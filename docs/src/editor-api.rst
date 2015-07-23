@@ -5,4 +5,7 @@ Editor API
    :includehidden:
    :maxdepth: 2
 
-   python-api/analysis/toolbar
+   python-api/editor/editor
+   python-api/editor/menubar
+   python-api/editor/action
+   python-api/editor/toolbar
