@@ -20,6 +20,7 @@ from PyQt4 import QtGui
 
 from menubar import MenuBar
 from action import Action
+from worker import Worker
 
 class Editor(QtGui.QMainWindow):
 
