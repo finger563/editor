@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<view model="package" name="packageview">
+  <layout>
+    <row name="MessageRow">
+      <alignment value = "bottom"/>
+      <padding x = 10 y = 23 />
+      <objects types = "Message"/>
+      <outline color = "black" width = 10 />
+      <fill color = "black" />
+      <origin pos = "Top Left" />
+    </row>
+    
+    <col name="ComponentColumn">
+      <alignment value = "right"/>
+      <padding x = 10 y = 23 />
+      <objects types = "Component"/>
+      <outline color = "black" width = 10 />
+      <fill color = "black" />
+      <offset pos = "MessageRow.BottomLeft" />
+      <origin pos = "Top Left" />
+    </col>
+    
+    <row name="ServiceRow">
+      <alignment value = "top"/>
+      <padding x = 10 y = 23 />
+      <objects types = "Service"/>
+      <outline color = "black" width = 10 />
+      <fill color = "black" />
+      <offset pos = "ComponentColumn.BottomRight" />
+      <origin pos = "Top Left" />
+    </row>
+
+    <view model="Component" name="ComponentView">
+      <col name="PubCol">
+	<alignment value = "right"/>
+	<padding x = 10 y = 23 />
+	<objects types = "Publisher"/>
+	<outline color = "black" width = 10 />
+	<fill color = "black" />
+	<origin pos = "Top Center" />
+      </col>
+      <col name="SubCol">
+	<alignment value = "right"/>
+	<padding x = 10 y = 23 />
+	<objects types = "Subscriber"/>
+	<outline color = "black" width = 10 />
+	<fill color = "black" />
+	<offset pos = "PubCol.BottomCenter" />
+	<origin pos = "Top Center" />
+      </col>
+      <col name="TmrCol">
+	<alignment value = "right"/>
+	<padding x = 10 y = 23 />
+	<objects types = "Timer"/>
+	<outline color = "black" width = 10 />
+	<fill color = "black" />
+	<offset pos = "SubCol.BottomCenter" />
+	<origin pos = "Top Center" />
+      </col>
+      <col name="ClientCol">
+	<alignment value = "right"/>
+	<padding x = 10 y = 23 />
+	<objects types = "Client"/>
+	<outline color = "black" width = 10 />
+	<fill color = "black" />
+	<offset pos = "TmrCol.BottomCenter" />
+	<origin pos = "Top Center" />
+      </col>
+      <col name="ServerCol">
+	<alignment value = "right"/>
+	<padding x = 10 y = 23 />
+	<objects types = "Server"/>
+	<outline color = "black" width = 10 />
+	<fill color = "black" />
+	<offset pos = "ClientCol.BottomCenter" />
+	<origin pos = "Top Center" />
+      </col>
+      <label>
+	<pos value = "Top Center"/>
+	<padding x = 0 y = 0 />
+	<text color = "black" size = 10 rotation = 0 />
+	<style value = "Rectangle">
+	  <fill color = "black" pattern = "solid />
+	  <outline color = "black" width = 10 />
+	</style>
+      </label>
+    </view>
+  </layout>
+</view>

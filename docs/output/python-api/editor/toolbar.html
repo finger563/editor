@@ -133,6 +133,50 @@
             
   <div class="section" id="module-toolbar">
 <span id="toolbar"></span><h1>Toolbar<a class="headerlink" href="#module-toolbar" title="Permalink to this headline">¶</a></h1>
+<p>Toolbar for the Meta-Model Editor</p>
+<p>This program provides an API for 
+library code to add toolbars,
+buttons and actions to the GUI.</p>
+<dl class="function">
+<dt id="toolbar.toolbar_init">
+<code class="descclassname">toolbar.</code><code class="descname">toolbar_init</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#toolbar.toolbar_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="toolbar.toolbar_create">
+<code class="descclassname">toolbar.</code><code class="descname">toolbar_create</code><span class="sig-paren">(</span><em>self</em>, <em>tb_name</em><span class="sig-paren">)</span><a class="headerlink" href="#toolbar.toolbar_create" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string tb_name</strong> (<em>in</em>) &#8211; name of the toolbar</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="toolbar.toolbar_add_action">
+<code class="descclassname">toolbar.</code><code class="descname">toolbar_add_action</code><span class="sig-paren">(</span><em>self</em>, <em>tb_name</em>, <em>tb_action</em><span class="sig-paren">)</span><a class="headerlink" href="#toolbar.toolbar_add_action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string tb_name</strong> (<em>in</em>) &#8211; name used to create the toolbar from <code class="xref py py-func docutils literal"><span class="pre">Editor.toolbar_create()</span></code>.</li>
+<li><strong>Action tb_action</strong> (<em>in</em>) &#8211; <a class="reference internal" href="action.html#action.Action" title="action.Action"><code class="xref py py-class docutils literal"><span class="pre">action.Action</span></code></a> object to bind to the toolbar.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="toolbar.toolbar_remove">
+<code class="descclassname">toolbar.</code><code class="descname">toolbar_remove</code><span class="sig-paren">(</span><em>self</em>, <em>tb_name</em><span class="sig-paren">)</span><a class="headerlink" href="#toolbar.toolbar_remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 

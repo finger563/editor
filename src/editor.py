@@ -10,9 +10,9 @@ libraries to perform meta-model specific
 operations such as generation, analysis,
 and deployment.
 
-author: William Emfinger
-website: github.com/finger563/editor 
-last edited: July 2015
+* author: William Emfinger
+* website: github.com/finger563/editor 
+* last edited: July 2015
 """
 
 from PyQt4 import QtCore

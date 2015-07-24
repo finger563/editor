@@ -138,12 +138,14 @@
 <p>This program provides an API for 
 library code to add menus and actions
 to the GUI menubar.</p>
-<dl class="class">
-<dt id="menubar.MenuBar">
-<em class="property">class </em><code class="descclassname">menubar.</code><code class="descname">MenuBar</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#menubar.MenuBar" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="menubar.MenuBar.add_menu">
-<code class="descname">add_menu</code><span class="sig-paren">(</span><em>menu_name</em><span class="sig-paren">)</span><a class="headerlink" href="#menubar.MenuBar.add_menu" title="Permalink to this definition">¶</a></dt>
+<dl class="function">
+<dt id="menubar.menubar_init">
+<code class="descclassname">menubar.</code><code class="descname">menubar_init</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#menubar.menubar_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="menubar.menubar_add_menu">
+<code class="descclassname">menubar.</code><code class="descname">menubar_add_menu</code><span class="sig-paren">(</span><em>self</em>, <em>menu_name</em><span class="sig-paren">)</span><a class="headerlink" href="#menubar.menubar_add_menu" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -154,23 +156,21 @@ to the GUI menubar.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="menubar.MenuBar.add_action">
-<code class="descname">add_action</code><span class="sig-paren">(</span><em>menu_name</em>, <em>menu_action</em><span class="sig-paren">)</span><a class="headerlink" href="#menubar.MenuBar.add_action" title="Permalink to this definition">¶</a></dt>
+<dl class="function">
+<dt id="menubar.menu_add_action">
+<code class="descclassname">menubar.</code><code class="descname">menu_add_action</code><span class="sig-paren">(</span><em>self</em>, <em>menu_name</em>, <em>menu_action</em><span class="sig-paren">)</span><a class="headerlink" href="#menubar.menu_add_action" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>string menu_name</strong> (<em>in</em>) &#8211; name used to create the menu from <a class="reference internal" href="#menubar.MenuBar.add_menu" title="menubar.MenuBar.add_menu"><code class="xref py py-func docutils literal"><span class="pre">MenuBar.add_menu()</span></code></a>.</li>
-<li><strong>Action menu_action</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">Action.Action</span></code> object to bind to the menu.</li>
+<li><strong>string menu_name</strong> (<em>in</em>) &#8211; name used to create the menu from <code class="xref py py-func docutils literal"><span class="pre">Editor.menubar_add_menu()</span></code>.</li>
+<li><strong>Action menu_action</strong> (<em>in</em>) &#8211; <a class="reference internal" href="action.html#action.Action" title="action.Action"><code class="xref py py-class docutils literal"><span class="pre">action.Action</span></code></a> object to bind to the menu.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 </dd></dl>
 
 </div>
