@@ -20,6 +20,20 @@ from PyQt4 import QtGui
 
 from action import Action
 from worker import Worker
+from model_tree import ModelTree
+
+class EditorWidget(QtGui.QWidget):
+    def __init__(self, parent):
+        super(EditorWidget,self).__init__(parent)
+        self.hbox = QtGui.QHBoxLayout()
+
+        self.modelTree = ModelTree(self)
+        self.hbox.addWidget(self.modelTree)
+
+        self.vbox = QtGui.QVBoxLayout()
+        self.vbox.addLayout(self.hbox)
+
+        self.setLayout(self.vbox)
 
 class Editor(QtGui.QMainWindow):
 
@@ -28,6 +42,9 @@ class Editor(QtGui.QMainWindow):
         self.init_ui()
 
     def init_ui(self):
+
+        self.grid = QtGui.QGridLayout()
+        self.grid.setSpacing(10)
 
         exitAction = Action('icons/toolbar/stop.png', '&Exit', self)        
         exitAction.setShortcut('Ctrl+Q')
@@ -43,6 +60,9 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_add_action("test1",exitAction)
         self.toolbar_create("test2")
         self.toolbar_add_action("test2",exitAction)
+
+        self.editorWidget = EditorWidget(self)
+        self.setCentralWidget(self.editorWidget)
 
         self.show()
 
