@@ -151,6 +151,71 @@ last edited: July 2015</p>
 <code class="descname">init_ui</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.init_ui" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="editor.Editor.menubar_add_menu">
+<code class="descname">menubar_add_menu</code><span class="sig-paren">(</span><em>menu_name</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.menubar_add_menu" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string menu_name</strong> (<em>in</em>) &#8211; name of the menu, shortcut (denoted by &amp;) optional (note that the &amp; will be stripped)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.menu_add_action">
+<code class="descname">menu_add_action</code><span class="sig-paren">(</span><em>menu_name</em>, <em>menu_action</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.menu_add_action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string menu_name</strong> (<em>in</em>) &#8211; name used to create the menu from <a class="reference internal" href="#editor.Editor.menubar_add_menu" title="editor.Editor.menubar_add_menu"><code class="xref py py-func docutils literal"><span class="pre">Editor.menubar_add_menu()</span></code></a>.</li>
+<li><strong>Action menu_action</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">Action.Action</span></code> object to bind to the menu.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.toolbar_create">
+<code class="descname">toolbar_create</code><span class="sig-paren">(</span><em>tb_name</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.toolbar_create" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string tb_name</strong> (<em>in</em>) &#8211; name of the toolbar</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.toolbar_add_action">
+<code class="descname">toolbar_add_action</code><span class="sig-paren">(</span><em>tb_name</em>, <em>tb_action</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.toolbar_add_action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string tb_name</strong> (<em>in</em>) &#8211; name used to create the toolbar from <a class="reference internal" href="#editor.Editor.toolbar_create" title="editor.Editor.toolbar_create"><code class="xref py py-func docutils literal"><span class="pre">Editor.toolbar_create()</span></code></a>.</li>
+<li><strong>Action tb_action</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">Action.Action</span></code> object to bind to the toolbar.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.toolbar_remove">
+<code class="descname">toolbar_remove</code><span class="sig-paren">(</span><em>tb_name</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.toolbar_remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
