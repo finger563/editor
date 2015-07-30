@@ -55,6 +55,9 @@ class EditorWidget(QtGui.QWidget):
 class TabbedEditorWidget(QtGui.QTabWidget):
     def __init__(self, parent):
         super(TabbedEditorWidget, self).__init__(parent)
+        self.setMovable(True)
+        self.setTabsClosable(True)
+        self.setUsesScrollButtons(True)
 
         newPage = EditorWidget(self)
         self.addTab(newPage, "test1")
