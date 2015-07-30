@@ -25,15 +25,6 @@ from model_tree import ModelTree
 class EditorWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(EditorWidget,self).__init__(parent)
-        self.hbox = QtGui.QHBoxLayout()
-
-        self.modelTree = ModelTree(self)
-        self.hbox.addWidget(self.modelTree)
-
-        self.vbox = QtGui.QVBoxLayout()
-        self.vbox.addLayout(self.hbox)
-
-        self.setLayout(self.vbox)
 
 class Editor(QtGui.QMainWindow):
 
@@ -61,8 +52,20 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_create("test2")
         self.toolbar_add_action("test2",exitAction)
 
+        self.modelTree = ModelTree(self)
+        self.modelTree.populate("testRML.xml")
+        self.modelTree2 = ModelTree(self)
         self.editorWidget = EditorWidget(self)
-        self.setCentralWidget(self.editorWidget)
+
+        self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
+        self.splitter1.addWidget(self.modelTree)
+        self.splitter1.addWidget(self.editorWidget)
+
+        self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.splitter2.addWidget(self.splitter1)
+        self.splitter2.addWidget(self.modelTree2)
+
+        self.setCentralWidget(self.splitter2)
 
         self.show()
 

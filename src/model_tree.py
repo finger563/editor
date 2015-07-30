@@ -1,4 +1,8 @@
 """
+ModelTree for the Meta-Model Editor
+
+This program allows viewing of generic
+metamodels as tree structures in Qt.
 """
 
 from PyQt4 import QtGui
