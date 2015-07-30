@@ -33,15 +33,35 @@ class EditorWidget(QtGui.QWidget):
         grview = QtGui.QGraphicsView(self)
         scene = QtGui.QGraphicsScene(self)
         pixmap = scene.addPixmap(QtGui.QPixmap('icons/model/Hardware.png'))
+        pixmap.setAcceptHoverEvents(True)
         matrix = QtGui.QMatrix()
         matrix.scale(0.5,0.5)
-        grview.setMatrix(matrix)
+        #grview.setMatrix(matrix)
         grview.setScene(scene)
+        #grview.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
+        grview.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         grview.show()
 
         self.hbox.addWidget(grview)
         self.setLayout(self.hbox)
 
+        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+
+    def contextMenuEvent(self, event):
+        menu = QtGui.QMenu()
+        menu.addAction("sample")
+        menu.exec_(event.globalPos())
+
+class TabbedEditorWidget(QtGui.QTabWidget):
+    def __init__(self, parent):
+        super(TabbedEditorWidget, self).__init__(parent)
+
+        newPage = EditorWidget(self)
+        self.addTab(newPage, "test1")
+        newPage = EditorWidget(self)
+        self.addTab(newPage, "test2")
+        
+        
 class Editor(QtGui.QMainWindow):
 
     def __init__(self):
@@ -70,11 +90,11 @@ class Editor(QtGui.QMainWindow):
 
         self.modelTree = ModelTree(self)
         self.modelTree2 = ModelTree(self)
-        self.editorWidget = EditorWidget(self)
+        self.tabbedEditorWidget = TabbedEditorWidget(self)
 
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.modelTree)
-        self.splitter1.addWidget(self.editorWidget)
+        self.splitter1.addWidget(self.tabbedEditorWidget)
 
         self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
