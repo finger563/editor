@@ -53,7 +53,6 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_add_action("test2",exitAction)
 
         self.modelTree = ModelTree(self)
-        self.modelTree.populate("testRML.xml")
         self.modelTree2 = ModelTree(self)
         self.editorWidget = EditorWidget(self)
 
@@ -66,6 +65,10 @@ class Editor(QtGui.QMainWindow):
         self.splitter2.addWidget(self.modelTree2)
 
         self.setCentralWidget(self.splitter2)
+
+        QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
+        self.setGeometry(300,300,800,600)
+        self.setWindowTitle("Editor")
 
         self.show()
 
