@@ -22,6 +22,10 @@ from action import Action
 from worker import Worker
 from model_tree import ModelTree
 
+class EditorObjectWidget(QtGui.QGraphicsWidget):
+    def __init__(self,parent):
+        super(EditorObjectWidget, self).__init__(parent)
+
 class EditorWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(EditorWidget,self).__init__(parent)
@@ -34,12 +38,14 @@ class EditorWidget(QtGui.QWidget):
         scene = QtGui.QGraphicsScene(self)
         pixmap = scene.addPixmap(QtGui.QPixmap('icons/model/Hardware.png'))
         pixmap.setAcceptHoverEvents(True)
+        pixmap.setAcceptDrops(True)
+        pixmap.setActive(True)
         matrix = QtGui.QMatrix()
         matrix.scale(0.5,0.5)
-        #grview.setMatrix(matrix)
+        grview.setMatrix(matrix)
         grview.setScene(scene)
         #grview.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
-        grview.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
+        #grview.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         grview.show()
 
         self.hbox.addWidget(grview)
