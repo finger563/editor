@@ -25,6 +25,22 @@ from model_tree import ModelTree
 class EditorWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(EditorWidget,self).__init__(parent)
+        self.init_ui()
+
+    def init_ui(self):
+        self.hbox = QtGui.QHBoxLayout(self)
+
+        grview = QtGui.QGraphicsView(self)
+        scene = QtGui.QGraphicsScene(self)
+        pixmap = scene.addPixmap(QtGui.QPixmap('icons/model/Hardware.png'))
+        matrix = QtGui.QMatrix()
+        matrix.scale(0.5,0.5)
+        grview.setMatrix(matrix)
+        grview.setScene(scene)
+        grview.show()
+
+        self.hbox.addWidget(grview)
+        self.setLayout(self.hbox)
 
 class Editor(QtGui.QMainWindow):
 
