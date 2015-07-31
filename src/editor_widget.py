@@ -76,6 +76,10 @@ class EditorView(QtGui.QGraphicsView):
     def __init__(self, parent = None):
         super(EditorView, self).__init__(parent)
 
+    def mousePressedEvent(self, event):
+        print self.selectedItems()
+        QtGui.QGraphicsView.mousePressedEvent(self, event)
+
     def dragMoveEvent(self, event):
         QtGui.QGraphicsView.dragMoveEvent(self,event)
 
