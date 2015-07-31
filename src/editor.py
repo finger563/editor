@@ -86,6 +86,8 @@ class Editor(QtGui.QMainWindow):
                                              'Build succeeded.')
 
     def closeEvent(self, event):
+        event.accept()
+        return
         reply = QtGui.QMessageBox.question(self, 'Message',
         "Are you sure to quit?", QtGui.QMessageBox.Yes | 
             QtGui.QMessageBox.No, QtGui.QMessageBox.No)
