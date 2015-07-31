@@ -15,7 +15,7 @@ from PyQt4 import QtGui
 class EditorObjectWidget(QtGui.QGraphicsItem):
     # NEED TO HANDLE MOUSE MOVE EVENTS LOOKING FOR ANCHOR POINTS IN PARENT
     # TO WHICH WE CAN ATTACH?
-    def __init__(self,parent, image):
+    def __init__(self, parent, name, image):
         super(EditorObjectWidget, self).__init__(parent)
 
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
@@ -25,12 +25,18 @@ class EditorObjectWidget(QtGui.QGraphicsItem):
         self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
 
-        self.image = QtGui.QImage(image)
+        self.name = name
+        self.image_file = image
+        self.anchorPoint = None
+
+        self.validDrag = False
+
+        self.image = QtGui.QImage(self.image_file)
         self.pixmapItem = QtGui.QGraphicsPixmapItem()
         self.pixmapItem.setPixmap(QtGui.QPixmap.fromImage(self.image))
 
-        self.anchorPoint = None
-        self.validDrag = False
+    def hoverEnterEvent(self, event):
+        print "Entered:: {}".format(self.name)
 
     def mousePressEvent(self, event):
         if self.shape().contains(event.pos()):
@@ -104,9 +110,9 @@ class EditorWidget(QtGui.QWidget):
 
         scene = EditorScene(self)
 
-        test = EditorObjectWidget(None, 'icons/model/Hardware.png')
-        test2 = EditorObjectWidget(test, 'icons/toolbar/generate.png')
-        test3 = EditorObjectWidget(test, 'icons/toolbar/build.png')
+        test = EditorObjectWidget(None, "hardware", 'icons/model/Hardware.png')
+        test2 = EditorObjectWidget(test, "generate", 'icons/toolbar/generate.png')
+        test3 = EditorObjectWidget(test, "build", 'icons/toolbar/build.png')
         scene.addItem(test)
 
 
