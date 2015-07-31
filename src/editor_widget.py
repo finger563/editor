@@ -17,43 +17,61 @@ class EditorObjectWidget(QtGui.QGraphicsItem):
     # TO WHICH WE CAN ATTACH?
     def __init__(self,parent, image):
         super(EditorObjectWidget, self).__init__(parent)
+
+        self.dragOver = False
+        
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.setAcceptDrops(True)
         self.image = QtGui.QGraphicsPixmapItem()
         self.image.setPixmap(QtGui.QPixmap(image))
+        self.setCursor(QtCore.Qt.OpenHandCursor)
 
-    def mousePressEvent(self, e):
-        return QtGui.QGraphicsItem.mousePressEvent(self,e)
+    def mousePressEvent(self, event):
+        if event.button() != QtCore.Qt.LeftButton:
+            event.ignore()
+            return
+        self.setCursor(QtCore.Qt.ClosedHandCursor)
+        #return QtGui.QGraphicsItem.mousePressEvent(self,event)
 
-    def mouseMoveEvent(self, e):
-        return QtGui.QGraphicsItem.mouseMoveEvent(self, e)
+    def mouseMoveEvent(self, event):
+        if QtCore.QLineF(QtCore.QPointF(event.screenPos()), QtCore.QPointF(event.buttonDownScreenPos(QtCore.Qt.LeftButton))).length() < QtGui.QApplication.startDragDistance():
+            return
 
-    def mouseReleaseEvent(self, e):
-        retval = QtGui.QGraphicsItem.mouseReleaseEvent(self, e)
-        print retval
-        items = [x for x in self.scene().items(e.scenePos()) if x != self]
-        print items
-        if items:
-            self.setParentItem(items[0])
-            self.setZValue(items[0].zValue()+1)
+        drag = QtGui.QDrag(event.widget())
+        mime = QtCore.QMimeData()
+        drag.setMimeData(mime)
+
+        drag.exec_()
+        self.setCursor(QtCore.Qt.OpenHandCursor)
+
+    def mouseReleaseEvent(self, event):
+        self.setCursor(QtCore.Qt.OpenHandCursor)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasColor():
+            event.setAccepted(True)
+            self.dragOver = True
+            self.update()
         else:
-            self.setParentItem(None)
-        return retval
+            event.setAccepted(False)
 
-    def dragEnterEvent(self, e):
-        e.accept()
-        return QtGui.QGraphicsItem.dragEnterEvent(self, e)
+    def dragLeaveEvent(self, event):
+        self.dragOver = False
+        self.update()
 
-    def dropEvent(self, e):
-        print e.pos()
-        e.setDropAction(QtCore.Qt.LinkAction)
-        e.accept()
-        return QtGui.QGraphicsItem.dropEvent(self, QDropEvent(QPoint(e.pos().x(), e.pos().y()), e.possibleActions(), e.mimeData(), e.buttons(), e.modifiers()))
+    def dropEvent(self, event):
+        self.dragOver = False
+        if event.mimeData().hasColor():
+            self.color = QtGui.QColor(event.mimeData().colorData())
+        elif event.mimeData().hasImage():
+            self.pixmap = QtGui.QPixmap(event.mimeData().imageData())
+
+        self.update()
         
     def boundingRect(self):
         return self.image.boundingRect()
         
-    def paint(self, painter, option, widget):
+    def paint(self, painter, option, widget = None):
         self.image.paint(painter, option, widget)
 
     def contextMenuEvent(self, event):
@@ -61,6 +79,17 @@ class EditorObjectWidget(QtGui.QGraphicsItem):
         menu.addAction("object")
         menu.exec_(event.screenPos())
 
+class EditorScene(QtGui.QGraphicsScene):
+    def __init__(self, parent = None):
+        super(EditorScene, self).__init__(parent)
+
+    def dragMoveEvent(self, event):
+        event.setAccepted(True)
+
+    def dropEvent(self, event):
+        # need to set position for the new object here!
+        pass
+        
 class EditorWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(EditorWidget,self).__init__(parent)
@@ -70,7 +99,7 @@ class EditorWidget(QtGui.QWidget):
         self.hbox = QtGui.QHBoxLayout(self)
 
         grview = QtGui.QGraphicsView(self)
-        scene = QtGui.QGraphicsScene(self)
+        scene = EditorScene(self)
         test = EditorObjectWidget(None, 'icons/model/Hardware.png')
         test2 = EditorObjectWidget(test, 'icons/toolbar/generate.png')
         test3 = EditorObjectWidget(test, 'icons/toolbar/build.png')
