@@ -22,9 +22,18 @@ from action import Action
 from worker import Worker
 from model_tree import ModelTree
 
-class EditorObjectWidget(QtGui.QGraphicsWidget):
+class EditorObjectWidget(QtGui.QGraphicsItem):
     def __init__(self,parent):
         super(EditorObjectWidget, self).__init__(parent)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
+        self.image = QtGui.QGraphicsPixmapItem()
+        self.image.setPixmap(QtGui.QPixmap('icons/model/Hardware.png'))
+
+    def boundingRect(self):
+        return self.image.boundingRect()
+        
+    def paint(self, painter, option, widget):
+        self.image.paint(painter, option, widget)
 
 class EditorWidget(QtGui.QWidget):
     def __init__(self, parent):
@@ -36,11 +45,9 @@ class EditorWidget(QtGui.QWidget):
 
         grview = QtGui.QGraphicsView(self)
         scene = QtGui.QGraphicsScene(self)
-        pixmap = scene.addPixmap(QtGui.QPixmap('icons/model/Hardware.png'))
-        #pixmap.setAcceptHoverEvents(True)
-        #pixmap.setAcceptDrops(True)
-        #pixmap.setActive(True)
-        pixmap.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
+        scene.addItem(EditorObjectWidget(None))
+        scene.addItem(EditorObjectWidget(None))
+        scene.addItem(EditorObjectWidget(None))
         matrix = QtGui.QMatrix()
         matrix.scale(0.5,0.5)
         grview.setMatrix(matrix)
