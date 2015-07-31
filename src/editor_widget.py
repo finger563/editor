@@ -25,6 +25,20 @@ class EditorObjectWidget(QtGui.QGraphicsItem):
         self.image = QtGui.QGraphicsPixmapItem()
         self.image.setPixmap(QtGui.QPixmap(image))
 
+    def mousePressEvent(self, e):
+        return QtGui.QGraphicsItem.mousePressEvent(self,e)
+
+    def mouseMoveEvent(self, e):
+        return QtGui.QGraphicsItem.mouseMoveEvent(self, e)
+
+    def mouseReleaseEvent(self, e):
+        items = [x for x in self.scene().items(e.scenePos()) if x != self]
+        print items
+        if items:
+            self.setParentItem(items[0])
+            self.setZValue(items[0].zValue()+1)
+        return QtGui.QGraphicsItem.mouseReleaseEvent(self, e)
+
     def dragEnterEvent(self, e):
         e.accept()
         return QtGui.QGraphicsItem.dragEnterEvent(self, e)
