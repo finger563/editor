@@ -1,11 +1,8 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 """
 Editor Widget 
 
 These classes allow users to view
-and edit models in the project.
+and edit models in the project in tabs.
 
 * author: William Emfinger
 * website: github.com/finger563/editor 

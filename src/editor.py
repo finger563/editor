@@ -22,6 +22,7 @@ from action import Action
 from worker import Worker
 from model_tree import ModelTree
 from editor_widget import TabbedEditorWidget
+from output import TabbedOutputWidget
 
 class Editor(QtGui.QMainWindow):
 
@@ -50,7 +51,6 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_add_action("test2",exitAction)
 
         self.modelTree = ModelTree(self)
-        self.modelTree2 = ModelTree(self)
         self.tabbedEditorWidget = TabbedEditorWidget(self)
 
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
@@ -59,7 +59,8 @@ class Editor(QtGui.QMainWindow):
 
         self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
-        self.splitter2.addWidget(self.modelTree2)
+        self.tabbedOutput = TabbedOutputWidget(self)
+        self.splitter2.addWidget(self.tabbedOutput)
 
         self.setCentralWidget(self.splitter2)
 
