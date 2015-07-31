@@ -72,7 +72,14 @@ class Editor(QtGui.QMainWindow):
         self.setGeometry(300,300,800,600)
         self.setWindowTitle("Editor")
 
+        self.center()
         self.show()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtGui.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def testEvent(self, event):
         test = QtGui.QMessageBox.information(self, 'Build',
