@@ -21,68 +21,8 @@ from PyQt4 import QtGui
 from action import Action
 from worker import Worker
 from model_tree import ModelTree
+from editor_widget import TabbedEditorWidget
 
-class EditorObjectWidget(QtGui.QGraphicsItem):
-    def __init__(self,parent):
-        super(EditorObjectWidget, self).__init__(parent)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
-        self.image = QtGui.QGraphicsPixmapItem()
-        self.image.setPixmap(QtGui.QPixmap('icons/model/Hardware.png'))
-
-    def boundingRect(self):
-        return self.image.boundingRect()
-        
-    def paint(self, painter, option, widget):
-        self.image.paint(painter, option, widget)
-
-class EditorWidget(QtGui.QWidget):
-    def __init__(self, parent):
-        super(EditorWidget,self).__init__(parent)
-        self.init_ui()
-
-    def init_ui(self):
-        self.hbox = QtGui.QHBoxLayout(self)
-
-        grview = QtGui.QGraphicsView(self)
-        scene = QtGui.QGraphicsScene(self)
-        test = EditorObjectWidget(None)
-        test2 = EditorObjectWidget(test)
-        test3 = EditorObjectWidget(test)
-        scene.addItem(test)
-        scene.addItem(test2)
-        scene.addItem(test3)
-        matrix = QtGui.QMatrix()
-        matrix.scale(0.5,0.5)
-        grview.setMatrix(matrix)
-        grview.setScene(scene)
-        #grview.setAcceptDrops(True)
-        #grview.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
-        #grview.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        grview.show()
-
-        self.hbox.addWidget(grview)
-        self.setLayout(self.hbox)
-
-        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-
-    def contextMenuEvent(self, event):
-        menu = QtGui.QMenu()
-        menu.addAction("sample")
-        menu.exec_(event.globalPos())
-
-class TabbedEditorWidget(QtGui.QTabWidget):
-    def __init__(self, parent):
-        super(TabbedEditorWidget, self).__init__(parent)
-        self.setMovable(True)
-        self.setTabsClosable(True)
-        self.setUsesScrollButtons(True)
-
-        newPage = EditorWidget(self)
-        self.addTab(newPage, "test1")
-        newPage = EditorWidget(self)
-        self.addTab(newPage, "test2")
-        
-        
 class Editor(QtGui.QMainWindow):
 
     def __init__(self):
