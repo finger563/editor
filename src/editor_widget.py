@@ -12,8 +12,6 @@ and edit models in the project in tabs.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-import jsonpickle
-
 class EditorObjectWidget(QtGui.QGraphicsItem):
     # NEED TO HANDLE MOUSE MOVE EVENTS LOOKING FOR ANCHOR POINTS IN PARENT
     # TO WHICH WE CAN ATTACH?
