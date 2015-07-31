@@ -6,6 +6,9 @@ Editor API
    :maxdepth: 2
 
    python-api/editor/editor
+   python-api/editor/editor-widget
+   python-api/editor/output
+   python-api/editor/syntax
    python-api/editor/menubar
    python-api/editor/action
    python-api/editor/toolbar

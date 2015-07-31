@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Action &mdash; Editor 0.1.0 documentation</title>
+  <title>Output &mdash; Editor 0.1.0 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   
     <link rel="top" title="Editor 0.1.0 documentation" href="../../index.html"/>
         <link rel="up" title="Editor API" href="../../editor-api.html"/>
-        <link rel="next" title="Toolbar" href="toolbar.html"/>
-        <link rel="prev" title="Menubar" href="menubar.html"/> 
+        <link rel="next" title="Syntax" href="syntax.html"/>
+        <link rel="prev" title="Editor-Widget" href="editor-widget.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -89,10 +89,10 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../editor-api.html">Editor API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="editor-widget.html">Editor-Widget</a></li>
-<li class="toctree-l2"><a class="reference internal" href="output.html">Output</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Output</a></li>
 <li class="toctree-l2"><a class="reference internal" href="syntax.html">Syntax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="menubar.html">Menubar</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="action.html">Action</a></li>
 <li class="toctree-l2"><a class="reference internal" href="toolbar.html">Toolbar</a></li>
 </ul>
 </li>
@@ -122,11 +122,11 @@
       
           <li><a href="../../editor-api.html">Editor API</a> &raquo;</li>
       
-    <li>Action</li>
+    <li>Output</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/python-api/editor/action.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/python-api/editor/output.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -135,16 +135,76 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="module-action">
-<span id="action"></span><h1>Action<a class="headerlink" href="#module-action" title="Permalink to this headline">¶</a></h1>
-<p>Action for the Meta-Model Editor</p>
-<p>This program provides an API for 
-library code to add actions
-to the GUI for use in the viewer, menubar, etc.</p>
+  <div class="section" id="module-output">
+<span id="output"></span><h1>Output<a class="headerlink" href="#module-output" title="Permalink to this headline">¶</a></h1>
+<p>Output Widget</p>
+<p>These classes allow output windows (in tabs)
+to which stderr/stdout can be redirected.</p>
+<p>They should also support color.</p>
+<ul class="simple">
+<li>author: William Emfinger</li>
+<li>website: github.com/finger563/editor</li>
+<li>last edited: July 2015</li>
+</ul>
 <dl class="class">
-<dt id="action.Action">
-<em class="property">class </em><code class="descclassname">action.</code><code class="descname">Action</code><span class="sig-paren">(</span><em>icon_file</em>, <em>text</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#action.Action" title="Permalink to this definition">¶</a></dt>
+<dt id="output.QtHandler">
+<em class="property">class </em><code class="descclassname">output.</code><code class="descname">QtHandler</code><a class="headerlink" href="#output.QtHandler" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="output.QtHandler.emit">
+<code class="descname">emit</code><span class="sig-paren">(</span><em>record</em><span class="sig-paren">)</span><a class="headerlink" href="#output.QtHandler.emit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="output.XStream">
+<em class="property">class </em><code class="descclassname">output.</code><code class="descname">XStream</code><a class="headerlink" href="#output.XStream" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="output.XStream.messageWritten">
+<code class="descname">messageWritten</code><a class="headerlink" href="#output.XStream.messageWritten" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="output.XStream.flush">
+<code class="descname">flush</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#output.XStream.flush" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="output.XStream.fileno">
+<code class="descname">fileno</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#output.XStream.fileno" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="output.XStream.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#output.XStream.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="output.XStream.stdout">
+<em class="property">static </em><code class="descname">stdout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#output.XStream.stdout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="output.XStream.stderr">
+<em class="property">static </em><code class="descname">stderr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#output.XStream.stderr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="output.OutputWidget">
+<em class="property">class </em><code class="descclassname">output.</code><code class="descname">OutputWidget</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#output.OutputWidget" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="output.TabbedOutputWidget">
+<em class="property">class </em><code class="descclassname">output.</code><code class="descname">TabbedOutputWidget</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#output.TabbedOutputWidget" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="output.TabbedOutputWidget.onTabClose">
+<code class="descname">onTabClose</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#output.TabbedOutputWidget.onTabClose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </div>
 
@@ -154,10 +214,10 @@ to the GUI for use in the viewer, menubar, etc.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="toolbar.html" class="btn btn-neutral float-right" title="Toolbar" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="syntax.html" class="btn btn-neutral float-right" title="Syntax" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="menubar.html" class="btn btn-neutral" title="Menubar" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="editor-widget.html" class="btn btn-neutral" title="Editor-Widget" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Action &mdash; Editor 0.1.0 documentation</title>
+  <title>Syntax &mdash; Editor 0.1.0 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   
     <link rel="top" title="Editor 0.1.0 documentation" href="../../index.html"/>
         <link rel="up" title="Editor API" href="../../editor-api.html"/>
-        <link rel="next" title="Toolbar" href="toolbar.html"/>
-        <link rel="prev" title="Menubar" href="menubar.html"/> 
+        <link rel="next" title="Menubar" href="menubar.html"/>
+        <link rel="prev" title="Output" href="output.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -90,9 +90,9 @@
 <li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="editor-widget.html">Editor-Widget</a></li>
 <li class="toctree-l2"><a class="reference internal" href="output.html">Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="syntax.html">Syntax</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Syntax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="menubar.html">Menubar</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="action.html">Action</a></li>
 <li class="toctree-l2"><a class="reference internal" href="toolbar.html">Toolbar</a></li>
 </ul>
 </li>
@@ -122,11 +122,11 @@
       
           <li><a href="../../editor-api.html">Editor API</a> &raquo;</li>
       
-    <li>Action</li>
+    <li>Syntax</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/python-api/editor/action.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/python-api/editor/syntax.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -135,16 +135,50 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="module-action">
-<span id="action"></span><h1>Action<a class="headerlink" href="#module-action" title="Permalink to this headline">¶</a></h1>
-<p>Action for the Meta-Model Editor</p>
-<p>This program provides an API for 
-library code to add actions
-to the GUI for use in the viewer, menubar, etc.</p>
+  <div class="section" id="module-syntax">
+<span id="syntax"></span><h1>Syntax<a class="headerlink" href="#module-syntax" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="syntax.format">
+<code class="descclassname">syntax.</code><code class="descname">format</code><span class="sig-paren">(</span><em>color</em>, <em>style=''</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a QTextCharFormat with the given attributes.</p>
+</dd></dl>
+
 <dl class="class">
-<dt id="action.Action">
-<em class="property">class </em><code class="descclassname">action.</code><code class="descname">Action</code><span class="sig-paren">(</span><em>icon_file</em>, <em>text</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#action.Action" title="Permalink to this definition">¶</a></dt>
+<dt id="syntax.PythonHighlighter">
+<em class="property">class </em><code class="descclassname">syntax.</code><code class="descname">PythonHighlighter</code><span class="sig-paren">(</span><em>document</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.PythonHighlighter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Syntax highlighter for the Python language.</p>
+<dl class="attribute">
+<dt id="syntax.PythonHighlighter.keywords">
+<code class="descname">keywords</code><em class="property"> = ['and', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'yield', 'None', 'True', 'False']</em><a class="headerlink" href="#syntax.PythonHighlighter.keywords" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="attribute">
+<dt id="syntax.PythonHighlighter.operators">
+<code class="descname">operators</code><em class="property"> = ['=', '==', '!=', '&lt;', '&lt;=', '&gt;', '&gt;=', '\\+', '-', '\\*', '/', '//', '\\%', '\\*\\*', '\\+=', '-=', '\\*=', '/=', '\\%=', '\\^', '\\|', '\\&amp;', '\\~', '&gt;&gt;', '&lt;&lt;']</em><a class="headerlink" href="#syntax.PythonHighlighter.operators" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="syntax.PythonHighlighter.braces">
+<code class="descname">braces</code><em class="property"> = ['\\{', '\\}', '\\(', '\\)', '\\[', '\\]']</em><a class="headerlink" href="#syntax.PythonHighlighter.braces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="syntax.PythonHighlighter.highlightBlock">
+<code class="descname">highlightBlock</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.PythonHighlighter.highlightBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply syntax highlighting to the given block of text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="syntax.PythonHighlighter.match_multiline">
+<code class="descname">match_multiline</code><span class="sig-paren">(</span><em>text</em>, <em>delimiter</em>, <em>in_state</em>, <em>style</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.PythonHighlighter.match_multiline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do highlighting of multi-line strings. <code class="docutils literal"><span class="pre">delimiter</span></code> should be a
+<code class="docutils literal"><span class="pre">QRegExp</span></code> for triple-single-quotes or triple-double-quotes, and
+<code class="docutils literal"><span class="pre">in_state</span></code> should be a unique integer to represent the corresponding
+state changes when inside those strings. Returns True if we&#8217;re still
+inside a multi-line string when this function is finished.</p>
+</dd></dl>
+
+</dd></dl>
 
 </div>
 
@@ -154,10 +188,10 @@ to the GUI for use in the viewer, menubar, etc.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="toolbar.html" class="btn btn-neutral float-right" title="Toolbar" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="menubar.html" class="btn btn-neutral float-right" title="Menubar" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="menubar.html" class="btn btn-neutral" title="Menubar" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="output.html" class="btn btn-neutral" title="Output" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
