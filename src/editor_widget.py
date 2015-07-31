@@ -29,12 +29,16 @@ class EditorObjectWidget(QtGui.QGraphicsItem):
         return QtGui.QGraphicsItem.mouseMoveEvent(self, e)
 
     def mouseReleaseEvent(self, e):
+        retval = QtGui.QGraphicsItem.mouseReleaseEvent(self, e)
+        print retval
         items = [x for x in self.scene().items(e.scenePos()) if x != self]
         print items
         if items:
             self.setParentItem(items[0])
             self.setZValue(items[0].zValue()+1)
-        return QtGui.QGraphicsItem.mouseReleaseEvent(self, e)
+        else:
+            self.setParentItem(None)
+        return retval
 
     def dragEnterEvent(self, e):
         e.accept()

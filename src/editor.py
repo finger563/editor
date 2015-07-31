@@ -38,7 +38,11 @@ class Editor(QtGui.QMainWindow):
         exitAction = Action('icons/toolbar/stop.png', '&Exit', self)        
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(QtGui.qApp.quit)
+        exitAction.triggered.connect(self.closeEvent)
+
+        testAction = Action('icons/toolbar/build.png', '&Build', self)
+        testAction.setStatusTip('Build code.')
+        testAction.triggered.connect(self.testEvent)
 
         self.menubar_init()
         self.menubar_add_menu('&File')
@@ -46,9 +50,9 @@ class Editor(QtGui.QMainWindow):
 
         self.toolbar_init()
         self.toolbar_create("test1")
-        self.toolbar_add_action("test1",exitAction)
+        self.toolbar_add_action("test1",testAction)
         self.toolbar_create("test2")
-        self.toolbar_add_action("test2",exitAction)
+        self.toolbar_add_action("test2",testAction)
 
         self.modelTree = ModelTree(self)
         self.tabbedEditorWidget = TabbedEditorWidget(self)
@@ -69,6 +73,20 @@ class Editor(QtGui.QMainWindow):
         self.setWindowTitle("Editor")
 
         self.show()
+
+    def testEvent(self, event):
+        test = QtGui.QMessageBox.information(self, 'Build',
+                                             'Build succeeded.')
+
+    def closeEvent(self, event):
+        reply = QtGui.QMessageBox.question(self, 'Message',
+        "Are you sure to quit?", QtGui.QMessageBox.Yes | 
+            QtGui.QMessageBox.No, QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore() 
 
     from menubar import menubar_init, menubar_add_menu, menu_add_action
     from toolbar import toolbar_init, toolbar_create, toolbar_add_action, toolbar_remove
