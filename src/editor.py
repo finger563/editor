@@ -39,7 +39,7 @@ class EditorWidget(QtGui.QWidget):
         pixmap = scene.addPixmap(QtGui.QPixmap('icons/model/Hardware.png'))
         #pixmap.setAcceptHoverEvents(True)
         #pixmap.setAcceptDrops(True)
-        pixmap.setActive(True)
+        #pixmap.setActive(True)
         pixmap.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         matrix = QtGui.QMatrix()
         matrix.scale(0.5,0.5)
