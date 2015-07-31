@@ -41,6 +41,11 @@ class EditorObjectWidget(QtGui.QGraphicsItem):
     def paint(self, painter, option, widget):
         self.image.paint(painter, option, widget)
 
+    def contextMenuEvent(self, event):
+        menu = QtGui.QMenu()
+        menu.addAction("object")
+        menu.exec_(event.screenPos())
+
 class EditorWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(EditorWidget,self).__init__(parent)
