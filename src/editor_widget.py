@@ -31,10 +31,8 @@ class EditorObjectWidget(QtGui.QGraphicsItem):
         self.pixmapItem = QtGui.QGraphicsPixmapItem()
         self.pixmapItem.setPixmap(QtGui.QPixmap.fromImage(self.image))
 
+        self.anchorPoint = None
         self.validDrag = False
-
-    def setAnchorPoint(self, anchor):
-        pass
 
     def mousePressEvent(self, event):
         if self.shape().contains(event.pos()):
