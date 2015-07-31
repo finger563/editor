@@ -12,84 +12,88 @@ and edit models in the project in tabs.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+import jsonpickle
+
 class EditorObjectWidget(QtGui.QGraphicsItem):
     # NEED TO HANDLE MOUSE MOVE EVENTS LOOKING FOR ANCHOR POINTS IN PARENT
     # TO WHICH WE CAN ATTACH?
     def __init__(self,parent, image):
         super(EditorObjectWidget, self).__init__(parent)
 
-        self.dragOver = False
-        
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
+        self.setFlag(QtGui.QGraphicsItem.ItemClipsToShape)
         self.setAcceptDrops(True)
-        self.image = QtGui.QGraphicsPixmapItem()
-        self.image.setPixmap(QtGui.QPixmap(image))
-        self.setCursor(QtCore.Qt.OpenHandCursor)
+        self.setAcceptHoverEvents(True)
+
+        self.image = QtGui.QImage(image)
+        self.pixmapItem = QtGui.QGraphicsPixmapItem()
+        self.pixmapItem.setPixmap(QtGui.QPixmap.fromImage(self.image))
+
+        self.validDrag = False
+
+    def setAnchorPoint(self, anchor):
+        pass
 
     def mousePressEvent(self, event):
-        if event.button() != QtCore.Qt.LeftButton:
+        if self.shape().contains(event.pos()):
+            QtGui.QGraphicsItem.mousePressEvent(self,event)
+            self.dragPos = self.mapFromScene(event.scenePos())
+            self.validDrag = True
+        else:
             event.ignore()
-            return
-        self.setCursor(QtCore.Qt.ClosedHandCursor)
-        #return QtGui.QGraphicsItem.mousePressEvent(self,event)
-
-    def mouseMoveEvent(self, event):
-        if QtCore.QLineF(QtCore.QPointF(event.screenPos()), QtCore.QPointF(event.buttonDownScreenPos(QtCore.Qt.LeftButton))).length() < QtGui.QApplication.startDragDistance():
-            return
-
-        drag = QtGui.QDrag(event.widget())
-        mime = QtCore.QMimeData()
-        drag.setMimeData(mime)
-
-        drag.exec_()
-        self.setCursor(QtCore.Qt.OpenHandCursor)
 
     def mouseReleaseEvent(self, event):
-        self.setCursor(QtCore.Qt.OpenHandCursor)
-
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasColor():
-            event.setAccepted(True)
-            self.dragOver = True
-            self.update()
+        if self.validDrag:
+            QtGui.QGraphicsItem.mouseReleaseEvent(self, event)
+            pos = event.scenePos()
+            items = [x for x in self.scene().items(event.scenePos()) if x != self]
+            if items:
+                self.setParentItem(items[0])
+                self.setZValue(items[0].zValue()+1)
+                self.setPos(self.parentItem().mapFromScene(pos) - self.dragPos)
+            elif self.parentItem():
+                scene = self.scene()
+                self.setParentItem(None)
+                scene.addItem(self)
+                self.setPos(pos - self.dragPos)
+            self.setCursor(QtCore.Qt.OpenHandCursor)
+            self.validDrag = False
         else:
-            event.setAccepted(False)
+            event.ignore()
 
-    def dragLeaveEvent(self, event):
-        self.dragOver = False
-        self.update()
-
-    def dropEvent(self, event):
-        self.dragOver = False
-        if event.mimeData().hasColor():
-            self.color = QtGui.QColor(event.mimeData().colorData())
-        elif event.mimeData().hasImage():
-            self.pixmap = QtGui.QPixmap(event.mimeData().imageData())
-
-        self.update()
-        
     def boundingRect(self):
-        return self.image.boundingRect()
+        return self.pixmapItem.boundingRect()
         
     def paint(self, painter, option, widget = None):
-        self.image.paint(painter, option, widget)
+        self.pixmapItem.paint(painter, option, widget)
 
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
         menu.addAction("object")
         menu.exec_(event.screenPos())
 
+class EditorView(QtGui.QGraphicsView):
+    def __init__(self, parent = None):
+        super(EditorView, self).__init__(parent)
+
+    def dragMoveEvent(self, event):
+        QtGui.QGraphicsView.dragMoveEvent(self,event)
+
+    def dropEvent(self, event):
+        QtGui.QGraphicsView.dropEvent(self,event)
+
 class EditorScene(QtGui.QGraphicsScene):
     def __init__(self, parent = None):
         super(EditorScene, self).__init__(parent)
 
     def dragMoveEvent(self, event):
-        event.setAccepted(True)
+        QtGui.QGraphicsScene.dragMoveEvent(self,event)
 
     def dropEvent(self, event):
-        # need to set position for the new object here!
-        pass
-        
+        QtGui.QGraphicsScene.dropEvent(self,event)
+
 class EditorWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(EditorWidget,self).__init__(parent)
@@ -98,24 +102,24 @@ class EditorWidget(QtGui.QWidget):
     def init_ui(self):
         self.hbox = QtGui.QHBoxLayout(self)
 
-        grview = QtGui.QGraphicsView(self)
         scene = EditorScene(self)
+
         test = EditorObjectWidget(None, 'icons/model/Hardware.png')
         test2 = EditorObjectWidget(test, 'icons/toolbar/generate.png')
         test3 = EditorObjectWidget(test, 'icons/toolbar/build.png')
-        test4 = EditorObjectWidget(None, 'icons/model/Hardware.png')
         scene.addItem(test)
-        scene.addItem(test4)
+
+
+        view = EditorView(scene)
+        view.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
+        #view.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         matrix = QtGui.QMatrix()
         matrix.scale(0.5,0.5)
-        grview.setMatrix(matrix)
-        grview.setScene(scene)
-        grview.setAcceptDrops(True)
-        #grview.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
-        #grview.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        grview.show()
+        view.setMatrix(matrix)
 
-        self.hbox.addWidget(grview)
+        view.show()
+
+        self.hbox.addWidget(view)
         self.setLayout(self.hbox)
 
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
