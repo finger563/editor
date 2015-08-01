@@ -99,8 +99,15 @@ class EditorObjectWidget(QtGui.QGraphicsItem):
         menu.exec_(event.screenPos())
 
 class EditorLayoutWidget(EditorObjectWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, kind = "none"):
         super(EditorLayoutWidget, self).__init__(parent)
+        self.kind = kind
+
+class EditorViewWidget(EditorObjectWidget):
+    def __init__(self, parent = None, name = "", color = ""):
+        super(EditorObjectWidget, self).__init__(parent)
+        self.color = color
+        self.name = name
 
 class EditorView(QtGui.QGraphicsView):
     def __init__(self, parent = None):
