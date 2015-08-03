@@ -12,77 +12,108 @@ and edit models in the project in tabs.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+# NEED RESIZE
 # NEED NEW DRAW STYLES
 # NEED WAYS OF SPECIFYING ANCHORING
 # NEED WAYS OF SPECIFYING LAYOUTS
+
+import math
+def distance(p1, p2):
+    p = p2 - p1
+    return math.sqrt(p.x()*p.x() + p.y()*p.y())
+
+def getClosestPoint(cp, pDict):
+    minDist = -1
+    closestPoint = None
+    for k,p in pDict.iteritems():
+        dist = distance(cp,p)
+        if minDist == -1 or dist < minDist:
+            minDist = dist
+            closestPoint = k
+    return closestPoint, minDist
 
 class EditorItem(QtGui.QGraphicsWidget):
     def __init__(self,
                  parent = None,
                  image_file = "",
                  anchor = "top left",
-                 width = 40,
-                 height = 40,
+                 anchorRadius = 10,
+                 anchorSize = 5,
+                 width = 100,
+                 height = 100,
                  layout = 'horizontal'):
         super(EditorItem, self).__init__(parent)
 
-        self.image_file = image_file
-        self.layout_style = layout
-        self.item = None
-        self.anchor = anchor
-        self.width = width
-        self.height = height
+        self._image_file = image_file
+        self._layout_style = layout
+        self._item = None
+        self._anchor = anchor
+        self._anchorRadius = anchorRadius
+        self._anchorSize = anchorSize
+        self._width = width
+        self._height = height
+        self._mouseOver = False
+
+        self._anchoredTo = []
+        self._hasAnchored = {}
 
         self.loadResources()
         
     def loadResources(self):
-        self.resize(self.width, self.height)
+        self.resize(self._width, self._height)
         self.initializeFlags()
         self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
         
         child_layout = None
-        if 'horizontal' in self.layout_style:
+        if 'horizontal' in self._layout_style:
             child_layout = QtGui.QGraphicsLinearLayout()
-        elif 'vertical' in self.layout_style:
+        elif 'vertical' in self._layout_style:
             child_layout = QtGui.QGraphicsLinearLayout(QtCore.Qt.Vertical)
-        elif 'grid' in self.layout_style:
+        elif 'grid' in self._layout_style:
             child_layout = QtGui.QGraphicsGridLayout()
+        elif 'anchor' in self._layout_style:
+            child_layout = QtGui.QGraphicsAnchorLayout()
 
         self.setLayout(child_layout)
 
-        if self.image_file:
-            self.item = QtGui.QGraphicsPixmapItem()
-            self.item.setPixmap(QtGui.QPixmap(self.image_file))
-            self.resize(QtCore.QSizeF(self.item.pixmap().size()))
+        if self._image_file:
+            self._item = QtGui.QGraphicsPixmapItem()
+            self._item.setPixmap(QtGui.QPixmap(self._image_file))
+            self.resize(QtCore.QSizeF(self._item.pixmap().size()))
 
         self.setCursor(QtCore.Qt.OpenHandCursor)
 
+    def boundingRect(self):
+        return self._item.boundingRect()
+
     def sizeHint(self, which, constraint):
-        if self.item:
-            return self.item.boundingRect().size()
+        if self._item:
+            return self._item.boundingRect().size()
         elif self.layout():
             return self.layout().sizeHint(which, constraint)
         else:
-            return QtCore.QSizeF(50,50)
+            return QtCore.QSizeF(self._width,self._height)
         
-    def updateGraphicsItem(self):
-        self.item.setPixmap(
-            self.item.pixmap().scaled(
-                self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width(),
-                self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
-            )
-        )
+    def updateGraphicsItem(self, width = 0, height = 0):
+        if not width and not height:
+            width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
+            height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
+        self._item.setPixmap( self._item.pixmap().scaled(width,height) )
 
     def removeChild(self, child):
         self.layout().removeItem(child)
         self.layout().activate()
         self.updateGraphicsItem()
+        self.updateGeometry()
+        self.updateAnchoredPos()
 
     def addChild(self, child):
         self.layout().addItem(child)
         self.layout().invalidate()
         self.updateGraphicsItem()
+        self.updateGeometry()
+        self.updateAnchoredPos()
 
     def parentEditorItem(self):
         currentParent = self.parentLayoutItem()
@@ -91,60 +122,129 @@ class EditorItem(QtGui.QGraphicsWidget):
         return currentParent
 
     def paint(self, painter, option, widget = None):
-        self.item.paint(painter, option, widget)
+        self._item.paint(painter, option, widget)
+        if self._mouseOver:
+            for k,a in self.getAnchors().iteritems():
+                a = self.mapFromScene( a )
+                anchorRect = QtCore.QRectF(
+                    a.x() - self._anchorSize,
+                    a.y() - self._anchorSize,
+                    2*self._anchorSize, 2*self._anchorSize)
+                painter.setBrush(QtGui.QBrush(QtGui.QColor(0,0,0)))
+                painter.drawRect(anchorRect)
     
+    def updateAnchoredPos(self):
+        for i,p in self._hasAnchored.iteritems():
+            pos = self.getAnchors()[p]
+            i.setPos(pos)
+            i.updateAnchoredPos()
+
     def mousePressEvent(self, event):
         if self.shape().contains(event.pos()):
-            QtGui.QGraphicsWidget.mousePressEvent(self, event)
-            self.dragPos = self.mapFromScene(event.scenePos())
-            self.validDrag = True
+            self._dragPos = self.mapFromScene(event.scenePos())
+            self._validDrag = True
         else:
-            self.validDrag = False
+            self._validDrag = False
+        QtGui.QGraphicsWidget.mousePressEvent(self, event)
 
+    def mouseMoveEvent(self, event):
+        if not self.parentEditorItem():
+            #self.updateAnchoredPos()
+            QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
+
+
+    # if item will have a parent, place it in the parent's layout
+    # else see if it will be anchored
     def mouseReleaseEvent(self, event):
-        if self.validDrag:
-            self.validDrag = False
+        if self._validDrag:
+            self._validDrag = False
             newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
             currentParent = self.parentEditorItem()
             if newParent:
                 if newParent[0] != currentParent:
                     if currentParent: currentParent.removeChild(self)
+                    if self._anchoredTo:
+                        self._anchoredTo[0].unAnchor(self)
+                    self._anchoredTo = []
                     newParent[0].addChild(self)
-                    self.setPos(newParent[0].mapFromScene(event.scenePos()) - self.dragPos)
+                    self.setPos(newParent[0].mapFromScene(event.scenePos()) - self._dragPos)
             else:
                 if currentParent:
+                    if self._anchoredTo:
+                        self._anchoredTo[0].unAnchor(self)
+                    self._anchoredTo = []
                     currentParent.removeChild(self)
                     self.setParentItem(None)
                     self.setParent(self.scene())
-                    self.setPos(event.scenePos() - self.dragPos)
-            QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
+                item, pointName = self.getClosestAnchor()
+                dist = distance(self.getAnchor(), item.getAnchors()[pointName])
+                if dist <= self._anchorRadius:
+                    self._anchoredTo = [item, pointName]
+                    item.anchor(self, pointName)
+                    self.setPos(item.getAnchors()[pointName])
+                else:
+                    if self._anchoredTo:
+                        self._anchoredTo[0].unAnchor(self)
+                    self._anchoredTo = []
+                    self.setPos(event.scenePos() - self._dragPos)
+                QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
         else:
             event.ignore()
+            
+    def hoverEnterEvent(self, event):
+        self._mouseOver = True
+
+    def hoverLeaveEvent(self, event):
+        self._mouseOver = False
 
     def initializeFlags(self):
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsScenePositionChanges)
+
+    def anchor(self, item, pName):
+        if item not in self._hasAnchored:
+            self._hasAnchored[item] = pName
+
+    def unAnchor(self, item):
+        self._hasAnchored.pop(item, None)
     
+    def getAnchor(self):
+        return self.getAnchors()[self._anchor]
+            
+    def getClosestAnchor(self):
+        myAnchorPos = self.getAnchor()
+        otherItems = [x for x in self.scene().items() if x != self]
+        minDist = -1
+        cp = None
+        for i in otherItems:
+            closestPoint, dist = getClosestPoint(myAnchorPos, i.getAnchors())
+            if minDist == -1 or dist < minDist:
+                minDist = dist
+                cp = [i, closestPoint]
+        return cp
+
     def getAnchors(self):
-        a = self.geometry()
+        a = self.boundingRect()
         anchorList = {
-            "bottom left": a.bottomLeft(),
-            "bottom right": a.bottomRight(),
-            "top left": a.topLeft(),
-            "top right": a.topRight(),
-            "center": a.center(),
-            "center left": (a.topLeft() + a.bottomLeft()) / 2.0,
-            "center right": (a.topRight() + a.bottomRight()) / 2.0,
-            "top center": (a.topLeft() + a.topRight()) / 2.0,
-            "bottom center": (a.bottomLeft() + a.bottomRight()) / 2.0
+            "bottom left": self.mapToScene(a.bottomLeft()),
+            "bottom right": self.mapToScene(a.bottomRight()),
+            "top left": self.mapToScene(a.topLeft()),
+            "top right": self.mapToScene(a.topRight()),
+            "center": self.mapToScene(a.center()),
+            "center left": self.mapToScene((a.topLeft() + a.bottomLeft()) / 2.0),
+            "center right": self.mapToScene((a.topRight() + a.bottomRight()) / 2.0),
+            "top center": self.mapToScene((a.topLeft() + a.topRight()) / 2.0),
+            "bottom center": self.mapToScene((a.bottomLeft() + a.bottomRight()) / 2.0)
         }
         return anchorList
 
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
         menu.addAction("EditorItem")
+        menu.addAction("SetLayout")
+        menu.addAction("SetAnchor")
         menu.exec_(event.screenPos())
 
 class EditorScene(QtGui.QGraphicsScene):

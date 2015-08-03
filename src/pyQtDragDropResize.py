@@ -76,7 +76,7 @@ class BoxResizable(QtGui.QGraphicsRectItem):
                 self.mousePressArea = None
         elif event.button() == QtCore.Qt.RightButton:
             self.contextMenuEvent(event)
-        super(BoxResizable, self).mousePressEvent(event)
+        QtGui.QGraphicsRectItem.mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         """
@@ -113,7 +113,7 @@ class BoxResizable(QtGui.QGraphicsRectItem):
             self.updateResizeHandles()
             self.prepareGeometryChange()
 
-        QtGui.QGraphicsRectItem.mousePressEvent(self, event)
+        QtGui.QGraphicsRectItem.mouseMoveEvent(self, event)
 
     def shape(self):
         path = QtGui.QPainterPath()
