@@ -12,10 +12,9 @@ and edit models in the project in tabs.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-# IMPLEMENT RESIZING OF OBJECTS
-# IMPLEMENT SERIALIZATION AND DESERIALIZATION
-# IMPLEMENT ANCHORING
-# IMPLEMNET DRAW STYLING
+# NEED NEW DRAW STYLES
+# NEED WAYS OF SPECIFYING ANCHORING
+# NEED WAYS OF SPECIFYING LAYOUTS
 
 class EditorItem(QtGui.QGraphicsWidget):
     def __init__(self,
