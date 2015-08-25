@@ -44,6 +44,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         self._image_file = image_file
         self._layout_style = layout
         self._item = None
+        self._pixmap = None
         self._width = width
         self._height = height
         self._mouseOver = False
@@ -69,9 +70,10 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.setLayout(child_layout)
 
         if self._image_file:
+            self._pixmap = QtGui.QPixmap(self._image_file)
             self._item = QtGui.QGraphicsPixmapItem()
-            self._item.setPixmap(QtGui.QPixmap(self._image_file))
-            self.resize(QtCore.QSizeF(self._item.pixmap().size()))
+            self._item.setPixmap(self._pixmap)
+            self.resize(QtCore.QSizeF(self._pixmap.size()))
 
         self.setCursor(QtCore.Qt.OpenHandCursor)
 
@@ -90,7 +92,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         if not width and not height:
             width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
             height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
-        self._item.setPixmap( self._item.pixmap().scaled(width,height) )
+        self._item.setPixmap( self._pixmap.scaled(width,height) )
 
     def removeChild(self, child):
         self.layout().removeItem(child)
