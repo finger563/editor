@@ -18,8 +18,7 @@ class Dashboard(QtGui.QWidget):
         
         self.layout = QtGui.QHBoxLayout(self)
         self.layout.addWidget(self.label)
-        self.layout.setContentsMargins(1,1,1,1)
-        self.layout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
+        #self.layout.setContentsMargins(1,1,1,1)
         self.setLayout(self.layout)
 
 class MainWindow(QtGui.QWidget):
@@ -34,31 +33,43 @@ class MainWindow(QtGui.QWidget):
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.addWidget(self.dashboard)
         self.layout.addWidget(self.toggleButton)
-        self.layout.setContentsMargins(1,1,1,1)
-        self.layout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
+        #self.layout.setContentsMargins(1,1,1,1)
         self.setLayout(self.layout)
-        
+
         self.connect(self.toggleButton, QtCore.SIGNAL('clicked()'), self.toggle)
+        self.displayed = True
+        self.firstRun = True
 
     def toggle(self):
-
         self.hideAnimation = QtCore.QPropertyAnimation(self.dashboard, "geometry")
-        self.parentHideAnimation = QtCore.QPropertyAnimation(self, "geometry")
+
         self.hideAnimation.setDuration(300)
-        self.parentHideAnimation.setDuration(300)
+
+        if self.firstRun:
+            self.firstRun = False
+            self.dw = self.dashboard.geometry().width()
+            self.dh = self.dashboard.geometry().height()
+
+        TL_y = 0
+        BR_y = self.dh
+
+        if self.displayed:
+            TL_x = self.dw - 100
+            BR_x = 2*self.dw - 100
+        else:
+            TL_x = 0
+            BR_x = self.dw
+        self.displayed = not self.displayed
+
         self.dashboard.startGeometry = QtCore.QRect(self.dashboard.geometry())
-        self.startGeometry = QtCore.QRect(self.geometry())
-        self.dashboard.endGeometry = QtCore.QRect(0,self.dashboard.geometry().height(),self.dashboard.geometry().width(), 0)
-        self.endGeometry = QtCore.QRect(self.geometry().x(),
-                                        self.geometry().y() + self.dashboard.geometry().height(),
-                                        self.dashboard.width(),
-                                        self.toggleButton.geometry().height())
+        self.dashboard.endGeometry = QtCore.QRect(
+            TL_x, TL_y,
+            BR_x, BR_y
+        )
+
         self.hideAnimation.setStartValue(self.dashboard.startGeometry)
-        self.parentHideAnimation.setStartValue(self.startGeometry)
         self.hideAnimation.setEndValue(self.dashboard.endGeometry)
-        self.parentHideAnimation.setEndValue(self.endGeometry)
         self.hideAnimation.start()
-        self.parentHideAnimation.start()
 
 if __name__ == "__main__":
     main = MainWindow()
