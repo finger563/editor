@@ -200,12 +200,12 @@ class EditorView(QtGui.QGraphicsView):
         scene.addItem(t)
         r.addChild(t)
 
-        self.aw = AttributeEditor(r)
-
         self.setScene(scene)
         self.show()
         self.firstRun = True
         self.displayed = True
+        self.aw = AttributeEditor(self)
+        self.aw.show()
 
     def keyPressEvent(self, event):
         if event.key() == self.drag_mode_key:
