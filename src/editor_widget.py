@@ -106,14 +106,12 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.layout().activate()
         self.updateGraphicsItem()
         self.updateGeometry()
-        self.updateAnchoredPos()
 
     def addChild(self, child):
         self.layout().addItem(child)
         self.layout().invalidate()
         self.updateGraphicsItem()
         self.updateGeometry()
-        self.updateAnchoredPos()
 
     def parentEditorItem(self):
         currentParent = self.parentLayoutItem()
@@ -123,79 +121,34 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def paint(self, painter, option, widget = None):
         self._item.paint(painter, option, widget)
-        if self._mouseOver:
-            for k,a in self.getAnchors().iteritems():
-                a = self.mapFromScene( a )
-                anchorRect = QtCore.QRectF(
-                    a.x() - self._anchorSize,
-                    a.y() - self._anchorSize,
-                    2*self._anchorSize, 2*self._anchorSize)
-                painter.setBrush(QtGui.QBrush(QtGui.QColor(0,0,0)))
-                painter.drawRect(anchorRect)
     
-    def updateAnchoredPos(self):
-        for i,p in self._hasAnchored.iteritems():
-            pos = self.getAnchors()[p]
-            i.setPos(pos)
-            i.updateAnchoredPos()
-
     def mousePressEvent(self, event):
-        if self.shape().contains(event.pos()):
-            self._dragPos = self.mapFromScene(event.scenePos())
-            self._validDrag = True
-        else:
-            self._validDrag = False
+        self._dragPos = self.mapFromScene(event.scenePos())
         QtGui.QGraphicsWidget.mousePressEvent(self, event)
 
     def mouseMoveEvent(self, event):
-        if not self.parentEditorItem():
-            #self.updateAnchoredPos()
-            QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
+        QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
 
 
     # if item will have a parent, place it in the parent's layout
     # else see if it will be anchored
     def mouseReleaseEvent(self, event):
-        if self._validDrag:
-            self._validDrag = False
-            newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
-            currentParent = self.parentEditorItem()
-            if newParent:
-                if newParent[0] != currentParent:
-                    if currentParent: currentParent.removeChild(self)
-                    if self._anchoredTo:
-                        self._anchoredTo[0].unAnchor(self)
-                    self._anchoredTo = []
-                    newParent[0].addChild(self)
-                    self.setPos(newParent[0].mapFromScene(event.scenePos()) - self._dragPos)
-            else:
-                if currentParent:
-                    if self._anchoredTo:
-                        self._anchoredTo[0].unAnchor(self)
-                    self._anchoredTo = []
-                    currentParent.removeChild(self)
-                    self.setParentItem(None)
-                    self.setParent(self.scene())
-                item, pointName = self.getClosestAnchor()
-                dist = distance(self.getAnchor(), item.getAnchors()[pointName])
-                if dist <= self._anchorRadius:
-                    self._anchoredTo = [item, pointName]
-                    item.anchor(self, pointName)
-                    self.setPos(item.getAnchors()[pointName])
-                else:
-                    if self._anchoredTo:
-                        self._anchoredTo[0].unAnchor(self)
-                    self._anchoredTo = []
-                    self.setPos(event.scenePos() - self._dragPos)
-                QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
+        QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
+        newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
+        currentParent = self.parentEditorItem()
+        if currentParent: currentParent.removeChild(self)
+        if newParent:
+            newParent[0].addChild(self)
+            #self.setPos(newParent[0].mapFromScene(event.scenePos()) - self._dragPos)
         else:
-            event.ignore()
+            self.setParentItem(None)
+            self.setParent(self.scene())
             
     def hoverEnterEvent(self, event):
-        self._mouseOver = True
+        QtGui.QGraphicsWidget.hoverEnterEvent(self, event)
 
     def hoverLeaveEvent(self, event):
-        self._mouseOver = False
+        QtGui.QGraphicsWidget.hoverLeaveEvent(self, event)
 
     def initializeFlags(self):
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
