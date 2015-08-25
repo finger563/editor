@@ -173,6 +173,7 @@ class EditorView(QtGui.QGraphicsView):
     def init_ui(self):
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         self.drag_mode_key = QtCore.Qt.Key_Control
+        self._command_key_pressed = False
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
@@ -197,19 +198,42 @@ class EditorView(QtGui.QGraphicsView):
         scene.addItem(t)
         r.addChild(t)
 
-
         self.setScene(scene)
         self.show()
 
     def keyPressEvent(self, event):
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
+            self._command_key_pressed = True
         QtGui.QGraphicsView.keyPressEvent(self, event)
 
     def keyReleaseEvent(self, event):
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
+            self._command_key_pressed = False
         QtGui.QGraphicsView.keyReleaseEvent(self, event)
+
+    def wheelEvent(self, event):
+        if self._command_key_pressed:
+            zoomInFactor = 1.25
+            zoomOutFactor = 1 / zoomInFactor
+
+            # Save the scene pos
+            oldPos = self.mapToScene(event.pos())
+
+            # Zoom
+            if event.delta() > 0:
+                zoomFactor = zoomInFactor
+            else:
+                zoomFactor = zoomOutFactor
+            self.scale(zoomFactor, zoomFactor)
+
+            oldPosNow = self.mapFromScene(oldPos)
+            move = oldPosNow - event.pos()
+            self.horizontalScrollBar().setValue(move.x() + self.horizontalScrollBar().value())
+            self.verticalScrollBar().setValue(move.y() + self.verticalScrollBar().value())
+        else:
+            QtGui.QGraphicsView.wheelEvent(self, event)
 
 class TabbedEditor(QtGui.QTabWidget):
     def __init__(self, parent):
