@@ -1,3 +1,6 @@
+'''
+https://forum.qt.io/topic/8746/solved-slide-animation-and-layout
+'''
 #!/usr/bin/env python
 import sys
 
