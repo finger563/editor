@@ -12,6 +12,8 @@ and edit models in the project in tabs.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+from attribute_widget import AttributeEditor
+
 # NEED RESIZE
 # NEED NEW DRAW STYLES
 # NEED WAYS OF SPECIFYING ANCHORING
@@ -77,6 +79,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         self.setCursor(QtCore.Qt.OpenHandCursor)
 
+    def paint(self, painter, option, widget = None):
+        self._item.paint(painter, option, widget)
+
     def boundingRect(self):
         return self._item.boundingRect()
 
@@ -111,9 +116,6 @@ class EditorItem(QtGui.QGraphicsWidget):
         if currentParent:
             currentParent = currentParent.parentLayoutItem()
         return currentParent
-
-    def paint(self, painter, option, widget = None):
-        self._item.paint(painter, option, widget)
     
     def mousePressEvent(self, event):
         QtGui.QGraphicsWidget.mousePressEvent(self, event)
@@ -198,8 +200,12 @@ class EditorView(QtGui.QGraphicsView):
         scene.addItem(t)
         r.addChild(t)
 
+        self.aw = AttributeEditor(r)
+
         self.setScene(scene)
         self.show()
+        self.firstRun = True
+        self.displayed = True
 
     def keyPressEvent(self, event):
         if event.key() == self.drag_mode_key:
@@ -211,8 +217,40 @@ class EditorView(QtGui.QGraphicsView):
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
             self._command_key_pressed = False
+            self.toggle()
         QtGui.QGraphicsView.keyReleaseEvent(self, event)
 
+    def toggle(self):
+        self.hideAnimation = QtCore.QPropertyAnimation(self.aw, "geometry")
+
+        self.hideAnimation.setDuration(300)
+
+        if self.firstRun:
+            self.firstRun = False
+            self.dw = self.aw.geometry().width()
+            self.dh = self.aw.geometry().height()
+
+        TL_y = 0
+        BR_y = self.dh
+
+        if self.displayed:
+            TL_x = self.dw - 100
+            BR_x = 2*self.dw - 100
+        else:
+            TL_x = 0
+            BR_x = self.dw
+        self.displayed = not self.displayed
+
+        self.aw.startGeometry = QtCore.QRectF(self.aw.geometry())
+        self.aw.endGeometry = QtCore.QRectF(
+            TL_x, TL_y,
+            BR_x, BR_y
+        )
+
+        self.hideAnimation.setStartValue(self.aw.startGeometry)
+        self.hideAnimation.setEndValue(self.aw.endGeometry)
+        self.hideAnimation.start()
+        
     def wheelEvent(self, event):
         if self._command_key_pressed:
             zoomInFactor = 1.25
