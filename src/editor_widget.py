@@ -36,9 +36,6 @@ class EditorItem(QtGui.QGraphicsWidget):
     def __init__(self,
                  parent = None,
                  image_file = "",
-                 anchor = "top left",
-                 anchorRadius = 10,
-                 anchorSize = 5,
                  width = 100,
                  height = 100,
                  layout = 'horizontal'):
@@ -47,15 +44,9 @@ class EditorItem(QtGui.QGraphicsWidget):
         self._image_file = image_file
         self._layout_style = layout
         self._item = None
-        self._anchor = anchor
-        self._anchorRadius = anchorRadius
-        self._anchorSize = anchorSize
         self._width = width
         self._height = height
         self._mouseOver = False
-
-        self._anchoredTo = []
-        self._hasAnchored = {}
 
         self.loadResources()
         
@@ -103,7 +94,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def removeChild(self, child):
         self.layout().removeItem(child)
-        self.layout().activate()
+        self.layout().invalidate()
         self.updateGraphicsItem()
         self.updateGeometry()
 
@@ -123,26 +114,23 @@ class EditorItem(QtGui.QGraphicsWidget):
         self._item.paint(painter, option, widget)
     
     def mousePressEvent(self, event):
-        self._dragPos = self.mapFromScene(event.scenePos())
         QtGui.QGraphicsWidget.mousePressEvent(self, event)
+        self._drag_pos = self.mapFromScene(event.scenePos())
 
     def mouseMoveEvent(self, event):
         QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
 
-
-    # if item will have a parent, place it in the parent's layout
-    # else see if it will be anchored
     def mouseReleaseEvent(self, event):
-        QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
         newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
         currentParent = self.parentEditorItem()
         if currentParent: currentParent.removeChild(self)
         if newParent:
             newParent[0].addChild(self)
-            #self.setPos(newParent[0].mapFromScene(event.scenePos()) - self._dragPos)
         else:
             self.setParentItem(None)
             self.setParent(self.scene())
+            self.setPos(event.scenePos() - self._drag_pos)
+        QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
             
     def hoverEnterEvent(self, event):
         QtGui.QGraphicsWidget.hoverEnterEvent(self, event)
@@ -156,48 +144,10 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsScenePositionChanges)
 
-    def anchor(self, item, pName):
-        if item not in self._hasAnchored:
-            self._hasAnchored[item] = pName
-
-    def unAnchor(self, item):
-        self._hasAnchored.pop(item, None)
-    
-    def getAnchor(self):
-        return self.getAnchors()[self._anchor]
-            
-    def getClosestAnchor(self):
-        myAnchorPos = self.getAnchor()
-        otherItems = [x for x in self.scene().items() if x != self]
-        minDist = -1
-        cp = None
-        for i in otherItems:
-            closestPoint, dist = getClosestPoint(myAnchorPos, i.getAnchors())
-            if minDist == -1 or dist < minDist:
-                minDist = dist
-                cp = [i, closestPoint]
-        return cp
-
-    def getAnchors(self):
-        a = self.boundingRect()
-        anchorList = {
-            "bottom left": self.mapToScene(a.bottomLeft()),
-            "bottom right": self.mapToScene(a.bottomRight()),
-            "top left": self.mapToScene(a.topLeft()),
-            "top right": self.mapToScene(a.topRight()),
-            "center": self.mapToScene(a.center()),
-            "center left": self.mapToScene((a.topLeft() + a.bottomLeft()) / 2.0),
-            "center right": self.mapToScene((a.topRight() + a.bottomRight()) / 2.0),
-            "top center": self.mapToScene((a.topLeft() + a.topRight()) / 2.0),
-            "bottom center": self.mapToScene((a.bottomLeft() + a.bottomRight()) / 2.0)
-        }
-        return anchorList
-
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
         menu.addAction("EditorItem")
         menu.addAction("SetLayout")
-        menu.addAction("SetAnchor")
         menu.exec_(event.screenPos())
 
 class EditorScene(QtGui.QGraphicsScene):
