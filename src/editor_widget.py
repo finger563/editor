@@ -202,10 +202,13 @@ class EditorView(QtGui.QGraphicsView):
 
         self.setScene(scene)
         self.show()
-        self.firstRun = True
-        self.displayed = True
+        
+        self._displayed = True
         self.aw = AttributeEditor(self)
         self.aw.show()
+        self.dw = self.aw.geometry().width()
+        self.dh = self.aw.geometry().height()
+        self.setAWGeo(self._displayed)
 
     def keyPressEvent(self, event):
         if event.key() == self.drag_mode_key:
@@ -220,26 +223,38 @@ class EditorView(QtGui.QGraphicsView):
             self.toggle()
         QtGui.QGraphicsView.keyReleaseEvent(self, event)
 
+    def resizeEvent(self, event):
+        self.setAWGeo(self._displayed)
+        QtGui.QGraphicsView.resizeEvent(self, event)
+
+    def setAWGeo(self, displayed):
+        TL_y = 0
+        BR_y = self.dh
+        if displayed:
+            TL_x = self.geometry().width() - 200
+            BR_x = self.geometry().width() + self.dw - 200
+        else:
+            TL_x = self.geometry().width()
+            BR_x = self.geometry().width() + self.dw
+        self.aw.setGeometry(self.geometry().width(), 0,
+                            self.geometry().width() + self.dw,
+                            self.dh)
+
     def toggle(self):
         self.hideAnimation = QtCore.QPropertyAnimation(self.aw, "geometry")
 
         self.hideAnimation.setDuration(300)
 
-        if self.firstRun:
-            self.firstRun = False
-            self.dw = self.aw.geometry().width()
-            self.dh = self.aw.geometry().height()
-
         TL_y = 0
         BR_y = self.dh
 
-        if self.displayed:
-            TL_x = self.dw - 100
-            BR_x = 2*self.dw - 100
+        if self._displayed:
+            TL_x = self.geometry().width() - 200
+            BR_x = self.geometry().width() + self.dw - 200
         else:
-            TL_x = 0
-            BR_x = self.dw
-        self.displayed = not self.displayed
+            TL_x = self.geometry().width()
+            BR_x = self.geometry().width() + self.dw
+        self._displayed = not self._displayed
 
         self.aw.startGeometry = QtCore.QRectF(self.aw.geometry())
         self.aw.endGeometry = QtCore.QRectF(
