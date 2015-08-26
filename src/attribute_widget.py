@@ -82,9 +82,11 @@ class AttributeEditor(QtGui.QWidget):
 
         obj = None
         if attr['type'] in ['float','int','double','string']:
-            obj = QtGui.QLineEdit(str(attr['value']),self)
+            obj = QtGui.QLineEdit(self)
+            obj.setText(str(attr['value']))
         elif attr['type'] in ['code']:
-            obj = QtGui.QTextEdit(attr['value'],self)
+            obj = QtGui.QTextEdit(self)
+            obj.setText(attr['value'])
         elif attr['type'] in ['list','reference']:
             obj = QtGui.QComboBox(self)
             obj.addItems(attr['options'])
@@ -124,7 +126,11 @@ class AttributeEditor(QtGui.QWidget):
          },
             {'name':'Profile',
              'type':'code',
-             'value':'',
+             'value':'''this
+is
+a
+multiline
+string.''',
              'tooltip':'Code Tooltip'
          },
             {'name':'Priority',
