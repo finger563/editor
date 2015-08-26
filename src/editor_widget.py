@@ -210,7 +210,6 @@ class EditorView(QtGui.QGraphicsView):
         
         self._displayed = True
         self.aw = AttributeEditor(self)
-        self.aw.show()
         self.setAWGeo(self._displayed)
 
     def mousePressEvent(self, event):

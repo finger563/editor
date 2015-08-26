@@ -19,13 +19,22 @@ class AttributeEditor(QtGui.QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.pix = QtGui.QPixmap("icons/model/Client.png").scaled(100,100)
+        self.layout = QtGui.QVBoxLayout(self)
+
         self.label = QtGui.QLabel(self)
-        self.label.setPixmap(self.pix)
-        
-        self.layout = QtGui.QHBoxLayout(self)
+        self.label.setText("Attribute\nEditor")
         self.layout.addWidget(self.label)
-        self.layout.setContentsMargins(1,1,1,1)
+
+        self.pix = QtGui.QPixmap("icons/model/Client.png").scaled(100,100)
+        self.label2 = QtGui.QLabel(self)
+        self.label2.setPixmap(self.pix)
+        self.layout.addWidget(self.label2)
+
+        self.button = QtGui.QPushButton('Button',self)
+        self.layout.addWidget(self.button)
+
+        self.setToolTip('This allows editing of currently selected object attributes.')
+        #self.layout.setContentsMargins(1,1,1,1)
         self.setLayout(self.layout)
 
     def mousePressEvent(self, event):
