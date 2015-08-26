@@ -13,10 +13,20 @@ that slides in from the right of the screen.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+# NEED TO FIX MAXIMUM WIDTH : CALCULATE IT EVERY TIME WE RUN INIT_UI?
+# NEED TO FIGURE OUT HOW TO FORMAT AND RETURN ATTRIBUTES
+# REQUIRES:
+#  * NAME: display name for the label
+#  * TYPE: variable type, e.g. string, double, list, reference
+#  * VALUE: current value of the field
+#  * VALIDATOR: should return true or false comparing the VALUE to TYPE (and other options)
+#  * TOOLTIP: hover text for more description
+
 class AttributeEditor(QtGui.QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, closeFunc = None):
         super(AttributeEditor,self).__init__(parent)
         self.layout = QtGui.QVBoxLayout(self)
+        self.closeFunc = closeFunc
 
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
@@ -45,36 +55,45 @@ class AttributeEditor(QtGui.QWidget):
         
     def init_ui(self):
         self.clear_ui()
-        self.label = QtGui.QLabel(self)
-        self.label.setText("Attribute Editor")
-        self.label.setWordWrap(True)
-        self.layout.addWidget(self.label)
+        label = QtGui.QLabel(self)
+        label.setText("Attribute Editor")
+        label.setWordWrap(True)
+        self.layout.addWidget(label)
 
-        self.pix = QtGui.QPixmap("icons/model/Client.png").scaled(100,100)
-        self.label2 = QtGui.QLabel(self)
-        self.label2.setPixmap(self.pix)
-        self.label2.setToolTip("This is a label tooltip.")
-        self.layout.addWidget(self.label2)
+        pix = QtGui.QPixmap("icons/model/Client.png").scaled(100,100)
+        label2 = QtGui.QLabel(self)
+        label2.setPixmap(pix)
+        label2.setToolTip("This is a label tooltip.")
+        self.layout.addWidget(label2)
 
-        self.cb = QtGui.QComboBox(self)
-        self.cb.addItems(["Hello","World"])
-        self.cb.setToolTip('This is a combo box tool tip.')
-        self.layout.addWidget(self.cb)
+        cb = QtGui.QComboBox(self)
+        cb.addItems(["Hello","World"])
+        cb.setToolTip('This is a combo box tool tip.')
+        self.layout.addWidget(cb)
 
-        self.le = QtGui.QLineEdit(self)
-        self.le.setToolTip('This is a line editor tool tip.')
-        self.layout.addWidget(self.le)
+        le = QtGui.QLineEdit(self)
+        le.setToolTip('This is a line editor tool tip.')
+        self.layout.addWidget(le)
 
-        self.te = QtGui.QTextEdit(self)
-        self.te.setToolTip('This is a text editor tool tip.')
-        self.layout.addWidget(self.te)
+        te = QtGui.QTextEdit(self)
+        te.setToolTip('This is a text editor tool tip.')
+        self.layout.addWidget(te)
 
-        self.button = QtGui.QPushButton('Button',self)
-        self.button.setToolTip('This is a button tooltip.')
-        self.layout.addWidget(self.button)
+        ok_cancel_widget = QtGui.QWidget(self)
+        ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
+        
+        button = QtGui.QPushButton('OK',self)
+        button.setToolTip('Save the updated attributes.')
+        button.clicked.connect(self.closeFunc)
+        ok_cancel_layout.addWidget(button)
 
-        #self.layout.setContentsMargins(1,1,1,1)
-        #self.setMaximumSize(100,200)
+        button = QtGui.QPushButton('Cancel',self)
+        button.setToolTip('Cancel attribute edits.')
+        button.clicked.connect(self.closeFunc)
+        ok_cancel_layout.addWidget(button)
+
+        ok_cancel_widget.setLayout(ok_cancel_layout)
+        self.layout.addWidget(ok_cancel_widget)
 
     def mouseDoubleClickEvent(self, event):
-        self.parent().mouseDoubleClickEvent(event)
+        self.closeFunc(event)

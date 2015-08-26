@@ -35,8 +35,13 @@ def getClosestPoint(cp, pDict):
     return closestPoint, minDist
 
 class EditorItem(QtGui.QGraphicsWidget):
+
+    layout_styles = ['horizontal','vertical','grid','anchor']
+    draw_styles = ['icon', 'ellipse', 'rect', 'round rect']
+
     def __init__(self,
                  parent = None,
+                 draw_style = 'icon',
                  image_file = "",
                  width = 100,
                  height = 100,
@@ -44,6 +49,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         super(EditorItem, self).__init__(parent)
 
         self._image_file = image_file
+        self._draw_style = draw_style
         self._layout_style = layout
         self._item = None
         self._pixmap = None
@@ -209,7 +215,7 @@ class EditorView(QtGui.QGraphicsView):
         self.show()
         
         self._displayed = False
-        self.aw = AttributeEditor(self)
+        self.aw = AttributeEditor(self, lambda e : self.setAW(e, False))
         self.setAWGeo(self._displayed)
 
     def mousePressEvent(self, event):
@@ -257,11 +263,10 @@ class EditorView(QtGui.QGraphicsView):
     def setAWGeo(self, displayed):
         self.aw.setGeometry(*self.getAWGeo(displayed))
 
-    def toggle(self):
-        self._displayed = not self._displayed
+    def setAW(self, event, displayed):
+        self._displayed = displayed
         if self._displayed:
             self.aw.init_ui()
-
         self.hideAnimation = QtCore.QPropertyAnimation(self.aw, "geometry")
         self.hideAnimation.setDuration(300)
 
@@ -272,6 +277,10 @@ class EditorView(QtGui.QGraphicsView):
         self.hideAnimation.setEndValue(self.aw.endGeometry)
         self.hideAnimation.start()
         
+    def toggle(self):
+        self._displayed = not self._displayed
+        self.setAW(None, self._displayed)
+
     def wheelEvent(self, event):
         if self._command_key_pressed:
             zoomInFactor = 1.25
