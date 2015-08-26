@@ -25,6 +25,14 @@ from PyQt4 import QtGui
 # SHOULD USE QValidators!
 # SHOULD USE sliders, spinboxes, etc.
 
+# attribute is a dict of key:val pairs:
+#  * NAME: display name for the label
+#  * TYPE: variable type, e.g. string, double, list, reference, can use spinbox for ranges
+#  * VALUE: current value of the field
+#  * VALIDATOR: should return true or false comparing the VALUE to TYPE (and other options)
+#  * OPTIONS: if the user selects between multiple options, they are specified here
+#  * TOOLTIP: hover text for more description
+
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent = None):
         super(AttributeEditor,self).__init__(parent)
@@ -50,6 +58,42 @@ class AttributeEditor(QtGui.QWidget):
         painter.end()
         super(AttributeEditor, self).paintEvent( e )
 
+    def add_static(self, static):
+        label = QtGui.QLabel(self)
+        label.setText(static['name'])
+        label.setWordWrap(True)
+        self.layout.addWidget(label)
+        obj = None
+        if static['type'] in ['image']:
+            pix = QtGui.QPixmap(static['value']).scaled(*static['scale'])
+            obj = QtGui.QLabel(self)
+            obj.setToolTip(static['tooltip'])
+            obj.setPixmap(pix)
+
+        if obj:
+            self.layout.addWidget(obj)
+
+    def add_attribute(self, attr):
+        label = QtGui.QLabel(self)
+        label.setText(attr['name'])
+        label.setToolTip(attr['tooltip'])
+        label.setWordWrap(True)
+        self.layout.addWidget(label)
+
+        obj = None
+        if attr['type'] in ['float','int','double','string']:
+            obj = QtGui.QLineEdit(str(attr['value']),self)
+        elif attr['type'] in ['code']:
+            obj = QtGui.QTextEdit(attr['value'],self)
+        elif attr['type'] in ['list','reference']:
+            obj = QtGui.QComboBox(self)
+            obj.addItems(attr['options'])
+            obj.setCurrentIndex(attr['options'].index(attr['value']))
+
+        if obj:
+            obj.setToolTip(attr['tooltip'])
+            self.layout.addWidget(obj)
+
     def clear_ui(self):
         while self.layout.count():
             child = self.layout.takeAt(0)
@@ -57,30 +101,46 @@ class AttributeEditor(QtGui.QWidget):
         
     def init_ui(self):
         self.clear_ui()
-        label = QtGui.QLabel(self)
-        label.setText("Attribute Editor")
-        label.setWordWrap(True)
-        self.layout.addWidget(label)
 
-        pix = QtGui.QPixmap("icons/model/Client.png").scaled(50,50)
-        label2 = QtGui.QLabel(self)
-        label2.setPixmap(pix)
-        label2.setToolTip("This is a label tooltip.")
-        self.layout.addWidget(label2)
+        static = {'name':'Attribute Editor',
+                  'type':'image',
+                  'value':'icons/model/Client.png',
+                  'scale':(50,50),
+                  'tooltip':'Static Tooltip'
+        }
+        self.add_static(static)
 
-        cb = QtGui.QComboBox(self)
-        cb.addItems(["Hello","World"])
-        cb.setToolTip('This is a combo box tool tip.')
-        self.layout.addWidget(cb)
+        attrs = [
+            {'name':'Ref',
+             'type':'list',
+             'value':'World',
+             'options':('Hello','World','Test'),
+             'tooltip':'List Tooltip'
+         },
+            {'name':'Name',
+             'type':'string',
+             'value':'test string',
+             'tooltip':'String Tooltip'
+         },
+            {'name':'Profile',
+             'type':'code',
+             'value':'',
+             'tooltip':'Code Tooltip'
+         },
+            {'name':'Priority',
+             'type':'int',
+             'value': 10,
+             'tooltip':'Int Tooltip'
+         },
+            {'name':'Period',
+             'type':'float',
+             'value': 10.12,
+             'tooltip':'Float Tooltip'
+         }]
 
-        le = QtGui.QLineEdit(self)
-        le.setToolTip('This is a line editor tool tip.')
-        self.layout.addWidget(le)
-
-        te = QtGui.QTextEdit(self)
-        te.setToolTip('This is a text editor tool tip.')
-        self.layout.addWidget(te)
-
+        for attr in attrs:
+            self.add_attribute(attr)
+        
         ok_cancel_widget = QtGui.QWidget(self)
         ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
         
