@@ -29,25 +29,29 @@ class AttributeEditor(QtGui.QWidget):
         self.pix = QtGui.QPixmap("icons/model/Client.png").scaled(100,100)
         self.label2 = QtGui.QLabel(self)
         self.label2.setPixmap(self.pix)
+        self.label2.setToolTip('This is a label tool tip.')
         self.layout.addWidget(self.label2)
 
         self.cb = QtGui.QComboBox(self)
         self.cb.addItems(["Hello","World"])
+        self.cb.setToolTip('This is a combo box tool tip.')
         self.layout.addWidget(self.cb)
 
         self.le = QtGui.QLineEdit(self)
+        self.le.setToolTip('This is a line editor tool tip.')
         self.layout.addWidget(self.le)
 
         self.te = QtGui.QTextEdit(self)
+        self.te.setToolTip('This is a text editor tool tip.')
         self.layout.addWidget(self.te)
 
         self.button = QtGui.QPushButton('Button',self)
+        self.button.setToolTip('This is a button tooltip.')
         self.layout.addWidget(self.button)
 
-        self.setToolTip('This allows editing of currently selected object attributes.')
         #self.layout.setContentsMargins(1,1,1,1)
         #self.setMaximumSize(100,200)
-        self.setFixedWidth(100)
+        self.setMaximumWidth(300)
         self.setLayout(self.layout)
 
     def mousePressEvent(self, event):

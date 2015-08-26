@@ -208,7 +208,7 @@ class EditorView(QtGui.QGraphicsView):
         self.setScene(scene)
         self.show()
         
-        self._displayed = True
+        self._displayed = False
         self.aw = AttributeEditor(self)
         self.setAWGeo(self._displayed)
 
@@ -246,8 +246,8 @@ class EditorView(QtGui.QGraphicsView):
         TL_x = _myw
         BR_x = _myw + _w
         if displayed:
-            TL_x -= self.attr_width
-            BR_x -= self.attr_width
+            TL_x -= _w
+            BR_x -= _w
         return TL_x, TL_y, BR_x, BR_y
 
     def setAWGeo(self, displayed):
