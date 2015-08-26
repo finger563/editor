@@ -28,6 +28,7 @@ p.add_child(Deployment("deployment"))
 class ModelTree(QtGui.QTreeWidget):
     def __init__(self,parent):
         super(ModelTree,self).__init__(parent)
+        self.setColumnCount(2)
         
     def populate(self, model = p, parent = None):
         if parent:
