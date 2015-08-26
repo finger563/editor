@@ -61,8 +61,5 @@ class AttributeEditor(QtGui.QWidget):
         self.setLayout(self.layout)
         self.show()
 
-    def mousePressEvent(self, event):
-        self.parent().mousePressEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        self.parent().mouseReleaseEvent(event)
+    def mouseDoubleClickEvent(self, event):
+        self.parent().mouseDoubleClickEvent(event)

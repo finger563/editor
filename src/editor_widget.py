@@ -214,12 +214,13 @@ class EditorView(QtGui.QGraphicsView):
 
     def mousePressEvent(self, event):
         QtGui.QGraphicsView.mousePressEvent(self, event)
-        self._press_location = event.pos()
 
     def mouseReleaseEvent(self, event):
         QtGui.QGraphicsView.mouseReleaseEvent(self, event)
-        if self._press_location == event.pos():
-            self.toggle()
+
+    def mouseDoubleClickEvent(self, event):
+        QtGui.QGraphicsView.mouseDoubleClickEvent(self, event)
+        self.toggle()
         
     def keyPressEvent(self, event):
         QtGui.QGraphicsView.keyPressEvent(self, event)
