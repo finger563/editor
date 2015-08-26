@@ -214,9 +214,8 @@ class EditorView(QtGui.QGraphicsView):
         self.setScene(scene)
         self.show()
         
-        self._displayed = False
-        self.aw = AttributeEditor(self, lambda e : self.setAW(e, False))
-        self.setAWGeo(self._displayed)
+        self.aw = AttributeEditor(self)
+        self.aw.updateGeo()
 
     def mousePressEvent(self, event):
         QtGui.QGraphicsView.mousePressEvent(self, event)
@@ -242,44 +241,13 @@ class EditorView(QtGui.QGraphicsView):
 
     def resizeEvent(self, event):
         QtGui.QGraphicsView.resizeEvent(self, event)
-        self.setAWGeo(self._displayed)
+        self.aw.updateGeo()
 
-    def getAWGeo(self, displayed):
-        _myw = self.geometry().width()
-        _w = self.aw.geometry().width()
-        _h = self.geometry().height()
-        TL_y = 0
-        BR_y = _h
-        TL_x = _myw
-        BR_x = _myw + _w
-        if displayed:
-            TL_x -= _w
-            BR_x -= _w
-        if TL_x < 0:
-            BR_x += -TL_x
-            TL_x += -TL_x
-        return TL_x, TL_y, BR_x, BR_y
-
-    def setAWGeo(self, displayed):
-        self.aw.setGeometry(*self.getAWGeo(displayed))
-
-    def setAW(self, event, displayed):
-        self._displayed = displayed
-        if self._displayed:
-            self.aw.init_ui()
-        self.hideAnimation = QtCore.QPropertyAnimation(self.aw, "geometry")
-        self.hideAnimation.setDuration(300)
-
-        self.aw.startGeometry = QtCore.QRectF(self.aw.geometry())
-        self.aw.endGeometry = QtCore.QRectF(*self.getAWGeo(self._displayed))
-
-        self.hideAnimation.setStartValue(self.aw.startGeometry)
-        self.hideAnimation.setEndValue(self.aw.endGeometry)
-        self.hideAnimation.start()
-        
     def toggle(self):
-        self._displayed = not self._displayed
-        self.setAW(None, self._displayed)
+        self.aw._displayed = not self.aw._displayed
+        if self.aw._displayed:
+            self.aw.init_ui()
+        self.aw.animate(None,self.aw._displayed)
 
     def wheelEvent(self, event):
         if self._command_key_pressed:
