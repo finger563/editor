@@ -21,6 +21,12 @@ class AttributeEditor(QtGui.QWidget):
     def init_ui(self):
         self.layout = QtGui.QVBoxLayout(self)
 
+        self.setStyleSheet("""QToolTip { 
+                           background-color: black; 
+                           color: white; 
+                           border: black solid 1px
+                           }""")
+
         self.label = QtGui.QLabel(self)
         self.label.setText("Attribute Editor")
         self.label.setWordWrap(True)
@@ -29,7 +35,7 @@ class AttributeEditor(QtGui.QWidget):
         self.pix = QtGui.QPixmap("icons/model/Client.png").scaled(100,100)
         self.label2 = QtGui.QLabel(self)
         self.label2.setPixmap(self.pix)
-        self.label2.setToolTip('This is a label tool tip.')
+        self.label2.setToolTip("This is a label tooltip.")
         self.layout.addWidget(self.label2)
 
         self.cb = QtGui.QComboBox(self)
@@ -53,6 +59,7 @@ class AttributeEditor(QtGui.QWidget):
         #self.setMaximumSize(100,200)
         self.setMaximumWidth(300)
         self.setLayout(self.layout)
+        self.show()
 
     def mousePressEvent(self, event):
         self.parent().mousePressEvent(event)
