@@ -168,13 +168,18 @@ class EditorScene(QtGui.QGraphicsScene):
             menu.exec_(event.screenPos())
 
 class EditorView(QtGui.QGraphicsView):
+
+    drag_mode_key = QtCore.Qt.Key_Control
+    scroll_mode_key = QtCore.Qt.Key_Control
+
+    attr_width = 100
+
     def __init__(self, parent):
         super(EditorView,self).__init__(parent)
         self.init_ui()
 
     def init_ui(self):
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        self.drag_mode_key = QtCore.Qt.Key_Control
         self._command_key_pressed = False
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
@@ -206,10 +211,17 @@ class EditorView(QtGui.QGraphicsView):
         self._displayed = True
         self.aw = AttributeEditor(self)
         self.aw.show()
-        self.dw = self.aw.geometry().width()
-        self.dh = self.aw.geometry().height()
         self.setAWGeo(self._displayed)
 
+    def mousePressEvent(self, event):
+        QtGui.QGraphicsView.mousePressEvent(self, event)
+        self._press_location = event.pos()
+
+    def mouseReleaseEvent(self, event):
+        if self._press_location == event.pos():
+            self.toggle()
+        QtGui.QGraphicsView.mouseReleaseEvent(self, event)
+        
     def keyPressEvent(self, event):
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
@@ -220,47 +232,37 @@ class EditorView(QtGui.QGraphicsView):
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
             self._command_key_pressed = False
-            self.toggle()
         QtGui.QGraphicsView.keyReleaseEvent(self, event)
 
     def resizeEvent(self, event):
         self.setAWGeo(self._displayed)
         QtGui.QGraphicsView.resizeEvent(self, event)
 
-    def setAWGeo(self, displayed):
+    def getAWGeo(self, displayed):
+        _myw = self.geometry().width()
+        _w = self.aw.geometry().width()
+        _h = self.aw.geometry().height()
         TL_y = 0
-        BR_y = self.dh
+        BR_y = _h
         if displayed:
-            TL_x = self.geometry().width() - 200
-            BR_x = self.geometry().width() + self.dw - 200
+            TL_x = _myw - self.attr_width
+            BR_x = _myw + _w - self.attr_width
         else:
-            TL_x = self.geometry().width()
-            BR_x = self.geometry().width() + self.dw
-        self.aw.setGeometry(self.geometry().width(), 0,
-                            self.geometry().width() + self.dw,
-                            self.dh)
+            TL_x = _myw
+            BR_x = _myw + _w
+        return TL_x, TL_y, BR_x, BR_y
+
+    def setAWGeo(self, displayed):
+        self.aw.setGeometry(*self.getAWGeo(displayed))
 
     def toggle(self):
         self.hideAnimation = QtCore.QPropertyAnimation(self.aw, "geometry")
 
         self.hideAnimation.setDuration(300)
 
-        TL_y = 0
-        BR_y = self.dh
-
-        if self._displayed:
-            TL_x = self.geometry().width() - 200
-            BR_x = self.geometry().width() + self.dw - 200
-        else:
-            TL_x = self.geometry().width()
-            BR_x = self.geometry().width() + self.dw
         self._displayed = not self._displayed
-
         self.aw.startGeometry = QtCore.QRectF(self.aw.geometry())
-        self.aw.endGeometry = QtCore.QRectF(
-            TL_x, TL_y,
-            BR_x, BR_y
-        )
+        self.aw.endGeometry = QtCore.QRectF(*self.getAWGeo(self._displayed))
 
         self.hideAnimation.setStartValue(self.aw.startGeometry)
         self.hideAnimation.setEndValue(self.aw.endGeometry)

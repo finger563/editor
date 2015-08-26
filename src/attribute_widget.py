@@ -19,7 +19,7 @@ class AttributeEditor(QtGui.QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.pix = QtGui.QPixmap("icons/model/Client.png")
+        self.pix = QtGui.QPixmap("icons/model/Client.png").scaled(100,100)
         self.label = QtGui.QLabel(self)
         self.label.setPixmap(self.pix)
         
@@ -27,3 +27,6 @@ class AttributeEditor(QtGui.QWidget):
         self.layout.addWidget(self.label)
         self.layout.setContentsMargins(1,1,1,1)
         self.setLayout(self.layout)
+
+    def mousePressEvent(self, event):
+        self.parent().mousePressEvent(event)
