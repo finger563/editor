@@ -248,6 +248,9 @@ class EditorView(QtGui.QGraphicsView):
         if displayed:
             TL_x -= _w
             BR_x -= _w
+        if TL_x < 0:
+            BR_x += -TL_x
+            TL_x += -TL_x
         return TL_x, TL_y, BR_x, BR_y
 
     def setAWGeo(self, displayed):
