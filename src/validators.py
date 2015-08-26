@@ -10,6 +10,8 @@ against basic types.
 * last edited: August 2015
 """
 
+# possibly replace with QValidators?
+
 class validators:
     def type(val, _type):
         retVal = False

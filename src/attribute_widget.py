@@ -17,10 +17,13 @@ from PyQt4 import QtGui
 # NEED TO FIGURE OUT HOW TO FORMAT AND RETURN ATTRIBUTES
 # REQUIRES:
 #  * NAME: display name for the label
-#  * TYPE: variable type, e.g. string, double, list, reference
+#  * TYPE: variable type, e.g. string, double, list, reference, can use spinbox for ranges
 #  * VALUE: current value of the field
 #  * VALIDATOR: should return true or false comparing the VALUE to TYPE (and other options)
 #  * TOOLTIP: hover text for more description
+
+# SHOULD USE QValidators!
+# SHOULD USE sliders, spinboxes, etc.
 
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent = None):
