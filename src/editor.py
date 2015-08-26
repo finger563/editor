@@ -54,7 +54,8 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_create("test2")
         self.toolbar_add_action("test2",testAction)
 
-        self.modelTree = ModelTree(self)
+        self.modelTree = ModelTree(None)
+        self.modelTree.populate()
         self.tabbedEditorWidget = TabbedEditor(self)
 
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
