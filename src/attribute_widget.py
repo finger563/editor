@@ -27,6 +27,17 @@ class AttributeEditor(QtGui.QWidget):
         self.setLayout(self.layout)
         self.show()
 
+    def paintEvent(self, e):
+        super(AttributeEditor, self).paintEvent( e )
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        color = QtGui.QColor(0, 0, 0)
+        color.setNamedColor('#d4d4d4')
+        painter.setPen(color)
+        painter.setBrush(QtGui.QColor(255, 255, 255))
+        painter.drawRect(0,0,self.geometry().width(),self.geometry().height())
+        painter.end()
+
     def clear_ui(self):
         while self.layout.count():
             child = self.layout.takeAt(0)
