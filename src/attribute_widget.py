@@ -62,7 +62,7 @@ class AttributeEditor(QtGui.QWidget):
         label.setWordWrap(True)
         self.layout.addWidget(label)
 
-        pix = QtGui.QPixmap("icons/model/Client.png").scaled(100,100)
+        pix = QtGui.QPixmap("icons/model/Client.png").scaled(50,50)
         label2 = QtGui.QLabel(self)
         label2.setPixmap(pix)
         label2.setToolTip("This is a label tooltip.")

@@ -38,7 +38,7 @@ class Editor(QtGui.QMainWindow):
         exitAction = Action('icons/toolbar/stop.png', '&Exit', self)        
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(self.closeEvent)
+        exitAction.triggered.connect(self.close) # note that this will call closeEvent
 
         testAction = Action('icons/toolbar/build.png', '&Build', self)
         testAction.setStatusTip('Build code.')
