@@ -218,49 +218,48 @@ class EditorView(QtGui.QGraphicsView):
         self._press_location = event.pos()
 
     def mouseReleaseEvent(self, event):
+        QtGui.QGraphicsView.mouseReleaseEvent(self, event)
         if self._press_location == event.pos():
             self.toggle()
-        QtGui.QGraphicsView.mouseReleaseEvent(self, event)
         
     def keyPressEvent(self, event):
+        QtGui.QGraphicsView.keyPressEvent(self, event)
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
             self._command_key_pressed = True
-        QtGui.QGraphicsView.keyPressEvent(self, event)
 
     def keyReleaseEvent(self, event):
+        QtGui.QGraphicsView.keyReleaseEvent(self, event)
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
             self._command_key_pressed = False
-        QtGui.QGraphicsView.keyReleaseEvent(self, event)
 
     def resizeEvent(self, event):
-        self.setAWGeo(self._displayed)
         QtGui.QGraphicsView.resizeEvent(self, event)
+        self.setAWGeo(self._displayed)
 
     def getAWGeo(self, displayed):
         _myw = self.geometry().width()
         _w = self.aw.geometry().width()
-        _h = self.aw.geometry().height()
+        _h = self.geometry().height()
         TL_y = 0
         BR_y = _h
+        TL_x = _myw
+        BR_x = _myw + _w
         if displayed:
-            TL_x = _myw - self.attr_width
-            BR_x = _myw + _w - self.attr_width
-        else:
-            TL_x = _myw
-            BR_x = _myw + _w
+            TL_x -= self.attr_width
+            BR_x -= self.attr_width
         return TL_x, TL_y, BR_x, BR_y
 
     def setAWGeo(self, displayed):
         self.aw.setGeometry(*self.getAWGeo(displayed))
 
     def toggle(self):
-        self.hideAnimation = QtCore.QPropertyAnimation(self.aw, "geometry")
+        self._displayed = not self._displayed
 
+        self.hideAnimation = QtCore.QPropertyAnimation(self.aw, "geometry")
         self.hideAnimation.setDuration(300)
 
-        self._displayed = not self._displayed
         self.aw.startGeometry = QtCore.QRectF(self.aw.geometry())
         self.aw.endGeometry = QtCore.QRectF(*self.getAWGeo(self._displayed))
 

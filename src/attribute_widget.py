@@ -30,3 +30,6 @@ class AttributeEditor(QtGui.QWidget):
 
     def mousePressEvent(self, event):
         self.parent().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        self.parent().mouseReleaseEvent(event)
