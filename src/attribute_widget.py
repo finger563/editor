@@ -22,34 +22,6 @@ from PyQt4 import QtGui
 #  * VALIDATOR: should return true or false comparing the VALUE to TYPE (and other options)
 #  * TOOLTIP: hover text for more description
 
-# these validators are provided for use with basic types and basic validation
-def type_validator(val, _type):
-    retVal = False
-    if isinstance(val, _type):
-        retVal = True
-    else:
-        try:
-            tmp = _type(val)
-            retVal = True
-        except:
-            pass
-    return retVal
-
-def double_validator(val):
-    return type_validator(val, float)
-
-def float_validator(val):
-    return type_validator(val, float)
-
-def int_validator(val):
-    return type_validator(val, int)
-
-def string_validator(val):
-    return type_validator(val, basestring)
-
-def list_validator(val, l):
-    return val in l
-
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent = None):
         super(AttributeEditor,self).__init__(parent)
