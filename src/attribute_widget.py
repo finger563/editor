@@ -16,9 +16,6 @@ from PyQt4 import QtGui
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent = None):
         super(AttributeEditor,self).__init__(parent)
-        self.init_ui()
-
-    def init_ui(self):
         self.layout = QtGui.QVBoxLayout(self)
 
         self.setStyleSheet("""QToolTip { 
@@ -26,7 +23,17 @@ class AttributeEditor(QtGui.QWidget):
                            color: white; 
                            border: black solid 1px
                            }""")
+        self.setMaximumWidth(300)
+        self.setLayout(self.layout)
+        self.show()
 
+    def clear_ui(self):
+        while self.layout.count():
+            child = self.layout.takeAt(0)
+            child.widget().deleteLater()
+        
+    def init_ui(self):
+        self.clear_ui()
         self.label = QtGui.QLabel(self)
         self.label.setText("Attribute Editor")
         self.label.setWordWrap(True)
@@ -57,9 +64,6 @@ class AttributeEditor(QtGui.QWidget):
 
         #self.layout.setContentsMargins(1,1,1,1)
         #self.setMaximumSize(100,200)
-        self.setMaximumWidth(300)
-        self.setLayout(self.layout)
-        self.show()
 
     def mouseDoubleClickEvent(self, event):
         self.parent().mouseDoubleClickEvent(event)

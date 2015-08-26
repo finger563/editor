@@ -259,6 +259,8 @@ class EditorView(QtGui.QGraphicsView):
 
     def toggle(self):
         self._displayed = not self._displayed
+        if self._displayed:
+            self.aw.init_ui()
 
         self.hideAnimation = QtCore.QPropertyAnimation(self.aw, "geometry")
         self.hideAnimation.setDuration(300)
