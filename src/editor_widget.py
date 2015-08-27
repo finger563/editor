@@ -34,6 +34,17 @@ def getClosestPoint(cp, pDict):
             closestPoint = k
     return closestPoint, minDist
 
+class RoundRectItem(QtGui.QGraphicsRectItem):
+    def __init__(self, x, y, w, h, xr, yr, parent = None):
+        super(RoundRectItem, self).__init__(x,y,w,h,parent)
+        self.xr = xr
+        self.yr = yr
+
+    def paint(self, painter, option, widget=None):
+        painter.setPen(self.pen());
+        painter.setBrush(self.brush());
+        painter.drawRoundedRect(self.rect(), self.xr, self.yr)
+
 class EditorItem(QtGui.QGraphicsWidget):
 
     layout_styles = ['horizontal','vertical','grid','anchor']
@@ -80,11 +91,17 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         self.setLayout(child_layout)
 
-        if self._image_file:
+        if self._image_file and self._draw_style == 'icon':
             self._pixmap = QtGui.QPixmap(self._image_file)
             self._item = QtGui.QGraphicsPixmapItem()
             self._item.setPixmap(self._pixmap)
             self.resize(QtCore.QSizeF(self._pixmap.size()))
+        elif self._draw_style == 'rect':
+            self._item = QtGui.QGraphicsRectItem(0,0,self._width, self._height)
+        elif self._draw_style == 'ellipse':
+            self._item = QtGui.QGraphicsEllipseItem(0,0,self._width, self._height)
+        elif self._draw_style == 'round rect':
+            self._item = RoundRectItem(0,0,self._width, self._height, self._width / 10.0, self._height / 10.0)
 
         self.setCursor(QtCore.Qt.OpenHandCursor)
 
@@ -133,7 +150,10 @@ class EditorItem(QtGui.QGraphicsWidget):
         if not width and not height:
             width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
             height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
-        self._item.setPixmap( self._pixmap.scaled(width,height) )
+        if self._draw_style == 'icon':
+            self._item.setPixmap( self._pixmap.scaled(width,height) )
+        else:
+            self._item.setRect(0,0,width,height)
 
     def removeChild(self, child):
         self.layout().removeItem(child)
@@ -248,11 +268,11 @@ class EditorView(QtGui.QGraphicsView):
         scene.addItem(t)
         r.addChild(t)
 
-        t = EditorItem(image_file = icon_file, kind = 'test 2')
+        t = EditorItem(image_file = icon_file, kind = 'test 2', draw_style = 'ellipse')
         scene.addItem(t)
         r.addChild(t)
 
-        t = EditorItem(image_file = icon_file, kind = 'test 3')
+        t = EditorItem(image_file = icon_file, kind = 'test 3', draw_style = 'round rect')
         scene.addItem(t)
         r.addChild(t)
 
