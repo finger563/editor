@@ -74,10 +74,11 @@ class AttributeEditor(QtGui.QWidget):
         label.setWordWrap(True)
         self.layout.addWidget(label)
         obj = None
-        if static['type'] in ['image']:
+        if static['type'] in ['icon']:
             pix = QtGui.QPixmap(static['value']).scaled(*static['scale'])
             obj = QtGui.QLabel()
-            obj.setToolTip(static['tooltip'])
+            if 'tooltip' in static:
+                obj.setToolTip(static['tooltip'])
             obj.setPixmap(pix)
 
         if obj:
@@ -86,7 +87,7 @@ class AttributeEditor(QtGui.QWidget):
     def add_attribute(self, attr):
         label = QtGui.QLabel()
         label.setText(attr['name'])
-        if attr['tooltip']:
+        if 'tooltip' in attr:
             label.setToolTip(attr['tooltip'])
         label.setWordWrap(True)
         self.layout.addWidget(label)
@@ -104,7 +105,7 @@ class AttributeEditor(QtGui.QWidget):
             obj.setCurrentIndex(attr['options'].index(attr['value']))
 
         if obj:
-            if attr['tooltip']:
+            if 'tooltip' in attr:
                 obj.setToolTip(attr['tooltip'])
             self.layout.addWidget(obj)
 

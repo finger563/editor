@@ -71,13 +71,13 @@ class EditorItem(QtGui.QGraphicsWidget):
         self._mouseOver = False
         self._drag = False
 
+        self.resize(self._width, self._height)
+        self.setAcceptDrops(True)
+        self.setAcceptHoverEvents(True)
+        self.initializeFlags()
         self.loadResources()
         
     def loadResources(self):
-        self.resize(self._width, self._height)
-        self.initializeFlags()
-        self.setAcceptDrops(True)
-        self.setAcceptHoverEvents(True)
         
         child_layout = None
         if 'horizontal' in self._layout_style:
@@ -106,16 +106,17 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.setCursor(QtCore.Qt.OpenHandCursor)
 
     def get_static(self):
-        return {
+        static =  {
             'name' : self._kind,
-            'type' : 'image',
-            'value' : self._image_file,
-            'scale' : (50,50),
-            'tooltip' :  ''
+            'type' : self._draw_style,
         }
+        if self._draw_style in ['icon']:
+            static['value'] = self._image_file
+            static['scale'] = (50,50)
+        return static
 
     def get_attr(self):
-        return [
+        attrs = [
             {
                 'name' : 'Draw Style',
                 'type' : 'list',
@@ -131,8 +132,10 @@ class EditorItem(QtGui.QGraphicsWidget):
                 'tooltip' : ''
             },
         ]
+        return attrs
 
     def paint(self, painter, option, widget = None):
+        super(EditorItem, self).paint(painter, option, widget)
         self._item.paint(painter, option, widget)
 
     def boundingRect(self):
