@@ -85,6 +85,12 @@ class EditorItem(QtGui.QGraphicsWidget):
         elif 'anchor' in self['layout style'].value:
             child_layout = QtGui.QGraphicsAnchorLayout()
 
+        if self.layout():
+            for i in range(0,self.layout().count()):
+                item = self.layout().itemAt(0)
+                self.layout().removeItem(item)
+                child_layout.addItem(item)
+
         self.setLayout(child_layout)
 
         if self['icon'].value and self['draw style'].value == 'icon':
@@ -179,13 +185,14 @@ class EditorItem(QtGui.QGraphicsWidget):
                 self.setParent(self.scene())
                 self.setPos(event.scenePos() - self._drag_pos)
 
-    def testFunc(self,obj):
-        print "GOT OBJ {}".format(obj)
+    def updateAttributes(self,attrs):
+        self.loadResources()
+        self.updateGraphicsItem()
                 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self.attributes, self.attributes, lambda o : self.testFunc(o))
+        editor.init_ui(self.attributes, self.attributes, lambda a : self.updateAttributes(a))
         editor.show(None)
             
     def hoverEnterEvent(self, event):
