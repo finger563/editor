@@ -13,6 +13,8 @@ that slides in from the right of the screen.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+from collections import OrderedDict
+
 # NEED TO FIX MAXIMUM WIDTH : CALCULATE IT EVERY TIME WE RUN INIT_UI?
 # NEED TO FIGURE OUT HOW TO FORMAT AND RETURN ATTRIBUTES
 # REQUIRES:
@@ -68,45 +70,41 @@ class AttributeEditor(QtGui.QWidget):
         painter.end()
         super(AttributeEditor, self).paintEvent( e )
 
-    def add_static(self, static):
+    def add_header(self, attrs):
         label = QtGui.QLabel()
-        label.setText("Editing Attributes of\n{}".format(static['name']))
+        label.setText("Attribute Editor")
         label.setWordWrap(True)
         self.layout.addWidget(label)
         obj = None
-        if static['type'] in ['icon']:
-            pix = QtGui.QPixmap(static['value']).scaled(*static['scale'])
+        if attrs['draw style'].value in ['icon']:
+            pix = QtGui.QPixmap( attrs['icon'].value).scaled( attrs['width'].value, attrs['height'].value)
             obj = QtGui.QLabel()
-            if 'tooltip' in static:
-                obj.setToolTip(static['tooltip'])
             obj.setPixmap(pix)
 
         if obj:
             self.layout.addWidget(obj)
 
-    def add_attribute(self, attr):
+    def add_attribute(self, name, attr):
         label = QtGui.QLabel()
-        label.setText(attr['name'])
-        if 'tooltip' in attr:
-            label.setToolTip(attr['tooltip'])
+        label.setText(name + ':')
+        label.setToolTip(attr.tooltip)
         label.setWordWrap(True)
         self.layout.addWidget(label)
 
         obj = None
-        if attr['type'] in ['float','int','double','string']:
+        if attr.kind in ['float','int','double','string','file']:
             obj = QtGui.QLineEdit()
-            obj.setText(str(attr['value']))
-        elif attr['type'] in ['code']:
+            obj.setText(str(attr.value))
+        elif attr.kind in ['code']:
             obj = QtGui.QTextEdit()
-            obj.setText(attr['value'])
-        elif attr['type'] in ['list','reference']:
+            obj.setText(attr.value)
+        elif attr.kind in ['list'] and attr.value in attr.options:
             obj = QtGui.QComboBox()
-            obj.addItems(attr['options'])
-            obj.setCurrentIndex(attr['options'].index(attr['value']))
+            obj.addItems(attr.options)
+            obj.setCurrentIndex(attr.options.index(attr.value))
 
         if obj:
-            if 'tooltip' in attr:
-                obj.setToolTip(attr['tooltip'])
+            obj.setToolTip(attr.tooltip)
             self.layout.addWidget(obj)
 
     def clear_ui(self):
@@ -114,53 +112,11 @@ class AttributeEditor(QtGui.QWidget):
             child = self.layout.takeAt(0)
             child.widget().deleteLater()
         
-    def init_ui(self, static={}, attrs=[], save_func=None):
+    def init_ui(self, attrs=OrderedDict(), save_func=None):
         self.clear_ui()
-
-        '''
-        static = {'name':'Attribute Editor',
-                  'type':'image',
-                  'value':'icons/model/Client.png',
-                  'scale':(50,50),
-                  'tooltip':'Static Tooltip'
-        }
-        '''
-        self.add_static(static)
-        """
-        attrs = [
-            {'name':'Ref',
-             'type':'list',
-             'value':'World',
-             'options':('Hello','World','Test'),
-             'tooltip':'List Tooltip'
-         },
-            {'name':'Name',
-             'type':'string',
-             'value':'test string',
-             'tooltip':'String Tooltip'
-         },
-            {'name':'Profile',
-             'type':'code',
-             'value':'''this
-is
-a
-multiline
-string.''',
-             'tooltip':'Code Tooltip'
-         },
-            {'name':'Priority',
-             'type':'int',
-             'value': 10,
-             'tooltip':'Int Tooltip'
-         },
-            {'name':'Period',
-             'type':'float',
-             'value': 10.12,
-             'tooltip':'Float Tooltip'
-         }]
-        """
-        for attr in attrs:
-            self.add_attribute(attr)
+        self.add_header(attrs)
+        for key,attr in attrs.iteritems():
+            self.add_attribute(key,attr)
         
         ok_cancel_widget = QtGui.QWidget(self)
         ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)

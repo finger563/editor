@@ -12,27 +12,15 @@ and edit models in the project in tabs.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+from collections import OrderedDict
+
 from attribute_widget import AttributeEditor
+import view_attributes as view_attr
 
 # NEED RESIZE
 # NEED NEW DRAW STYLES
 # NEED WAYS OF SPECIFYING ANCHORING
 # NEED WAYS OF SPECIFYING LAYOUTS
-
-import math
-def distance(p1, p2):
-    p = p2 - p1
-    return math.sqrt(p.x()*p.x() + p.y()*p.y())
-
-def getClosestPoint(cp, pDict):
-    minDist = -1
-    closestPoint = None
-    for k,p in pDict.iteritems():
-        dist = distance(cp,p)
-        if minDist == -1 or dist < minDist:
-            minDist = dist
-            closestPoint = k
-    return closestPoint, minDist
 
 class RoundRectItem(QtGui.QGraphicsRectItem):
     def __init__(self, x, y, w, h, xr, yr, parent = None):
@@ -47,92 +35,74 @@ class RoundRectItem(QtGui.QGraphicsRectItem):
 
 class EditorItem(QtGui.QGraphicsWidget):
 
-    layout_styles = ['horizontal','vertical','grid','anchor']
-    draw_styles = ['icon', 'ellipse', 'rect', 'round rect']
-
     def __init__(self,
                  parent = None,
                  kind = '',
                  draw_style = 'icon',
+                 color = 'blue',
                  image_file = "",
                  width = 100,
                  height = 100,
                  layout = 'horizontal'):
         super(EditorItem, self).__init__(parent)
 
-        self._kind = kind
-        self._image_file = image_file
-        self._draw_style = draw_style
-        self._layout_style = layout
+        self.attributes = OrderedDict()
+        self['kind'] = view_attr.Object(kind)
+        self['icon'] = view_attr.Icon(image_file)
+        self['draw style'] = view_attr.Draw_Style(draw_style)
+        self['color'] = view_attr.Color(color)
+        self['layout style'] = view_attr.Layout_Style(layout)
+        self['width'] = view_attr.Width(width)
+        self['height'] = view_attr.Height(height)
+        
         self._item = None
         self._pixmap = None
-        self._width = width
-        self._height = height
         self._mouseOver = False
         self._drag = False
+        self._parent = None
 
-        self.resize(self._width, self._height)
+        self.resize(self['width'].value, self['height'].value)
         self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
         self.initializeFlags()
         self.loadResources()
+
+    def __getitem__(self, key):
+        return self.attributes[key]
+
+    def __setitem__(self, key, value):
+        self.attributes[key] = value
         
     def loadResources(self):
         
         child_layout = None
-        if 'horizontal' in self._layout_style:
+        if 'horizontal' in self['layout style'].value:
             child_layout = QtGui.QGraphicsLinearLayout()
-        elif 'vertical' in self._layout_style:
+        elif 'vertical' in self['layout style'].value:
             child_layout = QtGui.QGraphicsLinearLayout(QtCore.Qt.Vertical)
-        elif 'grid' in self._layout_style:
+        elif 'grid' in self['layout style'].value:
             child_layout = QtGui.QGraphicsGridLayout()
-        elif 'anchor' in self._layout_style:
+        elif 'anchor' in self['layout style'].value:
             child_layout = QtGui.QGraphicsAnchorLayout()
 
         self.setLayout(child_layout)
 
-        if self._image_file and self._draw_style == 'icon':
-            self._pixmap = QtGui.QPixmap(self._image_file)
+        if self['icon'].value and self['draw style'].value == 'icon':
+            self._pixmap = QtGui.QPixmap(self['icon'].value)
             self._item = QtGui.QGraphicsPixmapItem()
             self._item.setPixmap(self._pixmap)
             self.resize(QtCore.QSizeF(self._pixmap.size()))
-        elif self._draw_style == 'rect':
-            self._item = QtGui.QGraphicsRectItem(0,0,self._width, self._height)
-        elif self._draw_style == 'ellipse':
-            self._item = QtGui.QGraphicsEllipseItem(0,0,self._width, self._height)
-        elif self._draw_style == 'round rect':
-            self._item = RoundRectItem(0,0,self._width, self._height, self._width / 10.0, self._height / 10.0)
+        else:
+            if self['draw style'].value == 'rect':
+                self._item = QtGui.QGraphicsRectItem(0,0,self['width'].value, self['height'].value)
+            elif self['draw style'].value == 'ellipse':
+                self._item = QtGui.QGraphicsEllipseItem(0,0,self['width'].value, self['height'].value)
+            elif self['draw style'].value == 'round rect':
+                self._item = RoundRectItem(0,0,self['width'].value, self['height'].value, self['width'].value / 10.0, self['height'].value / 10.0)
+            if self._item:
+                self._item.setBrush(QtGui.QColor(self['color'].value))
 
         self.setCursor(QtCore.Qt.OpenHandCursor)
-
-    def get_static(self):
-        static =  {
-            'name' : self._kind,
-            'type' : self._draw_style,
-        }
-        if self._draw_style in ['icon']:
-            static['value'] = self._image_file
-            static['scale'] = (50,50)
-        return static
-
-    def get_attr(self):
-        attrs = [
-            {
-                'name' : 'Draw Style',
-                'type' : 'list',
-                'value' : self._draw_style,
-                'options' : self.draw_styles,
-                'tooltip' : ''
-            },
-            {
-                'name' : 'Layout',
-                'type' : 'list',
-                'value' : self._layout_style,
-                'options' : self.layout_styles,
-                'tooltip' : ''
-            },
-        ]
-        return attrs
 
     def paint(self, painter, option, widget = None):
         super(EditorItem, self).paint(painter, option, widget)
@@ -142,33 +112,36 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self._item.boundingRect()
 
     def sizeHint(self, which, constraint):
-        if self._item:
-            return self._item.boundingRect().size()
-        elif self.layout():
+        if self.layout():
             return self.layout().sizeHint(which, constraint)
+        elif self._item:
+            return self._item.boundingRect().size()
         else:
-            return QtCore.QSizeF(self._width,self._height)
+            return QtCore.QSizeF(self['width'].value,self['height'].value)
         
     def updateGraphicsItem(self, width = 0, height = 0):
+        self.layout().invalidate()
         if not width and not height:
             width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
             height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
-        if self._draw_style == 'icon':
+        if self['draw style'].value == 'icon':
             self._item.setPixmap( self._pixmap.scaled(width,height) )
         else:
             self._item.setRect(0,0,width,height)
+        self.updateGeometry()
+        self.update()
+        if self._parent:
+            self._parent.updateGraphicsItem()
 
     def removeChild(self, child):
         self.layout().removeItem(child)
-        self.layout().invalidate()
+        child._parent = None
         self.updateGraphicsItem()
-        self.updateGeometry()
 
     def addChild(self, child):
         self.layout().addItem(child)
-        self.layout().invalidate()
+        child._parent = self
         self.updateGraphicsItem()
-        self.updateGeometry()
 
     def parentEditorItem(self):
         currentParent = self.parentLayoutItem()
@@ -208,7 +181,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        self.scene().parent().showAW(self.get_static(), self.get_attr())
+        self.scene().parent().showAW(self.attributes)
             
     def hoverEnterEvent(self, event):
         QtGui.QGraphicsWidget.hoverEnterEvent(self, event)
@@ -310,9 +283,9 @@ class EditorView(QtGui.QGraphicsView):
         QtGui.QGraphicsView.resizeEvent(self, event)
         self.aw.updateGeo()
 
-    def showAW(self, static = None, attr = None, save_func = None):
+    def showAW(self, attr = None, save_func = None):
         self.aw._displayed = True
-        self.aw.init_ui(static, attr, save_func)
+        self.aw.init_ui(attr, save_func)
         self.aw.animate(None,self.aw._displayed)
 
     def wheelEvent(self, event):
