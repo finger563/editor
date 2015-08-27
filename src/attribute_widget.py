@@ -36,7 +36,18 @@ from PyQt4 import QtGui
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent = None):
         super(AttributeEditor,self).__init__(parent)
-        self.layout = QtGui.QVBoxLayout(self)
+        self.vbox = QtGui.QVBoxLayout(self)
+        self.scrollArea = QtGui.QScrollArea()
+
+        self.viewWidget = QtGui.QWidget()
+        self.layout = QtGui.QVBoxLayout(self.viewWidget)
+
+        self.scrollArea.setWidget(self.viewWidget)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+
+        self.vbox.addWidget(self.scrollArea)
+
         self._displayed = False
 
         self.setStyleSheet("""QToolTip { 
@@ -45,7 +56,6 @@ class AttributeEditor(QtGui.QWidget):
                            border: black solid 1px
                            }""")
         self.setMaximumWidth(300)
-        self.setLayout(self.layout)
 
     def paintEvent(self, e):
         painter = QtGui.QPainter()
@@ -59,14 +69,14 @@ class AttributeEditor(QtGui.QWidget):
         super(AttributeEditor, self).paintEvent( e )
 
     def add_static(self, static):
-        label = QtGui.QLabel(self)
+        label = QtGui.QLabel()
         label.setText(static['name'])
         label.setWordWrap(True)
         self.layout.addWidget(label)
         obj = None
         if static['type'] in ['image']:
             pix = QtGui.QPixmap(static['value']).scaled(*static['scale'])
-            obj = QtGui.QLabel(self)
+            obj = QtGui.QLabel()
             obj.setToolTip(static['tooltip'])
             obj.setPixmap(pix)
 
@@ -74,7 +84,7 @@ class AttributeEditor(QtGui.QWidget):
             self.layout.addWidget(obj)
 
     def add_attribute(self, attr):
-        label = QtGui.QLabel(self)
+        label = QtGui.QLabel()
         label.setText(attr['name'])
         label.setToolTip(attr['tooltip'])
         label.setWordWrap(True)
@@ -82,13 +92,13 @@ class AttributeEditor(QtGui.QWidget):
 
         obj = None
         if attr['type'] in ['float','int','double','string']:
-            obj = QtGui.QLineEdit(self)
+            obj = QtGui.QLineEdit()
             obj.setText(str(attr['value']))
         elif attr['type'] in ['code']:
-            obj = QtGui.QTextEdit(self)
+            obj = QtGui.QTextEdit()
             obj.setText(attr['value'])
         elif attr['type'] in ['list','reference']:
-            obj = QtGui.QComboBox(self)
+            obj = QtGui.QComboBox()
             obj.addItems(attr['options'])
             obj.setCurrentIndex(attr['options'].index(attr['value']))
 
@@ -101,7 +111,7 @@ class AttributeEditor(QtGui.QWidget):
             child = self.layout.takeAt(0)
             child.widget().deleteLater()
         
-    def init_ui(self):
+    def init_ui(self, static={}, attrs=[], save_func=None):
         self.clear_ui()
 
         static = {'name':'Attribute Editor',

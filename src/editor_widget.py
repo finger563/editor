@@ -56,6 +56,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         self._width = width
         self._height = height
         self._mouseOver = False
+        self._drag = False
 
         self.loadResources()
         
@@ -126,21 +127,36 @@ class EditorItem(QtGui.QGraphicsWidget):
     def mousePressEvent(self, event):
         QtGui.QGraphicsWidget.mousePressEvent(self, event)
         self._drag_pos = self.mapFromScene(event.scenePos())
+        self._original_pos = self.pos()
 
     def mouseMoveEvent(self, event):
         QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
+        self._drag = True
 
     def mouseReleaseEvent(self, event):
-        newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
-        currentParent = self.parentEditorItem()
-        if currentParent: currentParent.removeChild(self)
-        if newParent:
-            newParent[0].addChild(self)
-        else:
-            self.setParentItem(None)
-            self.setParent(self.scene())
-            self.setPos(event.scenePos() - self._drag_pos)
         QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
+        if self._drag:
+            self._drag = False
+            newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
+            currentParent = self.parentEditorItem()
+            if newParent:
+                if currentParent:
+                    if newParent[0] != currentParent:
+                        currentParent.removeChild(self)
+                        newParent[0].addChild(self)
+                    else:
+                        self.setPos(self._original_pos)
+                else:
+                    newParent[0].addChild(self)
+            elif currentParent:
+                currentParent.removeChild(self)
+                self.setParentItem(None)
+                self.setParent(self.scene())
+                self.setPos(event.scenePos() - self._drag_pos)
+
+    def mouseDoubleClickEvent(self, event):
+        QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
+        self.scene().parent().showAW()
             
     def hoverEnterEvent(self, event):
         QtGui.QGraphicsWidget.hoverEnterEvent(self, event)
@@ -225,7 +241,6 @@ class EditorView(QtGui.QGraphicsView):
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsView.mouseDoubleClickEvent(self, event)
-        self.toggle()
         
     def keyPressEvent(self, event):
         QtGui.QGraphicsView.keyPressEvent(self, event)
@@ -243,10 +258,9 @@ class EditorView(QtGui.QGraphicsView):
         QtGui.QGraphicsView.resizeEvent(self, event)
         self.aw.updateGeo()
 
-    def toggle(self):
-        self.aw._displayed = not self.aw._displayed
-        if self.aw._displayed:
-            self.aw.init_ui()
+    def showAW(self):
+        self.aw._displayed = True
+        self.aw.init_ui(None, None)
         self.aw.animate(None,self.aw._displayed)
 
     def wheelEvent(self, event):
