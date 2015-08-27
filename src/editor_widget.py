@@ -179,9 +179,14 @@ class EditorItem(QtGui.QGraphicsWidget):
                 self.setParent(self.scene())
                 self.setPos(event.scenePos() - self._drag_pos)
 
+    def testFunc(self,obj):
+        print "GOT OBJ {}".format(obj)
+                
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        self.scene().parent().showAW(self.attributes)
+        editor = self.scene().parent().getEditor()
+        editor.init_ui(self.attributes, self.attributes, lambda o : self.testFunc(o))
+        editor.show(None)
             
     def hoverEnterEvent(self, event):
         QtGui.QGraphicsWidget.hoverEnterEvent(self, event)
@@ -258,6 +263,9 @@ class EditorView(QtGui.QGraphicsView):
         self.aw = AttributeEditor(self)
         self.aw.updateGeo()
 
+    def getEditor(self):
+        return self.aw
+
     def mousePressEvent(self, event):
         QtGui.QGraphicsView.mousePressEvent(self, event)
 
@@ -282,11 +290,6 @@ class EditorView(QtGui.QGraphicsView):
     def resizeEvent(self, event):
         QtGui.QGraphicsView.resizeEvent(self, event)
         self.aw.updateGeo()
-
-    def showAW(self, attr = None, save_func = None):
-        self.aw._displayed = True
-        self.aw.init_ui(attr, save_func)
-        self.aw.animate(None,self.aw._displayed)
 
     def wheelEvent(self, event):
         if self._command_key_pressed:

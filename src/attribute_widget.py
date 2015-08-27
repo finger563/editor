@@ -89,7 +89,6 @@ class AttributeEditor(QtGui.QWidget):
         label.setText(name + ':')
         label.setToolTip(attr.tooltip)
         label.setWordWrap(True)
-        self.layout.addWidget(label)
 
         obj = None
         if attr.kind in ['float','int','double','string','file']:
@@ -104,16 +103,21 @@ class AttributeEditor(QtGui.QWidget):
             obj.setCurrentIndex(attr.options.index(attr.value))
 
         if obj:
+            self._input_dict[name] = obj
+            self.layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
             self.layout.addWidget(obj)
 
     def clear_ui(self):
+        self._input_dict = {}
         while self.layout.count():
             child = self.layout.takeAt(0)
             child.widget().deleteLater()
         
-    def init_ui(self, attrs=OrderedDict(), save_func=None):
+    def init_ui(self, attrs=OrderedDict(), output_obj=None, output_func = None):
         self.clear_ui()
+        self._output_obj = output_obj
+        self._output_func = output_func
         self.add_header(attrs)
         for key,attr in attrs.iteritems():
             self.add_attribute(key,attr)
@@ -121,9 +125,9 @@ class AttributeEditor(QtGui.QWidget):
         ok_cancel_widget = QtGui.QWidget(self)
         ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
         
-        button = QtGui.QPushButton('OK',self)
+        button = QtGui.QPushButton('Save',self)
         button.setToolTip('Save the updated attributes.')
-        button.clicked.connect(self.hide)
+        button.clicked.connect(self.save)
         ok_cancel_layout.addWidget(button)
 
         button = QtGui.QPushButton('Cancel',self)
@@ -164,6 +168,22 @@ class AttributeEditor(QtGui.QWidget):
         self.hideAnimation.setStartValue(self.startGeometry)
         self.hideAnimation.setEndValue(self.endGeometry)
         self.hideAnimation.start()
+
+    def save(self, event):
+        for name,obj in self._input_dict.iteritems():
+            kind = self._output_obj[name].kind
+            if kind in ['string','file']:
+                self._output_obj[name].value = obj.text()
+            elif kind in ['code']:
+                self._output_obj[name].value = obj.toPlainText()
+            elif kind in ['float','double']:
+                self._output_obj[name].value = float(obj.text())
+            elif kind in ['int']:
+                self._output_obj[name].value = int(obj.text())
+            elif kind in ['list']:
+                self._output_obj[name].value = self._output_obj[name].options[obj.currentIndex()]
+        self.hide(event)
+        if self._output_func: self._output_func(self._output_obj)
 
     def hide(self, event):
         self._displayed = False
