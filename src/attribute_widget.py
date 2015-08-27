@@ -70,7 +70,7 @@ class AttributeEditor(QtGui.QWidget):
 
     def add_static(self, static):
         label = QtGui.QLabel()
-        label.setText(static['name'])
+        label.setText("Editing Attributes of\n{}".format(static['name']))
         label.setWordWrap(True)
         self.layout.addWidget(label)
         obj = None
@@ -86,7 +86,8 @@ class AttributeEditor(QtGui.QWidget):
     def add_attribute(self, attr):
         label = QtGui.QLabel()
         label.setText(attr['name'])
-        label.setToolTip(attr['tooltip'])
+        if attr['tooltip']:
+            label.setToolTip(attr['tooltip'])
         label.setWordWrap(True)
         self.layout.addWidget(label)
 
@@ -103,7 +104,8 @@ class AttributeEditor(QtGui.QWidget):
             obj.setCurrentIndex(attr['options'].index(attr['value']))
 
         if obj:
-            obj.setToolTip(attr['tooltip'])
+            if attr['tooltip']:
+                obj.setToolTip(attr['tooltip'])
             self.layout.addWidget(obj)
 
     def clear_ui(self):
@@ -114,14 +116,16 @@ class AttributeEditor(QtGui.QWidget):
     def init_ui(self, static={}, attrs=[], save_func=None):
         self.clear_ui()
 
+        '''
         static = {'name':'Attribute Editor',
                   'type':'image',
                   'value':'icons/model/Client.png',
                   'scale':(50,50),
                   'tooltip':'Static Tooltip'
         }
+        '''
         self.add_static(static)
-
+        """
         attrs = [
             {'name':'Ref',
              'type':'list',
@@ -153,7 +157,7 @@ string.''',
              'value': 10.12,
              'tooltip':'Float Tooltip'
          }]
-
+        """
         for attr in attrs:
             self.add_attribute(attr)
         

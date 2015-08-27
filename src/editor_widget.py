@@ -41,6 +41,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
                  parent = None,
+                 kind = '',
                  draw_style = 'icon',
                  image_file = "",
                  width = 100,
@@ -48,6 +49,7 @@ class EditorItem(QtGui.QGraphicsWidget):
                  layout = 'horizontal'):
         super(EditorItem, self).__init__(parent)
 
+        self._kind = kind
         self._image_file = image_file
         self._draw_style = draw_style
         self._layout_style = layout
@@ -85,6 +87,33 @@ class EditorItem(QtGui.QGraphicsWidget):
             self.resize(QtCore.QSizeF(self._pixmap.size()))
 
         self.setCursor(QtCore.Qt.OpenHandCursor)
+
+    def get_static(self):
+        return {
+            'name' : self._kind,
+            'type' : 'image',
+            'value' : self._image_file,
+            'scale' : (50,50),
+            'tooltip' :  ''
+        }
+
+    def get_attr(self):
+        return [
+            {
+                'name' : 'Draw Style',
+                'type' : 'list',
+                'value' : self._draw_style,
+                'options' : self.draw_styles,
+                'tooltip' : ''
+            },
+            {
+                'name' : 'Layout',
+                'type' : 'list',
+                'value' : self._layout_style,
+                'options' : self.layout_styles,
+                'tooltip' : ''
+            },
+        ]
 
     def paint(self, painter, option, widget = None):
         self._item.paint(painter, option, widget)
@@ -156,7 +185,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        self.scene().parent().showAW()
+        self.scene().parent().showAW(self.get_static(), self.get_attr())
             
     def hoverEnterEvent(self, event):
         QtGui.QGraphicsWidget.hoverEnterEvent(self, event)
@@ -210,20 +239,20 @@ class EditorView(QtGui.QGraphicsView):
 
         icon_file = 'icons/toolbar/terminal.png'
 
-        r = EditorItem(image_file = icon_file, layout='vertical')
+        r = EditorItem(image_file = icon_file, layout='vertical', kind = 'base')
         scene.addItem(r)
 
         icon_file = 'icons/toolbar/build.png'
 
-        t = EditorItem(image_file = icon_file)
+        t = EditorItem(image_file = icon_file, kind = 'test 1')
         scene.addItem(t)
         r.addChild(t)
 
-        t = EditorItem(image_file = icon_file)
+        t = EditorItem(image_file = icon_file, kind = 'test 2')
         scene.addItem(t)
         r.addChild(t)
 
-        t = EditorItem(image_file = icon_file)
+        t = EditorItem(image_file = icon_file, kind = 'test 3')
         scene.addItem(t)
         r.addChild(t)
 
@@ -258,9 +287,9 @@ class EditorView(QtGui.QGraphicsView):
         QtGui.QGraphicsView.resizeEvent(self, event)
         self.aw.updateGeo()
 
-    def showAW(self):
+    def showAW(self, static = None, attr = None, save_func = None):
         self.aw._displayed = True
-        self.aw.init_ui(None, None)
+        self.aw.init_ui(static, attr, save_func)
         self.aw.animate(None,self.aw._displayed)
 
     def wheelEvent(self, event):
