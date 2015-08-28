@@ -38,6 +38,8 @@ class EditorItem(QtGui.QGraphicsWidget):
     def __init__(self,
                  parent = None,
                  kind = '',
+                 anchor = 'top left',
+                 scope = 'view',
                  draw_style = 'icon',
                  color = 'blue',
                  image_file = "",
@@ -48,6 +50,8 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         self.attributes = OrderedDict()
         self['kind'] = view_attr.Object(kind)
+        self['anchor'] = view_attr.Anchor(anchor)
+        self['scope'] = view_attr.Scope(scope)
         self['icon'] = view_attr.Icon(image_file)
         self['draw style'] = view_attr.Draw_Style(draw_style)
         self['color'] = view_attr.Color(color)
@@ -247,7 +251,7 @@ class EditorView(QtGui.QGraphicsView):
 
         icon_file = 'icons/toolbar/terminal.png'
 
-        r = EditorItem(image_file = icon_file, layout='vertical', kind = 'base')
+        r = EditorItem(image_file = icon_file, layout='vertical', kind = 'container')
         scene.addItem(r)
 
         icon_file = 'icons/toolbar/build.png'

@@ -9,26 +9,33 @@ that a view object can have when editing views
 * last edited: August 2015
 """
 
-from classes import *
+import inspect
+import classes
 
-class Object(Attribute):
+test = inspect.getmembers(classes, inspect.isclass)
+objects = ['Container']
+for key,val in test:
+    if issubclass(val,classes.Model):
+        objects.append(key)
+
+class Object(classes.Attribute):
     tooltip = 'What kind of object is being viewed.'
-    options = ['test 1','test 2','service','message']
+    options = objects
     def __init__(self, value):
         super(Object, self).__init__("list",value)
 
-class Icon(Attribute):
+class Icon(classes.Attribute):
     tooltip = 'Icon displayed as background of the object.'
     def __init__(self, value):
         super(Icon, self).__init__("file",value)
 
-class Draw_Style(Attribute):
+class Draw_Style(classes.Attribute):
     tooltip = 'How the object is drawn.'
     options = ['icon', 'ellipse', 'rect', 'round rect']
     def __init__(self, value):
         super(Draw_Style, self).__init__("list",value)
 
-class Anchor(Attribute):
+class Anchor(classes.Attribute):
     tooltip = 'Which point on the object acts as its root point'
     options = ['top left', 'top right',
                'bottom left', 'bottom right',
@@ -37,23 +44,47 @@ class Anchor(Attribute):
     def __init__(self, value):
         super(Anchor, self).__init__("list",value)
 
-class Layout_Style(Attribute):
+class Scope(classes.Attribute):
+    tooltip = 'From what scope will objects of this kind be drawn in this view?'
+    options = ['project','view','parent']
+    def __init__(self, value):
+        super(Scope, self).__init__("list",value)
+
+class Text_Location(classes.Attribute):
+    tooltip = 'Where will text be located?'
+    options = ['top','bottom','left','right','center']
+    def __init__(self, value):
+        super(Text_Location, self).__init__("list",value)
+
+class Text_Horizontal_Alignment(classes.Attribute):
+    tooltip = 'Horizontal Alignment of text'
+    options = ['left','right','center']
+    def __init__(self, value):
+        super(Text_Horizontal_Alignment, self).__init__("list",value)
+
+class Text_Vertical_Alignment(classes.Attribute):
+    tooltip = 'Vertical Alignment of text'
+    options = ['top','bottom','center']
+    def __init__(self, value):
+        super(Text_Vertical_Alignment, self).__init__("list",value)
+
+class Layout_Style(classes.Attribute):
     tooltip = 'How are the children arranged in this object.'
     options = ['horizontal','vertical','grid','anchor']
     def __init__(self, value):
         super(Layout_Style, self).__init__("list",value)
 
-class Color(Attribute):
+class Color(classes.Attribute):
     tooltip = 'What color will the object be drawn with.'
     def __init__(self, value):
         super(Color, self).__init__("string",value)
 
-class Width(Attribute):
+class Width(classes.Attribute):
     tooltip = 'Width of the object.'
     def __init__(self, value):
         super(Width, self).__init__("float",value)
 
-class Height(Attribute):
+class Height(classes.Attribute):
     tooltip = 'Height of the object.'
     def __init__(self, value):
         super(Height, self).__init__("float",value)
