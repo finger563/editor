@@ -1,115 +1,115 @@
 {
-    "py/object": "view_model.ViewModel", 
+    "py/object": "view_model.ViewModel",
     "attributes": {
-        "py/object": "collections.OrderedDict", 
+        "py/object": "collections.OrderedDict",
         "__reduce__": [
             {
                 "py/type": "collections.OrderedDict"
-            }, 
+            },
             {
                 "py/tuple": [
                     [
                         [
-                            "kind", 
+                            "kind",
                             {
-                                "py/object": "view_attributes.Object", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Object",
+                                "kind": "list",
                                 "value": "Container"
                             }
-                        ], 
+                        ],
                         [
-                            "text location", 
+                            "text location",
                             {
-                                "py/object": "view_attributes.Text_Location", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Text_Location",
+                                "kind": "list",
                                 "value": "top"
                             }
-                        ], 
+                        ],
                         [
-                            "text horizontal alignment", 
+                            "text horizontal alignment",
                             {
-                                "py/object": "view_attributes.Text_Horizontal_Alignment", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Text_Horizontal_Alignment",
+                                "kind": "list",
                                 "value": "center"
                             }
-                        ], 
+                        ],
                         [
-                            "text vertical alignment", 
+                            "text vertical alignment",
                             {
-                                "py/object": "view_attributes.Text_Vertical_Alignment", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Text_Vertical_Alignment",
+                                "kind": "list",
                                 "value": "center"
                             }
-                        ], 
+                        ],
                         [
-                            "root", 
+                            "root",
                             {
-                                "py/object": "view_attributes.Root", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Root",
+                                "kind": "list",
                                 "value": "center"
                             }
-                        ], 
+                        ],
                         [
-                            "anchor", 
+                            "anchor",
                             {
-                                "py/object": "view_attributes.Anchor", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Anchor",
+                                "kind": "list",
                                 "value": "top left"
                             }
-                        ], 
+                        ],
                         [
-                            "scope", 
+                            "scope",
                             {
-                                "py/object": "view_attributes.Scope", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Scope",
+                                "kind": "list",
                                 "value": "view"
                             }
-                        ], 
+                        ],
                         [
-                            "icon", 
+                            "icon",
                             {
-                                "py/object": "view_attributes.Icon", 
-                                "kind": "file", 
+                                "py/object": "view_attributes.Icon",
+                                "kind": "file",
                                 "value": "icons/toolbar/terminal.png"
                             }
-                        ], 
+                        ],
                         [
-                            "draw style", 
+                            "draw style",
                             {
-                                "py/object": "view_attributes.Draw_Style", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Draw_Style",
+                                "kind": "list",
                                 "value": "icon"
                             }
-                        ], 
+                        ],
                         [
-                            "color", 
+                            "color",
                             {
-                                "py/object": "view_attributes.Color", 
-                                "kind": "string", 
+                                "py/object": "view_attributes.Color",
+                                "kind": "string",
                                 "value": "blue"
                             }
-                        ], 
+                        ],
                         [
-                            "layout style", 
+                            "layout style",
                             {
-                                "py/object": "view_attributes.Layout_Style", 
-                                "kind": "list", 
+                                "py/object": "view_attributes.Layout_Style",
+                                "kind": "list",
                                 "value": "vertical"
                             }
-                        ], 
+                        ],
                         [
-                            "width", 
+                            "width",
                             {
-                                "py/object": "view_attributes.Width", 
-                                "kind": "float", 
+                                "py/object": "view_attributes.Width",
+                                "kind": "float",
                                 "value": 100
                             }
-                        ], 
+                        ],
                         [
-                            "height", 
+                            "height",
                             {
-                                "py/object": "view_attributes.Height", 
-                                "kind": "float", 
+                                "py/object": "view_attributes.Height",
+                                "kind": "float",
                                 "value": 100
                             }
                         ]
@@ -117,120 +117,120 @@
                 ]
             }
         ]
-    }, 
+    },
     "children": [
         {
-            "py/object": "view_model.ViewModel", 
+            "py/object": "view_model.ViewModel",
             "attributes": {
-                "py/object": "collections.OrderedDict", 
+                "py/object": "collections.OrderedDict",
                 "__reduce__": [
                     {
                         "py/type": "collections.OrderedDict"
-                    }, 
+                    },
                     {
                         "py/tuple": [
                             [
                                 [
-                                    "kind", 
+                                    "kind",
                                     {
-                                        "py/object": "view_attributes.Object", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Object",
+                                        "kind": "list",
                                         "value": "Component"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text location", 
+                                    "text location",
                                     {
-                                        "py/object": "view_attributes.Text_Location", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Location",
+                                        "kind": "list",
                                         "value": "top"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text horizontal alignment", 
+                                    "text horizontal alignment",
                                     {
-                                        "py/object": "view_attributes.Text_Horizontal_Alignment", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Horizontal_Alignment",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text vertical alignment", 
+                                    "text vertical alignment",
                                     {
-                                        "py/object": "view_attributes.Text_Vertical_Alignment", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Vertical_Alignment",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "root", 
+                                    "root",
                                     {
-                                        "py/object": "view_attributes.Root", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Root",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "anchor", 
+                                    "anchor",
                                     {
-                                        "py/object": "view_attributes.Anchor", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Anchor",
+                                        "kind": "list",
                                         "value": "top left"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "scope", 
+                                    "scope",
                                     {
-                                        "py/object": "view_attributes.Scope", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Scope",
+                                        "kind": "list",
                                         "value": "view"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "icon", 
+                                    "icon",
                                     {
-                                        "py/object": "view_attributes.Icon", 
-                                        "kind": "file", 
+                                        "py/object": "view_attributes.Icon",
+                                        "kind": "file",
                                         "value": "icons/toolbar/build.png"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "draw style", 
+                                    "draw style",
                                     {
-                                        "py/object": "view_attributes.Draw_Style", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Draw_Style",
+                                        "kind": "list",
                                         "value": "icon"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "color", 
+                                    "color",
                                     {
-                                        "py/object": "view_attributes.Color", 
-                                        "kind": "string", 
+                                        "py/object": "view_attributes.Color",
+                                        "kind": "string",
                                         "value": "blue"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "layout style", 
+                                    "layout style",
                                     {
-                                        "py/object": "view_attributes.Layout_Style", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Layout_Style",
+                                        "kind": "list",
                                         "value": "horizontal"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "width", 
+                                    "width",
                                     {
-                                        "py/object": "view_attributes.Width", 
-                                        "kind": "float", 
+                                        "py/object": "view_attributes.Width",
+                                        "kind": "float",
                                         "value": 100
                                     }
-                                ], 
+                                ],
                                 [
-                                    "height", 
+                                    "height",
                                     {
-                                        "py/object": "view_attributes.Height", 
-                                        "kind": "float", 
+                                        "py/object": "view_attributes.Height",
+                                        "kind": "float",
                                         "value": 100
                                     }
                                 ]
@@ -238,121 +238,121 @@
                         ]
                     }
                 ]
-            }, 
+            },
             "children": []
-        }, 
+        },
         {
-            "py/object": "view_model.ViewModel", 
+            "py/object": "view_model.ViewModel",
             "attributes": {
-                "py/object": "collections.OrderedDict", 
+                "py/object": "collections.OrderedDict",
                 "__reduce__": [
                     {
                         "py/type": "collections.OrderedDict"
-                    }, 
+                    },
                     {
                         "py/tuple": [
                             [
                                 [
-                                    "kind", 
+                                    "kind",
                                     {
-                                        "py/object": "view_attributes.Object", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Object",
+                                        "kind": "list",
                                         "value": "Client"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text location", 
+                                    "text location",
                                     {
-                                        "py/object": "view_attributes.Text_Location", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Location",
+                                        "kind": "list",
                                         "value": "top"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text horizontal alignment", 
+                                    "text horizontal alignment",
                                     {
-                                        "py/object": "view_attributes.Text_Horizontal_Alignment", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Horizontal_Alignment",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text vertical alignment", 
+                                    "text vertical alignment",
                                     {
-                                        "py/object": "view_attributes.Text_Vertical_Alignment", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Vertical_Alignment",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "root", 
+                                    "root",
                                     {
-                                        "py/object": "view_attributes.Root", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Root",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "anchor", 
+                                    "anchor",
                                     {
-                                        "py/object": "view_attributes.Anchor", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Anchor",
+                                        "kind": "list",
                                         "value": "top left"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "scope", 
+                                    "scope",
                                     {
-                                        "py/object": "view_attributes.Scope", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Scope",
+                                        "kind": "list",
                                         "value": "view"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "icon", 
+                                    "icon",
                                     {
-                                        "py/object": "view_attributes.Icon", 
-                                        "kind": "file", 
+                                        "py/object": "view_attributes.Icon",
+                                        "kind": "file",
                                         "value": "icons/toolbar/build.png"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "draw style", 
+                                    "draw style",
                                     {
-                                        "py/object": "view_attributes.Draw_Style", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Draw_Style",
+                                        "kind": "list",
                                         "value": "ellipse"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "color", 
+                                    "color",
                                     {
-                                        "py/object": "view_attributes.Color", 
-                                        "kind": "string", 
+                                        "py/object": "view_attributes.Color",
+                                        "kind": "string",
                                         "value": "blue"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "layout style", 
+                                    "layout style",
                                     {
-                                        "py/object": "view_attributes.Layout_Style", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Layout_Style",
+                                        "kind": "list",
                                         "value": "horizontal"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "width", 
+                                    "width",
                                     {
-                                        "py/object": "view_attributes.Width", 
-                                        "kind": "float", 
+                                        "py/object": "view_attributes.Width",
+                                        "kind": "float",
                                         "value": 100
                                     }
-                                ], 
+                                ],
                                 [
-                                    "height", 
+                                    "height",
                                     {
-                                        "py/object": "view_attributes.Height", 
-                                        "kind": "float", 
+                                        "py/object": "view_attributes.Height",
+                                        "kind": "float",
                                         "value": 100
                                     }
                                 ]
@@ -360,121 +360,121 @@
                         ]
                     }
                 ]
-            }, 
+            },
             "children": []
-        }, 
+        },
         {
-            "py/object": "view_model.ViewModel", 
+            "py/object": "view_model.ViewModel",
             "attributes": {
-                "py/object": "collections.OrderedDict", 
+                "py/object": "collections.OrderedDict",
                 "__reduce__": [
                     {
                         "py/type": "collections.OrderedDict"
-                    }, 
+                    },
                     {
                         "py/tuple": [
                             [
                                 [
-                                    "kind", 
+                                    "kind",
                                     {
-                                        "py/object": "view_attributes.Object", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Object",
+                                        "kind": "list",
                                         "value": "Server"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text location", 
+                                    "text location",
                                     {
-                                        "py/object": "view_attributes.Text_Location", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Location",
+                                        "kind": "list",
                                         "value": "top"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text horizontal alignment", 
+                                    "text horizontal alignment",
                                     {
-                                        "py/object": "view_attributes.Text_Horizontal_Alignment", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Horizontal_Alignment",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "text vertical alignment", 
+                                    "text vertical alignment",
                                     {
-                                        "py/object": "view_attributes.Text_Vertical_Alignment", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Text_Vertical_Alignment",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "root", 
+                                    "root",
                                     {
-                                        "py/object": "view_attributes.Root", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Root",
+                                        "kind": "list",
                                         "value": "center"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "anchor", 
+                                    "anchor",
                                     {
-                                        "py/object": "view_attributes.Anchor", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Anchor",
+                                        "kind": "list",
                                         "value": "top left"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "scope", 
+                                    "scope",
                                     {
-                                        "py/object": "view_attributes.Scope", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Scope",
+                                        "kind": "list",
                                         "value": "view"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "icon", 
+                                    "icon",
                                     {
-                                        "py/object": "view_attributes.Icon", 
-                                        "kind": "file", 
+                                        "py/object": "view_attributes.Icon",
+                                        "kind": "file",
                                         "value": "icons/toolbar/build.png"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "draw style", 
+                                    "draw style",
                                     {
-                                        "py/object": "view_attributes.Draw_Style", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Draw_Style",
+                                        "kind": "list",
                                         "value": "round rect"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "color", 
+                                    "color",
                                     {
-                                        "py/object": "view_attributes.Color", 
-                                        "kind": "string", 
+                                        "py/object": "view_attributes.Color",
+                                        "kind": "string",
                                         "value": "blue"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "layout style", 
+                                    "layout style",
                                     {
-                                        "py/object": "view_attributes.Layout_Style", 
-                                        "kind": "list", 
+                                        "py/object": "view_attributes.Layout_Style",
+                                        "kind": "list",
                                         "value": "horizontal"
                                     }
-                                ], 
+                                ],
                                 [
-                                    "width", 
+                                    "width",
                                     {
-                                        "py/object": "view_attributes.Width", 
-                                        "kind": "float", 
+                                        "py/object": "view_attributes.Width",
+                                        "kind": "float",
                                         "value": 100
                                     }
-                                ], 
+                                ],
                                 [
-                                    "height", 
+                                    "height",
                                     {
-                                        "py/object": "view_attributes.Height", 
-                                        "kind": "float", 
+                                        "py/object": "view_attributes.Height",
+                                        "kind": "float",
                                         "value": 100
                                     }
                                 ]
@@ -482,7 +482,7 @@
                         ]
                     }
                 ]
-            }, 
+            },
             "children": []
         }
     ]

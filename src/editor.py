@@ -44,6 +44,10 @@ class Editor(QtGui.QMainWindow):
         testAction.setStatusTip('Build code.')
         testAction.triggered.connect(self.testEvent)
 
+        saveAction = Action('icons/toolbar/save.png', '&Save', self)
+        saveAction.setStatusTip('Save.')
+        saveAction.triggered.connect(self.saveEvent)
+
         self.menubar_init()
         self.menubar_add_menu('&File')
         self.menu_add_action('&File',exitAction)
@@ -53,6 +57,7 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_add_action("test1",exitAction)
         self.toolbar_create("test2")
         self.toolbar_add_action("test2",testAction)
+        self.toolbar_add_action("test2",saveAction)
 
         self.modelTree = ModelTree(None)
         self.modelTree.populate()
@@ -83,6 +88,13 @@ class Editor(QtGui.QMainWindow):
     def modelTreeItemDoubleClicked(self, item, col):
         print 'Clicked on {}'.format(item.Object())
 
+    def saveEvent(self, event):
+        fname = 'view.txt'
+        self.tabbedEditorWidget.currentWidget().saveVM(fname)
+        test = QtGui.QMessageBox.information(self, 'Build',
+                                             'Saved {}.'.format(fname))
+        
+        
     def testEvent(self, event):
         test = QtGui.QMessageBox.information(self, 'Build',
                                              'Build succeeded.')

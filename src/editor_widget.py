@@ -14,7 +14,7 @@ from PyQt4 import QtGui
 
 from collections import OrderedDict
 
-import json,jsonpickle
+import jsonpickle
 
 from attribute_widget import AttributeEditor
 from editor_item import EditorItem
@@ -40,8 +40,8 @@ class EditorView(QtGui.QGraphicsView):
 
     def __init__(self, parent):
         super(EditorView,self).__init__(parent)
+        self._root = None
         self.init_ui()
-        self.root = None
 
     def init_ui(self):
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
@@ -54,7 +54,7 @@ class EditorView(QtGui.QGraphicsView):
         fname = 'view.txt'
         vm = self.openVM(fname)
         r = self.buildView(vm)
-        self.root = r
+        self._root = r
         scene.addItem(r)
 
         self.saveVM(fname)
@@ -66,8 +66,9 @@ class EditorView(QtGui.QGraphicsView):
         self.aw.updateGeo()
 
     def saveVM(self, fname):
+        jsonpickle.set_encoder_options('simplejson',indent=4)
         with open(fname, 'w') as f:
-            f.write(json.dumps(json.loads(jsonpickle.encode(self.root.viewModel())), indent=4))
+            f.write(jsonpickle.encode(self._root.viewModel()))
 
     def openVM(self, fname):
         with open(fname, 'r') as f:
