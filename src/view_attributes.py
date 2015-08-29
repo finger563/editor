@@ -35,12 +35,22 @@ class Draw_Style(classes.Attribute):
     def __init__(self, value):
         super(Draw_Style, self).__init__("list",value)
 
-class Anchor(classes.Attribute):
-    tooltip = 'Which point on the object acts as its root point'
+class Root(classes.Attribute):
+    tooltip = 'What acts as the local anchor for this object?'
     options = ['top left', 'top right',
                'bottom left', 'bottom right',
                'center left', 'center right',
                'top center', 'bottom center']
+    def __init__(self, value):
+        super(Root, self).__init__("list",value)
+
+class Anchor(classes.Attribute):
+    tooltip = 'What other object:point acts as the anchor for this object?'
+    options = ['top left', 'top right',
+               'bottom left', 'bottom right',
+               'center left', 'center right',
+               'top center', 'bottom center']
+    editable = False
     def __init__(self, value):
         super(Anchor, self).__init__("list",value)
 

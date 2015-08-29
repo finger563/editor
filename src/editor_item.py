@@ -12,8 +12,6 @@ and edit models in the project in tabs.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from collections import OrderedDict
-
 import view_attributes as view_attr
 from layout import layout_create, layout_add, layout_remove, layout_move
 
@@ -41,34 +39,10 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
                  parent = None,
-                 kind = '',
-                 anchor = 'top left',
-                 text_loc = 'top',
-                 text_ha = 'center',
-                 text_va = 'center',
-                 scope = 'view',
-                 draw_style = 'icon',
-                 color = 'blue',
-                 image_file = "",
-                 width = 100,
-                 height = 100,
-                 layout = 'horizontal'):
+                 viewModel = None):
         super(EditorItem, self).__init__(parent)
 
-        self.attributes = OrderedDict()
-        self['kind'] = view_attr.Object(kind)
-        self['text location'] = view_attr.Text_Location(text_loc)
-        self['text horizontal alignment'] = view_attr.Text_Horizontal_Alignment(text_ha)
-        self['text vertical alignment'] = view_attr.Text_Vertical_Alignment(text_va)
-        self['anchor'] = view_attr.Anchor(anchor)
-        self['scope'] = view_attr.Scope(scope)
-        self['icon'] = view_attr.Icon(image_file)
-        self['draw style'] = view_attr.Draw_Style(draw_style)
-        self['color'] = view_attr.Color(color)
-        self['layout style'] = view_attr.Layout_Style(layout)
-        self['width'] = view_attr.Width(width)
-        self['height'] = view_attr.Height(height)
-        
+        self._view_model = viewModel
         self._item = None
         self._pixmap = None
         self._mouseOver = False
@@ -82,10 +56,10 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.loadResources()
 
     def __getitem__(self, key):
-        return self.attributes[key]
+        return self._view_model.attributes[key]
 
     def __setitem__(self, key, value):
-        self.attributes[key] = value
+        self._view_model.attributes[key] = value
         
     def loadResources(self):
         old_layout = self.layout()
@@ -199,7 +173,7 @@ class EditorItem(QtGui.QGraphicsWidget):
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self.attributes, self.attributes, lambda a : self.updateAttributes(a))
+        editor.init_ui(self._view_model.attributes, self._view_model.attributes, lambda a : self.updateAttributes(a))
         editor.show(None)
             
     def hoverEnterEvent(self, event):

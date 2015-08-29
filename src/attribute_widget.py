@@ -103,7 +103,8 @@ class AttributeEditor(QtGui.QWidget):
         self._output_func = output_func
         self.add_header(attrs)
         for key,attr in attrs.iteritems():
-            self.add_attribute(key,attr)
+            if attr.editable:
+                self.add_attribute(key,attr)
         
         ok_cancel_widget = QtGui.QWidget(self)
         ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)

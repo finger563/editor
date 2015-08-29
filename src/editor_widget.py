@@ -16,6 +16,7 @@ from collections import OrderedDict
 
 from attribute_widget import AttributeEditor
 from editor_item import EditorItem
+from view_model import ViewModel
 
 class EditorScene(QtGui.QGraphicsScene):
     def __init__(self, parent = None):
@@ -35,8 +36,6 @@ class EditorView(QtGui.QGraphicsView):
     drag_mode_key = QtCore.Qt.Key_Control
     scroll_mode_key = QtCore.Qt.Key_Control
 
-    attr_width = 100
-
     def __init__(self, parent):
         super(EditorView,self).__init__(parent)
         self.init_ui()
@@ -47,24 +46,38 @@ class EditorView(QtGui.QGraphicsView):
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
+        #replace this code with generic code following class structure?
+
         scene = EditorScene(self)
+
+        import jsonpickle
 
         icon_file = 'icons/toolbar/terminal.png'
 
-        r = EditorItem(image_file = icon_file, layout='vertical', kind = 'Container')
+        r = EditorItem(viewModel = ViewModel(icon_file = icon_file, layout='vertical', kind = 'Container'))
         scene.addItem(r)
 
         icon_file = 'icons/toolbar/build.png'
 
-        t = EditorItem(image_file = icon_file, kind = 'Component')
+        t = EditorItem(viewModel = ViewModel(icon_file = icon_file, kind = 'Component'))
         r.addChild(t)
 
-        t = EditorItem(image_file = icon_file, kind = 'Client', draw_style = 'ellipse')
+        t = EditorItem(viewModel = ViewModel(icon_file = icon_file, kind = 'Client', draw_style = 'ellipse'))
         r.addChild(t)
 
-        t = EditorItem(image_file = icon_file, kind = 'Server', draw_style = 'round rect')
+        t = EditorItem(viewModel = ViewModel(icon_file = icon_file, kind = 'Server', draw_style = 'round rect'))
         r.addChild(t)
 
+        with open('view.txt','w') as f:
+            f.write(jsonpickle.encode(r))
+
+        '''
+        with open('view.txt','r') as f:
+            r = jsonpickle.decode(f.read())
+            print r
+            scene.addItem(r)
+        '''
+        
         self.setScene(scene)
         self.show()
 

@@ -47,13 +47,13 @@ def layout_move(old_layout, new_layout, new_style):
     for i in range(0,old_layout.count()):
         item = old_layout.itemAt(0)
         old_layout.removeAt(0)
-        if self['layout style'].value in ['grid']:
+        if new_style in ['grid']:
             new_layout.addItem(item, grid_row, 0)
             print "added {} to grid row {}, count {}".format(item,
                                                              grid_row+1,
                                                              new_layout.count())
             grid_row += 1
-        elif self['layout style'].value in ['anchor']:
+        elif new_style in ['anchor']:
             new_layout.addCornerAnchors(item, QtCore.Qt.TopLeftCorner,
                                         new_layout, QtCore.Qt.TopLeftCorner);
         else:
