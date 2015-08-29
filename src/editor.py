@@ -74,6 +74,7 @@ class Editor(QtGui.QMainWindow):
         self.splitter2.addWidget(self.splitter1)
         self.tabbedOutput = TabbedOutputWidget(self)
         self.splitter2.addWidget(self.tabbedOutput)
+        self.splitter2.setSizes([3.0 * self.geometry().y()/4.0, self.geometry().y()/4.0])
 
         self.setCentralWidget(self.splitter2)
 
