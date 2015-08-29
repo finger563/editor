@@ -21,11 +21,11 @@ from layout import layout_create, layout_add, layout_remove, layout_move
 # NEED WAYS OF SPECIFYING LAYOUTS
 
 class RoundRectItem(QtGui.QGraphicsRectItem):
-    def __init__(self, x, y, w, h, xr, yr, parent = None):
+    def __init__(self, x, y, w, h, xr = 0.1, yr = 0.1, parent = None):
         super(RoundRectItem, self).__init__(x,y,w,h,parent)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
         self.xr = xr
         self.yr = yr
-        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
 
     # gotten from qt_graphicsItem_highlightSelected, qgraphicsitem.cpp : 7574
     def highlightSelected(item, painter, option):
@@ -60,7 +60,8 @@ class RoundRectItem(QtGui.QGraphicsRectItem):
     def paint(self, painter, option, widget=None):
         painter.setPen(self.pen());
         painter.setBrush(self.brush());
-        painter.drawRoundedRect(self.rect(), self.xr, self.yr)
+        minR = min(self.rect().width()*self.xr, self.rect().height()*self.yr)
+        painter.drawRoundedRect(self.rect(), minR, minR)
         if option.state & QtGui.QStyle.State_Selected:
             self.highlightSelected(painter, option)
 
@@ -113,7 +114,7 @@ class EditorItem(QtGui.QGraphicsWidget):
             elif self['draw style'].value == 'ellipse':
                 self._item = QtGui.QGraphicsEllipseItem(0,0,self['width'].value, self['height'].value)
             elif self['draw style'].value == 'round rect':
-                self._item = RoundRectItem(0,0,self['width'].value, self['height'].value, self['width'].value / 10.0, self['height'].value / 10.0)
+                self._item = RoundRectItem(0,0,self['width'].value, self['height'].value)
             if self._item:
                 self._item.setBrush(QtGui.QColor(self['color'].value))
 
