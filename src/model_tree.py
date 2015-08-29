@@ -27,7 +27,6 @@ class ModelTree(QtGui.QTreeWidget):
     def __init__(self,parent):
         super(ModelTree,self).__init__(parent)
         self.setExpandsOnDoubleClick(False)
-        #self.setColumnCount(2)
         
     def populate(self, model = project, parent = None):
         if parent:

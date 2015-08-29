@@ -50,7 +50,7 @@ class Editor(QtGui.QMainWindow):
 
         self.toolbar_init()
         self.toolbar_create("test1")
-        self.toolbar_add_action("test1",testAction)
+        self.toolbar_add_action("test1",exitAction)
         self.toolbar_create("test2")
         self.toolbar_add_action("test2",testAction)
 
