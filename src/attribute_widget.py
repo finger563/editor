@@ -34,6 +34,7 @@ class AttributeEditor(QtGui.QWidget):
         self.vbox.addWidget(self.scrollArea)
 
         self._displayed = False
+        self._unsaved_edits = False
 
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
@@ -76,12 +77,15 @@ class AttributeEditor(QtGui.QWidget):
         obj = None
         if attr.kind in ['float','int','double','string','file']:
             obj = QtGui.QLineEdit()
+            obj.editingFinished.connect(self.updateEdits)
             obj.setText(str(attr.value))
         elif attr.kind in ['code']:
             obj = QtGui.QTextEdit()
+            obj.editingFinished.connect(self.updateEdits)
             obj.setText(attr.value)
         elif attr.kind in ['list'] and attr.value in attr.options:
             obj = QtGui.QComboBox()
+            obj.currentIndexChanged.connect(self.updateEdits)
             obj.addItems(attr.options)
             obj.setCurrentIndex(attr.options.index(attr.value))
 
@@ -98,6 +102,13 @@ class AttributeEditor(QtGui.QWidget):
             child.widget().deleteLater()
         
     def init_ui(self, attrs, output_obj, output_func = None):
+        if self._unsaved_edits:
+            reply = QtGui.QMessageBox.question(self, 'Save?',
+                                             "Save attribute edits?",
+                                             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                             QtGui.QMessageBox.Yes)
+            if reply == QtGui.QMessageBox.Yes:
+                self.save(None)
         self.clear_ui()
         self._output_obj = output_obj
         self._output_func = output_func
@@ -116,11 +127,15 @@ class AttributeEditor(QtGui.QWidget):
 
         button = QtGui.QPushButton('Cancel',self)
         button.setToolTip('Cancel attribute edits.')
-        button.clicked.connect(self.hide)
+        button.clicked.connect(self.cancel)
         ok_cancel_layout.addWidget(button)
 
         ok_cancel_widget.setLayout(ok_cancel_layout)
         self.layout.addWidget(ok_cancel_widget)
+        self._unsaved_edits = False
+
+    def updateEdits(self, event):
+        self._unsaved_edits = True
 
     def updateGeo(self):
         rect = self.getNewRect(self._displayed)
@@ -168,6 +183,11 @@ class AttributeEditor(QtGui.QWidget):
                 self._output_obj[name].value = self._output_obj[name].options[obj.currentIndex()]
         self.hide(event)
         if self._output_func: self._output_func(self._output_obj)
+        self._unsaved_edits = False
+
+    def cancel(self, event):
+        self.hide(event)
+        self._unsaved_edits = False
 
     def hide(self, event):
         self._displayed = False
@@ -178,4 +198,5 @@ class AttributeEditor(QtGui.QWidget):
         self.animate(event,self._displayed)
 
     def mouseDoubleClickEvent(self, event):
-        self.hide(event)
+        #self.hide(event)
+        return
