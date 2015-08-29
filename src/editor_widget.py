@@ -251,20 +251,20 @@ class EditorView(QtGui.QGraphicsView):
 
         icon_file = 'icons/toolbar/terminal.png'
 
-        r = EditorItem(image_file = icon_file, layout='vertical', kind = 'container')
+        r = EditorItem(image_file = icon_file, layout='vertical', kind = 'Container')
         scene.addItem(r)
 
         icon_file = 'icons/toolbar/build.png'
 
-        t = EditorItem(image_file = icon_file, kind = 'test 1')
+        t = EditorItem(image_file = icon_file, kind = 'Component')
         scene.addItem(t)
         r.addChild(t)
 
-        t = EditorItem(image_file = icon_file, kind = 'test 2', draw_style = 'ellipse')
+        t = EditorItem(image_file = icon_file, kind = 'Client', draw_style = 'ellipse')
         scene.addItem(t)
         r.addChild(t)
 
-        t = EditorItem(image_file = icon_file, kind = 'test 3', draw_style = 'round rect')
+        t = EditorItem(image_file = icon_file, kind = 'Server', draw_style = 'round rect')
         scene.addItem(t)
         r.addChild(t)
 
