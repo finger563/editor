@@ -27,8 +27,8 @@ class ViewModel(object):
                  draw_style = 'icon',
                  icon_file = "",
                  color = 'blue',
-                 width = 100,
-                 height = 100,
+                 width = 100.0,
+                 height = 100.0,
                  layout = 'horizontal'):
         self.attributes = OrderedDict()
         self['kind'] = view_attr.Object(kind)
@@ -59,4 +59,3 @@ class ViewModel(object):
 
     def removeChild(self, child):
         self.children = [x for x in self.children if x != child]
-

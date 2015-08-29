@@ -97,7 +97,7 @@ class AttributeEditor(QtGui.QWidget):
             child = self.layout.takeAt(0)
             child.widget().deleteLater()
         
-    def init_ui(self, attrs=OrderedDict(), output_obj=None, output_func = None):
+    def init_ui(self, attrs, output_obj, output_func = None):
         self.clear_ui()
         self._output_obj = output_obj
         self._output_func = output_func

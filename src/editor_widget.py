@@ -67,8 +67,9 @@ class EditorView(QtGui.QGraphicsView):
 
     def saveVM(self, fname):
         jsonpickle.set_encoder_options('simplejson',indent=4)
+        encoded_output = jsonpickle.encode(self._root.viewModel())
         with open(fname, 'w') as f:
-            f.write(jsonpickle.encode(self._root.viewModel()))
+            f.write(encoded_output)
 
     def openVM(self, fname):
         with open(fname, 'r') as f:
