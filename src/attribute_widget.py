@@ -77,7 +77,7 @@ class AttributeEditor(QtGui.QWidget):
         self.layout.addWidget(label)
         obj = None
         if attrs['draw style'].value in ['icon']:
-            pix = QtGui.QPixmap( attrs['icon'].value).scaled( attrs['width'].value, attrs['height'].value)
+            pix = QtGui.QPixmap( attrs['icon'].value).scaled(30,30)
             obj = QtGui.QLabel()
             obj.setPixmap(pix)
 

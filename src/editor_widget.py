@@ -84,24 +84,34 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.attributes[key] = value
         
     def loadResources(self):
-        
-        child_layout = None
+        old_layout = self.layout()
+        new_layout = None
         if 'horizontal' in self['layout style'].value:
-            child_layout = QtGui.QGraphicsLinearLayout()
+            new_layout = QtGui.QGraphicsLinearLayout()
         elif 'vertical' in self['layout style'].value:
-            child_layout = QtGui.QGraphicsLinearLayout(QtCore.Qt.Vertical)
+            new_layout = QtGui.QGraphicsLinearLayout(QtCore.Qt.Vertical)
         elif 'grid' in self['layout style'].value:
-            child_layout = QtGui.QGraphicsGridLayout()
+            grid_row = 0
+            new_layout = QtGui.QGraphicsGridLayout()
         elif 'anchor' in self['layout style'].value:
-            child_layout = QtGui.QGraphicsAnchorLayout()
+            new_layout = QtGui.QGraphicsAnchorLayout()
 
-        if self.layout():
-            for i in range(0,self.layout().count()):
-                item = self.layout().itemAt(0)
-                self.layout().removeItem(item)
-                child_layout.addItem(item)
+        if old_layout:
+            for i in range(0,old_layout.count()):
+                item = old_layout.itemAt(0)
+                old_layout.removeAt(0)
+                if self['layout style'].value in ['grid']:
+                    new_layout.addItem(item, grid_row, 0)
+                    print "added {} to grid row {}, count {}".format(item,
+                                                                     grid_row+1,
+                                                                     new_layout.count())
+                    grid_row += 1
+                elif self['layout style'].value in ['anchor']:
+                    pass
+                else:
+                    new_layout.addItem(item)
 
-        self.setLayout(child_layout)
+        self.setLayout(new_layout)
 
         if self['icon'].value and self['draw style'].value == 'icon':
             self._pixmap = QtGui.QPixmap(self['icon'].value)
