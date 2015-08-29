@@ -31,9 +31,9 @@ class Editor(QtGui.QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-
-        self.grid = QtGui.QGridLayout()
-        self.grid.setSpacing(10)
+        QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
+        self.setGeometry(300,300,800,600)
+        self.setWindowTitle("Editor")
 
         exitAction = Action('icons/toolbar/stop.png', '&Exit', self)        
         exitAction.setShortcut('Ctrl+Q')
@@ -61,6 +61,7 @@ class Editor(QtGui.QMainWindow):
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.modelTree)
         self.splitter1.addWidget(self.tabbedEditorWidget)
+        self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 * self.geometry().x()/4.0])
 
         self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
@@ -68,10 +69,6 @@ class Editor(QtGui.QMainWindow):
         self.splitter2.addWidget(self.tabbedOutput)
 
         self.setCentralWidget(self.splitter2)
-
-        QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
-        self.setGeometry(300,300,800,600)
-        self.setWindowTitle("Editor")
 
         self.center()
         self.show()
