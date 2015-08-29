@@ -21,7 +21,7 @@ from PyQt4 import QtGui
 from action import Action
 from worker import Worker
 from model_tree import ModelTree
-from editor_widget import TabbedEditor
+from editor_widget import TabbedEditor, EditorView
 from output import TabbedOutputWidget
 
 class Editor(QtGui.QMainWindow):
@@ -63,6 +63,7 @@ class Editor(QtGui.QMainWindow):
         self.modelTree.populate()
         self.modelTree.itemDoubleClicked.connect(self.modelTreeItemDoubleClicked)
         self.tabbedEditorWidget = TabbedEditor(self)
+        self.openEditorTabs = {}
 
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.modelTree)
@@ -86,8 +87,17 @@ class Editor(QtGui.QMainWindow):
         self.move(qr.topLeft())
 
     def modelTreeItemDoubleClicked(self, item, col):
-        print 'Clicked on {}'.format(item.Object())
-
+        name = item.Object()['name'].value
+        if name not in self.openEditorTabs:
+            ev = EditorView( self.tabbedEditorWidget )
+            self.openEditorTabs[name] = ev
+            self.tabbedEditorWidget.addTab( ev, name )
+        elif self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]) < 0:
+            ev = self.openEditorTabs[name]
+            self.tabbedEditorWidget.addTab( ev, name )
+        self.tabbedEditorWidget.setCurrentIndex(
+            self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]))
+            
     def saveEvent(self, event):
         fname = 'view.txt'
         self.tabbedEditorWidget.currentWidget().saveVM(fname)

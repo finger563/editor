@@ -134,7 +134,7 @@ class AttributeEditor(QtGui.QWidget):
         self.layout.addWidget(ok_cancel_widget)
         self._unsaved_edits = False
 
-    def updateEdits(self, event):
+    def updateEdits(self, event = None):
         self._unsaved_edits = True
 
     def updateGeo(self):

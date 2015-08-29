@@ -41,6 +41,8 @@ class EditorView(QtGui.QGraphicsView):
     def __init__(self, parent):
         super(EditorView,self).__init__(parent)
         self._root = None
+        self.aw = AttributeEditor(self)
+        self.aw.updateGeo()
         self.init_ui()
 
     def init_ui(self):
@@ -61,9 +63,6 @@ class EditorView(QtGui.QGraphicsView):
         
         self.setScene(scene)
         self.show()
-
-        self.aw = AttributeEditor(self)
-        self.aw.updateGeo()
 
     def saveVM(self, fname):
         jsonpickle.set_encoder_options('simplejson',indent=4)
@@ -140,11 +139,6 @@ class TabbedEditor(QtGui.QTabWidget):
         self.setUsesScrollButtons(True)
 
         self.tabCloseRequested.connect(self.onTabClose)
-
-        newPage = EditorView(self)
-        self.addTab(newPage, "test1")
-        newPage = EditorView(self)
-        self.addTab(newPage, "test2")
        
     def onTabClose(self,index):
         self.removeTab(index)
