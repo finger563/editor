@@ -14,6 +14,8 @@ from PyQt4 import QtGui
 
 from collections import OrderedDict
 
+import jsonpickle
+
 from attribute_widget import AttributeEditor
 from editor_item import EditorItem
 from view_model import ViewModel
@@ -46,43 +48,24 @@ class EditorView(QtGui.QGraphicsView):
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
-        #replace this code with generic code following class structure?
-
         scene = EditorScene(self)
 
-        import jsonpickle
-
-        icon_file = 'icons/toolbar/terminal.png'
-
-        r = EditorItem(viewModel = ViewModel(icon_file = icon_file, layout='vertical', kind = 'Container'))
-        scene.addItem(r)
-
-        icon_file = 'icons/toolbar/build.png'
-
-        t = EditorItem(viewModel = ViewModel(icon_file = icon_file, kind = 'Component'))
-        r.addChild(t)
-
-        t = EditorItem(viewModel = ViewModel(icon_file = icon_file, kind = 'Client', draw_style = 'ellipse'))
-        r.addChild(t)
-
-        t = EditorItem(viewModel = ViewModel(icon_file = icon_file, kind = 'Server', draw_style = 'round rect'))
-        r.addChild(t)
-
-        with open('view.txt','w') as f:
-            f.write(jsonpickle.encode(r))
-
-        '''
         with open('view.txt','r') as f:
-            r = jsonpickle.decode(f.read())
-            print r
-            scene.addItem(r)
-        '''
+            vm = jsonpickle.decode(f.read())
+        r = self.buildView(vm)
+        scene.addItem(r)
         
         self.setScene(scene)
         self.show()
 
         self.aw = AttributeEditor(self)
         self.aw.updateGeo()
+
+    def buildView(self, viewModel, parent = None):
+        t = EditorItem(viewModel=viewModel)
+        for cvm in viewModel.children:
+            t.addChild(self.buildView(cvm, t))
+        return t
 
     def getEditor(self):
         return self.aw

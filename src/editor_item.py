@@ -60,6 +60,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def __setitem__(self, key, value):
         self._view_model.attributes[key] = value
+
+    def viewModel(self):
+        return self._view_model
         
     def loadResources(self):
         old_layout = self.layout()
@@ -122,11 +125,13 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def removeChild(self, child):
         layout_remove(self.layout(), self['layout style'].value, child)
+        self.viewModel().removeChild(child.viewModel())
         child._parent = None
         self.updateGraphicsItem()
 
     def addChild(self, child):
         layout_add(self.layout(), self['layout style'].value, child)
+        self.viewModel().addChild(child.viewModel())
         child._parent = self
         self.updateGraphicsItem()
 
@@ -173,7 +178,9 @@ class EditorItem(QtGui.QGraphicsWidget):
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self._view_model.attributes, self._view_model.attributes, lambda a : self.updateAttributes(a))
+        editor.init_ui(self.viewModel().attributes,
+                       self.viewModel().attributes,
+                       lambda a : self.updateAttributes(a))
         editor.show(None)
             
     def hoverEnterEvent(self, event):

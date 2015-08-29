@@ -54,8 +54,9 @@ class ViewModel(object):
         self.attributes[key] = value
 
     def addChild(self, child):
-        self.children.append(child)
+        if child not in self.children:
+            self.children.append(child)
 
     def removeChild(self, child):
-        self.chilren = [x for x in children if x != child]
+        self.children = [x for x in self.children if x != child]
 
