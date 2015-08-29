@@ -39,6 +39,9 @@ class EditorItem(QtGui.QGraphicsWidget):
                  parent = None,
                  kind = '',
                  anchor = 'top left',
+                 text_loc = 'top',
+                 text_ha = 'center',
+                 text_va = 'center',
                  scope = 'view',
                  draw_style = 'icon',
                  color = 'blue',
@@ -50,6 +53,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         self.attributes = OrderedDict()
         self['kind'] = view_attr.Object(kind)
+        self['text location'] = view_attr.Text_Location(text_loc)
+        self['text horizontal alignment'] = view_attr.Text_Horizontal_Alignment(text_ha)
+        self['text vertical alignment'] = view_attr.Text_Vertical_Alignment(text_va)
         self['anchor'] = view_attr.Anchor(anchor)
         self['scope'] = view_attr.Scope(scope)
         self['icon'] = view_attr.Icon(image_file)
@@ -122,7 +128,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self._item.boundingRect()
 
     def sizeHint(self, which, constraint):
-        if self.layout():
+        if self.layout() and self.layout().count():
             return self.layout().sizeHint(which, constraint)
         elif self._item:
             return self._item.boundingRect().size()
@@ -132,8 +138,12 @@ class EditorItem(QtGui.QGraphicsWidget):
     def updateGraphicsItem(self, width = 0, height = 0):
         self.layout().invalidate()
         if not width and not height:
-            width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
-            height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
+            if self.layout().count():
+                width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
+                height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
+            else:
+                width = self['width'].value
+                height = self['height'].value
         if self['draw style'].value == 'icon':
             self._item.setPixmap( self._pixmap.scaled(width,height) )
         else:
