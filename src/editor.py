@@ -56,6 +56,7 @@ class Editor(QtGui.QMainWindow):
 
         self.modelTree = ModelTree(None)
         self.modelTree.populate()
+        self.modelTree.itemDoubleClicked.connect(self.modelTreeItemDoubleClicked)
         self.tabbedEditorWidget = TabbedEditor(self)
 
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
@@ -78,6 +79,9 @@ class Editor(QtGui.QMainWindow):
         cp = QtGui.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def modelTreeItemDoubleClicked(self, item, col):
+        print 'Clicked on {}'.format(item.Object())
 
     def testEvent(self, event):
         test = QtGui.QMessageBox.information(self, 'Build',

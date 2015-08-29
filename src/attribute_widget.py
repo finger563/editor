@@ -15,25 +15,8 @@ from PyQt4 import QtGui
 
 from collections import OrderedDict
 
-# NEED TO FIX MAXIMUM WIDTH : CALCULATE IT EVERY TIME WE RUN INIT_UI?
-# NEED TO FIGURE OUT HOW TO FORMAT AND RETURN ATTRIBUTES
-# REQUIRES:
-#  * NAME: display name for the label
-#  * TYPE: variable type, e.g. string, double, list, reference, can use spinbox for ranges
-#  * VALUE: current value of the field
-#  * VALIDATOR: should return true or false comparing the VALUE to TYPE (and other options)
-#  * TOOLTIP: hover text for more description
-
 # SHOULD USE QValidators!
 # SHOULD USE sliders, spinboxes, etc.
-
-# attribute is a dict of key:val pairs:
-#  * NAME: display name for the label
-#  * TYPE: variable type, e.g. string, double, list, reference, can use spinbox for ranges
-#  * VALUE: current value of the field
-#  * VALIDATOR: should return true or false comparing the VALUE to TYPE (and other options)
-#  * OPTIONS: if the user selects between multiple options, they are specified here
-#  * TOOLTIP: hover text for more description
 
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent = None):

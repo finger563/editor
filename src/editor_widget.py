@@ -32,6 +32,9 @@ class RoundRectItem(QtGui.QGraphicsRectItem):
         painter.setPen(self.pen());
         painter.setBrush(self.brush());
         painter.drawRoundedRect(self.rect(), self.xr, self.yr)
+        if option.state == QtGui.QStyle.State_Selected:
+            print True
+            QtGui.QGraphicsItem.highlightSelected(self, painter, option)
 
 class EditorItem(QtGui.QGraphicsWidget):
 
@@ -230,6 +233,21 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsScenePositionChanges)
+
+    def getAnchors(self):
+        a = QtCore.QRectF(0, 0, self.width, self.height)
+        anchorList = {
+            "bottom left": a.bottomLeft(),
+            "bottom right": a.bottomRight(),
+            "top left": a.topLeft(),
+            "top right": a.topRight(),
+            "center": a.center(),
+            "center left": (a.topLeft() + a.bottomLeft()) / 2.0,
+            "center right": (a.topRight() + a.bottomRight()) / 2.0,
+            "top center": (a.topLeft() + a.topRight()) / 2.0,
+            "bottom center": (a.bottomLeft() + a.bottomRight()) / 2.0
+        }
+        return anchorList
 
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
