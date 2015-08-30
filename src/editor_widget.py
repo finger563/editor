@@ -24,6 +24,13 @@ from action import Action
 class EditorScene(QtGui.QGraphicsScene):
     def __init__(self, parent = None):
         super(EditorScene, self).__init__(parent)
+        self._root = None
+
+    def setRoot(self, r):
+        self._root = r
+
+    def getRoot(self):
+        return self._root
 
     def contextMenuEvent(self, event):
         item = self.itemAt(event.scenePos())
@@ -41,7 +48,7 @@ class EditorScene(QtGui.QGraphicsScene):
     def createNewItem(self, event, pos):
         t = EditorItem()
         t.setPos(pos)
-        self.addItem(t)
+        self.getRoot().addChild(t)
 
 class EditorView(QtGui.QGraphicsView):
 
@@ -50,12 +57,10 @@ class EditorView(QtGui.QGraphicsView):
 
     def __init__(self, parent):
         super(EditorView,self).__init__(parent)
-        self._root = None
         self.aw = AttributeEditor(self)
         self.aw.updateGeo()
-        self.init_ui()
 
-    def init_ui(self):
+    def init_ui(self, obj = None, fname = ''):
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         self._command_key_pressed = False
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
@@ -64,19 +69,23 @@ class EditorView(QtGui.QGraphicsView):
         scene = EditorScene(self)
         self.setScene(scene)
 
-        fname = 'view.txt'
-        vm = self.openVM(fname)
-        r = self.buildView(vm)
-        self._root = r
+        try:
+            if not fname:
+                fname = obj.kind + '.view'
+            vm = self.openVM(fname)
+            r = self.buildView(vm)
+        except:
+            r = EditorItem(
+                viewModel = ViewModel(kind = obj.kind)
+            )
+        scene.setRoot(r)
         scene.addItem(r)
 
-        self.saveVM(fname)
-        
         self.show()
 
     def saveVM(self, fname):
         jsonpickle.set_encoder_options('simplejson',indent=4)
-        encoded_output = jsonpickle.encode(self._root.viewModel())
+        encoded_output = jsonpickle.encode(self.scene().getRoot().viewModel())
         with open(fname, 'w') as f:
             f.write(encoded_output)
 

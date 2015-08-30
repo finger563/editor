@@ -91,6 +91,7 @@ class Editor(QtGui.QMainWindow):
         name = item.Object()['name'].value
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
+            ev.init_ui(item.Object(), item.Object().kind + '.view')
             self.openEditorTabs[name] = ev
             self.tabbedEditorWidget.addTab( ev, name )
         elif self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]) < 0:
@@ -100,10 +101,16 @@ class Editor(QtGui.QMainWindow):
             self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]))
             
     def saveEvent(self, event):
-        fname = 'view.txt'
-        self.tabbedEditorWidget.currentWidget().saveVM(fname)
-        test = QtGui.QMessageBox.information(self, 'Build',
-                                             'Saved {}.'.format(fname))
+        fileName = QtGui.QFileDialog.getSaveFileName(self,
+                                                     "Save view file",
+                                                     '',
+                                                     "View Files (*.view)",
+                                                     options = QtGui.QFileDialog.Options())
+        if fileName:
+            if fileName[-5:] != '.view': fileName += '.view'
+            self.tabbedEditorWidget.currentWidget().saveVM(fileName)
+            test = QtGui.QMessageBox.information(self, 'Build',
+                                                 'Saved {}.'.format(fileName))
         
         
     def testEvent(self, event):

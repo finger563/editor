@@ -210,9 +210,9 @@ class AttributeEditor(QtGui.QWidget):
         for name,obj in self._input_dict.iteritems():
             kind = self._output_obj[name].kind
             if kind in ['string']:
-                self._output_obj[name].value = obj.text()
+                self._output_obj[name].value = str(obj.text())
             elif kind in ['code']:
-                self._output_obj[name].value = obj.toPlainText()
+                self._output_obj[name].value = str(obj.toPlainText())
             elif kind in ['float','double']:
                 self._output_obj[name].value = float(obj.text())
             elif kind in ['int']:
@@ -220,7 +220,7 @@ class AttributeEditor(QtGui.QWidget):
             elif kind in ['list']:
                 self._output_obj[name].value = self._output_obj[name].options[obj.currentIndex()]
             elif 'file' in kind:
-                self._output_obj[name].value = obj.text()
+                self._output_obj[name].value = str(obj.text())
             elif 'dictionary' in kind:
                 _type = kind.split('_')[1]
                 if 'bool' in _type:

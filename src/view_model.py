@@ -24,7 +24,7 @@ class ViewModel(object):
                  text_va = 'center',
                  scope = 'view',
                  draw_style = 'round rect',
-                 icon_file = "",
+                 icon_file = '',
                  src = '',
                  dst = '',
                  color = 'light blue',
