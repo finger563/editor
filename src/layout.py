@@ -84,6 +84,9 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
             self.addCornerAnchors(item, convertAnchorToQt('top left'),
                                   self, convertAnchorToQt('top left'))
 
+    def updateItem(self, item):
+        self.addItem(item)
+
     def removeItem(self, item):
         for i in range(self.count()):
             if item == self.itemAt(i):
@@ -109,6 +112,9 @@ class HorizontalLayout(QtGui.QGraphicsLinearLayout):
             item = otherLayout.itemAt(0)
             otherLayout.removeAt(0)
             self.addItem(item)
+
+    def updateItem(self, item):
+        item.setPos(item._original_pos)
             
 class VerticalLayout(QtGui.QGraphicsLinearLayout):
     def __init__(self):
@@ -121,6 +127,9 @@ class VerticalLayout(QtGui.QGraphicsLinearLayout):
             item = otherLayout.itemAt(0)
             otherLayout.removeAt(0)
             self.addItem(item)
+            
+    def updateItem(self, item):
+        item.setPos(item._original_pos)
             
 class GridLayout(QtGui.QGraphicsGridLayout):
     def __init__(self):
@@ -138,6 +147,9 @@ class GridLayout(QtGui.QGraphicsGridLayout):
         gr = self.count()
         gc = self.count()
         super(GridLayout,self).addItem(item, gr, gc)
+
+    def updateItem(self, item):
+        self.addItem(item)
 
     def removeItem(self, item):
         for i in range(self.count()):

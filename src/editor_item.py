@@ -114,6 +114,10 @@ class EditorItem(QtGui.QGraphicsWidget):
         child._parent = None
         self.updateGraphicsItem()
 
+    def updateChild(self, child):
+        self.layout().updateItem(child)
+        self.updateGraphicsItem()
+
     def addChild(self, child):
         self.layout().addItem(child)
         self.viewModel().addChild(child.viewModel())
@@ -137,13 +141,11 @@ class EditorItem(QtGui.QGraphicsWidget):
             currentParent = self._parent
             if newParent:
                 p = newParent[0]
-                if currentParent:
-                    if p != currentParent:
-                        currentParent.removeChild(self)
-                        p.addChild(self)
-                    else:
-                        self.setPos(self._original_pos)
+                if p == currentParent:
+                    p.updateChild(self)
                 else:
+                    if currentParent:
+                        currentParent.removeChild(self)
                     p.addChild(self)
             elif currentParent:
                 currentParent.removeChild(self)
