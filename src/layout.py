@@ -11,65 +11,148 @@ and modifications of layouts.
 
 from PyQt4 import QtCore, QtGui
 
-from anchors import convertAnchorToQt, AnchorLayout
+from anchors import convertAnchorToQt, closestAnchors
+
+class AnchorLayout(QtGui.QGraphicsAnchorLayout):
+
+    min_anchoring_dist = 10
+    edge_padding = 10
+    item_spacing = 10
+    
+    def __init__(self, parent = None):
+        super(AnchorLayout, self).__init__(parent)
+        self.setSpacing(self.item_spacing)
+
+    def sizeHint(self, which, constraint):
+        maxW = 0
+        maxH = 0
+        minX = 0
+        maxX = 0
+        minY = 0
+        maxY = 0
+        for i in range(self.count()):
+            item = self.itemAt(i)
+            geo = item.geometry()
+            width = geo.width()
+            height = geo.height()
+            minX = min(minX,geo.x())
+            minY = min(minY,geo.y())
+            maxX = max(maxX,geo.x() + width)
+            maxY = max(maxY,geo.y() + height)
+        if minX < 0 or minY < 0:
+            for i in range(self.count()):
+                item = self.itemAt(i)
+                geo = item.geometry()
+                newx = geo.x() - minX
+                newy = geo.y() - minY
+                item.setPos(newx,newy)
+        maxW = maxX - minX
+        maxH = maxY - minY
+        return QtCore.QSizeF(maxW + self.edge_padding,
+                             maxH + self.edge_padding)
+
+    def updateGeometry(self):
+        super(AnchorLayout,self).updateGeometry()
+
+    def getClosestAnchors(self, newItem):
+        minDist = -1
+        anchor1 = None
+        anchor2 = None
+        closestItem = None
+        if newItem:
+            for i in range(self.count()):
+                item = self.itemAt(i)
+                if item != newItem:
+                    dist, a1, a2 = closestAnchors(item,newItem)
+                    if minDist == -1 or dist < minDist:
+                        minDist = dist
+                        anchor1, anchor2 = a1, a2
+                        closestItem = item
+        return abs(minDist), anchor1, anchor2, closestItem
+
+    def addItem(self, item):
+        if self.count():
+            d, a1, a2, ci = self.getClosestAnchors(item)
+            if d > 0 and d < self.min_anchoring_dist:
+                if isinstance(a1,QtCore.Qt.Corner) and isinstance(a2,QtCore.Qt.Corner):
+                    layout.addCornerAnchors(item, a2,
+                                            ci, a1)
+                elif isinstance(a1, QtCore.Qt.AnchorPoint) and isinstance(a2, QtCore.Qt.AnchorPoint):
+                    layout.addAnchor(item, a2,
+                                     ci, a1)
+        else:
+            self.addCornerAnchors(item, convertAnchorToQt('top left'),
+                                  self, convertAnchorToQt('top left'))
+
+    def removeItem(self, item):
+        for i in range(self.count()):
+            if item == self.itemAt(i):
+                self.removeAt(i)
+                break
+
+    def fromLayout(self, otherLayout):
+        if not otherLayout:
+            return
+        for i in range(otherLayout.count()):
+            item = otherLayout.itemAt(0)
+            otherLayout.removeAt(0)
+            self.addItem(item)
+
+class HorizontalLayout(QtGui.QGraphicsLinearLayout):
+    def __init__(self):
+        super(HorizontalLayout, self).__init__()
+
+    def fromLayout(self, otherLayout):
+        if not otherLayout:
+            return
+        for i in range(otherLayout.count()):
+            item = otherLayout.itemAt(0)
+            otherLayout.removeAt(0)
+            self.addItem(item)
+            
+class VerticalLayout(QtGui.QGraphicsLinearLayout):
+    def __init__(self):
+        super(VerticalLayout, self).__init__(QtCore.Qt.Vertical)
+
+    def fromLayout(self, otherLayout):
+        if not otherLayout:
+            return
+        for i in range(otherLayout.count()):
+            item = otherLayout.itemAt(0)
+            otherLayout.removeAt(0)
+            self.addItem(item)
+            
+class GridLayout(QtGui.QGraphicsGridLayout):
+    def __init__(self):
+        super(GridLayout,self).__init__()
+
+    def fromLayout(self, otherLayout):
+        if not otherLayout:
+            return
+        for i in range(otherLayout.count()):
+            item = otherLayout.itemAt(0)
+            otherLayout.removeAt(0)
+            self.addItem(item)
+
+    def addItem(self,item):
+        gr = self.count()
+        gc = self.count()
+        super(GridLayout,self).addItem(item, gr, gc)
+
+    def removeItem(self, item):
+        for i in range(self.count()):
+            if item == self.itemAt(i):
+                self.removeAt(i)
+                break
 
 def layout_create(style):
     new_layout = None
     if style in ['horizontal']:
-        new_layout = QtGui.QGraphicsLinearLayout()
+        new_layout = HorizontalLayout()
     elif style in ['vertical']:
-        new_layout = QtGui.QGraphicsLinearLayout(QtCore.Qt.Vertical)
+        new_layout = VerticalLayout()
     elif style in ['grid']:
-        grid_row = 0
-        new_layout = QtGui.QGraphicsGridLayout()
+        new_layout = GridLayout()
     elif style in ['anchor']:
         new_layout = AnchorLayout()
     return new_layout
-
-def layout_add(layout, style, item,
-               gr = 0, gc = 0,
-               anchor_item = None, item_ap = None, anchor_ap = None ):
-    if style in ['grid']:
-        layout.addItem(item, gr, gc)
-    elif style in ['anchor']:
-        if isinstance(item_ap,QtCore.Qt.Corner) and\
-           isinstance(anchor_ap,QtCore.Qt.Corner):
-            layout.addCornerAnchors(item, item_ap,
-                                    anchor_item, anchor_ap)
-        elif isinstance(item_ap, QtCore.Qt.AnchorPoint) and\
-        isinstance(anchor_ap, QtCore.Qt.AnchorPoint):
-            layout.addAnchor(item, item_ap,
-                             anchor_item, anchor_ap)
-    else:
-        layout.addItem(item)
-    
-def layout_remove(layout, style, item):
-    if style in ['grid', 'anchor', 'vertical', 'horizontal']:
-        for i in range(layout.count()):
-            if item == layout.itemAt(i):
-                layout.removeAt(i)
-                break
-
-def layout_move(old_layout, new_layout, new_style):
-    grid_row = 0
-    for i in range(0,old_layout.count()):
-        item = old_layout.itemAt(0)
-        old_layout.removeAt(0)
-        if new_style in ['grid']:
-            new_layout.addItem(item, grid_row, grid_row)
-            grid_row += 1
-        elif new_style in ['anchor']:
-            if new_layout.count():
-                layout_add(new_layout, new_style,
-                           item,
-                           item_ap = convertAnchorToQt('center left'),
-                           anchor_item = new_layout.itemAt(new_layout.count()-1),
-                           anchor_ap = convertAnchorToQt('center right'))
-            else:
-                layout_add(new_layout, new_style,
-                           item,
-                           item_ap = convertAnchorToQt('top left'),
-                           anchor_item = new_layout,
-                           anchor_ap = QtCore.Qt.TopLeftCorner)
-        else:
-            new_layout.addItem(item)

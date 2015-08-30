@@ -13,58 +13,13 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 import view_attributes as view_attr
-from layout import layout_create, layout_add, layout_remove, layout_move
-from anchors import convertAnchorToQt
+from layout import layout_create
+from graphics_items import RoundRectItem
 
 # NEED RESIZE
 # NEED NEW DRAW STYLES
 # NEED WAYS OF SPECIFYING ANCHORING
 # NEED WAYS OF SPECIFYING LAYOUTS
-
-class RoundRectItem(QtGui.QGraphicsRectItem):
-    def __init__(self, x, y, w, h, xr = 0.1, yr = 0.1, parent = None):
-        super(RoundRectItem, self).__init__(x,y,w,h,parent)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
-        self.xr = xr
-        self.yr = yr
-
-    # gotten from qt_graphicsItem_highlightSelected, qgraphicsitem.cpp : 7574
-    def highlightSelected(item, painter, option):
-        murect = painter.transform().mapRect(QtCore.QRectF(0, 0, 1, 1))
-        if not murect.width() or not murect.height():
-            return
-
-        mbrect = painter.transform().mapRect(item.boundingRect())
-        if min(mbrect.width(), mbrect.height()) < 1.0:
-            return
-
-        itemPenWidth = item.pen().widthF()
-        
-        pad = itemPenWidth / 2
-
-        penWidth = 0 # cosmetic pen
-
-        fgcolor = option.palette.windowText().color()
-        bgcolor = QtGui.QColor(
-            0 if fgcolor.red()   > 127 else 255,
-            0 if fgcolor.green() > 127 else 255,
-            0 if fgcolor.blue()  > 127 else 255)
-
-        painter.setPen(QtGui.QPen(bgcolor, penWidth, QtCore.Qt.SolidLine));
-        painter.setBrush(QtCore.Qt.NoBrush);
-        painter.drawRect(item.boundingRect().adjusted(pad, pad, -pad, -pad));
-
-        painter.setPen(QtGui.QPen(option.palette.windowText(), 0, QtCore.Qt.DashLine));
-        painter.setBrush(QtCore.Qt.NoBrush);
-        painter.drawRect(item.boundingRect().adjusted(pad, pad, -pad, -pad));
-
-    def paint(self, painter, option, widget=None):
-        painter.setPen(self.pen());
-        painter.setBrush(self.brush());
-        minR = min(self.rect().width()*self.xr, self.rect().height()*self.yr)
-        painter.drawRoundedRect(self.rect(), minR, minR)
-        if option.state & QtGui.QStyle.State_Selected:
-            self.highlightSelected(painter, option)
 
 class EditorItem(QtGui.QGraphicsWidget):
 
@@ -96,26 +51,25 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self._view_model
         
     def loadResources(self):
-        old_layout = self.layout()
         new_layout = layout_create(self['layout style'].value)
+        if type(self.layout()) != type(new_layout):
+            new_layout.fromLayout(self.layout())
+            self.setLayout(new_layout)
 
-        if old_layout:
-            layout_move(old_layout, new_layout, self['layout style'].value)
-
-        self.setLayout(new_layout)
+        sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
+        width = sh.width()
+        height = sh.height()
 
         if self['icon'].value and self['draw style'].value == 'icon':
-            self._pixmap = QtGui.QPixmap(self['icon'].value)
             self._item = QtGui.QGraphicsPixmapItem()
-            self._item.setPixmap(self._pixmap)
-            self.resize(QtCore.QSizeF(self._pixmap.size()))
+            self._item.setPixmap( QtGui.QPixmap(self['icon'].value).scaled(width,height) )
         else:
             if self['draw style'].value == 'rect':
-                self._item = QtGui.QGraphicsRectItem(0,0,self['width'].value, self['height'].value)
+                self._item = QtGui.QGraphicsRectItem(0,0,width,height)
             elif self['draw style'].value == 'ellipse':
-                self._item = QtGui.QGraphicsEllipseItem(0,0,self['width'].value, self['height'].value)
+                self._item = QtGui.QGraphicsEllipseItem(0,0,width,height)
             elif self['draw style'].value == 'round rect':
-                self._item = RoundRectItem(0,0,self['width'].value, self['height'].value)
+                self._item = RoundRectItem(0,0,width,height)
             if self._item:
                 self._item.setBrush(QtGui.QColor(self['color'].value))
 
@@ -129,24 +83,24 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self._item.boundingRect()
 
     def sizeHint(self, which, constraint):
-        if self.layout() and self.layout().count():
+        shw = 0; shh = 0
+        if self.layout():
             sh = self.layout().sizeHint(which, constraint)
-            return sh
-        elif self._item:
-            return self._item.boundingRect().size()
-        else:
-            return QtCore.QSizeF(self['width'].value,self['height'].value)
+            shw = sh.width()
+            shh = sh.height()
+        #print shw,shh, self['width'].value, self['height'].value
+        return QtCore.QSizeF(
+            max(shw, self['width'].value),
+            max(shh, self['height'].value)
+        )
         
     def updateGraphicsItem(self):
         self.layout().invalidate()
-        if self.layout().count():
-            width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
-            height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
-        else:
-            width = self['width'].value
-            height = self['height'].value
-        if self['draw style'].value == 'icon':
-            self._item.setPixmap( self._pixmap.scaled(width,height) )
+        sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
+        width = sh.width()
+        height = sh.height()
+        if self['icon'].value and self['draw style'].value == 'icon':
+            self._item.setPixmap( QtGui.QPixmap(self['icon'].value).scaled(width,height) )
         else:
             self._item.setRect(0,0,width,height)
         self.updateGeometry()
@@ -155,23 +109,17 @@ class EditorItem(QtGui.QGraphicsWidget):
             self._parent.updateGraphicsItem()
 
     def removeChild(self, child):
-        layout_remove(self.layout(), self['layout style'].value, child)
+        self.layout().removeItem(child)
         self.viewModel().removeChild(child.viewModel())
         child._parent = None
         self.updateGraphicsItem()
 
     def addChild(self, child):
-        layout_add(self.layout(), self['layout style'].value, child)
+        self.layout().addItem(child)
         self.viewModel().addChild(child.viewModel())
         child._parent = self
         self.updateGraphicsItem()
 
-    def parentEditorItem(self):
-        currentParent = self.parentLayoutItem()
-        if currentParent:
-            currentParent = currentParent.parentLayoutItem()
-        return currentParent
-    
     def mousePressEvent(self, event):
         QtGui.QGraphicsWidget.mousePressEvent(self, event)
         self._drag_pos = self.mapFromScene(event.scenePos())
@@ -186,36 +134,23 @@ class EditorItem(QtGui.QGraphicsWidget):
         if self._drag:
             self._drag = False
             newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
-            currentParent = self.parentEditorItem()
+            currentParent = self._parent
             if newParent:
                 p = newParent[0]
-                style = p.viewModel()['layout style'].value
-                anchorUpdated = False
-                if style in ['anchor']:
-                    d, a1, a2, ci = p.layout().getClosestAnchors(self)
-                    if d > 0 and d < 10:
-                        anchorUpdated = True
-                        layout_add(p.layout(),
-                                   style,
-                                   self,
-                                   anchor_item = ci,
-                                   item_ap = convertAnchorToQt(a2),
-                                   anchor_ap = convertAnchorToQt(a1))
                 if currentParent:
                     if p != currentParent:
                         currentParent.removeChild(self)
                         p.addChild(self)
                     else:
-                        if not anchorUpdated:
-                            self.setPos(self._original_pos)
+                        self.setPos(self._original_pos)
                 else:
                     p.addChild(self)
-                self.updateGraphicsItem()
             elif currentParent:
                 currentParent.removeChild(self)
                 self.setParentItem(None)
                 self.setParent(self.scene())
                 self.setPos(event.scenePos() - self._drag_pos)
+        self.updateGraphicsItem()
 
     def updateAttributes(self,attrs):
         self.loadResources()
