@@ -14,6 +14,7 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 from collections import OrderedDict
+from graphics_items import PushButton
 
 # SHOULD USE QValidators!
 # SHOULD USE sliders, spinboxes, etc.
@@ -75,25 +76,62 @@ class AttributeEditor(QtGui.QWidget):
         label.setWordWrap(True)
 
         obj = None
-        if attr.kind in ['float','int','double','string','file']:
+        if attr.kind in ['float','int','double','string']:
             obj = QtGui.QLineEdit()
             obj.editingFinished.connect(self.updateEdits)
             obj.setText(str(attr.value))
+            self._input_dict[name] = obj
         elif attr.kind in ['code']:
             obj = QtGui.QTextEdit()
             obj.editingFinished.connect(self.updateEdits)
             obj.setText(attr.value)
+            self._input_dict[name] = obj
         elif attr.kind in ['list'] and attr.value in attr.options:
             obj = QtGui.QComboBox()
             obj.currentIndexChanged.connect(self.updateEdits)
             obj.addItems(attr.options)
             obj.setCurrentIndex(attr.options.index(attr.value))
-
-        if obj:
             self._input_dict[name] = obj
-            self.layout.addWidget(label)
+        elif 'file' in attr.kind:
+            obj = PushButton()
+            obj.setText(attr.value)
+            obj.setMaximumWidth(self.maximumWidth() * 0.8)
+            obj.clicked.connect(
+                lambda : self.open_file(name, obj, attr.kind.split('_')[1])
+            )
+            self._input_dict[name] = obj
+        elif 'dictionary' in attr.kind:
+            label = None
+            _type = attr.kind.split('_')[1]
+            obj = QtGui.QGroupBox(name)
+            layout = QtGui.QFormLayout()
+            self._input_dict[name] = {}
+            for key_name in attr.options:
+                if 'bool' in _type:
+                    cb = QtGui.QCheckBox()
+                    cb.setCheckState(bool(attr.value[key_name]))
+                    layout.addRow(QtGui.QLabel(key_name+':'), cb)
+                    self._input_dict[name][key_name] = cb
+                else:
+                    print 'Unknown dictionary value type: {}'.format(_type)
+                    break
+            obj.setLayout(layout)
+        if obj:
+            if label: self.layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
             self.layout.addWidget(obj)
+
+    def open_file(self, name, obj, file_type):
+        fileName = QtGui.QFileDialog.getOpenFileName(self,
+                                                     "Select {} file".format(name),
+                                                     obj.text(),
+                                                     "All Files (*);;{} Files (*.{})".format(name,file_type),
+                                                     options = QtGui.QFileDialog.Options())
+        if fileName:
+            obj.setText(fileName)
+
+    def open_dir(self, name, obj):
+        pass
 
     def clear_ui(self):
         self._input_dict = {}
@@ -171,7 +209,7 @@ class AttributeEditor(QtGui.QWidget):
     def save(self, event):
         for name,obj in self._input_dict.iteritems():
             kind = self._output_obj[name].kind
-            if kind in ['string','file']:
+            if kind in ['string']:
                 self._output_obj[name].value = obj.text()
             elif kind in ['code']:
                 self._output_obj[name].value = obj.toPlainText()
@@ -181,6 +219,13 @@ class AttributeEditor(QtGui.QWidget):
                 self._output_obj[name].value = int(obj.text())
             elif kind in ['list']:
                 self._output_obj[name].value = self._output_obj[name].options[obj.currentIndex()]
+            elif 'file' in kind:
+                self._output_obj[name].value = obj.text()
+            elif 'dictionary' in kind:
+                _type = kind.split('_')[1]
+                if 'bool' in _type:
+                    for key_name in self._output_obj[name].options:
+                        self._output_obj[name][key_name] = bool(obj[key_name].checkState & QtCore.Qt.Checked)
         self.hide(event)
         if self._output_func: self._output_func(self._output_obj)
         self._unsaved_edits = False

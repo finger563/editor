@@ -27,13 +27,13 @@ class Object(classes.Attribute):
 class Icon(classes.Attribute):
     tooltip = 'Icon displayed as background of the object.'
     def __init__(self, value):
-        super(Icon, self).__init__("file",value)
+        super(Icon, self).__init__("file_png",value)
 
 class Draw_Style(classes.Attribute):
     tooltip = 'How the object is drawn.'
     options = ['icon', 'ellipse', 'rect', 'round rect']
     def __init__(self, value):
-        super(Draw_Style, self).__init__("list",value)
+        super(Draw_Style, self).__init__("dictionary_bool",value)
 
 class Root(classes.Attribute):
     tooltip = 'What acts as the local anchor for this object?'
@@ -62,7 +62,7 @@ class Anchor(classes.Attribute):
                'top center', 'bottom center']
     editable = False
     def __init__(self, value):
-        super(Anchor, self).__init__("list",value)
+        super(Anchor, self).__init__("dictionary_reference",value)
 
 class Scope(classes.Attribute):
     tooltip = 'From what scope will objects of this kind be drawn in this view?'

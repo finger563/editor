@@ -12,6 +12,13 @@ draw styles not natively found in qgraphics*items
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+class PushButton(QtGui.QPushButton):
+    def paintEvent(self, event):
+        tmp_text = self.text()
+        self.setText(tmp_text.split('/')[-1])
+        super(PushButton,self).paintEvent(event)
+        self.setText(tmp_text)
+
 class RoundRectItem(QtGui.QGraphicsRectItem):
     def __init__(self, x, y, w, h, xr = 0.1, yr = 0.1, parent = None):
         super(RoundRectItem, self).__init__(x,y,w,h,parent)
