@@ -52,6 +52,7 @@ class EditorView(QtGui.QGraphicsView):
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
         scene = EditorScene(self)
+        self.setScene(scene)
 
         fname = 'view.txt'
         vm = self.openVM(fname)
@@ -61,7 +62,6 @@ class EditorView(QtGui.QGraphicsView):
 
         self.saveVM(fname)
         
-        self.setScene(scene)
         self.show()
 
     def saveVM(self, fname):
@@ -76,7 +76,7 @@ class EditorView(QtGui.QGraphicsView):
         return vm
 
     def buildView(self, viewModel, parent = None):
-        t = EditorItem(viewModel=viewModel)
+        t = EditorItem(parent=parent,viewModel=viewModel)
         for cvm in viewModel.children:
             t.addChild(self.buildView(cvm, t))
         return t

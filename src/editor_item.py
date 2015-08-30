@@ -129,21 +129,21 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def sizeHint(self, which, constraint):
         if self.layout() and self.layout().count():
-            return self.layout().sizeHint(which, constraint)
+            sh = self.layout().sizeHint(which, constraint)
+            return sh
         elif self._item:
             return self._item.boundingRect().size()
         else:
             return QtCore.QSizeF(self['width'].value,self['height'].value)
         
-    def updateGraphicsItem(self, width = 0, height = 0):
+    def updateGraphicsItem(self):
         self.layout().invalidate()
-        if not width and not height:
-            if self.layout().count():
-                width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
-                height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
-            else:
-                width = self['width'].value
-                height = self['height'].value
+        if self.layout().count():
+            width = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).width()
+            height = self.layout().sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF()).height()
+        else:
+            width = self['width'].value
+            height = self['height'].value
         if self['draw style'].value == 'icon':
             self._item.setPixmap( self._pixmap.scaled(width,height) )
         else:

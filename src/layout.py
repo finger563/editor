@@ -11,6 +11,8 @@ and modifications of layouts.
 
 from PyQt4 import QtCore, QtGui
 
+from anchors import convertAnchorToQt, AnchorLayout
+
 def layout_create(style):
     new_layout = None
     if style in ['horizontal']:
@@ -21,7 +23,7 @@ def layout_create(style):
         grid_row = 0
         new_layout = QtGui.QGraphicsGridLayout()
     elif style in ['anchor']:
-        new_layout = QtGui.QGraphicsAnchorLayout()
+        new_layout = AnchorLayout()
     return new_layout
 
 def layout_add(layout, style, item,
@@ -30,31 +32,42 @@ def layout_add(layout, style, item,
     if style in ['grid']:
         layout.addItem(item, gr, gc)
     elif style in ['anchor']:
-        layout.addCornerAnchors(item, item_ap,
-                                anchor_item, anchor_ap);
+        if isinstance(item_ap,QtCore.Qt.Corner):
+            layout.addCornerAnchors(item, item_ap,
+                                    anchor_item, anchor_ap)
+        else:
+            layout.addAnchor(item, item_ap,
+                             anchor_item, anchor_ap)
     else:
         layout.addItem(item)
     
 def layout_remove(layout, style, item):
-    if style in ['grid']:
-        pass
-    elif style in ['anchor']:
-        pass
-    else:
-        layout.removeItem(item)
+    if style in ['grid', 'anchor', 'vertical', 'horizontal']:
+        for i in range(layout.count()):
+            if item == layout.itemAt(i):
+                layout.removeAt(i)
+                break
 
 def layout_move(old_layout, new_layout, new_style):
+    grid_row = 0
     for i in range(0,old_layout.count()):
         item = old_layout.itemAt(0)
         old_layout.removeAt(0)
         if new_style in ['grid']:
-            new_layout.addItem(item, grid_row, 0)
-            print "added {} to grid row {}, count {}".format(item,
-                                                             grid_row+1,
-                                                             new_layout.count())
+            new_layout.addItem(item, grid_row, grid_row)
             grid_row += 1
         elif new_style in ['anchor']:
-            new_layout.addCornerAnchors(item, QtCore.Qt.TopLeftCorner,
-                                        new_layout, QtCore.Qt.TopLeftCorner);
+            if new_layout.count():
+                layout_add(new_layout, new_style,
+                           item,
+                           item_ap = convertAnchorToQt('center left'),
+                           anchor_item = new_layout.itemAt(new_layout.count()-1),
+                           anchor_ap = convertAnchorToQt('center right'))
+            else:
+                layout_add(new_layout, new_style,
+                           item,
+                           item_ap = convertAnchorToQt('top left'),
+                           anchor_item = new_layout,
+                           anchor_ap = QtCore.Qt.TopLeftCorner)
         else:
             new_layout.addItem(item)
