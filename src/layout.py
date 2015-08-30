@@ -149,14 +149,15 @@ class GridLayout(QtGui.QGraphicsGridLayout):
         gr, ok = QtGui.QInputDialog.getInteger(None,
                                                "Item '{}' Row".format(item['kind'].value),
                                                "Row:", 0, 0)
-        if not ok:
-            gr = self.count()
+        if not ok: gr = -1
         gc, ok = QtGui.QInputDialog.getInteger(None,
                                                "Item '{}' Column".format(item['kind'].value),
                                                "Column:", 0, 0)
-        if not ok:
-            gc = self.count()
-        super(GridLayout,self).addItem(item, gr, gc)
+        if not ok: gc = -1
+        if gc >= 0 and gr >= 0:
+            super(GridLayout,self).addItem(item, gr, gc)
+        else:
+            item.setPos(item._original_pos)
 
     def updateItem(self, item):
         self.addItem(item)
