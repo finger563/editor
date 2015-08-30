@@ -16,11 +16,6 @@ import view_attributes as view_attr
 from layout import layout_create
 from graphics_items import RoundRectItem
 
-# NEED RESIZE
-# NEED NEW DRAW STYLES
-# NEED WAYS OF SPECIFYING ANCHORING
-# NEED WAYS OF SPECIFYING LAYOUTS
-
 class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
@@ -88,7 +83,6 @@ class EditorItem(QtGui.QGraphicsWidget):
             sh = self.layout().sizeHint(which, constraint)
             shw = sh.width()
             shh = sh.height()
-        #print shw,shh, self['width'].value, self['height'].value
         return QtCore.QSizeF(
             max(shw, self['width'].value),
             max(shh, self['height'].value)

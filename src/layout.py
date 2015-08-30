@@ -146,8 +146,16 @@ class GridLayout(QtGui.QGraphicsGridLayout):
             self.addItem(item)
 
     def addItem(self,item):
-        gr = self.count()
-        gc = self.count()
+        gr, ok = QtGui.QInputDialog.getInteger(None,
+                                               "Item '{}' Row".format(item['kind'].value),
+                                               "Row:", 0, 0)
+        if not ok:
+            gr = self.count()
+        gc, ok = QtGui.QInputDialog.getInteger(None,
+                                               "Item '{}' Column".format(item['kind'].value),
+                                               "Column:", 0, 0)
+        if not ok:
+            gc = self.count()
         super(GridLayout,self).addItem(item, gr, gc)
 
     def updateItem(self, item):

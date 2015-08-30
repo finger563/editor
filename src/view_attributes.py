@@ -13,7 +13,7 @@ import inspect
 import classes
 
 test = inspect.getmembers(classes, inspect.isclass)
-objects = ['Container']
+objects = ['Container', 'Association']
 for key,val in test:
     if issubclass(val,classes.Model):
         objects.append(key)
