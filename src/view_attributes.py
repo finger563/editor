@@ -44,6 +44,16 @@ class Root(classes.Attribute):
     def __init__(self, value):
         super(Root, self).__init__("list",value)
 
+class Source(classes.Attribute):
+    tooltip = 'What is the external oobject source reference for this object'
+    def __init__(self, value):
+        super(Source, self).__init__("string",value)
+
+class Destination(classes.Attribute):
+    tooltip = 'What is the external object destination reference for this object'
+    def __init__(self, value):
+        super(Destination, self).__init__("string",value)
+
 class Anchor(classes.Attribute):
     tooltip = 'What other object:point acts as the anchor for this object?'
     options = ['top left', 'top right',

@@ -25,24 +25,28 @@ class ViewModel(object):
                  scope = 'view',
                  draw_style = 'icon',
                  icon_file = "",
+                 src = '',
+                 dst = '',
                  color = 'blue',
                  width = 50.0,
                  height = 50.0,
                  layout = 'horizontal'):
         self.attributes = OrderedDict()
         self['kind'] = view_attr.Object(kind)
+        self['scope'] = view_attr.Scope(scope)
+        self['layout style'] = view_attr.Layout_Style(layout)
+        self['width'] = view_attr.Width(width)
+        self['height'] = view_attr.Height(height)
+        self['draw style'] = view_attr.Draw_Style(draw_style)
+        self['icon'] = view_attr.Icon(icon_file)
+        self['color'] = view_attr.Color(color)
         self['text location'] = view_attr.Text_Location(text_loc)
         self['text horizontal alignment'] = view_attr.Text_Horizontal_Alignment(text_ha)
         self['text vertical alignment'] = view_attr.Text_Vertical_Alignment(text_va)
         self['root'] = view_attr.Root(root)
         self['anchor'] = view_attr.Anchor(anchor)
-        self['scope'] = view_attr.Scope(scope)
-        self['icon'] = view_attr.Icon(icon_file)
-        self['draw style'] = view_attr.Draw_Style(draw_style)
-        self['color'] = view_attr.Color(color)
-        self['layout style'] = view_attr.Layout_Style(layout)
-        self['width'] = view_attr.Width(width)
-        self['height'] = view_attr.Height(height)
+        self['source'] = view_attr.Source(src)
+        self['destination'] = view_attr.Source(dst)
 
         self.children = []
 
