@@ -32,10 +32,12 @@ def layout_add(layout, style, item,
     if style in ['grid']:
         layout.addItem(item, gr, gc)
     elif style in ['anchor']:
-        if isinstance(item_ap,QtCore.Qt.Corner):
+        if isinstance(item_ap,QtCore.Qt.Corner) and\
+           isinstance(anchor_ap,QtCore.Qt.Corner):
             layout.addCornerAnchors(item, item_ap,
                                     anchor_item, anchor_ap)
-        else:
+        elif isinstance(item_ap, QtCore.Qt.AnchorPoint) and\
+        isinstance(anchor_ap, QtCore.Qt.AnchorPoint):
             layout.addAnchor(item, item_ap,
                              anchor_item, anchor_ap)
     else:

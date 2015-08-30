@@ -16,7 +16,6 @@ import view_attributes as view_attr
 
 class ViewModel(object):
     def __init__(self,
-                 parent = None,
                  kind = '',
                  root = 'top left',
                  anchor = 'top left',

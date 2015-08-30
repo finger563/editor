@@ -26,6 +26,20 @@ def getClosestPoint(cp, pDict):
             closestPoint = k
     return closestPoint, minDist
 
+def closestAnchors(item1,item2):
+    anchor1 = None
+    anchor2 = None
+    anchors1 = item1.getAnchors()
+    anchors2 = item2.getAnchors()
+    minDist = -1
+    for k1,p1 in anchors1.iteritems():
+        for k2,p2 in anchors2.iteritems():
+            dist = distance(item1.mapToScene(p1),item2.mapToScene(p2))
+            if minDist == -1 or dist < minDist:
+                minDist = dist
+                anchor1, anchor2 = k1,k2
+    return minDist, anchor1, anchor2
+
 def convertAnchorToQt(anchor_name):
     qtAnchor = None
     if anchor_name in ['top left']:
@@ -66,7 +80,31 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
             minY = min(minY,geo.y())
             maxX = max(maxX,geo.x() + width)
             maxY = max(maxY,geo.y() + height)
-
+        if minX < 0 or minY < 0:
+            for i in range(self.count()):
+                item = self.itemAt(i)
+                geo = item.geometry()
+                newx = geo.x() - minX
+                newy = geo.y() - minY
+                item.setPos(newx,newy)
         maxW = maxX - minX
         maxH = maxY - minY
         return QtCore.QSizeF(maxW,maxH)
+
+    def updateGeometry(self):
+        super(AnchorLayout,self).updateGeometry()
+
+    def getClosestAnchors(self, newItem):
+        minDist = -1
+        anchor1 = None
+        anchor2 = None
+        closestItem = None
+        for i in range(self.count()):
+            item = self.itemAt(i)
+            if item != newItem:
+                dist, a1, a2 = closestAnchors(item,newItem)
+                if minDist == -1 or dist < minDist:
+                    minDist = dist
+                    anchor1, anchor2 = a1, a2
+                    closestItem = item
+        return minDist, anchor1, anchor2, closestItem

@@ -14,6 +14,7 @@ from PyQt4 import QtGui
 
 import view_attributes as view_attr
 from layout import layout_create, layout_add, layout_remove, layout_move
+from anchors import convertAnchorToQt
 
 # NEED RESIZE
 # NEED NEW DRAW STYLES
@@ -187,14 +188,29 @@ class EditorItem(QtGui.QGraphicsWidget):
             newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
             currentParent = self.parentEditorItem()
             if newParent:
+                p = newParent[0]
+                style = p.viewModel()['layout style'].value
+                anchorUpdated = False
+                if style in ['anchor']:
+                    d, a1, a2, ci = p.layout().getClosestAnchors(self)
+                    if d > 0 and d < 10:
+                        anchorUpdated = True
+                        layout_add(p.layout(),
+                                   style,
+                                   self,
+                                   anchor_item = ci,
+                                   item_ap = convertAnchorToQt(a2),
+                                   anchor_ap = convertAnchorToQt(a1))
                 if currentParent:
-                    if newParent[0] != currentParent:
+                    if p != currentParent:
                         currentParent.removeChild(self)
-                        newParent[0].addChild(self)
+                        p.addChild(self)
                     else:
-                        self.setPos(self._original_pos)
+                        if not anchorUpdated:
+                            self.setPos(self._original_pos)
                 else:
-                    newParent[0].addChild(self)
+                    p.addChild(self)
+                self.updateGraphicsItem()
             elif currentParent:
                 currentParent.removeChild(self)
                 self.setParentItem(None)
@@ -226,13 +242,12 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.setFlag(QtGui.QGraphicsItem.ItemSendsScenePositionChanges)
 
     def getAnchors(self):
-        a = QtCore.QRectF(0, 0, self.width, self.height)
+        a = self.boundingRect()
         anchorList = {
             "bottom left": a.bottomLeft(),
             "bottom right": a.bottomRight(),
             "top left": a.topLeft(),
             "top right": a.topRight(),
-            "center": a.center(),
             "center left": (a.topLeft() + a.bottomLeft()) / 2.0,
             "center right": (a.topRight() + a.bottomRight()) / 2.0,
             "top center": (a.topLeft() + a.topRight()) / 2.0,
