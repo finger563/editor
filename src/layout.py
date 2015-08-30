@@ -15,7 +15,7 @@ from anchors import convertAnchorToQt, closestAnchors
 
 class AnchorLayout(QtGui.QGraphicsAnchorLayout):
 
-    min_anchoring_dist = 10
+    min_anchoring_dist = 20
     edge_padding = 10
     item_spacing = 10
     
@@ -73,12 +73,14 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
     def addItem(self, item):
         if self.count():
             d, a1, a2, ci = self.getClosestAnchors(item)
+            a1 = convertAnchorToQt(a1)
+            a2 = convertAnchorToQt(a2)
             if d > 0 and d < self.min_anchoring_dist:
                 if isinstance(a1,QtCore.Qt.Corner) and isinstance(a2,QtCore.Qt.Corner):
-                    layout.addCornerAnchors(item, a2,
+                    self.addCornerAnchors(item, a2,
                                             ci, a1)
                 elif isinstance(a1, QtCore.Qt.AnchorPoint) and isinstance(a2, QtCore.Qt.AnchorPoint):
-                    layout.addAnchor(item, a2,
+                    self.addAnchor(item, a2,
                                      ci, a1)
         else:
             self.addCornerAnchors(item, convertAnchorToQt('top left'),
