@@ -15,12 +15,13 @@ from PyQt4 import QtGui
 import view_attributes as view_attr
 from layout import layout_create
 from graphics_items import RoundRectItem
+from view_model import ViewModel
 
 class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
                  parent = None,
-                 viewModel = None):
+                 viewModel = ViewModel()):
         super(EditorItem, self).__init__(parent)
 
         self._view_model = viewModel

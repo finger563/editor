@@ -33,7 +33,7 @@ class Draw_Style(classes.Attribute):
     tooltip = 'How the object is drawn.'
     options = ['icon', 'ellipse', 'rect', 'round rect']
     def __init__(self, value):
-        super(Draw_Style, self).__init__("dictionary_bool",value)
+        super(Draw_Style, self).__init__("list",value)
 
 class Root(classes.Attribute):
     tooltip = 'What acts as the local anchor for this object?'

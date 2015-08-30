@@ -19,6 +19,7 @@ import jsonpickle
 from attribute_widget import AttributeEditor
 from editor_item import EditorItem
 from view_model import ViewModel
+from action import Action
 
 class EditorScene(QtGui.QGraphicsScene):
     def __init__(self, parent = None):
@@ -30,8 +31,17 @@ class EditorScene(QtGui.QGraphicsScene):
             item.contextMenuEvent(event)
         else:
             menu = QtGui.QMenu()
-            menu.addAction("EditorScene")
+
+            addNewItem = Action('','New Editor Item', self)
+            addNewItem.triggered.connect(lambda e : self.createNewItem(e, event.scenePos()))
+            menu.addAction(addNewItem)
+
             menu.exec_(event.screenPos())
+
+    def createNewItem(self, event, pos):
+        t = EditorItem()
+        t.setPos(pos)
+        self.addItem(t)
 
 class EditorView(QtGui.QGraphicsView):
 

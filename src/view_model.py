@@ -16,18 +16,18 @@ import view_attributes as view_attr
 
 class ViewModel(object):
     def __init__(self,
-                 kind = '',
+                 kind = 'Container',
                  root = 'top left',
                  anchor = 'top left',
                  text_loc = 'top',
                  text_ha = 'center',
                  text_va = 'center',
                  scope = 'view',
-                 draw_style = 'icon',
+                 draw_style = 'round rect',
                  icon_file = "",
                  src = '',
                  dst = '',
-                 color = 'blue',
+                 color = 'light blue',
                  width = 50.0,
                  height = 50.0,
                  layout = 'horizontal'):
