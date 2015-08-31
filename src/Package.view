@@ -30,7 +30,7 @@
                             {
                                 "py/object": "view_attributes.Layout_Style",
                                 "kind": "list",
-                                "value": "anchor"
+                                "value": "horizontal"
                             }
                         ],
                         [
@@ -86,7 +86,7 @@
                             {
                                 "py/object": "view_attributes.Text_Horizontal_Alignment",
                                 "kind": "list",
-                                "value": "center"
+                                "value": "left"
                             }
                         ],
                         [
@@ -94,7 +94,7 @@
                             {
                                 "py/object": "view_attributes.Text_Vertical_Alignment",
                                 "kind": "list",
-                                "value": "center"
+                                "value": "top"
                             }
                         ],
                         [
@@ -151,7 +151,7 @@
                                     {
                                         "py/object": "view_attributes.Object",
                                         "kind": "list",
-                                        "value": "Component"
+                                        "value": "Message"
                                     }
                                 ],
                                 [
@@ -191,7 +191,7 @@
                                     {
                                         "py/object": "view_attributes.Draw_Style",
                                         "kind": "list",
-                                        "value": "round rect"
+                                        "value": "icon"
                                     }
                                 ],
                                 [
@@ -199,7 +199,7 @@
                                     {
                                         "py/object": "view_attributes.Icon",
                                         "kind": "file_png",
-                                        "value": ""
+                                        "value": "/home/jeb/Repositories/editor/src/icons/model/Message.png"
                                     }
                                 ],
                                 [
@@ -223,7 +223,7 @@
                                     {
                                         "py/object": "view_attributes.Text_Horizontal_Alignment",
                                         "kind": "list",
-                                        "value": "center"
+                                        "value": "left"
                                     }
                                 ],
                                 [
@@ -231,7 +231,7 @@
                                     {
                                         "py/object": "view_attributes.Text_Vertical_Alignment",
                                         "kind": "list",
-                                        "value": "center"
+                                        "value": "top"
                                     }
                                 ],
                                 [
@@ -361,7 +361,7 @@
                                     {
                                         "py/object": "view_attributes.Text_Horizontal_Alignment",
                                         "kind": "list",
-                                        "value": "center"
+                                        "value": "left"
                                     }
                                 ],
                                 [
@@ -369,7 +369,7 @@
                                     {
                                         "py/object": "view_attributes.Text_Vertical_Alignment",
                                         "kind": "list",
-                                        "value": "center"
+                                        "value": "top"
                                     }
                                 ],
                                 [
@@ -427,7 +427,7 @@
                                     {
                                         "py/object": "view_attributes.Object",
                                         "kind": "list",
-                                        "value": "Message"
+                                        "value": "Component"
                                     }
                                 ],
                                 [
@@ -467,7 +467,7 @@
                                     {
                                         "py/object": "view_attributes.Draw_Style",
                                         "kind": "list",
-                                        "value": "icon"
+                                        "value": "round rect"
                                     }
                                 ],
                                 [
@@ -475,7 +475,7 @@
                                     {
                                         "py/object": "view_attributes.Icon",
                                         "kind": "file_png",
-                                        "value": "/home/jeb/Repositories/editor/src/icons/model/Message.png"
+                                        "value": ""
                                     }
                                 ],
                                 [
@@ -483,7 +483,7 @@
                                     {
                                         "py/object": "view_attributes.Color",
                                         "kind": "string",
-                                        "value": "light blue"
+                                        "value": "light gray"
                                     }
                                 ],
                                 [
@@ -499,7 +499,7 @@
                                     {
                                         "py/object": "view_attributes.Text_Horizontal_Alignment",
                                         "kind": "list",
-                                        "value": "center"
+                                        "value": "left"
                                     }
                                 ],
                                 [
@@ -507,7 +507,7 @@
                                     {
                                         "py/object": "view_attributes.Text_Vertical_Alignment",
                                         "kind": "list",
-                                        "value": "center"
+                                        "value": "top"
                                     }
                                 ],
                                 [
