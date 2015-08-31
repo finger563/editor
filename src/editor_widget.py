@@ -17,7 +17,8 @@ from collections import OrderedDict
 import jsonpickle
 
 from attribute_widget import AttributeEditor
-from editor_item import EditorItem
+from view_model_item import ViewModelItem
+from model_item import ModelItem
 from view_model import ViewModel
 from action import Action
 
@@ -46,7 +47,7 @@ class EditorScene(QtGui.QGraphicsScene):
             menu.exec_(event.screenPos())
 
     def createNewItem(self, event, pos):
-        r = EditorItem( viewModel = ViewModel())
+        r = ViewModelItem( viewModel = ViewModel())
         r.setPos(pos)
         self.addItem(r)
 
@@ -76,7 +77,7 @@ class EditorView(QtGui.QGraphicsView):
             vm = self.openVM(fname)
             r = self.buildView(vm)
         except:
-            r = EditorItem(
+            r = ViewModelItem(
                 viewModel = ViewModel(kind = obj.kind)
             )
         scene.setRoot(r)
@@ -92,7 +93,7 @@ class EditorView(QtGui.QGraphicsView):
             return -1
         elif len(root_items) > 1:
             print "WARNING: ADDING TOP LEVEL CONTAINER TO {}".format(fname)
-            root = EditorItem( viewModel = ViewModel() )
+            root = ViewModelItem( viewModel = ViewModel() )
             for r in root_items:
                 root.addChild(r)
         else:
@@ -108,7 +109,7 @@ class EditorView(QtGui.QGraphicsView):
         return vm
 
     def buildView(self, viewModel, parent = None):
-        t = EditorItem(parent=parent,viewModel=viewModel)
+        t = ViewModelItem(parent=parent,viewModel=viewModel)
         for cvm in viewModel.children:
             t.addChild(self.buildView(cvm, t))
         return t

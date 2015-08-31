@@ -1,8 +1,9 @@
 """
-Editor Widget 
+Model Item
 
-These classes allow users to view
-and edit models in the project in tabs.
+This class defines the widget
+which allows for viewing and editing
+of models.
 
 * author: William Emfinger
 * website: github.com/finger563/editor 
@@ -18,12 +19,12 @@ from graphics_items import RoundRectItem, TextItem
 from view_model import ViewModel
 from action import Action
 
-class EditorItem(QtGui.QGraphicsWidget):
+class ModelItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
                  parent = None,
                  viewModel = ViewModel()):
-        super(EditorItem, self).__init__(parent)
+        super(ModelItem, self).__init__(parent)
 
         self._view_model = viewModel
         self._item = None
@@ -81,7 +82,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.createItem(width, height)
 
     def paint(self, painter, option, widget = None):
-        super(EditorItem, self).paint(painter, option, widget)
+        super(ModelItem, self).paint(painter, option, widget)
         if self._item:
             self._item.paint(painter, option, widget)
         if self._label:
@@ -226,4 +227,4 @@ class EditorItem(QtGui.QGraphicsWidget):
             self.scene().removeItem(self)
 
     def addNewItem(self, event):
-        self.addChild(EditorItem(self, viewModel = ViewModel()))
+        self.addChild(ModelItem(self, viewModel = ViewModel()))
