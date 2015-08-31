@@ -86,6 +86,7 @@ class AttributeEditor(QtGui.QWidget):
     def add_header(self, attrs):
         label = QtGui.QLabel()
         label.setText("Attribute Editor")
+        label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
         self._layout.addWidget(label)
         obj = None
