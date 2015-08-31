@@ -66,16 +66,23 @@ class EditorView(QtGui.QGraphicsView):
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
-    def init_ui(self, obj = None, fname = ''):
+    def init_ui(self, obj = None, fname = '', view_type = 'model'):
         scene = EditorScene(self)
         self.setScene(scene)
+        self.view_type = view_type
 
         try:
             if not fname:
                 fname = obj.kind + '.view'
             vm = self.openVM(fname)
-            r = self.buildViewModel(vm)
-        except:
+            if self.view_type == 'model':
+                r = self.buildModel(obj, vm)
+            elif self.view_type == 'view model':
+                r = self.buildViewModel(vm)
+        except Exception, e:
+            print "WARNING: Could not load '{}' to generate '{}' view for {}:\n\t{}".format(
+                fname, self.view_type, obj['name'].value, e
+            )
             r = ViewModelItem(
                 viewModel = ViewModel(kind = obj.kind)
             )
@@ -83,6 +90,16 @@ class EditorView(QtGui.QGraphicsView):
         scene.addItem(r)
 
         self.show()
+
+    def buildModel(self, model, view_model, parent = None):
+        t = ModelItem( parent = parent, model = model, viewModel = view_model)
+        return t
+
+    def buildViewModel(self, viewModel, parent = None):
+        t = ViewModelItem(parent=parent,viewModel=viewModel)
+        for cvm in viewModel.children:
+            t.addChild(self.buildViewModel(cvm, t))
+        return t
 
     def saveVM(self, fname):
         jsonpickle.set_encoder_options('simplejson',indent=4)
@@ -106,17 +123,6 @@ class EditorView(QtGui.QGraphicsView):
         with open(fname, 'r') as f:
             vm = jsonpickle.decode(f.read())
         return vm
-
-    def buildModel(self, model, view_model, parent = None):
-        
-        t = ModelItem( parent = parent, model = model, viewModel = view_model)
-        
-
-    def buildViewModel(self, viewModel, parent = None):
-        t = ViewModelItem(parent=parent,viewModel=viewModel)
-        for cvm in viewModel.children:
-            t.addChild(self.buildViewModel(cvm, t))
-        return t
 
     def getEditor(self):
         return self.aw

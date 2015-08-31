@@ -27,7 +27,7 @@ class ModelItem(QtGui.QGraphicsWidget):
                  viewModel = ViewModel()):
         super(ModelItem, self).__init__(parent)
 
-        self._model = obj
+        self._model = model
         self._view_model = viewModel
         self._item = None
         self._label = None

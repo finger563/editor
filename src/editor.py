@@ -26,9 +26,12 @@ from output import TabbedOutputWidget
 
 class Editor(QtGui.QMainWindow):
 
+    editor_modes = ['view model','model','meta model']
+
     def __init__(self):
         super(Editor, self).__init__()
         self.init_ui()
+        self.editor_mode = 'model'
 
     def init_ui(self):
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
@@ -96,7 +99,11 @@ class Editor(QtGui.QMainWindow):
         name = item.text(0)
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
-            ev.init_ui(item.Object(), item.Object().kind + '.view')
+            ev.init_ui(
+                obj = item.Object(),
+                fname = item.Object().kind + '.view',
+                view_type = self.editor_mode
+            )
             self.openEditorTabs[name] = ev
             self.tabbedEditorWidget.addTab( ev, name )
         elif self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]) < 0:
@@ -106,6 +113,15 @@ class Editor(QtGui.QMainWindow):
             self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]))
             
     def saveEvent(self, event):
+        if self.editor_mode == 'view model':
+            self.saveCurrentViewModel()
+        elif self.editor_mode == 'model':
+            self.saveCurrentModel()
+            
+    def saveCurrentModel(self):
+        pass
+
+    def saveCurrentViewModel(self):
         fileName = QtGui.QFileDialog.getSaveFileName(self,
                                                      "Save view file",
                                                      '',
