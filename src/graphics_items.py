@@ -19,6 +19,52 @@ class PushButton(QtGui.QPushButton):
         super(PushButton,self).paintEvent(event)
         self.setText(tmp_text)
 
+def alignmentToQt(a):
+    aq = a
+    if a in ['left']:
+        aq = QtCore.Qt.AlignLeft
+    elif a in ['right']:
+        aq = QtCore.Qt.AlignRight
+    elif a in ['horizontal center']:
+        aq = QtCore.Qt.AlignHCenter
+    elif a in ['justify']:
+        aq = QtCore.Qt.AlignJustify
+    elif a in ['top']:
+        aq = QtCore.Qt.AlignTop
+    elif a in ['bottom']:
+        aq = QtCore.Qt.AlignBottom
+    elif a in ['vertical center']:
+        aq = QtCore.Qt.AlignVCenter
+    return aq
+
+class TextItem(QtGui.QGraphicsTextItem):
+    def __init__(self, text = '', parent = None,
+                 ha = QtCore.Qt.AlignLeft,
+                 va = QtCore.Qt.AlignTop):
+        super(TextItem, self).__init__(text, parent)
+        self.setAlignment(ha, va)
+        self.init()
+
+    def init(self):
+        self.updateGeometry()
+        self.document().contentsChange.connect(self.updateGeometry)
+
+    def setAlignment(self, ha, va):
+        self._ha = alignmentToQt(ha)
+        self._va = alignmentToQt(va)
+        _format = QtGui.QTextBlockFormat()
+        _format.setAlignment(self._ha | self._va)
+        cursor = self.textCursor()
+        cursor.select(QtGui.QTextCursor.Document)
+        cursor.mergeBlockFormat(_format)
+        cursor.clearSelection()
+        self.setTextCursor(cursor)
+
+    def updateGeometry(self):
+        self.setTextWidth(-1)
+        self.setTextWidth(self.boundingRect().width())
+        self.setAlignment(self._ha, self._va)
+
 class RoundRectItem(QtGui.QGraphicsRectItem):
     def __init__(self, x, y, w, h, xr = 0.1, yr = 0.1, parent = None):
         super(RoundRectItem, self).__init__(x,y,w,h,parent)

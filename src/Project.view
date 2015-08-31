@@ -86,7 +86,7 @@
                             {
                                 "py/object": "view_attributes.Text_Horizontal_Alignment",
                                 "kind": "list",
-                                "value": "center"
+                                "value": "horizontal center"
                             }
                         ],
                         [
@@ -94,7 +94,7 @@
                             {
                                 "py/object": "view_attributes.Text_Vertical_Alignment",
                                 "kind": "list",
-                                "value": "center"
+                                "value": "vertical center"
                             }
                         ],
                         [
@@ -223,7 +223,7 @@
                                     {
                                         "py/object": "view_attributes.Text_Horizontal_Alignment",
                                         "kind": "list",
-                                        "value": "center"
+                                        "value": "horizontal center"
                                     }
                                 ],
                                 [
@@ -231,7 +231,7 @@
                                     {
                                         "py/object": "view_attributes.Text_Vertical_Alignment",
                                         "kind": "list",
-                                        "value": "center"
+                                        "value": "vertical center"
                                     }
                                 ],
                                 [
@@ -360,7 +360,7 @@
                                             {
                                                 "py/object": "view_attributes.Text_Horizontal_Alignment",
                                                 "kind": "list",
-                                                "value": "center"
+                                                "value": "horizontal center"
                                             }
                                         ],
                                         [
@@ -368,7 +368,7 @@
                                             {
                                                 "py/object": "view_attributes.Text_Vertical_Alignment",
                                                 "kind": "list",
-                                                "value": "center"
+                                                "value": "vertical center"
                                             }
                                         ],
                                         [
@@ -498,7 +498,7 @@
                                             {
                                                 "py/object": "view_attributes.Text_Horizontal_Alignment",
                                                 "kind": "list",
-                                                "value": "center"
+                                                "value": "horizontal center"
                                             }
                                         ],
                                         [
@@ -506,7 +506,7 @@
                                             {
                                                 "py/object": "view_attributes.Text_Vertical_Alignment",
                                                 "kind": "list",
-                                                "value": "center"
+                                                "value": "vertical center"
                                             }
                                         ],
                                         [
@@ -636,7 +636,7 @@
                                             {
                                                 "py/object": "view_attributes.Text_Horizontal_Alignment",
                                                 "kind": "list",
-                                                "value": "center"
+                                                "value": "horizontal center"
                                             }
                                         ],
                                         [
@@ -644,7 +644,7 @@
                                             {
                                                 "py/object": "view_attributes.Text_Vertical_Alignment",
                                                 "kind": "list",
-                                                "value": "center"
+                                                "value": "vertical center"
                                             }
                                         ],
                                         [
@@ -773,7 +773,7 @@
                                                     {
                                                         "py/object": "view_attributes.Text_Horizontal_Alignment",
                                                         "kind": "list",
-                                                        "value": "center"
+                                                        "value": "horizontal center"
                                                     }
                                                 ],
                                                 [
@@ -781,7 +781,7 @@
                                                     {
                                                         "py/object": "view_attributes.Text_Vertical_Alignment",
                                                         "kind": "list",
-                                                        "value": "center"
+                                                        "value": "vertical center"
                                                     }
                                                 ],
                                                 [
@@ -911,7 +911,7 @@
                                                     {
                                                         "py/object": "view_attributes.Text_Horizontal_Alignment",
                                                         "kind": "list",
-                                                        "value": "center"
+                                                        "value": "horizontal center"
                                                     }
                                                 ],
                                                 [
@@ -919,7 +919,7 @@
                                                     {
                                                         "py/object": "view_attributes.Text_Vertical_Alignment",
                                                         "kind": "list",
-                                                        "value": "center"
+                                                        "value": "vertical center"
                                                     }
                                                 ],
                                                 [
@@ -1048,7 +1048,7 @@
                                                             {
                                                                 "py/object": "view_attributes.Text_Horizontal_Alignment",
                                                                 "kind": "list",
-                                                                "value": "center"
+                                                                "value": "horizontal center"
                                                             }
                                                         ],
                                                         [
@@ -1056,7 +1056,7 @@
                                                             {
                                                                 "py/object": "view_attributes.Text_Vertical_Alignment",
                                                                 "kind": "list",
-                                                                "value": "center"
+                                                                "value": "vertical center"
                                                             }
                                                         ],
                                                         [

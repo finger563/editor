@@ -14,7 +14,7 @@ from PyQt4 import QtGui
 
 import view_attributes as view_attr
 from layout import layout_create
-from graphics_items import RoundRectItem
+from graphics_items import RoundRectItem, TextItem
 from view_model import ViewModel
 from action import Action
 
@@ -33,7 +33,8 @@ class EditorItem(QtGui.QGraphicsWidget):
         self._drag = False
         self._parent = None
 
-        self.resize(self['width'].value, self['height'].value)
+        #self.resize(self['width'].value, self['height'].value)
+        #self.setCursor(QtCore.Qt.OpenHandCursor)
         self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
         self.initializeFlags()
@@ -49,7 +50,11 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self._view_model
         
     def createItem(self, width, height):
-        self._label = QtGui.QGraphicsTextItem(self.viewModel()['kind'].value)
+        self._label = TextItem(self.viewModel()['kind'].value)
+        self._label.setAlignment(
+            self.viewModel()['text horizontal alignment'].value,
+            self.viewModel()['text vertical alignment'].value
+        )
 
         if self['icon'].value and self['draw style'].value == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
@@ -74,7 +79,6 @@ class EditorItem(QtGui.QGraphicsWidget):
         width = sh.width()
         height = sh.height()
         self.createItem(width, height)
-        self.setCursor(QtCore.Qt.OpenHandCursor)
 
     def paint(self, painter, option, widget = None):
         super(EditorItem, self).paint(painter, option, widget)

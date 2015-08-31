@@ -78,13 +78,13 @@ class Text_Location(classes.Attribute):
 
 class Text_Horizontal_Alignment(classes.Attribute):
     tooltip = 'Horizontal Alignment of text'
-    options = ['left','right','center']
+    options = ['left','right','horizontal center','justify']
     def __init__(self, value):
         super(Text_Horizontal_Alignment, self).__init__("list",value)
 
 class Text_Vertical_Alignment(classes.Attribute):
     tooltip = 'Vertical Alignment of text'
-    options = ['top','bottom','center']
+    options = ['top','bottom','vertical center']
     def __init__(self, value):
         super(Text_Vertical_Alignment, self).__init__("list",value)
 
