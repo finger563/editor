@@ -86,7 +86,18 @@ class EditorView(QtGui.QGraphicsView):
 
     def saveVM(self, fname):
         jsonpickle.set_encoder_options('simplejson',indent=4)
-        encoded_output = jsonpickle.encode(self.scene().getRoot().viewModel())
+        root_items = [x for x in self.scene().items() if not x._parent]
+        if not root_items:
+            print "ERROR: MUST HAVE AT LEAST ONE ITEM"
+            return
+        elif len(root_items) > 1:
+            print "WARNING: ADDING TOP LEVEL CONTAINER TO {}".format(fname)
+            root = EditorItem( viewModel = ViewModel() )
+            for r in root_items:
+                root.addChild(r)
+        else:
+            root = root_items[0]
+        encoded_output = jsonpickle.encode(root.viewModel()) + '\n'
         with open(fname, 'w') as f:
             f.write(encoded_output)
 

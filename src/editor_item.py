@@ -155,14 +155,14 @@ class EditorItem(QtGui.QGraphicsWidget):
                     if currentParent:
                         currentParent.removeChild(self)
                     p.addChild(self)
-            else:
-                self.setPos(self._original_pos)
-            '''
             elif currentParent:
                 currentParent.removeChild(self)
                 self.setParentItem(None)
                 self.setParent(self.scene())
                 self.setPos(event.scenePos() - self._drag_pos)
+            '''
+            else:
+                self.setPos(self._original_pos)
             '''
         self.updateGraphicsItem()
 
@@ -218,12 +218,12 @@ class EditorItem(QtGui.QGraphicsWidget):
         menu.exec_(event.screenPos())
 
     def delete(self, event):
+        for i in range(self.layout().count()):
+            self.layout().itemAt(0).delete(None)
         if self._parent:
-            for i in range(self.layout().count()):
-                self.layout().itemAt(0).delete(None)
             self._parent.removeChild(self)
         else:
-            print "ERROR: Cannot delete root object!"
+            self.scene().removeItem(self)
 
     def addNewItem(self, event):
         self.addChild(EditorItem(self, viewModel = ViewModel()))
