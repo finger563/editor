@@ -27,6 +27,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         self._view_model = viewModel
         self._item = None
+        self._label = None
         self._pixmap = None
         self._mouseOver = False
         self._drag = False
@@ -48,6 +49,8 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self._view_model
         
     def createItem(self, width, height):
+        self._label = QtGui.QGraphicsTextItem(self.viewModel()['kind'].value)
+
         if self['icon'].value and self['draw style'].value == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
             self._item.setPixmap( QtGui.QPixmap(self['icon'].value).scaled(width,height) )
@@ -77,6 +80,8 @@ class EditorItem(QtGui.QGraphicsWidget):
         super(EditorItem, self).paint(painter, option, widget)
         if self._item:
             self._item.paint(painter, option, widget)
+        if self._label:
+            self._label.paint(painter, option, widget)
 
     def boundingRect(self):
         if self._item:
@@ -213,9 +218,6 @@ class EditorItem(QtGui.QGraphicsWidget):
             for i in range(self.layout().count()):
                 self.layout().itemAt(0).delete(None)
             self._parent.removeChild(self)
-            #self._parent.layout().removeItem(self)
-            #self._parent.layout().invalidate()
-            #self._parent.update()
         else:
             print "ERROR: Cannot delete root object!"
 
