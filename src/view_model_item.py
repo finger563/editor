@@ -49,6 +49,9 @@ class ViewModelItem(QtGui.QGraphicsWidget):
 
     def viewModel(self):
         return self._view_model
+
+    def model(self):
+        return self._view_model
         
     def createItem(self, width, height):
         self._label = TextItem(self.viewModel()['kind'].value)
@@ -174,7 +177,7 @@ class ViewModelItem(QtGui.QGraphicsWidget):
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self.viewModel().attributes,
+        editor.init_ui(self,
                        self.viewModel().attributes,
                        lambda a : self.updateAttributes(a))
         editor.show(None)
