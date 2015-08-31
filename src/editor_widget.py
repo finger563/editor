@@ -54,6 +54,7 @@ class EditorView(QtGui.QGraphicsView):
 
     drag_mode_key = QtCore.Qt.Key_Control
     scroll_mode_key = QtCore.Qt.Key_Control
+    close_aw_key = QtCore.Qt.Key_Escape
 
     def __init__(self, parent):
         super(EditorView,self).__init__(parent)
@@ -123,6 +124,8 @@ class EditorView(QtGui.QGraphicsView):
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
             self._command_key_pressed = False
+        elif event.key() == self.close_aw_key:
+            self.aw.cancel(None)
 
     def resizeEvent(self, event):
         QtGui.QGraphicsView.resizeEvent(self, event)

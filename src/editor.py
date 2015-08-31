@@ -88,7 +88,7 @@ class Editor(QtGui.QMainWindow):
         self.move(qr.topLeft())
 
     def modelTreeItemDoubleClicked(self, item, col):
-        name = item.Object()['name'].value
+        name = item.text(0)
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
             ev.init_ui(item.Object(), item.Object().kind + '.view')

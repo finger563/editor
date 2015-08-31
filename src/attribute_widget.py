@@ -226,7 +226,7 @@ class AttributeEditor(QtGui.QWidget):
                 if 'bool' in _type:
                     for key_name in self._output_obj[name].options:
                         self._output_obj[name][key_name] = bool(obj[key_name].checkState & QtCore.Qt.Checked)
-        self.hide(event)
+        #self.hide(event)
         if self._output_func: self._output_func(self._output_obj)
         self._unsaved_edits = False
 
