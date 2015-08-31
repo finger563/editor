@@ -101,19 +101,19 @@ class EditorView(QtGui.QGraphicsView):
 
     def buildModel(self, model, view_model, parent = None):
         vm = view_model
-        _type = vm['kind']
+        _type = vm['kind'].value
         if _type in ['Container','Association']:
             t = ModelItem( parent = parent, viewModel = vm )
         else:
             t = ModelItem( parent = parent, viewModel = vm, model = model )
         for cvm in vm.children:
-            print cvm
-            _scope = cvm['scope']
+            _scope = cvm['scope'].value
             child_models = None
-            if _scope in ['view']:
-                child_models = self._root_model.get_children(cvm['kind'])
+            if _scope in ['view','project']:
+                child_models = self._root_model.get_children(cvm['kind'].value)
             elif _scope in ['parent']:
-                child_models = model.get_children(cvm['kind'])
+                child_models = model.get_children(cvm['kind'].value)
+            print cvm, cvm['kind'].value, child_models
             if child_models:
                 for cm in child_models:
                     t.addChild(self.buildModel( cm, cvm, t))

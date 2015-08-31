@@ -22,7 +22,7 @@ class ViewModel(object):
                  text_loc = 'top',
                  text_ha = 'left',
                  text_va = 'top',
-                 scope = 'view',
+                 scope = 'parent',
                  draw_style = 'round rect',
                  icon_file = '',
                  src = '',

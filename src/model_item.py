@@ -56,7 +56,7 @@ class ModelItem(QtGui.QGraphicsWidget):
         return self._model
         
     def createItem(self, width, height):
-        self._label = TextItem(self.viewModel()['kind'].value)
+        self._label = TextItem(self.model()['name'].value)
         self._label.setAlignment(
             self.viewModel()['text horizontal alignment'].value,
             self.viewModel()['text vertical alignment'].value
