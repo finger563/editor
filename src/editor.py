@@ -60,7 +60,7 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_add_action("test2",saveAction)
 
         self.modelTree = ModelTree(None)
-        self.modelTree.populate()
+        self.modelTree.load_meta_model()
         self.modelTree.itemDoubleClicked.connect(self.modelTreeItemDoubleClicked)
         self.tabbedEditorWidget = TabbedEditor(self)
         self.openEditorTabs = {}

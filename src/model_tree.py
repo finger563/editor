@@ -8,7 +8,7 @@ metamodels as tree structures in Qt.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from classes import test_project
+from classes import test_project, root
 
 project = test_project()
 
@@ -28,7 +28,7 @@ class ModelTree(QtGui.QTreeWidget):
         super(ModelTree,self).__init__(parent)
         self.setExpandsOnDoubleClick(False)
         
-    def populate(self, model = project, parent = None):
+    def load_model(self, model = project, parent = None):
         if parent:
             item = ModelTreeItem(parent)
         else:
@@ -40,5 +40,15 @@ class ModelTree(QtGui.QTreeWidget):
                 if "name" in key:
                     item.setText(0, str(attr.value))
         for child in model.children:
-            self.populate(child, item)
+            self.load_model(child, item)
 
+    def load_meta_model(self, meta_model = root, parent = None):
+        if parent:
+            item = ModelTreeItem(parent)
+        else:
+            item = ModelTreeItem()
+            self.addTopLevelItem(item)
+        item.setObject(meta_model)
+        item.setText(0, str(meta_model.kind))
+        for a in meta_model.children._allowed:
+            self.load_meta_model(a(), item)
