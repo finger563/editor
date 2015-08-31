@@ -107,6 +107,7 @@ class EditorView(QtGui.QGraphicsView):
         else:
             t = ModelItem( parent = parent, viewModel = vm, model = model )
         for cvm in vm.children:
+            print cvm
             _scope = cvm['scope']
             child_models = None
             if _scope in ['view']:

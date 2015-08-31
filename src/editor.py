@@ -48,6 +48,10 @@ class Editor(QtGui.QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close) # note that this will call closeEvent
 
+        modeAction = Action('icons/toolbar/run.png', '&Mode', self)        
+        modeAction.setStatusTip('Select editor mode')
+        modeAction.triggered.connect(self.changeMode)
+
         testAction = Action('icons/toolbar/build.png', '&Build', self)
         testAction.setStatusTip('Build code.')
         testAction.triggered.connect(self.testEvent)
@@ -63,15 +67,13 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_init()
         self.toolbar_create("test1")
         self.toolbar_add_action("test1",exitAction)
+        self.toolbar_add_action("test1",modeAction)
         self.toolbar_create("test2")
         self.toolbar_add_action("test2",testAction)
         self.toolbar_add_action("test2",saveAction)
 
         self.modelTree = ModelTree(None)
-        if self.editor_mode in ['model']:
-            self.modelTree.load_model()
-        elif self.editor_mode in ['view model','meta model']:
-            self.modelTree.load_meta_model()
+        self.buildTree(self.modelTree)
         self.modelTree.itemDoubleClicked.connect(self.modelTreeItemDoubleClicked)
         self.tabbedEditorWidget = TabbedEditor(self)
         self.openEditorTabs = {}
@@ -97,6 +99,16 @@ class Editor(QtGui.QMainWindow):
         cp = QtGui.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def clearEditor(self):
+        self.tabbedEditorWidget.clear()
+
+    def buildTree(self, tree):
+        tree.clear()
+        if self.editor_mode in ['model']:
+            tree.load_model()
+        elif self.editor_mode in ['view model','meta model']:
+            tree.load_meta_model()
 
     def modelTreeItemDoubleClicked(self, item, col):
         name = item.text(0)
@@ -136,6 +148,16 @@ class Editor(QtGui.QMainWindow):
                 test = QtGui.QMessageBox.information(self, 'Build',
                                                      'Saved {}.'.format(fileName))
         
+
+    def changeMode(self, event):
+        item, ok = QtGui.QInputDialog.getItem(self, "Select View Mode",
+                                              "View Mode:", self.editor_modes,
+                                              self.editor_modes.index(self.editor_mode), False)
+        if ok and item:
+            if item != self.editor_mode:
+                self.editor_mode = item
+                self.clearEditor()
+                self.buildTree(self.modelTree)
         
     def testEvent(self, event):
         test = QtGui.QMessageBox.information(self, 'Build',
