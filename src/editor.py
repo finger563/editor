@@ -32,6 +32,11 @@ class Editor(QtGui.QMainWindow):
 
     def init_ui(self):
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
+        self.setStyleSheet("""QToolTip {
+                           background-color: black;
+                           color: white;
+                           border: black solid 1px
+                           }""")
         self.setGeometry(300,300,800,600)
         self.setWindowTitle("Editor")
 
