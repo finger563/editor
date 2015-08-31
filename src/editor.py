@@ -113,9 +113,9 @@ class Editor(QtGui.QMainWindow):
                                                      options = QtGui.QFileDialog.Options())
         if fileName:
             if fileName[-5:] != '.view': fileName += '.view'
-            self.tabbedEditorWidget.currentWidget().saveVM(fileName)
-            test = QtGui.QMessageBox.information(self, 'Build',
-                                                 'Saved {}.'.format(fileName))
+            if self.tabbedEditorWidget.currentWidget().saveVM(fileName) == 0:
+                test = QtGui.QMessageBox.information(self, 'Build',
+                                                     'Saved {}.'.format(fileName))
         
         
     def testEvent(self, event):

@@ -89,7 +89,7 @@ class EditorView(QtGui.QGraphicsView):
         root_items = [x for x in self.scene().items() if not x._parent]
         if not root_items:
             print "ERROR: MUST HAVE AT LEAST ONE ITEM"
-            return
+            return -1
         elif len(root_items) > 1:
             print "WARNING: ADDING TOP LEVEL CONTAINER TO {}".format(fname)
             root = EditorItem( viewModel = ViewModel() )
@@ -100,6 +100,7 @@ class EditorView(QtGui.QGraphicsView):
         encoded_output = jsonpickle.encode(root.viewModel()) + '\n'
         with open(fname, 'w') as f:
             f.write(encoded_output)
+        return 0
 
     def openVM(self, fname):
         with open(fname, 'r') as f:
