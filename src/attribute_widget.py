@@ -112,7 +112,7 @@ class AttributeEditor(QtGui.QWidget):
             self._input_dict[name] = obj
         elif attr.kind in ['code']:
             obj = QtGui.QTextEdit()
-            obj.editingFinished.connect(self.updateEdits)
+            obj.textChanged.connect(self.updateEdits)
             obj.setText(attr.value)
             self._input_dict[name] = obj
         elif attr.kind in ['list'] and attr.value in attr.options:
@@ -138,7 +138,7 @@ class AttributeEditor(QtGui.QWidget):
             for key_name in attr.options:
                 if 'bool' in _type:
                     cb = QtGui.QCheckBox()
-                    cb.setCheckState(bool(attr.value[key_name]))
+                    cb.setChecked(bool(attr.value[key_name]))
                     layout.addRow(QtGui.QLabel(key_name+':'), cb)
                     self._input_dict[name][key_name] = cb
                 else:
@@ -215,7 +215,7 @@ class AttributeEditor(QtGui.QWidget):
                 _type = kind.split('_')[1]
                 if 'bool' in _type:
                     for key_name in self._output_obj[name].options:
-                        self._output_obj[name][key_name] = bool(obj[key_name].checkState & QtCore.Qt.Checked)
+                        self._output_obj[name][key_name] = bool(obj[key_name].checkState() & QtCore.Qt.Checked)
         #self.hide(event)
         if self._output_func: self._output_func(self._output_obj)
         self._unsaved_edits = False

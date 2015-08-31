@@ -179,7 +179,7 @@ class ModelItem(QtGui.QGraphicsWidget):
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self.model().attributes,
+        editor.init_ui(self,
                        self.model().attributes,
                        lambda a : self.updateAttributes(a))
         editor.show(None)

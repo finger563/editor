@@ -70,6 +70,7 @@ class EditorView(QtGui.QGraphicsView):
         scene = EditorScene(self)
         self.setScene(scene)
         self.view_type = view_type
+        self._root_model = obj
 
         try:
             if not fname:
@@ -83,21 +84,44 @@ class EditorView(QtGui.QGraphicsView):
             print "WARNING: Could not load '{}' to generate '{}' view for {}:\n\t{}".format(
                 fname, self.view_type, obj['name'].value, e
             )
-            r = ViewModelItem(
-                viewModel = ViewModel(kind = obj.kind)
-            )
+            if self.view_type in ['model']:
+                r = ModelItem(
+                    model = obj,
+                    viewModel = ViewModel(kind = obj.kind)
+                )
+            elif self.view_type in ['view model','meta model']:
+                r = ViewModelItem(
+                    viewModel = ViewModel(kind = obj.kind)
+                )
+        print r
         scene.setRoot(r)
         scene.addItem(r)
 
         self.show()
 
     def buildModel(self, model, view_model, parent = None):
-        t = ModelItem( parent = parent, model = model, viewModel = view_model)
+        vm = view_model
+        _type = vm['kind']
+        if _type in ['Container','Association']:
+            t = ModelItem( parent = parent, viewModel = vm )
+        else:
+            t = ModelItem( parent = parent, viewModel = vm, model = model )
+        for cvm in vm.children:
+            _scope = cvm['scope']
+            child_models = None
+            if _scope in ['view']:
+                child_models = self._root_model.get_children(cvm['kind'])
+            elif _scope in ['parent']:
+                child_models = model.get_children(cvm['kind'])
+            if child_models:
+                for cm in child_models:
+                    t.addChild(self.buildModel( cm, cvm, t))
         return t
 
-    def buildViewModel(self, viewModel, parent = None):
-        t = ViewModelItem(parent=parent,viewModel=viewModel)
-        for cvm in viewModel.children:
+    def buildViewModel(self, view_model, parent = None):
+        vm = view_model
+        t = ViewModelItem(parent = parent, viewModel = vm)
+        for cvm in vm.children:
             t.addChild(self.buildViewModel(cvm, t))
         return t
 
@@ -158,17 +182,12 @@ class EditorView(QtGui.QGraphicsView):
         if self._command_key_pressed:
             zoomInFactor = 1.25
             zoomOutFactor = 1 / zoomInFactor
-
-            # Save the scene pos
             oldPos = self.mapToScene(event.pos())
-
-            # Zoom
             if event.delta() > 0:
                 zoomFactor = zoomInFactor
             else:
                 zoomFactor = zoomOutFactor
             self.scale(zoomFactor, zoomFactor)
-
             oldPosNow = self.mapFromScene(oldPos)
             move = oldPosNow - event.pos()
             self.horizontalScrollBar().setValue(move.x() + self.horizontalScrollBar().value())

@@ -30,8 +30,8 @@ class Editor(QtGui.QMainWindow):
 
     def __init__(self):
         super(Editor, self).__init__()
-        self.init_ui()
         self.editor_mode = 'model'
+        self.init_ui()
 
     def init_ui(self):
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
@@ -68,7 +68,10 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_add_action("test2",saveAction)
 
         self.modelTree = ModelTree(None)
-        self.modelTree.load_meta_model()
+        if self.editor_mode in ['model']:
+            self.modelTree.load_model()
+        elif self.editor_mode in ['view model','meta model']:
+            self.modelTree.load_meta_model()
         self.modelTree.itemDoubleClicked.connect(self.modelTreeItemDoubleClicked)
         self.tabbedEditorWidget = TabbedEditor(self)
         self.openEditorTabs = {}
