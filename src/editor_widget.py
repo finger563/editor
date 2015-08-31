@@ -32,7 +32,6 @@ class EditorScene(QtGui.QGraphicsScene):
     def getRoot(self):
         return self._root
 
-    '''
     def contextMenuEvent(self, event):
         item = self.itemAt(event.scenePos())
         if item:
@@ -47,8 +46,9 @@ class EditorScene(QtGui.QGraphicsScene):
             menu.exec_(event.screenPos())
 
     def createNewItem(self, event, pos):
-        self.getRoot().addChild(EditorItem(self.getRoot(), viewModel = ViewModel()))
-    '''
+        r = EditorItem( viewModel = ViewModel())
+        r.setPos(pos)
+        self.addItem(r)
 
 class EditorView(QtGui.QGraphicsView):
 
