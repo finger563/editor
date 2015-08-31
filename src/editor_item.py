@@ -16,6 +16,7 @@ import view_attributes as view_attr
 from layout import layout_create
 from graphics_items import RoundRectItem
 from view_model import ViewModel
+from action import Action
 
 class EditorItem(QtGui.QGraphicsWidget):
 
@@ -46,16 +47,7 @@ class EditorItem(QtGui.QGraphicsWidget):
     def viewModel(self):
         return self._view_model
         
-    def loadResources(self):
-        new_layout = layout_create(self['layout style'].value)
-        if type(self.layout()) != type(new_layout):
-            new_layout.fromLayout(self.layout())
-            self.setLayout(new_layout)
-
-        sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
-        width = sh.width()
-        height = sh.height()
-
+    def createItem(self, width, height):
         if self['icon'].value and self['draw style'].value == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
             self._item.setPixmap( QtGui.QPixmap(self['icon'].value).scaled(width,height) )
@@ -69,14 +61,28 @@ class EditorItem(QtGui.QGraphicsWidget):
             if self._item:
                 self._item.setBrush(QtGui.QColor(self['color'].value))
 
+    def loadResources(self):
+        new_layout = layout_create(self['layout style'].value)
+        if type(self.layout()) != type(new_layout):
+            new_layout.fromLayout(self.layout())
+            self.setLayout(new_layout)
+
+        sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
+        width = sh.width()
+        height = sh.height()
+        self.createItem(width, height)
         self.setCursor(QtCore.Qt.OpenHandCursor)
 
     def paint(self, painter, option, widget = None):
         super(EditorItem, self).paint(painter, option, widget)
-        self._item.paint(painter, option, widget)
+        if self._item:
+            self._item.paint(painter, option, widget)
 
     def boundingRect(self):
-        return self._item.boundingRect()
+        if self._item:
+            return self._item.boundingRect()
+        elif self.layout():
+            return self.layout().boundingRect()
 
     def sizeHint(self, which, constraint):
         shw = 0; shh = 0
@@ -90,22 +96,20 @@ class EditorItem(QtGui.QGraphicsWidget):
         )
         
     def updateGraphicsItem(self):
+        self.prepareGeometryChange()
         self.layout().invalidate()
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()
-        if self['icon'].value and self['draw style'].value == 'icon':
-            self._item.setPixmap( QtGui.QPixmap(self['icon'].value).scaled(width,height) )
-        else:
-            self._item.setRect(0,0,width,height)
+        self.createItem(width,height)
         self.updateGeometry()
         self.update()
         if self._parent:
             self._parent.updateGraphicsItem()
 
     def removeChild(self, child):
-        self.layout().removeItem(child)
         self.viewModel().removeChild(child.viewModel())
+        self.layout().removeItem(child)
         child._parent = None
         self.updateGraphicsItem()
 
@@ -142,11 +146,15 @@ class EditorItem(QtGui.QGraphicsWidget):
                     if currentParent:
                         currentParent.removeChild(self)
                     p.addChild(self)
+            else:
+                self.setPos(self._original_pos)
+            '''
             elif currentParent:
                 currentParent.removeChild(self)
                 self.setParentItem(None)
                 self.setParent(self.scene())
                 self.setPos(event.scenePos() - self._drag_pos)
+            '''
         self.updateGraphicsItem()
 
     def updateAttributes(self,attrs):
@@ -189,6 +197,27 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
-        menu.addAction("EditorItem")
-        menu.addAction("SetLayout")
+
+        delSelf = Action('', 'Delete', self)
+        delSelf.triggered.connect(self.delete)
+        menu.addAction(delSelf)
+        
+        addSelf = Action('', 'Add new Item', self)
+        addSelf.triggered.connect(self.addNewItem)
+        menu.addAction(addSelf)
+        
         menu.exec_(event.screenPos())
+
+    def delete(self, event):
+        if self._parent:
+            for i in range(self.layout().count()):
+                self.layout().itemAt(0).delete(None)
+            self._parent.removeChild(self)
+            #self._parent.layout().removeItem(self)
+            #self._parent.layout().invalidate()
+            #self._parent.update()
+        else:
+            print "ERROR: Cannot delete root object!"
+
+    def addNewItem(self, event):
+        self.addChild(EditorItem(self, viewModel = ViewModel()))

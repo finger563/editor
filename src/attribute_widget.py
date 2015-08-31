@@ -163,8 +163,8 @@ class AttributeEditor(QtGui.QWidget):
         button.clicked.connect(self.save)
         ok_cancel_layout.addWidget(button)
 
-        button = QtGui.QPushButton('Cancel',self)
-        button.setToolTip('Cancel attribute edits.')
+        button = QtGui.QPushButton('Close',self)
+        button.setToolTip('Close the attribute editor.')
         button.clicked.connect(self.cancel)
         ok_cancel_layout.addWidget(button)
 
