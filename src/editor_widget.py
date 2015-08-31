@@ -61,14 +61,12 @@ class EditorView(QtGui.QGraphicsView):
     def __init__(self, parent):
         super(EditorView,self).__init__(parent)
         self.aw = AttributeEditor(self)
-        self.aw.updateGeo()
-
-    def init_ui(self, obj = None, fname = ''):
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         self._command_key_pressed = False
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
+    def init_ui(self, obj = None, fname = ''):
         scene = EditorScene(self)
         self.setScene(scene)
 
@@ -110,6 +108,7 @@ class EditorView(QtGui.QGraphicsView):
         return vm
 
     def buildModel(self, model, view_model, parent = None):
+        
         t = ModelItem( parent = parent, model = model, viewModel = view_model)
         
 

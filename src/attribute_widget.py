@@ -16,50 +16,78 @@ from PyQt4 import QtGui
 from collections import OrderedDict
 from graphics_items import PushButton
 
-# SHOULD USE QValidators!
-# SHOULD USE sliders, spinboxes, etc.
+# NEED TO USE VALIDATORS
 
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent = None):
         super(AttributeEditor,self).__init__(parent)
-        self.vbox = QtGui.QVBoxLayout(self)
+        self.setContentsMargins(0,0,0,0)
+        self.setMaximumWidth(300)
+
+        self.vbox = QtGui.QVBoxLayout()
+        self.setLayout(self.vbox)
+        self._displayed = False
+        self._unsaved_edits = False
+        self._layout = None
+
+    def init_layout(self):
+        self._input_dict = {}
+        while self._layout and self._layout.count():
+            child = self._layout.takeAt(0)
+            child.widget().deleteLater()
+        self.vbox.removeItem(self.vbox.itemAt(0))
         self.scrollArea = QtGui.QScrollArea()
 
         self.viewWidget = QtGui.QWidget()
-        self.layout = QtGui.QVBoxLayout(self.viewWidget)
+        self._layout = QtGui.QVBoxLayout(self.viewWidget)
 
         self.scrollArea.setWidget(self.viewWidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
         self.vbox.addWidget(self.scrollArea)
+        self._layout.setContentsMargins(20,20,20,20)
+        
+        self.updateGeo()
 
-        self._displayed = False
+    def init_ui(self, attrs, output_obj, output_func = None):
+        if self._unsaved_edits:
+            reply = QtGui.QMessageBox.question(self, 'Save?',
+                                             "Save attribute edits?",
+                                             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                             QtGui.QMessageBox.Yes)
+            if reply == QtGui.QMessageBox.Yes:
+                self.save(None)
+        self.init_layout()
+        self._output_obj = output_obj
+        self._output_func = output_func
+        self.add_header(attrs)
+        for key,attr in attrs.iteritems():
+            if attr.editable:
+                self.add_attribute(key,attr)
+        
+        ok_cancel_widget = QtGui.QWidget(self)
+        ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
+        
+        button = QtGui.QPushButton('Save',self)
+        button.setToolTip('Save the updated attributes.')
+        button.clicked.connect(self.save)
+        ok_cancel_layout.addWidget(button)
+
+        button = QtGui.QPushButton('Close',self)
+        button.setToolTip('Close the attribute editor.')
+        button.clicked.connect(self.cancel)
+        ok_cancel_layout.addWidget(button)
+
+        ok_cancel_widget.setLayout(ok_cancel_layout)
+        self._layout.addWidget(ok_cancel_widget)
         self._unsaved_edits = False
-
-        self.setStyleSheet("""QToolTip { 
-                           background-color: black; 
-                           color: white; 
-                           border: black solid 1px
-                           }""")
-        self.setMaximumWidth(300)
-
-    def paintEvent(self, e):
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        color = QtGui.QColor(0, 0, 0)
-        color.setNamedColor('#d4d4d4')
-        painter.setPen(color)
-        painter.setBrush(QtGui.QColor(255, 255, 255))
-        painter.drawRect(0,0,self.geometry().width(),self.geometry().height())
-        painter.end()
-        super(AttributeEditor, self).paintEvent( e )
 
     def add_header(self, attrs):
         label = QtGui.QLabel()
         label.setText("Attribute Editor")
         label.setWordWrap(True)
-        self.layout.addWidget(label)
+        self._layout.addWidget(label)
         obj = None
         if attrs['draw style'].value in ['icon']:
             pix = QtGui.QPixmap( attrs['icon'].value).scaled(30,30)
@@ -67,7 +95,7 @@ class AttributeEditor(QtGui.QWidget):
             obj.setPixmap(pix)
 
         if obj:
-            self.layout.addWidget(obj)
+            self._layout.addWidget(obj)
 
     def add_attribute(self, name, attr):
         label = QtGui.QLabel()
@@ -117,9 +145,9 @@ class AttributeEditor(QtGui.QWidget):
                     break
             obj.setLayout(layout)
         if obj:
-            if label: self.layout.addWidget(label)
+            if label: self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
-            self.layout.addWidget(obj)
+            self._layout.addWidget(obj)
 
     def open_file(self, name, obj, file_type):
         fileName = QtGui.QFileDialog.getOpenFileName(self,
@@ -132,45 +160,6 @@ class AttributeEditor(QtGui.QWidget):
 
     def open_dir(self, name, obj):
         pass
-
-    def clear_ui(self):
-        self._input_dict = {}
-        while self.layout.count():
-            child = self.layout.takeAt(0)
-            child.widget().deleteLater()
-        
-    def init_ui(self, attrs, output_obj, output_func = None):
-        if self._unsaved_edits:
-            reply = QtGui.QMessageBox.question(self, 'Save?',
-                                             "Save attribute edits?",
-                                             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                             QtGui.QMessageBox.Yes)
-            if reply == QtGui.QMessageBox.Yes:
-                self.save(None)
-        self.clear_ui()
-        self._output_obj = output_obj
-        self._output_func = output_func
-        self.add_header(attrs)
-        for key,attr in attrs.iteritems():
-            if attr.editable:
-                self.add_attribute(key,attr)
-        
-        ok_cancel_widget = QtGui.QWidget(self)
-        ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
-        
-        button = QtGui.QPushButton('Save',self)
-        button.setToolTip('Save the updated attributes.')
-        button.clicked.connect(self.save)
-        ok_cancel_layout.addWidget(button)
-
-        button = QtGui.QPushButton('Close',self)
-        button.setToolTip('Close the attribute editor.')
-        button.clicked.connect(self.cancel)
-        ok_cancel_layout.addWidget(button)
-
-        ok_cancel_widget.setLayout(ok_cancel_layout)
-        self.layout.addWidget(ok_cancel_widget)
-        self._unsaved_edits = False
 
     def updateEdits(self, event = None):
         self._unsaved_edits = True
