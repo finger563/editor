@@ -23,9 +23,11 @@ class ModelItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
                  parent = None,
+                 model= None,
                  viewModel = ViewModel()):
         super(ModelItem, self).__init__(parent)
 
+        self._model = obj
         self._view_model = viewModel
         self._item = None
         self._label = None
@@ -42,13 +44,16 @@ class ModelItem(QtGui.QGraphicsWidget):
         self.loadResources()
 
     def __getitem__(self, key):
-        return self._view_model.attributes[key]
+        return self._model[key]
 
     def __setitem__(self, key, value):
-        self._view_model.attributes[key] = value
+        self._model[key] = value
 
     def viewModel(self):
         return self._view_model
+
+    def model(self):
+        return self._model
         
     def createItem(self, width, height):
         self._label = TextItem(self.viewModel()['kind'].value)
@@ -57,21 +62,21 @@ class ModelItem(QtGui.QGraphicsWidget):
             self.viewModel()['text vertical alignment'].value
         )
 
-        if self['icon'].value and self['draw style'].value == 'icon':
+        if self.viewModel()['icon'].value and self.viewModel()['draw style'].value == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
-            self._item.setPixmap( QtGui.QPixmap(self['icon'].value).scaled(width,height) )
+            self._item.setPixmap( QtGui.QPixmap(self.viewModel()['icon'].value).scaled(width,height) )
         else:
-            if self['draw style'].value == 'rect':
+            if self.viewModel()['draw style'].value == 'rect':
                 self._item = QtGui.QGraphicsRectItem(0,0,width,height)
-            elif self['draw style'].value == 'ellipse':
+            elif self.viewModel()['draw style'].value == 'ellipse':
                 self._item = QtGui.QGraphicsEllipseItem(0,0,width,height)
-            elif self['draw style'].value == 'round rect':
+            elif self.viewModel()['draw style'].value == 'round rect':
                 self._item = RoundRectItem(0,0,width,height)
             if self._item:
-                self._item.setBrush(QtGui.QColor(self['color'].value))
+                self._item.setBrush(QtGui.QColor(self.viewModel()['color'].value))
 
     def loadResources(self):
-        new_layout = layout_create(self['layout style'].value)
+        new_layout = layout_create(self.viewModel()['layout style'].value)
         if type(self.layout()) != type(new_layout):
             new_layout.fromLayout(self.layout())
             self.setLayout(new_layout)
@@ -101,8 +106,8 @@ class ModelItem(QtGui.QGraphicsWidget):
             shw = sh.width()
             shh = sh.height()
         return QtCore.QSizeF(
-            max(shw, self['width'].value),
-            max(shh, self['height'].value)
+            max(shw, self.viewModel()['width'].value),
+            max(shh, self.viewModel()['height'].value)
         )
         
     def updateGraphicsItem(self):
@@ -174,8 +179,8 @@ class ModelItem(QtGui.QGraphicsWidget):
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self.viewModel().attributes,
-                       self.viewModel().attributes,
+        editor.init_ui(self.model().attributes,
+                       self.model().attributes,
                        lambda a : self.updateAttributes(a))
         editor.show(None)
             

@@ -23,9 +23,10 @@ from view_model import ViewModel
 from action import Action
 
 class EditorScene(QtGui.QGraphicsScene):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, itemType = ViewModelItem):
         super(EditorScene, self).__init__(parent)
         self._root = None
+        self._item_type = itemType
 
     def setRoot(self, r):
         self._root = r
@@ -40,14 +41,14 @@ class EditorScene(QtGui.QGraphicsScene):
         else:
             menu = QtGui.QMenu()
 
-            addNewItem = Action('','New Editor Item', self)
+            addNewItem = Action('','New {}'.format(self._item_type.__name__), self)
             addNewItem.triggered.connect(lambda e : self.createNewItem(e, event.scenePos()))
             menu.addAction(addNewItem)
 
             menu.exec_(event.screenPos())
 
     def createNewItem(self, event, pos):
-        r = ViewModelItem( viewModel = ViewModel())
+        r = self._item_type( viewModel = ViewModel())
         r.setPos(pos)
         self.addItem(r)
 
@@ -75,7 +76,7 @@ class EditorView(QtGui.QGraphicsView):
             if not fname:
                 fname = obj.kind + '.view'
             vm = self.openVM(fname)
-            r = self.buildView(vm)
+            r = self.buildViewModel(vm)
         except:
             r = ViewModelItem(
                 viewModel = ViewModel(kind = obj.kind)
@@ -98,7 +99,7 @@ class EditorView(QtGui.QGraphicsView):
                 root.addChild(r)
         else:
             root = root_items[0]
-        encoded_output = jsonpickle.encode(root.viewModel()) + '\n'
+        encoded_output = jsonpickle.encode(root.viewModel())
         with open(fname, 'w') as f:
             f.write(encoded_output)
         return 0
@@ -108,10 +109,14 @@ class EditorView(QtGui.QGraphicsView):
             vm = jsonpickle.decode(f.read())
         return vm
 
-    def buildView(self, viewModel, parent = None):
+    def buildModel(self, model, view_model, parent = None):
+        t = ModelItem( parent = parent, model = model, viewModel = view_model)
+        
+
+    def buildViewModel(self, viewModel, parent = None):
         t = ViewModelItem(parent=parent,viewModel=viewModel)
         for cvm in viewModel.children:
-            t.addChild(self.buildView(cvm, t))
+            t.addChild(self.buildViewModel(cvm, t))
         return t
 
     def getEditor(self):
