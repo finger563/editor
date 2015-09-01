@@ -14,7 +14,7 @@ from PyQt4 import QtGui
 
 from collections import OrderedDict
 
-import jsonpickle
+import jsonpickle, copy
 
 from attribute_widget import AttributeEditor
 from view_model_item import ViewModelItem
@@ -117,8 +117,12 @@ class EditorView(QtGui.QGraphicsView):
             elif _scope in ['parent']:
                 objs = model.get_children(_kind)
             if objs:
-                layout_item = ModelItem( parent = t, view_model = cvm )
+                layout_item = ModelItem( parent = t,
+                                         view_model = ViewModel( kind = 'Container',
+                                                                 draw_style = 'hidden',
+                                                                 layout = cvm['layout style'].value))
                 layout_item.viewModel()['kind'].value = 'Container'
+                layout_item.viewModel()['draw style'].value = 'hidden'
                 for obj in objs:
                     layout_item.addChild(self.buildModel( model = obj,
                                                           view_model = cvm,
@@ -155,6 +159,7 @@ class EditorView(QtGui.QGraphicsView):
     def openVM(self, fname):
         with open(fname, 'r') as f:
             vm = jsonpickle.decode(f.read())
+        print vm.toStr()
         return vm
 
     def getEditor(self):

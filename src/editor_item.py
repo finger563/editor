@@ -30,7 +30,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         self._parent = None
         self._model = model
-        self._view_model = copy.deepcopy(view_model)
+        self._view_model = view_model
 
         self._label = None
         self._item = None
@@ -158,7 +158,8 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def mouseMoveEvent(self, event):
         QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
-        self._drag = True
+        if self.flags() & QtGui.QGraphicsItem.ItemIsMovable:
+            self._drag = True
 
     def mouseReleaseEvent(self, event):
         QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
@@ -183,11 +184,12 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        editor = self.scene().parent().getEditor()
-        editor.init_ui(self,
-                       self.model().attributes,
-                       lambda a : self.updateAttributes(a))
-        editor.show(None)
+        if self.model():
+            editor = self.scene().parent().getEditor()
+            editor.init_ui(self,
+                           self.model().attributes,
+                           lambda a : self.updateAttributes(a))
+            editor.show(None)
             
     def updateAttributes(self,attrs):
         self.loadResources()

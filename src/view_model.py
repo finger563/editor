@@ -77,5 +77,6 @@ class ViewModel(object):
         retstr += '{}Kind: {}\n'.format(prefix,self['kind'].value)
         if printKids:
             for c in self.children:
+                retstr += "{}{}\n".format(prefix,c)
                 retstr += c.toStr(printKids, prefix + '\t')
         return retstr

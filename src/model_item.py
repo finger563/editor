@@ -13,6 +13,8 @@ of models.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+import copy
+
 from view_model import ViewModel
 from action import Action
 from editor_item import EditorItem
@@ -24,6 +26,10 @@ class ModelItem(EditorItem):
 
     def __setitem__(self, key, value):
         self.model()[key] = value
+
+    def initializeFlags(self):
+        super(ModelItem,self).initializeFlags()
+        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
 
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
@@ -40,5 +46,8 @@ class ModelItem(EditorItem):
         menu.exec_(event.screenPos())
 
     def addNewItem(self, _type):
-        self.addChild(ModelItem(self, view_model = ViewModel( kind = _type.__name__ ),
-                                model = _type()))
+        t = ModelItem( self,
+                       view_model = ViewModel( kind = _type.__name__ ),
+                       model = _type()
+        )
+        self.addChild(t)
