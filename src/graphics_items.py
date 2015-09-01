@@ -54,7 +54,7 @@ class TextItem(QtGui.QGraphicsTextItem):
         self.document().contentsChange.connect(self.updateGeometry)
 
     def setPos(self, pos_str, origin_pos, width, height):
-        newpos = origin_pos
+        newpos = QtCore.QPointF()
         if 'right' in pos_str:
             newpos.setX( newpos.x() + width )
         elif 'left' in pos_str:

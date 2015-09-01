@@ -55,7 +55,7 @@ class EditorItem(QtGui.QGraphicsWidget):
             if self.scene():
                 self.scene().removeItem(self._label)
             del self._label
-        if self.viewModel()['draw style'].value in ['hidden']:
+        if self.isHidden():
             return
         if self.model():
             if 'name' in self.model().attributes:
@@ -63,10 +63,10 @@ class EditorItem(QtGui.QGraphicsWidget):
             else:
                 name = self.model()['kind'].value
             self._label = TextItem( name , parent = self)
-            #self._label.setAlignment(
-            #    self.viewModel()['text horizontal alignment'].value,
-            #    self.viewModel()['text vertical alignment'].value
-            #)
+            self._label.setAlignment(
+                self.viewModel()['text horizontal alignment'].value,
+                self.viewModel()['text vertical alignment'].value
+            )
             self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
 
     def createItem(self, width, height):
@@ -106,11 +106,20 @@ class EditorItem(QtGui.QGraphicsWidget):
                 self._item.paint(painter, option, widget)
 
     def boundingRect(self):
-        retRect = QtCore.QRectF()
+        minx =0; miny=0; maxx=0;maxy=0
         if self._item:
-            retRect = self._item.boundingRect()
-        elif self._label:
-            retRect = self._label.boundingRect()
+            brect = self._item.boundingRect()
+            minx = min(brect.x(),minx)
+            miny = min(brect.y(),miny)
+            maxx = max(maxx, brect.x() + brect.width())
+            maxy = max(maxy, brect.y() + brect.height())
+        if self._label:
+            brect = self._label.boundingRect()
+            minx = min(brect.x(),minx)
+            miny = min(brect.y(),miny)
+            maxx = max(maxx, brect.x() + brect.width())
+            maxy = max(maxy, brect.y() + brect.height())
+        retRect = QtCore.QRectF(minx,miny, maxx-minx, maxy-miny)
         return retRect
 
     def sizeHint(self, which, constraint):
@@ -119,13 +128,14 @@ class EditorItem(QtGui.QGraphicsWidget):
             sh = self.layout().sizeHint(which, constraint)
             shw = sh.width()
             shh = sh.height()
+        shw = max( shw, self.boundingRect().width())
+        shh = max( shh, self.boundingRect().height())
         return QtCore.QSizeF(
             max(shw, self.viewModel()['width'].value),
             max(shh, self.viewModel()['height'].value)
         )
         
     def updateGraphicsItem(self):
-        self.prepareGeometryChange()
         self.layout().activate()
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
