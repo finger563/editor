@@ -39,6 +39,7 @@ class ModelTree(QtGui.QTreeWidget):
                     item.setText(0, str(attr.value))
         for child in model.children:
             self.load_model(child, item)
+        item.setExpanded(True)
 
     def load_meta_model(self, meta_model = root, parent = None):
         item = ModelTreeItem(parent)
@@ -48,3 +49,4 @@ class ModelTree(QtGui.QTreeWidget):
         item.setText(0, str(meta_model.kind))
         for a in meta_model.children._allowed:
             self.load_meta_model(a(), item)
+        item.setExpanded(True)

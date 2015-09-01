@@ -107,8 +107,6 @@ class EditorItem(QtGui.QGraphicsWidget):
         retRect = QtCore.QRectF()
         if self._item:
             retRect = self._item.boundingRect()
-        elif self.layout():
-            retRect = self.layout().boundingRect()
         elif self._label:
             retRect = self._label.boundingRect()
         return retRect
@@ -152,45 +150,58 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.updateGraphicsItem()
 
     def mousePressEvent(self, event):
-        QtGui.QGraphicsWidget.mousePressEvent(self, event)
-        self._drag_pos = self.mapFromScene(event.scenePos())
-        self._original_pos = self.pos()
+        if not self.isHidden():
+            QtGui.QGraphicsWidget.mousePressEvent(self, event)
+            self._drag_pos = self.mapFromScene(event.scenePos())
+            self._original_pos = self.pos()
 
     def mouseMoveEvent(self, event):
         QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
-        if self.flags() & QtGui.QGraphicsItem.ItemIsMovable:
+        if self.isMovable():
             self._drag = True
 
     def mouseReleaseEvent(self, event):
-        QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
-        if self._drag:
-            self._drag = False
-            newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
-            currentParent = self._parent
-            if newParent:
-                p = newParent[0]
-                if p == currentParent:
-                    p.updateChild(self)
-                else:
-                    if currentParent:
-                        currentParent.removeChild(self)
-                    p.addChild(self)
-            elif currentParent:
-                currentParent.removeChild(self)
-                self.setParentItem(None)
-                self.setParent(self.scene())
-                self.setPos(event.scenePos() - self._drag_pos)
-        self.updateGraphicsItem()
+        if self.isHidden():
+            if self._parent: self._parent.mouseReleaseEvent(event)
+        else:
+            QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
+            if self._drag:
+                self._drag = False
+                newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
+                currentParent = self._parent
+                if newParent:
+                    p = newParent[0]
+                    if p == currentParent:
+                        p.updateChild(self)
+                    else:
+                        if currentParent:
+                            currentParent.removeChild(self)
+                        p.addChild(self)
+                elif currentParent:
+                    currentParent.removeChild(self)
+                    self.setParentItem(None)
+                    self.setParent(self.scene())
+                    self.setPos(event.scenePos() - self._drag_pos)
+            self.updateGraphicsItem()
+
+    def isHidden(self):
+        return self.viewModel()['draw style'].value in ['hidden']
+
+    def isMovable(self):
+        return bool(self.flags() & QtGui.QGraphicsItem.ItemIsMovable)
 
     def mouseDoubleClickEvent(self, event):
-        QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        if self.model():
-            editor = self.scene().parent().getEditor()
-            editor.init_ui(self,
-                           self.model().attributes,
-                           lambda a : self.updateAttributes(a))
-            editor.show(None)
-            
+        if self.isHidden():
+            if self._parent: self._parent.mouseDoubleClickEvent(event)
+        else:
+            QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
+            if self.model():
+                editor = self.scene().parent().getEditor()
+                editor.init_ui(self,
+                               self.model().attributes,
+                               lambda a : self.updateAttributes(a))
+                editor.show(None)
+
     def updateAttributes(self,attrs):
         self.loadResources()
         self.updateGraphicsItem()
@@ -226,6 +237,7 @@ class EditorItem(QtGui.QGraphicsWidget):
             self.layout().itemAt(0).delete(None)
         if self._parent:
             self._parent.removeChild(self)
-        self.scene().removeItem(self)
+        if self.scene():
+            self.scene().removeItem(self)
         self._parent = None
 

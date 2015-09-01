@@ -23,9 +23,6 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
         super(AnchorLayout, self).__init__(parent)
         self.setSpacing(self.item_spacing)
 
-    def boundingRect(self):
-        return self.geometry()
-
     def sizeHint(self, which, constraint):
         geo = self.geometry()
         return QtCore.QSizeF(geo.width(), geo.height)
@@ -90,9 +87,6 @@ class HorizontalLayout(QtGui.QGraphicsLinearLayout):
     def __init__(self):
         super(HorizontalLayout, self).__init__()
 
-    def boundingRect(self):
-        return self.geometry()
-
     def fromLayout(self, otherLayout):
         if not otherLayout:
             return
@@ -107,9 +101,6 @@ class HorizontalLayout(QtGui.QGraphicsLinearLayout):
 class VerticalLayout(QtGui.QGraphicsLinearLayout):
     def __init__(self):
         super(VerticalLayout, self).__init__(QtCore.Qt.Vertical)
-
-    def boundingRect(self):
-        return self.geometry()
 
     def fromLayout(self, otherLayout):
         if not otherLayout:
@@ -126,9 +117,6 @@ class GridLayout(QtGui.QGraphicsGridLayout):
     def __init__(self):
         super(GridLayout,self).__init__()
 
-    def boundingRect(self):
-        return self.geometry()
-
     def fromLayout(self, otherLayout):
         if not otherLayout:
             return
@@ -140,7 +128,7 @@ class GridLayout(QtGui.QGraphicsGridLayout):
     def addItem(self,item):
         self.removeItem(item)
         if 'grid' not in item.viewModel()['layout config'].value:
-            if 'name' in item.model().attributes:
+            if item.model() and 'name' in item.model().attributes:
                 name = item['name'].value
             else:
                 name = item.viewModel()['kind'].value
@@ -161,7 +149,7 @@ class GridLayout(QtGui.QGraphicsGridLayout):
             if item._original_pos:
                 item.setPos(item._original_pos)
             else:
-                item.delete()
+                item.delete(None)
 
     def updateItem(self, item):
         self.removeItem(item)
