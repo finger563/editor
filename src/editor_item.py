@@ -24,9 +24,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
                  parent = None,
-                 model= None,
+                 model = None,
                  view_model = ViewModel()):
-        super(EditorItem, self).__init__(parent)
+        super(EditorItem, self).__init__()
 
         self._parent = None
         self._model = model
@@ -51,6 +51,10 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self._model
         
     def createLabel(self, width, height):
+        if self._label:
+            if self.scene():
+                self.scene().removeItem(self._label)
+            del self._label
         if self.viewModel()['draw style'].value in ['hidden']:
             return
         if self.model():
@@ -58,11 +62,11 @@ class EditorItem(QtGui.QGraphicsWidget):
                 name = self.model()['name'].value
             else:
                 name = self.model()['kind'].value
-            self._label = TextItem(name)
-            self._label.setAlignment(
-                self.viewModel()['text horizontal alignment'].value,
-                self.viewModel()['text vertical alignment'].value
-            )
+            self._label = TextItem( name , parent = self)
+            #self._label.setAlignment(
+            #    self.viewModel()['text horizontal alignment'].value,
+            #    self.viewModel()['text vertical alignment'].value
+            #)
             self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
 
     def createItem(self, width, height):
@@ -97,11 +101,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def paint(self, painter, option, widget = None):
         super(EditorItem, self).paint(painter, option, widget)
-        if self.viewModel()['draw style'].value not in ['hidden']:
+        if not self.isHidden():
             if self._item:
                 self._item.paint(painter, option, widget)
-            if self._label:
-                self._label.paint(painter, option, widget)
 
     def boundingRect(self):
         retRect = QtCore.QRectF()
@@ -167,7 +169,7 @@ class EditorItem(QtGui.QGraphicsWidget):
             QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
             if self._drag:
                 self._drag = False
-                newParent = [x for x in self.scene().items(event.scenePos()) if x != self]
+                newParent = [x for x in self.scene().items(event.scenePos()) if x != self and issubclass(type(x),EditorItem)]
                 currentParent = self._parent
                 if newParent:
                     p = newParent[0]

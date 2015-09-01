@@ -97,6 +97,7 @@ class EditorView(QtGui.QGraphicsView):
                 r = ViewModelItem(
                     view_model = ViewModel(kind = obj.kind)
                 )
+
         scene.setRoot(r)
         scene.addItem(r)
 

@@ -38,10 +38,14 @@ def alignmentToQt(a):
     return aq
 
 class TextItem(QtGui.QGraphicsTextItem):
-    def __init__(self, text = '', parent = None,
+    def __init__(self, text = '', parent = None, scene = None,
                  ha = QtCore.Qt.AlignLeft,
                  va = QtCore.Qt.AlignTop):
-        super(TextItem, self).__init__(text, parent)
+        super(TextItem, self).__init__(text, parent = parent, scene = scene)
+        self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+        self.setFlag(QtGui.QGraphicsItem.ItemClipsToShape, False)
         self.setAlignment(ha, va)
         self.init()
 
@@ -54,9 +58,9 @@ class TextItem(QtGui.QGraphicsTextItem):
         if 'right' in pos_str:
             newpos.setX( newpos.x() + width )
         elif 'left' in pos_str:
-            newpos.setX( newpos.x() - width )
+            newpos.setX( newpos.x() - self.boundingRect().width() )
         if 'top' in pos_str:
-            newpos.setY( newpos.y() - height )
+            newpos.setY( newpos.y() - self.boundingRect().height() )
         elif 'bottom' in pos_str:
             newpos.setY( newpos.y() + height )
         super(TextItem, self).setPos(newpos)
@@ -71,6 +75,13 @@ class TextItem(QtGui.QGraphicsTextItem):
         cursor.mergeBlockFormat(_format)
         cursor.clearSelection()
         self.setTextCursor(cursor)
+
+    def mousePressEvent(self,e):
+        e.ignore()
+    def mouseMoveEvent(self, e):
+        e.ignore()
+    def mouseReleaseEvent(self, e):
+        e.ignore()
 
     def updateGeometry(self):
         self.setTextWidth(-1)
