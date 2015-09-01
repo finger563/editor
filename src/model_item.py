@@ -36,14 +36,6 @@ class ModelItem(EditorItem):
         )
         self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
 
-    def mouseDoubleClickEvent(self, event):
-        QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        editor = self.scene().parent().getEditor()
-        editor.init_ui(self,
-                       self.model().attributes,
-                       lambda a : self.updateAttributes(a))
-        editor.show(None)
-            
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
 

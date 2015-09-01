@@ -26,18 +26,17 @@ class EditorItem(QtGui.QGraphicsWidget):
                  viewModel = ViewModel()):
         super(EditorItem, self).__init__(parent)
 
+        self._parent = None
         self._model = model
         self._view_model = viewModel
+
         self._item = None
         self._label = None
-        self._pixmap = None
+
         self._mouseOver = False
         self._drag = False
-        self._parent = None
         self._original_pos = None
 
-        #self.resize(self['width'].value, self['height'].value)
-        #self.setCursor(QtCore.Qt.OpenHandCursor)
         self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
         self.initializeFlags()
@@ -157,12 +156,16 @@ class EditorItem(QtGui.QGraphicsWidget):
                 self.setParentItem(None)
                 self.setParent(self.scene())
                 self.setPos(event.scenePos() - self._drag_pos)
-            '''
-            else:
-                self.setPos(self._original_pos)
-            '''
         self.updateGraphicsItem()
 
+    def mouseDoubleClickEvent(self, event):
+        QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
+        editor = self.scene().parent().getEditor()
+        editor.init_ui(self,
+                       self.model().attributes,
+                       lambda a : self.updateAttributes(a))
+        editor.show(None)
+            
     def updateAttributes(self,attrs):
         self.loadResources()
         self.updateGraphicsItem()
@@ -201,6 +204,3 @@ class EditorItem(QtGui.QGraphicsWidget):
         else:
             self.scene().removeItem(self)
 
-    def addNewItem(self, _type):
-        self.addChild(EditorItem(self, viewModel = ViewModel( kind = _type.__name__ ),
-                                model = _type()))

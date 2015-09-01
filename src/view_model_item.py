@@ -23,10 +23,10 @@ from editor_item import EditorItem
 class ViewModelItem(EditorItem):
 
     def __getitem__(self, key):
-        return self.viewModel().attributes[key]
+        return self.viewModel()[key]
 
     def __setitem__(self, key, value):
-        self.viewModel().attributes[key] = value
+        self.viewModel()[key] = value
 
     def model(self):
         return self.viewModel()
@@ -47,14 +47,6 @@ class ViewModelItem(EditorItem):
         self.viewModel().addChild(child.viewModel())
         super(ViewModelItem,self).addChild(child)
 
-    def mouseDoubleClickEvent(self, event):
-        QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        editor = self.scene().parent().getEditor()
-        editor.init_ui(self,
-                       self.viewModel().attributes,
-                       lambda a : self.updateAttributes(a))
-        editor.show(None)
-            
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
 
