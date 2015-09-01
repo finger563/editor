@@ -178,6 +178,8 @@ class Editor(QtGui.QMainWindow):
 
     from menubar import menubar_init, menubar_add_menu, menu_add_action
     from toolbar import toolbar_init, toolbar_create, toolbar_add_action, toolbar_remove
+    from action import action_init, action_create
+    from context_menu import context_menu_init, context_menu_create, context_menu_add_action
 
 if __name__ == "__main__":
     import sys
