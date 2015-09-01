@@ -25,12 +25,12 @@ class EditorItem(QtGui.QGraphicsWidget):
     def __init__(self,
                  parent = None,
                  model= None,
-                 viewModel = ViewModel()):
+                 view_model = ViewModel()):
         super(EditorItem, self).__init__(parent)
 
         self._parent = None
         self._model = model
-        self._view_model = copy.deepcopy(viewModel)
+        self._view_model = copy.deepcopy(view_model)
 
         self._item = None
         self._label = None
@@ -207,6 +207,6 @@ class EditorItem(QtGui.QGraphicsWidget):
             self.layout().itemAt(0).delete(None)
         if self._parent:
             self._parent.removeChild(self)
-        else:
-            self.scene().removeItem(self)
+        self.scene().removeItem(self)
+        self._parent = None
 

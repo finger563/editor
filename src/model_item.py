@@ -54,5 +54,5 @@ class ModelItem(EditorItem):
         menu.exec_(event.screenPos())
 
     def addNewItem(self, _type):
-        self.addChild(ModelItem(self, viewModel = ViewModel( kind = _type.__name__ ),
+        self.addChild(ModelItem(self, view_model = ViewModel( kind = _type.__name__ ),
                                 model = _type()))

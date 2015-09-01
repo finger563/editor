@@ -101,6 +101,7 @@ class Editor(QtGui.QMainWindow):
         self.move(qr.topLeft())
 
     def clearEditor(self):
+        self.openEditorTabs = {}
         self.tabbedEditorWidget.clear()
 
     def buildTree(self, tree):

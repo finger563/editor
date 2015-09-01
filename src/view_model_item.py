@@ -61,4 +61,4 @@ class ViewModelItem(EditorItem):
         menu.exec_(event.screenPos())
 
     def addNewItem(self, event):
-        self.addChild(ViewModelItem(self, viewModel = ViewModel()))
+        self.addChild(ViewModelItem(self, view_model = ViewModel()))

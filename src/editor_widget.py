@@ -49,7 +49,7 @@ class EditorScene(QtGui.QGraphicsScene):
             menu.exec_(event.screenPos())
 
     def createNewItem(self, event, pos):
-        r = self._item_type( viewModel = ViewModel())
+        r = self._item_type( view_model = ViewModel())
         r.setPos(pos)
         self.addItem(r)
 
@@ -88,11 +88,11 @@ class EditorView(QtGui.QGraphicsView):
             if self.view_type in ['model']:
                 r = ModelItem(
                     model = obj,
-                    viewModel = ViewModel(kind = obj.kind)
+                    view_model = ViewModel(kind = obj.kind)
                 )
             elif self.view_type in ['view model','meta model']:
                 r = ViewModelItem(
-                    viewModel = ViewModel(kind = obj.kind)
+                    view_model = ViewModel(kind = obj.kind)
                 )
         scene.setRoot(r)
         scene.addItem(r)
@@ -103,12 +103,12 @@ class EditorView(QtGui.QGraphicsView):
         vm = view_model
         _type = vm['kind'].value
         if _type in ['Container','Association']:
-            t = ModelItem( parent = parent, viewModel = vm )
+            t = ModelItem( parent = parent, view_model = vm )
             t.viewModel()['draw style'].value = 'hidden'
         else:
-            t = ModelItem( parent = parent, viewModel = vm, model = model )
+            t = ModelItem( parent = parent, view_model = vm, model = model )
         for cvm in vm.children:
-            layout_item = ModelItem( parent = t, viewModel = cvm)
+            layout_item = ModelItem( parent = t, view_model = cvm)
             layout_item.viewModel()['draw style'].value = 'hidden'
             _scope = cvm['scope'].value
             child_models = None
@@ -124,7 +124,7 @@ class EditorView(QtGui.QGraphicsView):
 
     def buildViewModel(self, view_model, parent = None):
         vm = view_model
-        t = ViewModelItem(parent = parent, viewModel = vm)
+        t = ViewModelItem(parent = parent, view_model = vm)
         for cvm in vm.children:
             t.addChild(self.buildViewModel(cvm, t))
         return t
@@ -136,7 +136,7 @@ class EditorView(QtGui.QGraphicsView):
             return -1
         elif len(root_items) > 1:
             print "WARNING: ADDING TOP LEVEL CONTAINER TO {}".format(fname)
-            root = ViewModelItem( viewModel = ViewModel() )
+            root = ViewModelItem( view_model = ViewModel() )
             for r in root_items:
                 root.addChild(r)
         else:
