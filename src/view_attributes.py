@@ -50,7 +50,7 @@ class Height(classes.Attribute):
 
 class Draw_Style(classes.Attribute):
     tooltip = 'How the object is drawn.'
-    options = ['icon', 'ellipse', 'rect', 'round rect']
+    options = ['icon', 'ellipse', 'rect', 'round rect', 'hidden']
     def __init__(self, value):
         super(Draw_Style, self).__init__("list",value)
 

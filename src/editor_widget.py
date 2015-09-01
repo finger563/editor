@@ -21,6 +21,7 @@ from view_model_item import ViewModelItem
 from model_item import ModelItem
 from view_model import ViewModel
 from action import Action
+from layout import layout_create
 
 class EditorScene(QtGui.QGraphicsScene):
     def __init__(self, parent = None, itemType = ViewModelItem):
@@ -103,9 +104,12 @@ class EditorView(QtGui.QGraphicsView):
         _type = vm['kind'].value
         if _type in ['Container','Association']:
             t = ModelItem( parent = parent, viewModel = vm )
+            t.viewModel()['draw style'].value = 'hidden'
         else:
             t = ModelItem( parent = parent, viewModel = vm, model = model )
         for cvm in vm.children:
+            layout_item = ModelItem( parent = t, viewModel = cvm)
+            layout_item.viewModel()['draw style'].value = 'hidden'
             _scope = cvm['scope'].value
             child_models = None
             if _scope in ['view','project']:
@@ -114,7 +118,8 @@ class EditorView(QtGui.QGraphicsView):
                 child_models = model.get_children(cvm['kind'].value)
             if child_models:
                 for cm in child_models:
-                    t.addChild(self.buildModel( cm, cvm, t))
+                    layout_item.addChild(self.buildModel( cm, cvm, layout_item))
+            t.addChild(layout_item)
         return t
 
     def buildViewModel(self, view_model, parent = None):

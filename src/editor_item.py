@@ -18,6 +18,8 @@ from layout import layout_create
 from graphics_items import RoundRectItem, TextItem
 from view_model import ViewModel
 
+import copy
+
 class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
@@ -28,7 +30,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         self._parent = None
         self._model = model
-        self._view_model = viewModel
+        self._view_model = copy.deepcopy(viewModel)
 
         self._item = None
         self._label = None
@@ -52,15 +54,18 @@ class EditorItem(QtGui.QGraphicsWidget):
         pass
 
     def createItem(self, width, height):
-        if self.viewModel()['icon'].value and self.viewModel()['draw style'].value == 'icon':
+        draw_style = self.viewModel()['draw style'].value
+        if draw_style in ['hidden']:
+            return
+        if self.viewModel()['icon'].value and draw_style == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
             self._item.setPixmap( QtGui.QPixmap(self.viewModel()['icon'].value).scaled(width,height) )
         else:
-            if self.viewModel()['draw style'].value == 'rect':
+            if draw_style == 'rect':
                 self._item = QtGui.QGraphicsRectItem(0,0,width,height)
-            elif self.viewModel()['draw style'].value == 'ellipse':
+            elif draw_style == 'ellipse':
                 self._item = QtGui.QGraphicsEllipseItem(0,0,width,height)
-            elif self.viewModel()['draw style'].value == 'round rect':
+            elif draw_style == 'round rect':
                 self._item = RoundRectItem(0,0,width,height)
             if self._item:
                 self._item.setBrush(QtGui.QColor(self.viewModel()['color'].value))
@@ -79,10 +84,11 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def paint(self, painter, option, widget = None):
         super(EditorItem, self).paint(painter, option, widget)
-        if self._item:
-            self._item.paint(painter, option, widget)
-        if self._label:
-            self._label.paint(painter, option, widget)
+        if self.viewModel()['draw style'].value not in ['hidden']:
+            if self._item:
+                self._item.paint(painter, option, widget)
+            if self._label:
+                self._label.paint(painter, option, widget)
 
     def boundingRect(self):
         if self._item:

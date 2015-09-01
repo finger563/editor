@@ -29,12 +29,15 @@ class ModelItem(EditorItem):
         self.model()[key] = value
 
     def createLabel(self, width, height):
-        self._label = TextItem(self.model()['name'].value)
-        self._label.setAlignment(
-            self.viewModel()['text horizontal alignment'].value,
-            self.viewModel()['text vertical alignment'].value
-        )
-        self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
+        if self.viewModel()['draw style'].value in ['hidden']:
+            return
+        if self.model():
+            self._label = TextItem(self.model()['name'].value)
+            self._label.setAlignment(
+                self.viewModel()['text horizontal alignment'].value,
+                self.viewModel()['text vertical alignment'].value
+            )
+            self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
 
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
