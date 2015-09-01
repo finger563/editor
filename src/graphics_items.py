@@ -49,6 +49,19 @@ class TextItem(QtGui.QGraphicsTextItem):
         self.updateGeometry()
         self.document().contentsChange.connect(self.updateGeometry)
 
+    def setPos(self, pos_str, origin_pos, width, height):
+        newpos = origin_pos
+        if 'right' in pos_str:
+            newpos.setX( newpos.x() + width )
+        elif 'left' in pos_str:
+            newpos.setX( newpos.x() - width )
+        if 'top' in pos_str:
+            newpos.setY( newpos.y() - height )
+        elif 'bottom' in pos_str:
+            newpos.setY( newpos.y() + height )
+        super(TextItem, self).setPos(newpos)
+        print self.pos()
+
     def setAlignment(self, ha, va):
         self._ha = alignmentToQt(ha)
         self._va = alignmentToQt(va)

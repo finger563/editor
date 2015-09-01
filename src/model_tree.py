@@ -29,10 +29,8 @@ class ModelTree(QtGui.QTreeWidget):
         self.setExpandsOnDoubleClick(False)
         
     def load_model(self, model = project, parent = None):
-        if parent:
-            item = ModelTreeItem(parent)
-        else:
-            item = ModelTreeItem()
+        item = ModelTreeItem(parent)
+        if not parent:
             self.addTopLevelItem(item)
         item.setObject(model)
         for key,attr in model.attributes.iteritems():
@@ -43,10 +41,8 @@ class ModelTree(QtGui.QTreeWidget):
             self.load_model(child, item)
 
     def load_meta_model(self, meta_model = root, parent = None):
-        if parent:
-            item = ModelTreeItem(parent)
-        else:
-            item = ModelTreeItem()
+        item = ModelTreeItem(parent)
+        if not parent:
             self.addTopLevelItem(item)
         item.setObject(meta_model)
         item.setText(0, str(meta_model.kind))

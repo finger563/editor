@@ -61,6 +61,7 @@ class ModelItem(QtGui.QGraphicsWidget):
             self.viewModel()['text horizontal alignment'].value,
             self.viewModel()['text vertical alignment'].value
         )
+        self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
 
         if self.viewModel()['icon'].value and self.viewModel()['draw style'].value == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
@@ -123,7 +124,6 @@ class ModelItem(QtGui.QGraphicsWidget):
             self._parent.updateGraphicsItem()
 
     def removeChild(self, child):
-        self.viewModel().removeChild(child.viewModel())
         self.layout().removeItem(child)
         child._parent = None
         self.updateGraphicsItem()
@@ -134,7 +134,6 @@ class ModelItem(QtGui.QGraphicsWidget):
 
     def addChild(self, child):
         self.layout().addItem(child)
-        self.viewModel().addChild(child.viewModel())
         child._parent = self
         self.updateGraphicsItem()
 
@@ -216,10 +215,11 @@ class ModelItem(QtGui.QGraphicsWidget):
         delSelf = Action('', 'Delete', self)
         delSelf.triggered.connect(self.delete)
         menu.addAction(delSelf)
-        
-        addSelf = Action('', 'Add new Item', self)
-        addSelf.triggered.connect(self.addNewItem)
-        menu.addAction(addSelf)
+
+        for a in self.model().children._allowed:
+            addAction = Action('', 'Add new {}'.format(a.__name__), self)
+            addAction.triggered.connect(lambda : self.addNewItem(a) )
+            menu.addAction(addAction)
         
         menu.exec_(event.screenPos())
 
@@ -231,5 +231,6 @@ class ModelItem(QtGui.QGraphicsWidget):
         else:
             self.scene().removeItem(self)
 
-    def addNewItem(self, event):
-        self.addChild(ModelItem(self, viewModel = ViewModel()))
+    def addNewItem(self, _type):
+        self.addChild(ModelItem(self, viewModel = ViewModel( kind = _type.__name__ ),
+                                model = _type()))
