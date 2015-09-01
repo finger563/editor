@@ -72,10 +72,11 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
 
     def addItem(self, item):
         if self.count():
-            d, a1, a2, ci = self.getClosestAnchors(item)
-            a1 = convertAnchorToQt(a1)
-            a2 = convertAnchorToQt(a2)
+            d, a1_str, a2_str, ci = self.getClosestAnchors(item)
+            a1 = convertAnchorToQt(a1_str)
+            a2 = convertAnchorToQt(a2_str)
             if d > 0 and d < self.min_anchoring_dist:
+                item.viewModel()['layout config'].value['anchor'] = (a2_str, ci, a1_str)
                 if isinstance(a1,QtCore.Qt.Corner) and isinstance(a2,QtCore.Qt.Corner):
                     self.addCornerAnchors(item, a2,
                                             ci, a1)
@@ -83,6 +84,7 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
                     self.addAnchor(item, a2,
                                      ci, a1)
         else:
+            item.viewModel()['layout config'].value['anchor'] = (a2_str, self, a1_str)
             self.addCornerAnchors(item, convertAnchorToQt('top left'),
                                   self, convertAnchorToQt('top left'))
 
@@ -146,18 +148,29 @@ class GridLayout(QtGui.QGraphicsGridLayout):
             self.addItem(item)
 
     def addItem(self,item):
-        gr, ok = QtGui.QInputDialog.getInteger(None,
-                                               "Item '{}' Row".format(item['kind'].value),
-                                               "Row:", 0, 0)
-        if not ok: gr = -1
-        gc, ok = QtGui.QInputDialog.getInteger(None,
-                                               "Item '{}' Column".format(item['kind'].value),
-                                               "Column:", 0, 0)
-        if not ok: gc = -1
+        if 'grid' not in item.viewModel()['layout config'].value:
+            if 'name' in item.model().attributes:
+                name = item['name'].value
+            else:
+                name = item.viewModel()['kind'].value
+            gr, ok = QtGui.QInputDialog.getInteger(None,
+                                                   "Item '{}' Row".format(name),
+                                                   "Row:", 0, 0)
+            if not ok: gr = -1
+            gc, ok = QtGui.QInputDialog.getInteger(None,
+                                                   "Item '{}' Column".format(name),
+                                                   "Column:", 0, 0)
+            if not ok: gc = -1
+        else:
+            gr,gc = item.viewModel()['layout config'].value['grid']
         if gc >= 0 and gr >= 0:
             super(GridLayout,self).addItem(item, gr, gc)
+            item.viewModel()['layout config'].value['grid'] = (gr, gc)
         else:
-            item.setPos(item._original_pos)
+            if item._original_pos:
+                item.setPos(item._original_pos)
+            else:
+                item.delete()
 
     def updateItem(self, item):
         self.addItem(item)

@@ -18,16 +18,35 @@ for key,val in test:
     if issubclass(val,classes.Model):
         objects.append(key)
 
+# model related
 class Object(classes.Attribute):
     tooltip = 'What kind of object is being viewed.'
     options = objects
     def __init__(self, value):
         super(Object, self).__init__("list",value)
 
-class Icon(classes.Attribute):
-    tooltip = 'Icon displayed as background of the object.'
+class Scope(classes.Attribute):
+    tooltip = 'From what scope will objects of this kind be drawn in this view?'
+    options = ['project','view','parent']
     def __init__(self, value):
-        super(Icon, self).__init__("file_png",value)
+        super(Scope, self).__init__("list",value)
+
+# drawing related
+class Layout_Style(classes.Attribute):
+    tooltip = 'How are the children arranged in this object.'
+    options = ['horizontal','vertical','grid','anchor']
+    def __init__(self, value):
+        super(Layout_Style, self).__init__("list",value)
+
+class Width(classes.Attribute):
+    tooltip = 'Width of the object.'
+    def __init__(self, value):
+        super(Width, self).__init__("float",value)
+
+class Height(classes.Attribute):
+    tooltip = 'Height of the object.'
+    def __init__(self, value):
+        super(Height, self).__init__("float",value)
 
 class Draw_Style(classes.Attribute):
     tooltip = 'How the object is drawn.'
@@ -35,40 +54,15 @@ class Draw_Style(classes.Attribute):
     def __init__(self, value):
         super(Draw_Style, self).__init__("list",value)
 
-class Root(classes.Attribute):
-    tooltip = 'What acts as the local anchor for this object?'
-    options = ['top left', 'top right',
-               'bottom left', 'bottom right',
-               'center left', 'center right',
-               'top center', 'bottom center']
+class Icon(classes.Attribute):
+    tooltip = 'Icon displayed as background of the object.'
     def __init__(self, value):
-        super(Root, self).__init__("list",value)
+        super(Icon, self).__init__("file_png",value)
 
-class Source(classes.Attribute):
-    tooltip = 'What is the external oobject source reference for this object'
+class Color(classes.Attribute):
+    tooltip = 'What color will the object be drawn with.'
     def __init__(self, value):
-        super(Source, self).__init__("string",value)
-
-class Destination(classes.Attribute):
-    tooltip = 'What is the external object destination reference for this object'
-    def __init__(self, value):
-        super(Destination, self).__init__("string",value)
-
-class Anchor(classes.Attribute):
-    tooltip = 'What other object:point acts as the anchor for this object?'
-    options = ['top left', 'top right',
-               'bottom left', 'bottom right',
-               'center left', 'center right',
-               'top center', 'bottom center']
-    editable = False
-    def __init__(self, value):
-        super(Anchor, self).__init__("dictionary_reference",value)
-
-class Scope(classes.Attribute):
-    tooltip = 'From what scope will objects of this kind be drawn in this view?'
-    options = ['project','view','parent']
-    def __init__(self, value):
-        super(Scope, self).__init__("list",value)
+        super(Color, self).__init__("string",value)
 
 class Text_Location(classes.Attribute):
     tooltip = 'Where will text be located?'
@@ -88,24 +82,40 @@ class Text_Vertical_Alignment(classes.Attribute):
     def __init__(self, value):
         super(Text_Vertical_Alignment, self).__init__("list",value)
 
-class Layout_Style(classes.Attribute):
-    tooltip = 'How are the children arranged in this object.'
+# Layout configuration related
+class Layout_Config(classes.Attribute):
     options = ['horizontal','vertical','grid','anchor']
+    editable = False
     def __init__(self, value):
-        super(Layout_Style, self).__init__("list",value)
+        super(Layout_Config, self).__init__("dictionary_list", value)
 
-class Color(classes.Attribute):
-    tooltip = 'What color will the object be drawn with.'
+class Root(classes.Attribute):
+    tooltip = 'What acts as the local anchor for this object?'
+    options = ['top left', 'top right',
+               'bottom left', 'bottom right',
+               'center left', 'center right',
+               'top center', 'bottom center']
     def __init__(self, value):
-        super(Color, self).__init__("string",value)
+        super(Root, self).__init__("list",value)
 
-class Width(classes.Attribute):
-    tooltip = 'Width of the object.'
+class Anchor(classes.Attribute):
+    tooltip = 'What other object:point acts as the anchor for this object?'
+    options = ['top left', 'top right',
+               'bottom left', 'bottom right',
+               'center left', 'center right',
+               'top center', 'bottom center']
+    editable = False
     def __init__(self, value):
-        super(Width, self).__init__("float",value)
+        super(Anchor, self).__init__("dictionary_reference",value)
 
-class Height(classes.Attribute):
-    tooltip = 'Height of the object.'
+# Association
+class Source(classes.Attribute):
+    tooltip = 'What is the external oobject source reference for this object'
     def __init__(self, value):
-        super(Height, self).__init__("float",value)
+        super(Source, self).__init__("string",value)
+
+class Destination(classes.Attribute):
+    tooltip = 'What is the external object destination reference for this object'
+    def __init__(self, value):
+        super(Destination, self).__init__("string",value)
 

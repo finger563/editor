@@ -93,7 +93,6 @@ class EditorView(QtGui.QGraphicsView):
                 r = ViewModelItem(
                     viewModel = ViewModel(kind = obj.kind)
                 )
-        print r
         scene.setRoot(r)
         scene.addItem(r)
 
@@ -113,7 +112,6 @@ class EditorView(QtGui.QGraphicsView):
                 child_models = self._root_model.get_children(cvm['kind'].value)
             elif _scope in ['parent']:
                 child_models = model.get_children(cvm['kind'].value)
-            print cvm, cvm['kind'].value, child_models
             if child_models:
                 for cm in child_models:
                     t.addChild(self.buildModel( cm, cvm, t))
@@ -127,7 +125,6 @@ class EditorView(QtGui.QGraphicsView):
         return t
 
     def saveVM(self, fname):
-        jsonpickle.set_encoder_options('simplejson',indent=4)
         root_items = [x for x in self.scene().items() if not x._parent]
         if not root_items:
             print "ERROR: MUST HAVE AT LEAST ONE ITEM"
@@ -139,6 +136,7 @@ class EditorView(QtGui.QGraphicsView):
                 root.addChild(r)
         else:
             root = root_items[0]
+        jsonpickle.set_encoder_options('simplejson',indent=4)
         encoded_output = jsonpickle.encode(root.viewModel())
         with open(fname, 'w') as f:
             f.write(encoded_output)

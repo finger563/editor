@@ -60,7 +60,6 @@ class TextItem(QtGui.QGraphicsTextItem):
         elif 'bottom' in pos_str:
             newpos.setY( newpos.y() + height )
         super(TextItem, self).setPos(newpos)
-        print self.pos()
 
     def setAlignment(self, ha, va):
         self._ha = alignmentToQt(ha)
