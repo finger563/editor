@@ -13,9 +13,6 @@ of view models.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-import view_attributes as view_attr
-from layout import layout_create
-from graphics_items import RoundRectItem, TextItem
 from view_model import ViewModel
 from action import Action
 from editor_item import EditorItem
@@ -31,20 +28,12 @@ class ViewModelItem(EditorItem):
     def model(self):
         return self.viewModel()
         
-    def createLabel(self, width, height):
-        self._label = TextItem(self.viewModel()['kind'].value)
-        self._label.setAlignment(
-            self.viewModel()['text horizontal alignment'].value,
-            self.viewModel()['text vertical alignment'].value
-        )
-        self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
-
     def removeChild(self, child):
-        self.viewModel().removeChild(child.viewModel())
+        self.viewModel().remove_child(child.viewModel())
         super(ViewModelItem,self).removeChild(child)
 
     def addChild(self, child):
-        self.viewModel().addChild(child.viewModel())
+        self.viewModel().add_child(child.viewModel())
         super(ViewModelItem,self).addChild(child)
 
     def contextMenuEvent(self, event):

@@ -32,8 +32,8 @@ class EditorItem(QtGui.QGraphicsWidget):
         self._model = model
         self._view_model = copy.deepcopy(view_model)
 
-        self._item = None
         self._label = None
+        self._item = None
 
         self._mouseOver = False
         self._drag = False
@@ -41,8 +41,8 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
-        self.initializeFlags()
         self.loadResources()
+        self.initializeFlags()
 
     def viewModel(self):
         return self._view_model
@@ -51,9 +51,22 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self._model
         
     def createLabel(self, width, height):
-        pass
+        if self.viewModel()['draw style'].value in ['hidden']:
+            return
+        if self.model():
+            if 'name' in self.model().attributes:
+                name = self.model()['name'].value
+            else:
+                name = self.model()['kind'].value
+            self._label = TextItem(name)
+            self._label.setAlignment(
+                self.viewModel()['text horizontal alignment'].value,
+                self.viewModel()['text vertical alignment'].value
+            )
+            self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
 
     def createItem(self, width, height):
+        self._item = None
         draw_style = self.viewModel()['draw style'].value
         if draw_style in ['hidden']:
             return
@@ -91,10 +104,14 @@ class EditorItem(QtGui.QGraphicsWidget):
                 self._label.paint(painter, option, widget)
 
     def boundingRect(self):
+        retRect = QtCore.QRectF()
         if self._item:
-            return self._item.boundingRect()
+            retRect = self._item.boundingRect()
         elif self.layout():
-            return self.layout().boundingRect()
+            retRect = self.layout().boundingRect()
+        elif self._label:
+            retRect = self._label.boundingRect()
+        return retRect
 
     def sizeHint(self, which, constraint):
         shw = 0; shh = 0
@@ -109,7 +126,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         
     def updateGraphicsItem(self):
         self.prepareGeometryChange()
-        self.layout().invalidate()
+        self.layout().activate()
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()

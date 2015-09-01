@@ -65,9 +65,17 @@ class ViewModel(object):
     def __setitem__(self, key, value):
         self.attributes[key] = value
 
-    def addChild(self, child):
+    def add_child(self, child):
         if child not in self.children:
             self.children.append(child)
 
-    def removeChild(self, child):
+    def remove_child(self, child):
         self.children = [x for x in self.children if x != child]
+
+    def toStr(self, printKids = True, prefix = ''):
+        retstr = ''
+        retstr += '{}Kind: {}\n'.format(prefix,self['kind'].value)
+        if printKids:
+            for c in self.children:
+                retstr += c.toStr(printKids, prefix + '\t')
+        return retstr

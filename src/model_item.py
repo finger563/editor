@@ -13,9 +13,6 @@ of models.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-import view_attributes as view_attr
-from layout import layout_create
-from graphics_items import RoundRectItem, TextItem
 from view_model import ViewModel
 from action import Action
 from editor_item import EditorItem
@@ -27,17 +24,6 @@ class ModelItem(EditorItem):
 
     def __setitem__(self, key, value):
         self.model()[key] = value
-
-    def createLabel(self, width, height):
-        if self.viewModel()['draw style'].value in ['hidden']:
-            return
-        if self.model():
-            self._label = TextItem(self.model()['name'].value)
-            self._label.setAlignment(
-                self.viewModel()['text horizontal alignment'].value,
-                self.viewModel()['text vertical alignment'].value
-            )
-            self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
 
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()

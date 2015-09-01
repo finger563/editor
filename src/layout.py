@@ -23,33 +23,12 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
         super(AnchorLayout, self).__init__(parent)
         self.setSpacing(self.item_spacing)
 
+    def boundingRect(self):
+        return self.geometry()
+
     def sizeHint(self, which, constraint):
-        maxW = 0
-        maxH = 0
-        minX = 0
-        maxX = 0
-        minY = 0
-        maxY = 0
-        for i in range(self.count()):
-            item = self.itemAt(i)
-            geo = item.geometry()
-            width = geo.width()
-            height = geo.height()
-            minX = min(minX,geo.x())
-            minY = min(minY,geo.y())
-            maxX = max(maxX,geo.x() + width)
-            maxY = max(maxY,geo.y() + height)
-        if minX < 0 or minY < 0:
-            for i in range(self.count()):
-                item = self.itemAt(i)
-                geo = item.geometry()
-                newx = geo.x() - minX
-                newy = geo.y() - minY
-                item.setPos(newx,newy)
-        maxW = maxX - minX
-        maxH = maxY - minY
-        return QtCore.QSizeF(maxW + self.edge_padding,
-                             maxH + self.edge_padding)
+        geo = self.geometry()
+        return QtCore.QSizeF(geo.width(), geo.height)
 
     def updateGeometry(self):
         super(AnchorLayout,self).updateGeometry()
@@ -71,6 +50,7 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
         return abs(minDist), anchor1, anchor2, closestItem
 
     def addItem(self, item):
+        self.removeItem(item)
         if self.count():
             d, a1_str, a2_str, ci = self.getClosestAnchors(item)
             a1 = convertAnchorToQt(a1_str)
@@ -89,6 +69,7 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
                                   self, convertAnchorToQt('top left'))
 
     def updateItem(self, item):
+        self.removeItem(item)
         self.addItem(item)
 
     def removeItem(self, item):
@@ -109,6 +90,9 @@ class HorizontalLayout(QtGui.QGraphicsLinearLayout):
     def __init__(self):
         super(HorizontalLayout, self).__init__()
 
+    def boundingRect(self):
+        return self.geometry()
+
     def fromLayout(self, otherLayout):
         if not otherLayout:
             return
@@ -123,6 +107,9 @@ class HorizontalLayout(QtGui.QGraphicsLinearLayout):
 class VerticalLayout(QtGui.QGraphicsLinearLayout):
     def __init__(self):
         super(VerticalLayout, self).__init__(QtCore.Qt.Vertical)
+
+    def boundingRect(self):
+        return self.geometry()
 
     def fromLayout(self, otherLayout):
         if not otherLayout:
@@ -139,6 +126,9 @@ class GridLayout(QtGui.QGraphicsGridLayout):
     def __init__(self):
         super(GridLayout,self).__init__()
 
+    def boundingRect(self):
+        return self.geometry()
+
     def fromLayout(self, otherLayout):
         if not otherLayout:
             return
@@ -148,6 +138,7 @@ class GridLayout(QtGui.QGraphicsGridLayout):
             self.addItem(item)
 
     def addItem(self,item):
+        self.removeItem(item)
         if 'grid' not in item.viewModel()['layout config'].value:
             if 'name' in item.model().attributes:
                 name = item['name'].value
@@ -173,6 +164,7 @@ class GridLayout(QtGui.QGraphicsGridLayout):
                 item.delete()
 
     def updateItem(self, item):
+        self.removeItem(item)
         self.addItem(item)
 
     def removeItem(self, item):

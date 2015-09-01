@@ -68,7 +68,10 @@ class EditorView(QtGui.QGraphicsView):
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
     def init_ui(self, obj = None, fname = '', view_type = 'model'):
-        scene = EditorScene(self)
+        if view_type in ['meta model','view model']:
+            scene = EditorScene(self, ViewModelItem)
+        elif view_type in ['model']:
+            scene = EditorScene(self, ModelItem)
         self.setScene(scene)
         self.view_type = view_type
         self._root_model = obj
@@ -78,9 +81,9 @@ class EditorView(QtGui.QGraphicsView):
                 fname = obj.kind + '.view'
             vm = self.openVM(fname)
             if self.view_type == 'model':
-                r = self.buildModel(obj, vm)
+                r = self.buildModel( model = obj, view_model = vm)
             elif self.view_type == 'view model':
-                r = self.buildViewModel(vm)
+                r = self.buildViewModel( view_model = vm)
         except Exception, e:
             print "WARNING: Could not load '{}' to generate '{}' view for {}:\n\t{}".format(
                 fname, self.view_type, obj['name'].value, e
@@ -101,25 +104,26 @@ class EditorView(QtGui.QGraphicsView):
 
     def buildModel(self, model, view_model, parent = None):
         vm = view_model
-        _type = vm['kind'].value
-        if _type in ['Container','Association']:
-            t = ModelItem( parent = parent, view_model = vm )
+        _kind = vm['kind'].value
+        objs = []
+        t = ModelItem( parent = parent, view_model = vm, model = model )
+        if _kind in ['Container']:
             t.viewModel()['draw style'].value = 'hidden'
-        else:
-            t = ModelItem( parent = parent, view_model = vm, model = model )
         for cvm in vm.children:
-            layout_item = ModelItem( parent = t, view_model = cvm)
-            layout_item.viewModel()['draw style'].value = 'hidden'
+            _kind = cvm['kind'].value
             _scope = cvm['scope'].value
-            child_models = None
             if _scope in ['view','project']:
-                child_models = self._root_model.get_children(cvm['kind'].value)
+                objs = self._root_model.get_children(_kind)
             elif _scope in ['parent']:
-                child_models = model.get_children(cvm['kind'].value)
-            if child_models:
-                for cm in child_models:
-                    layout_item.addChild(self.buildModel( cm, cvm, layout_item))
-            t.addChild(layout_item)
+                objs = model.get_children(_kind)
+            if objs:
+                layout_item = ModelItem( parent = t, view_model = cvm )
+                layout_item.viewModel()['kind'].value = 'Container'
+                for obj in objs:
+                    layout_item.addChild(self.buildModel( model = obj,
+                                                          view_model = cvm,
+                                                          parent = layout_item ) )
+                t.addChild(layout_item)
         return t
 
     def buildViewModel(self, view_model, parent = None):
@@ -141,6 +145,7 @@ class EditorView(QtGui.QGraphicsView):
                 root.addChild(r)
         else:
             root = root_items[0]
+        print root.viewModel().toStr()
         jsonpickle.set_encoder_options('simplejson',indent=4)
         encoded_output = jsonpickle.encode(root.viewModel())
         with open(fname, 'w') as f:
