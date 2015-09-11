@@ -13,19 +13,11 @@ of models.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-import copy
-
 from view_model import ViewModel
 from action import Action
 from editor_item import EditorItem
 
 class ModelItem(EditorItem):
-
-    def __getitem__(self, key):
-        return self.model()[key]
-
-    def __setitem__(self, key, value):
-        self.model()[key] = value
 
     def initializeFlags(self):
         super(ModelItem,self).initializeFlags()

@@ -138,14 +138,13 @@ class EditorView(QtGui.QGraphicsView):
         return t
 
     def buildViewModel(self, view_model, parent = None):
-        vm = view_model
-        t = ViewModelItem(parent = parent, view_model = vm)
-        for cvm in vm.children:
+        t = ViewModelItem(parent = parent, view_model = view_model)
+        for cvm in view_model.children:
             t.addChild(self.buildViewModel(cvm, t))
         return t
 
     def saveVM(self, fname):
-        root_items = [x for x in self.scene().items() if not x._parent]
+        root_items = [x for x in self.scene().items() if isinstance(x,ViewModelItem) and not x._parent]
         if not root_items:
             print "ERROR: MUST HAVE AT LEAST ONE ITEM"
             return -1

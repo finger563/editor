@@ -14,11 +14,9 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 import view_attributes as view_attr
-from layout import layout_create
+from layout import layout_create, valid_layouts
 from graphics_items import RoundRectItem, TextItem
 from view_model import ViewModel
-
-import copy
 
 class EditorItem(QtGui.QGraphicsWidget):
 
@@ -26,23 +24,26 @@ class EditorItem(QtGui.QGraphicsWidget):
                  parent = None,
                  model = None,
                  view_model = ViewModel()):
-        super(EditorItem, self).__init__()
-
         self._parent = None
         self._model = model
         self._view_model = view_model
-
-        self._label = None
-        self._item = None
 
         self._mouseOver = False
         self._drag = False
         self._original_pos = None
 
+        self._label = None
+        self._item = None
+        
+        super(EditorItem, self).__init__(parent)
+
+        self._label = TextItem( '' , parent = self)
+
+        self.loadResources()
         self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
-        self.loadResources()
         self.initializeFlags()
+        self.updateGraphicsItem()
 
     def viewModel(self):
         return self._view_model
@@ -50,19 +51,21 @@ class EditorItem(QtGui.QGraphicsWidget):
     def model(self):
         return self._model
         
-    def createLabel(self, width, height):
-        if self._label:
-            if self.scene():
-                self.scene().removeItem(self._label)
-            del self._label
+    def __getitem__(self, key):
+        return self.model()[key]
+
+    def __setitem__(self, key, value):
+        self.model()[key] = value
+
+    def updateLabel(self, width, height):
         if self.isHidden():
-            return
+            self._label.setPlainText('')
         if self.model():
             if 'name' in self.model().attributes:
                 name = self.model()['name'].value
             else:
                 name = self.model()['kind'].value
-            self._label = TextItem( name , parent = self)
+            self._label.setPlainText(name)
             self._label.setAlignment(
                 self.viewModel()['text horizontal alignment'].value,
                 self.viewModel()['text vertical alignment'].value
@@ -70,10 +73,9 @@ class EditorItem(QtGui.QGraphicsWidget):
             self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
 
     def createItem(self, width, height):
-        self._item = None
+        if self.isHidden():
+            self._item = None
         draw_style = self.viewModel()['draw style'].value
-        if draw_style in ['hidden']:
-            return
         if self.viewModel()['icon'].value and draw_style == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
             self._item.setPixmap( QtGui.QPixmap(self.viewModel()['icon'].value).scaled(width,height) )
@@ -96,7 +98,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()
-        self.createLabel(width, height)
+        self.updateLabel(width, height)
         self.createItem(width, height)
 
     def paint(self, painter, option, widget = None):
@@ -124,7 +126,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def sizeHint(self, which, constraint):
         shw = 0; shh = 0
-        if self.layout():
+        if type(self.layout()) in valid_layouts:
             sh = self.layout().sizeHint(which, constraint)
             shw = sh.width()
             shh = sh.height()
@@ -137,10 +139,11 @@ class EditorItem(QtGui.QGraphicsWidget):
         
     def updateGraphicsItem(self):
         self.layout().activate()
+        self.prepareGeometryChange()
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()
-        self.createLabel(width, height)
+        self.updateLabel(width, height)
         self.createItem(width, height)
         self.updateGeometry()
         self.update()

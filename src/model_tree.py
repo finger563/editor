@@ -8,10 +8,6 @@ metamodels as tree structures in Qt.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from classes import test_project, root
-
-project = test_project()
-
 class ModelTreeItem(QtGui.QTreeWidgetItem):
     def __init__(self, parent = None, obj = None):
         super(ModelTreeItem, self).__init__(parent)
@@ -28,7 +24,7 @@ class ModelTree(QtGui.QTreeWidget):
         super(ModelTree,self).__init__(parent)
         self.setExpandsOnDoubleClick(False)
         
-    def load_model(self, model = project, parent = None):
+    def load_model(self, model, parent = None):
         item = ModelTreeItem(parent)
         if not parent:
             self.addTopLevelItem(item)
@@ -41,7 +37,7 @@ class ModelTree(QtGui.QTreeWidget):
             self.load_model(child, item)
         item.setExpanded(True)
 
-    def load_meta_model(self, meta_model = root, parent = None):
+    def load_meta_model(self, meta_model, parent = None):
         item = ModelTreeItem(parent)
         if not parent:
             self.addTopLevelItem(item)
