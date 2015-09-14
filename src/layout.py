@@ -161,8 +161,10 @@ class GridLayout(QtGui.QGraphicsGridLayout):
                 self.removeAt(i)
                 break
 
+valid_layouts = [HorizontalLayout, VerticalLayout, GridLayout, AnchorLayout]
+
 def layout_create(style):
-    new_layout = None
+    new_layout = HorizontalLayout()
     if style in ['horizontal']:
         new_layout = HorizontalLayout()
     elif style in ['vertical']:

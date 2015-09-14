@@ -24,10 +24,9 @@ from action import Action
 from layout import layout_create
 
 class EditorScene(QtGui.QGraphicsScene):
-    def __init__(self, parent = None, itemType = ViewModelItem):
+    def __init__(self, parent = None):
         super(EditorScene, self).__init__(parent)
         self._root = None
-        self._item_type = itemType
 
     def setRoot(self, r):
         self._root = r
@@ -42,16 +41,17 @@ class EditorScene(QtGui.QGraphicsScene):
         else:
             menu = QtGui.QMenu()
 
-            addNewItem = Action('','New {}'.format(self._item_type.__name__), self)
-            addNewItem.triggered.connect(lambda e : self.createNewItem(e, event.scenePos()))
-            menu.addAction(addNewItem)
+            if isinstance(self.getRoot(), ModelItem):
+                for a in self.getRoot().model().children._allowed:
+                    addNewItem = Action('','New {}'.format(a.__name__), self)
+                    addNewItem.triggered.connect(self.getRoot().addNewItem(a))
+                    menu.addAction(addNewItem)
+            else:
+                addNewItem = Action('','New Item', self)
+                addNewItem.triggered.connect(self.getRoot().addNewItem() )
+                menu.addAction(addNewItem)
 
             menu.exec_(event.screenPos())
-
-    def createNewItem(self, event, pos):
-        r = self._item_type( view_model = ViewModel())
-        r.setPos(pos)
-        self.addItem(r)
 
 class EditorView(QtGui.QGraphicsView):
 
@@ -68,10 +68,7 @@ class EditorView(QtGui.QGraphicsView):
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
     def init_ui(self, obj = None, fname = '', view_type = 'model'):
-        if view_type in ['meta model','view model']:
-            scene = EditorScene(self, ViewModelItem)
-        elif view_type in ['model']:
-            scene = EditorScene(self, ModelItem)
+        scene = EditorScene(self)
         self.setScene(scene)
         self.view_type = view_type
         self._root_model = obj
@@ -138,14 +135,13 @@ class EditorView(QtGui.QGraphicsView):
         return t
 
     def buildViewModel(self, view_model, parent = None):
-        vm = view_model
-        t = ViewModelItem(parent = parent, view_model = vm)
-        for cvm in vm.children:
+        t = ViewModelItem(parent = parent, view_model = view_model)
+        for cvm in view_model.children:
             t.addChild(self.buildViewModel(cvm, t))
         return t
 
     def saveVM(self, fname):
-        root_items = [x for x in self.scene().items() if not x._parent]
+        root_items = [x for x in self.scene().items() if isinstance(x,ViewModelItem) and not x._parent]
         if not root_items:
             print "ERROR: MUST HAVE AT LEAST ONE ITEM"
             return -1

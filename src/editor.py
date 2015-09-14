@@ -24,6 +24,10 @@ from model_tree import ModelTree
 from editor_widget import TabbedEditor, EditorView
 from output import TabbedOutputWidget
 
+from classes import test_project
+
+project = test_project()
+
 class Editor(QtGui.QMainWindow):
 
     editor_modes = ['view model','model','meta model']
@@ -107,9 +111,9 @@ class Editor(QtGui.QMainWindow):
     def buildTree(self, tree):
         tree.clear()
         if self.editor_mode in ['model']:
-            tree.load_model()
+            tree.load_model(project)
         elif self.editor_mode in ['view model','meta model']:
-            tree.load_meta_model()
+            tree.load_meta_model(project)
 
     def modelTreeItemDoubleClicked(self, item, col):
         name = item.text(0)
