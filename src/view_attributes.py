@@ -10,7 +10,8 @@ that a view object can have when editing views
 """
 
 import inspect
-import classes
+#import classes
+import metamodel.base as classes
 
 test = inspect.getmembers(classes, inspect.isclass)
 objects = ['Container', 'Association']

@@ -27,6 +27,7 @@ from output import TabbedOutputWidget
 from classes import test_project
 
 project = test_project()
+print project
 
 class Editor(QtGui.QMainWindow):
 
