@@ -12,6 +12,13 @@ class itemModel(QtCore.QAbstractItemModel):
         super(itemModel, self).__init__(parent)
         self.rootNode = root
 
+    def getModel(self, index):
+        if index.isValid():
+            node = index.internalPointer()
+            if node:
+                return node
+        return self.rootNode
+
     def rowCount(self, parent):
         if not parent.isValid():
             parentNode = self.rootNode
@@ -26,13 +33,26 @@ class itemModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return None
         node = index.internalPointer()
-        if role == QtCore.Qt.DisplayRole:
+        if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
             if index.column() == 0:
-                return node['name'].value
+                return node['name'].value # should make this more generic
             else:
                 return node.kind
+        if role == QtCore.Qt.DecorationRole:
+            if index.column() == 0:
+                kind = node.kind
+                if kind == "Software":
+                    return QtGui.QIcon(QtGui.QPixmap("icons/model/Hardware.png"))
         return None
 
+    def setData(self, index, value, role=QtCore.Qt.EditRole):
+        if index.isValid():
+            if role == QtCore.Qt.EditRole:
+                node = index.internalPointer()
+                node['name'].value = value  # should make this more generic
+                return True
+        return False
+    
     def headerData(self, section, orientation, role):
         if role == QtCore.Qt.DisplayRole:
             if section == 0:
@@ -47,10 +67,7 @@ class itemModel(QtCore.QAbstractItemModel):
         return f
         
     def index(self, row, column, parent):
-        if not parent.isValid():
-            parentNode = self.rootNode
-        else:
-            parentNode = parent.internalPointer()
+        parentNode = self.getModel(parent)
         childItem = parentNode.child(row)   # child should be implemented by data model
         if not childItem:
             return QtCore.QModelIndex()
@@ -59,11 +76,33 @@ class itemModel(QtCore.QAbstractItemModel):
         
     def parent(self, index):
         #index.row() , index.column()
-        node = index.internalPointer()
+        node = self.getModel(index)
         parentNode = node.parent
         if parentNode == self.rootNode:
             return QtCore.QModelIndex()
         return self.createIndex(parentNode.row(), 0, parentNode)  # data model needs to have a row method, e.g. parent.children.index(self)
+
+    def insertRows(self, position, rows, parent=QtCore.QModelIndex()):
+        parentNode= self.getModel(parent)
+        self.beginInsertRows(parent, position, position + rows - 1)
+
+        for row in range(rows):
+            childCount = parentNode.childCount()
+            childNode = Model("new model" + str(childCount))
+            success = parentNode.insert_child(position, childNode)
+
+        self.endInsertRows()
+        return True
+
+    def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
+        parentNode= self.getModel(parent)
+        self.beginRemoveRows(parent, position, position + rows  -1)
+
+        for row in range(rows):
+            success = parentNode.remove_child(position)
+
+        self.endRemoveRows()
+        return success
 
 if __name__ == "__main__":
     import sys
@@ -88,6 +127,8 @@ if __name__ == "__main__":
     rootNode.add_child(dep)
 
     model = itemModel(rootNode)
+
+    #model.removeRows(1,1)
 
     treeView = QtGui.QTreeView()
     treeView.show()
