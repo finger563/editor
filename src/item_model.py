@@ -130,17 +130,33 @@ def main():
     dep['name'].value = "My Deployment"
     rootNode.add_child(dep)
 
-    model = itemModel(rootNode)
+    mainWidget = QtGui.QWidget()
 
-    swIndex = model.index(0,3, QtCore.QModelIndex())
-
-    model.insertRows(1,5,swIndex)
-    #model.removeRows(1,1)
+    filterEdit = QtGui.QLineEdit()
 
     treeView = QtGui.QTreeView()
     treeView.show()
 
-    treeView.setModel(model)
+    vbox = QtGui.QVBoxLayout()
+    vbox.addWidget(filterEdit)
+    vbox.addWidget(treeView)
+    mainWidget.setLayout(vbox)
+    mainWidget.show()
+    app.setActiveWindow(mainWidget)
+
+    proxyModel = QtGui.QSortFilterProxyModel()
+    proxyModel.setDynamicSortFilter(True)
+    proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+    model = itemModel(rootNode)
+    proxyModel.setSourceModel(model)
+    treeView.setModel(proxyModel)
+    treeView.setSortingEnabled(True)
+
+    swIndex = model.index(0,3, QtCore.QModelIndex())
+    model.insertRows(1,5,swIndex)
+    #model.removeRows(1,1)
+
+    filterEdit.textChanged.connect(proxyModel.setFilterRegExp)
 
     sys.exit(app.exec_())
 
