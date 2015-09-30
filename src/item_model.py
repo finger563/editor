@@ -6,6 +6,8 @@ AbstractItemModel base class.
 """
 
 from PyQt4 import QtCore, QtGui
+import metamodel.base as classes
+import metamodel.importer as rosmod
 
 class itemModel(QtCore.QAbstractItemModel):
     def __init__(self, root, parent=None):
@@ -88,7 +90,11 @@ class itemModel(QtCore.QAbstractItemModel):
 
         for row in range(rows):
             childCount = parentNode.childCount()
-            childNode = Model("new model" + str(childCount))
+            _type = parentNode.children._allowed[0]
+            childNode = _type(
+                name=rosmod.Name( "new {} {}".format(_type.__name__,
+                                                     childCount) )
+            )
             success = parentNode.insert_child(position, childNode)
 
         self.endInsertRows()
@@ -106,8 +112,6 @@ class itemModel(QtCore.QAbstractItemModel):
 
 if __name__ == "__main__":
     import sys
-    import metamodel.base as classes
-    import metamodel.importer as rosmod
 
     app = QtGui.QApplication(sys.argv)
 
@@ -128,6 +132,9 @@ if __name__ == "__main__":
 
     model = itemModel(rootNode)
 
+    swIndex = model.index(0,3, QtCore.QModelIndex())
+
+    model.insertRows(1,5,swIndex)
     #model.removeRows(1,1)
 
     treeView = QtGui.QTreeView()
