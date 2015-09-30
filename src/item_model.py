@@ -20,25 +20,31 @@ class itemModel(QtCore.QAbstractItemModel):
         return parentNode.childCount()  # should be implemented by data model
         
     def columnCount(self, parent):
-        return 1
-        if not parent.isValid():
-            parentNode = self.rootNode
-        else:
-            parentNode = parent.internalPointer()
-        return parentNode.childCount()  # should be implemented by data model
+        return 2
         
     def data(self, index, role):
         if not index.isValid():
             return None
         node = index.internalPointer()
         if role == QtCore.Qt.DisplayRole:
-            return node['name'].value
+            if index.column() == 0:
+                return node['name'].value
+            else:
+                return node.kind
+        return None
 
     def headerData(self, section, orientation, role):
-        return "Test Header"
+        if role == QtCore.Qt.DisplayRole:
+            if section == 0:
+                return "Name"
+            else:
+                return "Kind"
         
     def flags(self, index):
-        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+        f = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+        if index.column() == 0:
+            f = f | QtCore.Qt.ItemIsEditable
+        return f
         
     def index(self, row, column, parent):
         if not parent.isValid():
@@ -69,16 +75,16 @@ if __name__ == "__main__":
     rootNode = rosmod.Project()
     rootNode['name'].value = "Project Root"
     sw = rosmod.Software()
-    sw['name'].value = "Software"
+    sw['name'].value = "My Software"
     rootNode.add_child(sw)
     pkg = rosmod.Package()
-    pkg['name'].value = "Package"
+    pkg['name'].value = "My Package"
     sw.add_child(pkg)
     hw = rosmod.Hardware()
-    hw['name'].value = "Hardware"
+    hw['name'].value = "My Hardware"
     rootNode.add_child(hw)
     dep = rosmod.Deployment()
-    dep['name'].value = "Deployment"
+    dep['name'].value = "My Deployment"
     rootNode.add_child(dep)
 
     model = itemModel(rootNode)
