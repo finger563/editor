@@ -110,7 +110,7 @@ class itemModel(QtCore.QAbstractItemModel):
         self.endRemoveRows()
         return success
 
-if __name__ == "__main__":
+def main():
     import sys
 
     app = QtGui.QApplication(sys.argv)
@@ -143,3 +143,6 @@ if __name__ == "__main__":
     treeView.setModel(model)
 
     sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()
