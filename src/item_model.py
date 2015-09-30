@@ -26,7 +26,7 @@ class itemModel(QtCore.QAbstractItemModel):
             parentNode = self.rootNode
         else:
             parentNode = parent.internalPointer()
-        return parentNode.childCount()  # should be implemented by data model
+        return parentNode.child_count()  # should be implemented by data model
         
     def columnCount(self, parent):
         return 2
@@ -89,7 +89,7 @@ class itemModel(QtCore.QAbstractItemModel):
         self.beginInsertRows(parent, position, position + rows - 1)
 
         for row in range(rows):
-            childCount = parentNode.childCount()
+            childCount = parentNode.child_count()
             _type = parentNode.children._allowed[0]
             childNode = _type(
                 name=rosmod.Name( "new {} {}".format(_type.__name__,
