@@ -59,11 +59,14 @@ class AttributeEditor(QtGui.QWidget):
     def setItem(self, item):
         self.init_layout()
         node = item.internalPointer()
-        self.add_header(node.viewModel())
-        for key,attr in node.model().attributes.iteritems():
+        #self.add_header(node.viewModel())
+        i = 0
+        for key,attr in node.attributes.iteritems():
             if attr.editable:
-                self.add_attribute(key, attr)
-        self._dataMapper.setItem(item)
+                obj = self.add_attribute(key, attr)
+                self._dataMapper.addMapping(obj, i)
+                i += 1
+        self._dataMapper.setCurrentModelIndex(item)
         
     def init_ui(self, item, output_obj, output_func = None):
         if self._unsaved_edits:
@@ -164,6 +167,7 @@ class AttributeEditor(QtGui.QWidget):
             if label: self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
             self._layout.addWidget(obj)
+            return obj
 
     def open_file(self, name, obj, file_type):
         fileName = QtGui.QFileDialog.getOpenFileName(self,

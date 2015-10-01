@@ -207,7 +207,8 @@ def main():
 
     treeView2.setModel(model)
 
-    swIndex = model.index(1,3, QtCore.QModelIndex())
+    swIndex = model.index(1,0, QtCore.QModelIndex())
+    ae.setItem(swIndex)
     model.insertRows(0,5,swIndex)
     #model.removeRows(1,1)
 
