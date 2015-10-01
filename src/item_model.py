@@ -10,6 +10,10 @@ import metamodel.base as classes
 import metamodel.importer as rosmod
 
 class itemModel(QtCore.QAbstractItemModel):
+
+    sort_role = QtCore.Qt.UserRole
+    filter_role = QtCore.Qt.UserRole + 1
+    
     def __init__(self, root, parent=None):
         super(itemModel, self).__init__(parent)
         self.rootNode = root
@@ -45,6 +49,10 @@ class itemModel(QtCore.QAbstractItemModel):
                 kind = node.kind
                 if kind == "Software":
                     return QtGui.QIcon(QtGui.QPixmap("icons/model/Hardware.png"))
+        if role == itemModel.sort_role:
+            return node.kind            
+        if role == itemModel.filter_role:
+            return node.kind
         return None
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
@@ -122,7 +130,7 @@ class mySortFilterProxyModel(QtGui.QSortFilterProxyModel):
             if self.filterAcceptsRow(r,index0):
                 inChildren = True
                 break
-        return QtCore.QString(self.sourceModel().data(index0, QtCore.Qt.DisplayRole)).contains(self.filterRegExp()) or inChildren
+        return QtCore.QString(self.sourceModel().data(index0, self.filterRole())).contains(self.filterRegExp()) or inChildren
 
 def main():
     import sys
@@ -131,18 +139,26 @@ def main():
 
     rootNode = rosmod.Project()
     rootNode['name'].value = "Project Root"
-    sw = rosmod.Software()
-    sw['name'].value = "My Software"
-    rootNode.add_child(sw)
-    pkg = rosmod.Package()
-    pkg['name'].value = "My Package"
-    sw.add_child(pkg)
-    hw = rosmod.Hardware()
-    hw['name'].value = "My Hardware"
-    rootNode.add_child(hw)
+
     dep = rosmod.Deployment()
     dep['name'].value = "My Deployment"
     rootNode.add_child(dep)
+
+    sw = rosmod.Software()
+    sw['name'].value = "My Software"
+    rootNode.add_child(sw)
+
+    pkg = rosmod.Package()
+    pkg['name'].value = "My Package"
+    sw.add_child(pkg)
+
+    hw = rosmod.Hardware()
+    hw['name'].value = "My Hardware"
+    rootNode.add_child(hw)
+
+    dep2 = rosmod.Deployment()
+    dep2['name'].value = "My Deployment 2"
+    rootNode.add_child(dep2)
 
     mainWidget = QtGui.QWidget()
 
@@ -162,13 +178,18 @@ def main():
     proxyModel = mySortFilterProxyModel()
     proxyModel.setDynamicSortFilter(True)
     proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+    proxyModel.setSortRole(itemModel.sort_role)
+    proxyModel.setFilterRole(itemModel.filter_role)
+
     model = itemModel(rootNode)
+
     proxyModel.setSourceModel(model)
+
     treeView.setModel(proxyModel)
     treeView.setSortingEnabled(True)
 
-    swIndex = model.index(0,3, QtCore.QModelIndex())
-    model.insertRows(1,5,swIndex)
+    swIndex = model.index(1,3, QtCore.QModelIndex())
+    model.insertRows(0,5,swIndex)
     #model.removeRows(1,1)
 
     filterEdit.textChanged.connect(proxyModel.setFilterRegExp)
