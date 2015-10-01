@@ -124,7 +124,7 @@ class mySortFilterProxyModel(QtGui.QSortFilterProxyModel):
         super(mySortFilterProxyModel,self).__init__()
 
     def filterAcceptsRow(self, row, parent):
-        index0 = self.sourceModel().index(row, 0, parent)
+        index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
         inChildren = False
         for r in range(index0.internalPointer().child_count()):
             if self.filterAcceptsRow(r,index0):
