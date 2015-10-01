@@ -33,21 +33,19 @@ class itemModel(QtCore.QAbstractItemModel):
         return parentNode.child_count()  # should be implemented by data model
         
     def columnCount(self, parent):
-        return 2
+        return 5
         
     def data(self, index, role):
         if not index.isValid():
             return None
         node = index.internalPointer()
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
-            if index.column() == 0:
-                return node['name'].value # should make this more generic
-            else:
-                return node.kind
+            if index.column() < len(node.attributes.items()):
+                return node.attributes.values()[index.column()].value
         if role == QtCore.Qt.DecorationRole:
             if index.column() == 0:
                 kind = node.kind
-                if kind == "Software":
+                if kind == "Hardware":
                     return QtGui.QIcon(QtGui.QPixmap("icons/model/Hardware.png"))
         if role == itemModel.sort_role:
             return node.kind            
@@ -59,9 +57,8 @@ class itemModel(QtCore.QAbstractItemModel):
         if index.isValid():
             node = index.internalPointer()
             if role == QtCore.Qt.EditRole:
-                if index.column() == 0:
-                    node['name'].value = value  # should make this more generic
-                    self.dataChanged.emit(index,index)  # from, to
+                node.attributes.values()[index.column()].value = value
+                self.dataChanged.emit(index,index)
                 return True
         return False
     
@@ -136,6 +133,7 @@ class mySortFilterProxyModel(QtGui.QSortFilterProxyModel):
 
 def main():
     import sys
+    from attribute_widget import AttributeEditor
 
     app = QtGui.QApplication(sys.argv)
 
@@ -153,6 +151,14 @@ def main():
     pkg = rosmod.Package()
     pkg['name'].value = "My Package"
     sw.add_child(pkg)
+
+    comp = rosmod.Component()
+    comp['name'].value = "My Component"
+    pkg.add_child(comp)
+
+    tmr = rosmod.Timer()
+    tmr['name'].value = "My Timer"
+    comp.add_child(tmr)
 
     hw = rosmod.Hardware()
     hw['name'].value = "My Hardware"
@@ -172,10 +178,13 @@ def main():
     treeView2 = QtGui.QTreeView()
     treeView2.show()
 
+    ae = AttributeEditor()
+
     vbox = QtGui.QVBoxLayout()
     vbox.addWidget(filterEdit)
     vbox.addWidget(treeView)
     vbox.addWidget(treeView2)
+    vbox.addWidget(ae)
     mainWidget.setLayout(vbox)
     mainWidget.show()
     app.setActiveWindow(mainWidget)
@@ -193,6 +202,8 @@ def main():
 
     treeView.setModel(proxyModel)
     treeView.setSortingEnabled(True)
+
+    ae.setModel(model)
 
     treeView2.setModel(model)
 

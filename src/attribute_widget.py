@@ -30,6 +30,12 @@ class AttributeEditor(QtGui.QWidget):
         self._unsaved_edits = False
         self._layout = None
 
+        self._dataMapper = QtGui.QDataWidgetMapper()
+
+    def setModel(self, model):
+        self._model = model
+        self._dataMapper.setModel(model)
+
     def init_layout(self):
         self._input_dict = {}
         while self._layout and self._layout.count():
@@ -50,6 +56,15 @@ class AttributeEditor(QtGui.QWidget):
         
         self.updateGeo()
 
+    def setItem(self, item):
+        self.init_layout()
+        node = item.internalPointer()
+        self.add_header(node.viewModel())
+        for key,attr in node.model().attributes.iteritems():
+            if attr.editable:
+                self.add_attribute(key, attr)
+        self._dataMapper.setItem(item)
+        
     def init_ui(self, item, output_obj, output_func = None):
         if self._unsaved_edits:
             reply = QtGui.QMessageBox.question(self, 'Save?',
