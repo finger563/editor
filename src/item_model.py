@@ -57,9 +57,11 @@ class itemModel(QtCore.QAbstractItemModel):
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
         if index.isValid():
+            node = index.internalPointer()
             if role == QtCore.Qt.EditRole:
-                node = index.internalPointer()
-                node['name'].value = value  # should make this more generic
+                if index.column() == 0:
+                    node['name'].value = value  # should make this more generic
+                    self.dataChanged.emit(index,index)  # from, to
                 return True
         return False
     
@@ -167,9 +169,13 @@ def main():
     treeView = QtGui.QTreeView()
     treeView.show()
 
+    treeView2 = QtGui.QTreeView()
+    treeView2.show()
+
     vbox = QtGui.QVBoxLayout()
     vbox.addWidget(filterEdit)
     vbox.addWidget(treeView)
+    vbox.addWidget(treeView2)
     mainWidget.setLayout(vbox)
     mainWidget.show()
     app.setActiveWindow(mainWidget)
@@ -187,6 +193,8 @@ def main():
 
     treeView.setModel(proxyModel)
     treeView.setSortingEnabled(True)
+
+    treeView2.setModel(model)
 
     swIndex = model.index(1,3, QtCore.QModelIndex())
     model.insertRows(0,5,swIndex)
