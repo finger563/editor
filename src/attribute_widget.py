@@ -32,9 +32,9 @@ class AttributeEditor(QtGui.QWidget):
 
         self._dataMapper = QtGui.QDataWidgetMapper()
 
-    def setModel(self, model):
-        self._model = model
-        self._dataMapper.setModel(model)
+    def setModel(self, proxyModel):
+        self._proxyModel = proxyModel
+        self._dataMapper.setModel(proxyModel.sourceModel())
 
     def init_layout(self):
         self._input_dict = {}
@@ -56,18 +56,31 @@ class AttributeEditor(QtGui.QWidget):
         
         self.updateGeo()
 
-    def setItem(self, item):
+    def setSelection(self, current, old):
+        current = self._proxyModel.mapToSource(current)
+        
+        parent = current.parent()
+        self._dataMapper.setRootIndex(parent)
+        #self._dataMapper.clearMapping()
+        self._dataMapper.setCurrentModelIndex(current)
+
         self.init_layout()
-        node = item.internalPointer()
-        #self.add_header(node.viewModel())
+
+        node = current.internalPointer()
+
+        self.add_header(node)
         i = 0
         for key,attr in node.attributes.iteritems():
+            print key, attr
             if attr.editable:
                 obj = self.add_attribute(key, attr)
-                self._dataMapper.addMapping(obj, i)
-                i += 1
-        self._dataMapper.setCurrentModelIndex(item)
-        
+                if obj:
+                    print "  added"
+                    self._dataMapper.addMapping(obj, i)
+                    i += 1
+        self.add_ok_cancel()
+        self.unhide(None)
+
     def init_ui(self, item, output_obj, output_func = None):
         if self._unsaved_edits:
             reply = QtGui.QMessageBox.question(self, 'Save?',
@@ -83,30 +96,16 @@ class AttributeEditor(QtGui.QWidget):
         for key,attr in item.model().attributes.iteritems():
             if attr.editable:
                 self.add_attribute(key,attr)
-        
-        ok_cancel_widget = QtGui.QWidget(self)
-        ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
-        
-        button = QtGui.QPushButton('Save',self)
-        button.setToolTip('Save the updated attributes.')
-        button.clicked.connect(self.save)
-        ok_cancel_layout.addWidget(button)
-
-        button = QtGui.QPushButton('Close',self)
-        button.setToolTip('Close the attribute editor.')
-        button.clicked.connect(self.cancel)
-        ok_cancel_layout.addWidget(button)
-
-        ok_cancel_widget.setLayout(ok_cancel_layout)
-        self._layout.addWidget(ok_cancel_widget)
+        self.add_ok_cancel()
         self._unsaved_edits = False
 
-    def add_header(self, attrs):
+    def add_header(self, item):
         label = QtGui.QLabel()
-        label.setText("Attribute Editor")
+        label.setText("Properties")
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
         self._layout.addWidget(label)
+        '''
         obj = None
         if attrs['draw style'].value in ['icon']:
             pix = QtGui.QPixmap( attrs['icon'].value).scaled(30,30)
@@ -115,6 +114,7 @@ class AttributeEditor(QtGui.QWidget):
 
         if obj:
             self._layout.addWidget(obj)
+        '''
 
     def add_attribute(self, name, attr):
         label = QtGui.QLabel()
@@ -125,20 +125,21 @@ class AttributeEditor(QtGui.QWidget):
         obj = None
         if attr.kind in ['float','int','double','string']:
             obj = QtGui.QLineEdit()
-            obj.editingFinished.connect(self.updateEdits)
+            #obj.editingFinished.connect(self.updateEdits)
             obj.setText(str(attr.value))
-            self._input_dict[name] = obj
+            #self._input_dict[name] = obj
         elif attr.kind in ['code']:
             obj = QtGui.QTextEdit()
-            obj.textChanged.connect(self.updateEdits)
+            #obj.textChanged.connect(self.updateEdits)
             obj.setText(attr.value)
-            self._input_dict[name] = obj
-        elif attr.kind in ['list'] and attr.value in attr.options:
+            #self._input_dict[name] = obj
+        elif attr.kind in ['list_entry'] and attr.value in attr.options:
             obj = QtGui.QComboBox()
-            obj.currentIndexChanged.connect(self.updateEdits)
+            #obj.currentIndexChanged.connect(self.updateEdits)
             obj.addItems(attr.options)
             obj.setCurrentIndex(attr.options.index(attr.value))
-            self._input_dict[name] = obj
+            #self._input_dict[name] = obj
+        '''
         elif 'file' in attr.kind:
             obj = PushButton()
             obj.setText(attr.value)
@@ -163,11 +164,29 @@ class AttributeEditor(QtGui.QWidget):
                     print 'Unknown dictionary value type: {}'.format(_type)
                     break
             obj.setLayout(layout)
+        '''
         if obj:
             if label: self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
             self._layout.addWidget(obj)
-            return obj
+        return obj
+
+    def add_ok_cancel(self):
+        ok_cancel_widget = QtGui.QWidget(self)
+        ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
+        
+        button = QtGui.QPushButton('Save',self)
+        button.setToolTip('Save the updated attributes.')
+        button.clicked.connect(self.save)
+        ok_cancel_layout.addWidget(button)
+
+        button = QtGui.QPushButton('Close',self)
+        button.setToolTip('Close the attribute editor.')
+        button.clicked.connect(self.cancel)
+        ok_cancel_layout.addWidget(button)
+
+        ok_cancel_widget.setLayout(ok_cancel_layout)
+        self._layout.addWidget(ok_cancel_widget)
 
     def open_file(self, name, obj, file_type):
         fileName = QtGui.QFileDialog.getOpenFileName(self,
@@ -247,7 +266,7 @@ class AttributeEditor(QtGui.QWidget):
         self._displayed = False
         self.animate(event,self._displayed)
 
-    def show(self, event):
+    def unhide(self, event):
         self._displayed = True
         self.animate(event,self._displayed)
 

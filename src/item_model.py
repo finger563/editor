@@ -57,7 +57,7 @@ class itemModel(QtCore.QAbstractItemModel):
         if index.isValid():
             node = index.internalPointer()
             if role == QtCore.Qt.EditRole:
-                node.attributes.values()[index.column()].value = value
+                node.attributes.values()[index.column()].fromQVariant(value)
                 self.dataChanged.emit(index,index)
                 return True
         return False
@@ -164,31 +164,8 @@ def main():
     hw['name'].value = "My Hardware"
     rootNode.add_child(hw)
 
-    dep2 = rosmod.Deployment()
-    dep2['name'].value = "My Deployment 2"
-    rootNode.add_child(dep2)
-
-    mainWidget = QtGui.QWidget()
-
-    filterEdit = QtGui.QLineEdit()
-
-    treeView = QtGui.QTreeView()
-    treeView.show()
-
-    treeView2 = QtGui.QTreeView()
-    treeView2.show()
-
-    ae = AttributeEditor()
-
-    vbox = QtGui.QVBoxLayout()
-    vbox.addWidget(filterEdit)
-    vbox.addWidget(treeView)
-    vbox.addWidget(treeView2)
-    vbox.addWidget(ae)
-    mainWidget.setLayout(vbox)
-    mainWidget.show()
-    app.setActiveWindow(mainWidget)
-
+    ''' SET UP THE MODEL, PROXY MODEL '''
+    
     #proxyModel = QtGui.QSortFilterProxyModel()
     proxyModel = mySortFilterProxyModel()
     proxyModel.setDynamicSortFilter(True)
@@ -200,19 +177,41 @@ def main():
 
     proxyModel.setSourceModel(model)
 
+    ''' SET UP THE ACTUAL WIDGETS '''
+
+    mainWidget = QtGui.QWidget()
+
+    filterEdit = QtGui.QLineEdit()
+    filterEdit.textChanged.connect(proxyModel.setFilterRegExp)
+
+    ae = AttributeEditor(mainWidget)
+    ae.setModel(proxyModel)
+
+    treeView = QtGui.QTreeView()
     treeView.setModel(proxyModel)
     treeView.setSortingEnabled(True)
+    treeView.selectionModel().currentChanged.connect(ae.setSelection)
+    treeView.show()
 
-    ae.setModel(model)
-
+    treeView2 = QtGui.QTreeView()
     treeView2.setModel(model)
+    treeView2.show()
+
+    vbox = QtGui.QVBoxLayout()
+    vbox.addWidget(filterEdit)
+    vbox.addWidget(treeView)
+    vbox.addWidget(treeView2)
+    #vbox.addWidget(ae)
+    mainWidget.setLayout(vbox)
+    mainWidget.show()
+    app.setActiveWindow(mainWidget)
+
+    ae.show()
+    ae.raise_()
 
     swIndex = model.index(1,0, QtCore.QModelIndex())
-    ae.setItem(swIndex)
     model.insertRows(0,5,swIndex)
     #model.removeRows(1,1)
-
-    filterEdit.textChanged.connect(proxyModel.setFilterRegExp)
 
     sys.exit(app.exec_())
 
