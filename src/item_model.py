@@ -110,6 +110,20 @@ class itemModel(QtCore.QAbstractItemModel):
         self.endRemoveRows()
         return success
 
+class mySortFilterProxyModel(QtGui.QSortFilterProxyModel):
+
+    def __init__(self):
+        super(mySortFilterProxyModel,self).__init__()
+
+    def filterAcceptsRow(self, row, parent):
+        index0 = self.sourceModel().index(row, 0, parent)
+        inChildren = False
+        for r in range(index0.internalPointer().child_count()):
+            if self.filterAcceptsRow(r,index0):
+                inChildren = True
+                break
+        return QtCore.QString(self.sourceModel().data(index0, QtCore.Qt.DisplayRole)).contains(self.filterRegExp()) or inChildren
+
 def main():
     import sys
 
@@ -144,7 +158,8 @@ def main():
     mainWidget.show()
     app.setActiveWindow(mainWidget)
 
-    proxyModel = QtGui.QSortFilterProxyModel()
+    #proxyModel = QtGui.QSortFilterProxyModel()
+    proxyModel = mySortFilterProxyModel()
     proxyModel.setDynamicSortFilter(True)
     proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
     model = itemModel(rootNode)
