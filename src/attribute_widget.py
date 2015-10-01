@@ -71,11 +71,9 @@ class AttributeEditor(QtGui.QWidget):
         self.add_header(node)
         i = 0
         for key,attr in node.attributes.iteritems():
-            print key, attr
             if attr.editable:
                 obj = self.add_attribute(key, attr)
                 if obj:
-                    print "  added"
                     self._dataMapper.addMapping(obj, i)
                     i += 1
         self.add_ok_cancel()
