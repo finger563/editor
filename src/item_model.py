@@ -194,7 +194,9 @@ def main():
     treeView.show()
 
     treeView2 = QtGui.QTreeView()
-    treeView2.setModel(model)
+    treeView2.setModel(proxyModel)
+    treeView2.setSortingEnabled(True)
+    treeView2.setSelectionModel(treeView.selectionModel())
     treeView2.show()
 
     vbox = QtGui.QVBoxLayout()

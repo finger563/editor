@@ -67,6 +67,8 @@ class AttributeEditor(QtGui.QWidget):
         self.init_layout()
 
         node = current.internalPointer()
+        if not node:
+            return
 
         self.add_header(node)
         i = 0
@@ -121,7 +123,7 @@ class AttributeEditor(QtGui.QWidget):
         label.setWordWrap(True)
 
         obj = None
-        if attr.kind in ['float','int','double','string']:
+        if attr.kind in ['float','int','integer','double','string']:
             obj = QtGui.QLineEdit()
             #obj.editingFinished.connect(self.updateEdits)
             obj.setText(str(attr.value))
