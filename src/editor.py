@@ -20,9 +20,10 @@ from PyQt4 import QtGui
 
 from action import Action
 from worker import Worker
-from model_tree import ModelTree
 from editor_widget import TabbedEditor, EditorView
 from output import TabbedOutputWidget
+
+from item_model import ItemModel, SortFilterProxyModel
 
 import metamodel.project as ROSMOD
 from interface import ROSMOD_Interface
@@ -31,6 +32,8 @@ rosmod_intf = ROSMOD_Interface()
 rosmod_intf.new_project( path = ROSMOD.Path("./") )
 
 project = rosmod_intf.project
+
+root_node = project
 
 class Editor(QtGui.QMainWindow):
 
@@ -80,14 +83,36 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_add_action("test2",testAction)
         self.toolbar_add_action("test2",saveAction)
 
-        self.modelTree = ModelTree(None)
-        self.buildTree(self.modelTree)
-        self.modelTree.itemDoubleClicked.connect(self.modelTreeItemDoubleClicked)
+        self.proxy_model = SortFilterProxyModel()
+        self.proxy_model.setDynamicSortFilter(True)
+        self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.proxy_model.setSortRole(ItemModel.sort_role)
+        self.proxy_model.setFilterRole(ItemModel.filter_role)
+
+        self.model = ItemModel(root_node)
+
+        self.proxy_model.setSourceModel(self.model)
+
+        self.tree_view = QtGui.QTreeView()
+        self.tree_view.setModel(self.proxy_model)
+        #self.tree_view.doubleClicked.connect(self.treeItemDoubleClicked)
+        self.tree_view.setSortingEnabled(False)
+        #self.tree_view.selectionModel().currentChanged.connnect(self.treeItemDoubleClicked)
+
+        self.filter_edit = QtGui.QLineEdit()
+        self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
+
+        self.navigator = QtGui.QWidget()
+        self.navigator_vbox = QtGui.QVBoxLayout()
+        self.navigator_vbox.addWidget(self.filter_edit)
+        self.navigator_vbox.addWidget(self.tree_view)
+        self.navigator.setLayout(self.navigator_vbox)
+        
         self.tabbedEditorWidget = TabbedEditor(self)
         self.openEditorTabs = {}
 
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.splitter1.addWidget(self.modelTree)
+        self.splitter1.addWidget(self.navigator)
         self.splitter1.addWidget(self.tabbedEditorWidget)
         self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 * self.geometry().x()/4.0])
 
@@ -112,6 +137,9 @@ class Editor(QtGui.QMainWindow):
         self.openEditorTabs = {}
         self.tabbedEditorWidget.clear()
 
+    def setModel(self, model):
+        tree
+
     def buildTree(self, tree):
         tree.clear()
         if self.editor_mode in ['model']:
@@ -119,8 +147,13 @@ class Editor(QtGui.QMainWindow):
         elif self.editor_mode in ['view model','meta model']:
             tree.load_meta_model(project)
 
-    def modelTreeItemDoubleClicked(self, item, col):
-        name = item.text(0)
+    def treeItemDoubleClicked(self, modelIndex):
+        print "hello"
+        print modelIndex
+        print modelIndex.column()
+        item = modelIndex.internalPointer()
+        name = item.attributes.values()[modelIndex.column()].value
+        return
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
             ev.init_ui(
@@ -166,7 +199,7 @@ class Editor(QtGui.QMainWindow):
             if item != self.editor_mode:
                 self.editor_mode = item
                 self.clearEditor()
-                self.buildTree(self.modelTree)
+                # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
         
     def testEvent(self, event):
         test = QtGui.QMessageBox.information(self, 'Build',
