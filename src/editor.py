@@ -25,15 +25,37 @@ from output import TabbedOutputWidget
 
 from item_model import ItemModel, SortFilterProxyModel
 
-import metamodel.project as ROSMOD
-from interface import ROSMOD_Interface
+import metamodel.base as classes
+import metamodel.importer as rosmod
 
-rosmod_intf = ROSMOD_Interface()
-rosmod_intf.new_project( path = ROSMOD.Path("./") )
+rootNode = rosmod.Project()
+rootNode['name'].value = "Project Root"
 
-project = rosmod_intf.project
+dep = rosmod.Deployment()
+dep['name'].value = "My Deployment"
+rootNode.add_child(dep)
 
-root_node = project
+sw = rosmod.Software()
+sw['name'].value = "My Software"
+rootNode.add_child(sw)
+
+pkg = rosmod.Package()
+pkg['name'].value = "My Package"
+sw.add_child(pkg)
+
+comp = rosmod.Component()
+comp['name'].value = "My Component"
+pkg.add_child(comp)
+
+tmr = rosmod.Timer()
+tmr['name'].value = "My Timer"
+comp.add_child(tmr)
+    
+hw = rosmod.Hardware()
+hw['name'].value = "My Hardware"
+rootNode.add_child(hw)
+
+root_node = rootNode
 
 class Editor(QtGui.QMainWindow):
 
@@ -95,7 +117,7 @@ class Editor(QtGui.QMainWindow):
 
         self.tree_view = QtGui.QTreeView()
         self.tree_view.setModel(self.proxy_model)
-        #self.tree_view.doubleClicked.connect(self.treeItemDoubleClicked)
+        self.tree_view.doubleClicked.connect(self.treeItemDoubleClicked)
         self.tree_view.setSortingEnabled(False)
         #self.tree_view.selectionModel().currentChanged.connnect(self.treeItemDoubleClicked)
 
@@ -137,9 +159,6 @@ class Editor(QtGui.QMainWindow):
         self.openEditorTabs = {}
         self.tabbedEditorWidget.clear()
 
-    def setModel(self, model):
-        tree
-
     def buildTree(self, tree):
         tree.clear()
         if self.editor_mode in ['model']:
@@ -148,19 +167,19 @@ class Editor(QtGui.QMainWindow):
             tree.load_meta_model(project)
 
     def treeItemDoubleClicked(self, modelIndex):
-        print "hello"
-        print modelIndex
-        print modelIndex.column()
-        item = modelIndex.internalPointer()
-        name = item.attributes.values()[modelIndex.column()].value
-        return
+        mi = self.proxy_model.mapToSource(modelIndex)
+        item = self.model.getModel( mi )
+        name = item["name"].value
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
             ev.init_ui(
-                obj = item.Object(),
-                fname = item.Object().kind + '.view',
+                obj = item,
+                fname = item.kind + '.view',
                 view_type = self.editor_mode
             )
+            ev.getEditor().setModel(self.proxy_model)
+            # TODO: FIX THIS SO THAT THE VIEW'S EDITOR MODEL IS SET TO THE VIEW'S SELECTION CHANGED
+            self.tree_view.selectionModel().currentChanged.connect(ev.getEditor().setSelection)
             self.openEditorTabs[name] = ev
             self.tabbedEditorWidget.addTab( ev, name )
         elif self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]) < 0:

@@ -33,7 +33,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         return parentNode.child_count()  # should be implemented by data model
         
     def columnCount(self, parent):
-        return 5
+        return 1
         
     def data(self, index, role):
         if not index.isValid():
@@ -66,8 +66,6 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DisplayRole:
             if section == 0:
                 return "Name"
-            else:
-                return "Kind"
         
     def flags(self, index):
         f = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable

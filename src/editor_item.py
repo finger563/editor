@@ -215,7 +215,8 @@ class EditorItem(QtGui.QGraphicsWidget):
                 editor.init_ui(self,
                                self.model().attributes,
                                lambda a : self.updateAttributes(a))
-                editor.show(None)
+                editor.show()
+                editor.raise_()
 
     def updateAttributes(self,attrs):
         self.loadResources()
