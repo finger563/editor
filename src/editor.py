@@ -24,10 +24,13 @@ from model_tree import ModelTree
 from editor_widget import TabbedEditor, EditorView
 from output import TabbedOutputWidget
 
-from classes import test_project
+import metamodel.project as ROSMOD
+from interface import ROSMOD_Interface
 
-project = test_project()
-print project
+rosmod_intf = ROSMOD_Interface()
+rosmod_intf.new_project( path = ROSMOD.Path("./") )
+
+project = rosmod_intf.project
 
 class Editor(QtGui.QMainWindow):
 

@@ -9,13 +9,13 @@ from PyQt4 import QtCore, QtGui
 import metamodel.base as classes
 import metamodel.importer as rosmod
 
-class itemModel(QtCore.QAbstractItemModel):
+class ItemModel(QtCore.QAbstractItemModel):
 
     sort_role = QtCore.Qt.UserRole
     filter_role = QtCore.Qt.UserRole + 1
     
     def __init__(self, root, parent=None):
-        super(itemModel, self).__init__(parent)
+        super(ItemModel, self).__init__(parent)
         self.rootNode = root
 
     def getModel(self, index):
@@ -47,9 +47,9 @@ class itemModel(QtCore.QAbstractItemModel):
                 kind = node.kind
                 if kind == "Hardware":
                     return QtGui.QIcon(QtGui.QPixmap("icons/model/Hardware.png"))
-        if role == itemModel.sort_role:
+        if role == ItemModel.sort_role:
             return node.kind            
-        if role == itemModel.filter_role:
+        if role == ItemModel.filter_role:
             return node.kind
         return None
 
@@ -117,10 +117,10 @@ class itemModel(QtCore.QAbstractItemModel):
         self.endRemoveRows()
         return success
 
-class mySortFilterProxyModel(QtGui.QSortFilterProxyModel):
+class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
 
     def __init__(self):
-        super(mySortFilterProxyModel,self).__init__()
+        super(SortFilterProxyModel,self).__init__()
 
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
@@ -167,13 +167,13 @@ def main():
     ''' SET UP THE MODEL, PROXY MODEL '''
     
     #proxyModel = QtGui.QSortFilterProxyModel()
-    proxyModel = mySortFilterProxyModel()
+    proxyModel = SortFilterProxyModel()
     proxyModel.setDynamicSortFilter(True)
     proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
-    proxyModel.setSortRole(itemModel.sort_role)
-    proxyModel.setFilterRole(itemModel.filter_role)
+    proxyModel.setSortRole(ItemModel.sort_role)
+    proxyModel.setFilterRole(ItemModel.filter_role)
 
-    model = itemModel(rootNode)
+    model = ItemModel(rootNode)
 
     proxyModel.setSourceModel(model)
 
