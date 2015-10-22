@@ -123,9 +123,11 @@ class Editor(QtGui.QMainWindow):
 
         self.filter_edit = QtGui.QLineEdit()
         self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
+        self.filter_label = QtGui.QLabel("Filter:")
 
         self.navigator = QtGui.QWidget()
         self.navigator_vbox = QtGui.QVBoxLayout()
+        self.navigator_vbox.addWidget(self.filter_label)
         self.navigator_vbox.addWidget(self.filter_edit)
         self.navigator_vbox.addWidget(self.tree_view)
         self.navigator.setLayout(self.navigator_vbox)
