@@ -16,6 +16,10 @@ from PyQt4 import QtGui
 from collections import OrderedDict
 from graphics_items import PushButton
 
+from code_editor import CodeEditor
+
+import syntax
+
 # NEED TO USE VALIDATORS
 
 class AttributeEditor(QtGui.QWidget):
@@ -129,7 +133,8 @@ class AttributeEditor(QtGui.QWidget):
             obj.setText(str(attr.value))
             #self._input_dict[name] = obj
         elif attr.kind in ['code']:
-            obj = QtGui.QTextEdit()
+            obj = CodeEditor()
+            self.highlight = syntax.CodeHighlighter(obj.document())
             #obj.textChanged.connect(self.updateEdits)
             obj.setText(attr.value)
             #self._input_dict[name] = obj
@@ -168,6 +173,7 @@ class AttributeEditor(QtGui.QWidget):
         if obj:
             if label: self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
+            self.obj = obj
             self._layout.addWidget(obj)
         return obj
 

@@ -18,7 +18,7 @@ class ViewModel(object):
     def __init__(self,
                  kind = 'Container',
                  root = 'top left',
-                 #anchor = 'top left',
+                 anchor = 'top left',
                  text_loc = 'top',
                  text_ha = 'left',
                  text_va = 'top',

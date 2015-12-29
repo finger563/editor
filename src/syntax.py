@@ -24,7 +24,8 @@ def format(color, style=''):
 # Syntax styles that can be shared by all languages
 STYLES = {
     'keyword': format('blue'),
-    'operator': format('red'),
+    'keyword2': format('darkMagenta'),
+    'datatype': format('darkRed'),
     'brace': format('darkGray'),
     'defclass': format('black', 'bold'),
     'string': format('magenta'),
@@ -32,37 +33,30 @@ STYLES = {
     'comment': format('darkGreen', 'italic'),
     'self': format('black', 'italic'),
     'numbers': format('brown'),
-    'error': format('red', 'bold')
 }
 
 
-class PythonHighlighter (QSyntaxHighlighter):
-    """Syntax highlighter for the Python language.
+class CodeHighlighter (QSyntaxHighlighter):
+    """Syntax highlighter for the Code Mission language.
     """
-    # Python keywords
+    # Code Mission keywords
     keywords = [
-        'and', 'assert', 'break', 'class', 'continue', 'def',
-        'del', 'elif', 'else', 'except', 'exec', 'finally',
-        'for', 'from', 'global', 'if', 'import', 'in',
-        'is', 'lambda', 'not', 'or', 'pass', 'print',
-        'raise', 'return', 'try', 'while', 'yield',
         'None', 'True', 'False',
     ]
 
-    # Python operators
-    operators = [
-        '=',
-        # Comparison
-        '==', '!=', '<', '<=', '>', '>=',
-        # Arithmetic
-        '\+', '-', '\*', '/', '//', '\%', '\*\*',
-        # In-place
-        '\+=', '-=', '\*=', '/=', '\%=',
-        # Bitwise
-        '\^', '\|', '\&', '\~', '>>', '<<',
+    # Code Message Type Keywords
+    keywords2 = [
+        'table', 'critical', 'command', 'housekeeping', 'global'
     ]
 
-    # Python braces
+    # Code Datatypes
+    datatypes = [
+        'string', 'float32', 'float64', 'bool', 'time', 'duration',
+        'int8', 'int16', 'int32', 'int64',
+        'uint8', 'uint16', 'uint32', 'uint64',
+    ]
+
+    # Braces
     braces = [
         '\{', '\}', '\(', '\)', '\[', '\]',
     ]
@@ -79,11 +73,13 @@ class PythonHighlighter (QSyntaxHighlighter):
 
         # Keyword, operator, and brace rules
         rules += [(r'\b%s\b' % w, 0, STYLES['keyword'])
-            for w in PythonHighlighter.keywords]
-        rules += [(r'%s' % o, 0, STYLES['operator'])
-            for o in PythonHighlighter.operators]
+            for w in CodeHighlighter.keywords]
+        rules += [(r'\b%s\b' % w, 0, STYLES['keyword2'])
+            for w in CodeHighlighter.keywords2]        
+        rules += [(r'\b%s\b' % w, 0, STYLES['datatype'])
+            for w in CodeHighlighter.datatypes]        
         rules += [(r'%s' % b, 0, STYLES['brace'])
-            for b in PythonHighlighter.braces]
+            for b in CodeHighlighter.braces]
 
         # All other rules
         rules += [
@@ -100,8 +96,13 @@ class PythonHighlighter (QSyntaxHighlighter):
             # 'class' followed by an identifier
             (r'\bclass\b\s*(\w+)', 1, STYLES['defclass']),
 
-            # From '#' until a newline
-            (r'#[^\n]*', 0, STYLES['comment']),
+            # From '//' until a newline
+            (r'//[^\n]*', 0, STYLES['comment']),
+
+            # Multi-line comments - This needs to be a single rule
+            (r'/\*', 0, STYLES['comment']),
+            (r'\*[^\n]*', 0, STYLES['comment']),
+            (r'\*/', 0, STYLES['comment']),
 
             # Numeric literals
             (r'\b[+-]?[0-9]+[lL]?\b', 0, STYLES['numbers']),

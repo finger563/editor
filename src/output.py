@@ -14,7 +14,7 @@ They should also support color.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-import syntax
+#import syntax
 import sys
 import logging
 
@@ -63,7 +63,7 @@ class OutputWidget(QtGui.QWidget):
 
         self._console = QtGui.QTextBrowser(self)
 
-        self._highlight = syntax.PythonHighlighter(self._console.document())
+        #self._highlight = syntax.PythonHighlighter(self._console.document())
 
         layout = QtGui.QVBoxLayout(self)
         layout.addWidget(self._console)
