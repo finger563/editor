@@ -43,6 +43,16 @@ pkg = rosmod.Package()
 pkg['name'].value = "My Package"
 sw.add_child(pkg)
 
+msg = rosmod.Message()
+msg['name'].value = "My Message"
+msg['definition'].value = "int8 testInt = 2\nbool testBool = False"
+pkg.add_child(msg)
+
+srv = rosmod.Service()
+srv['name'].value = "My Service"
+srv['definition'].value = "int8 testInt = 2\nbool testBool = False\n---\nbool retVal"
+pkg.add_child(srv)
+
 comp = rosmod.Component()
 comp['name'].value = "My Component"
 pkg.add_child(comp)
