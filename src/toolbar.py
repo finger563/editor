@@ -27,6 +27,14 @@ def toolbar_add_action(self, tb_name, tb_action):
     if tb_name in self.toolbars:
         self.toolbars[tb_name].addAction(tb_action)
 
+def toolbar_add_widget(self, tb_name, tb_widget):
+    """
+    :param in string tb_name: name used to create the toolbar from :func:`Editor.toolbar_create`.
+    :param in Action tb_widget: any pyQt widget to add to the toolbar.
+    """
+    if tb_name in self.toolbars:
+        self.toolbars[tb_name].addWidget(tb_widget)
+
 def toolbar_remove(self, tb_name):
     pass
 

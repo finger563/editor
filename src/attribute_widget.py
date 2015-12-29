@@ -85,24 +85,6 @@ class AttributeEditor(QtGui.QWidget):
         self.add_ok_cancel()
         self.unhide(None)
 
-    def init_ui(self, item, output_obj, output_func = None):
-        if self._unsaved_edits:
-            reply = QtGui.QMessageBox.question(self, 'Save?',
-                                             "Save attribute edits?",
-                                             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                             QtGui.QMessageBox.Yes)
-            if reply == QtGui.QMessageBox.Yes:
-                self.save(None)
-        self.init_layout()
-        self._output_obj = output_obj
-        self._output_func = output_func
-        self.add_header(item.viewModel())
-        for key,attr in item.model().attributes.iteritems():
-            if attr.editable:
-                self.add_attribute(key,attr)
-        self.add_ok_cancel()
-        self._unsaved_edits = False
-
     def add_header(self, item):
         label = QtGui.QLabel()
         label.setText("Properties")

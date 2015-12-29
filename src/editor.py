@@ -25,7 +25,6 @@ from output import TabbedOutputWidget
 
 from item_model import ItemModel, SortFilterProxyModel
 
-import metamodel.base as classes
 import metamodel.importer as rosmod
 
 rootNode = rosmod.Project()
@@ -91,10 +90,6 @@ class Editor(QtGui.QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close) # note that this will call closeEvent
 
-        modeAction = Action('icons/toolbar/run.png', '&Mode', self)        
-        modeAction.setStatusTip('Select editor mode')
-        modeAction.triggered.connect(self.changeMode)
-
         testAction = Action('icons/toolbar/build.png', '&Build', self)
         testAction.setStatusTip('Build code.')
         testAction.triggered.connect(self.testEvent)
@@ -103,17 +98,21 @@ class Editor(QtGui.QMainWindow):
         saveAction.setStatusTip('Save.')
         saveAction.triggered.connect(self.saveEvent)
 
+        self.mode_selector = QtGui.QComboBox()
+        self.mode_selector.addItems(['model','meta model','view model'])
+        self.mode_selector.currentIndexChanged.connect(self.changeMode)
+
         self.menubar_init()
         self.menubar_add_menu('&File')
         self.menu_add_action('&File',exitAction)
 
         self.toolbar_init()
-        self.toolbar_create("test1")
-        self.toolbar_add_action("test1",exitAction)
-        self.toolbar_add_action("test1",modeAction)
-        self.toolbar_create("test2")
-        self.toolbar_add_action("test2",testAction)
-        self.toolbar_add_action("test2",saveAction)
+        self.toolbar_create("toolbar1")
+        self.toolbar_add_action("toolbar1",exitAction)
+        self.toolbar_add_widget('toolbar1',self.mode_selector)
+        self.toolbar_create("toolbar2")
+        self.toolbar_add_action("toolbar2",testAction)
+        self.toolbar_add_action("toolbar2",saveAction)
 
         self.proxy_model = SortFilterProxyModel()
         self.proxy_model.setDynamicSortFilter(True)
@@ -222,15 +221,12 @@ class Editor(QtGui.QMainWindow):
                                                      'Saved {}.'.format(fileName))
         
 
-    def changeMode(self, event):
-        item, ok = QtGui.QInputDialog.getItem(self, "Select View Mode",
-                                              "View Mode:", self.editor_modes,
-                                              self.editor_modes.index(self.editor_mode), False)
-        if ok and item:
-            if item != self.editor_mode:
-                self.editor_mode = item
-                self.clearEditor()
-                # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
+    def changeMode(self, index):
+        text = self.mode_selector.currentText()
+        if text != self.editor_mode:
+            self.editor_mode = text
+            self.clearEditor()
+            # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
         
     def testEvent(self, event):
         test = QtGui.QMessageBox.information(self, 'Build',
@@ -249,7 +245,7 @@ class Editor(QtGui.QMainWindow):
             event.ignore() 
 
     from menubar import menubar_init, menubar_add_menu, menu_add_action
-    from toolbar import toolbar_init, toolbar_create, toolbar_add_action, toolbar_remove
+    from toolbar import toolbar_init, toolbar_create, toolbar_add_action, toolbar_add_widget, toolbar_remove
     from action import action_init, action_create
     from context_menu import context_menu_init, context_menu_create, context_menu_add_action
 
