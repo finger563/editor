@@ -68,12 +68,13 @@ root_node = rootNode
 
 class Editor(QtGui.QMainWindow):
 
-    editor_modes = ['view model','model','meta model']
+    editor_modes = ['model','meta model','view model']
 
     def __init__(self):
         super(Editor, self).__init__()
         self.editor_mode = 'model'
         self.init_ui()
+        self.setWindowIcon(QtGui.QIcon("icons/editor.png"))
 
     def init_ui(self):
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
@@ -99,7 +100,8 @@ class Editor(QtGui.QMainWindow):
         saveAction.triggered.connect(self.saveEvent)
 
         self.mode_selector = QtGui.QComboBox()
-        self.mode_selector.addItems(['model','meta model','view model'])
+        self.mode_selector.addItems(self.editor_modes)
+        self.mode_selector.setCurrentIndex(self.editor_modes.index(self.editor_mode))
         self.mode_selector.currentIndexChanged.connect(self.changeMode)
 
         self.menubar_init()
