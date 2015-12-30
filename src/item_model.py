@@ -63,7 +63,7 @@ class ItemModel(QtCore.QAbstractItemModel):
     def headerData(self, section, orientation, role):
         if role == QtCore.Qt.DisplayRole:
             if section == 0:
-                return "Name"
+                return "Model"
         
     def flags(self, index):
         f = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable

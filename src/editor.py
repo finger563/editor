@@ -39,6 +39,8 @@ class Editor(QtGui.QMainWindow):
     # Defined in meta.py
     editor_modes = ['model','meta model','view model']
 
+    filter_types = ['Kind','Name']
+
     def __init__(self):
         super(Editor, self).__init__()
         self.init_model()
@@ -102,30 +104,17 @@ class Editor(QtGui.QMainWindow):
         self.tree_view.setSortingEnabled(False)
         #self.tree_view.selectionModel().currentChanged.connnect(self.treeItemDoubleClicked)
 
-        # Set up the filtering for the model tree viewer
-        self.filter_edit = QtGui.QLineEdit()
-        self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
-        self.filter_label = QtGui.QLabel("Filter:")
-
-        # Add filter and tree view to model navigator widget
-        self.navigator = QtGui.QWidget()
-        self.navigator_vbox = QtGui.QVBoxLayout()
-        self.navigator_vbox.addWidget(self.filter_label)
-        self.navigator_vbox.addWidget(self.filter_edit)
-        self.navigator_vbox.addWidget(self.tree_view)
-        self.navigator.setLayout(self.navigator_vbox)
-        
         # Create the Visualizer
         self.tabbedEditorWidget = TabbedEditor(self)
         self.openEditorTabs = {}
 
-        # Split the main part into visualizer and navigator
+        # Split the main part into visualizer and tree_view
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.splitter1.addWidget(self.navigator)
+        self.splitter1.addWidget(self.tree_view)
         self.splitter1.addWidget(self.tabbedEditorWidget)
         self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 * self.geometry().x()/4.0])
 
-        # Set the central widget of the application (the visualizer + navigator)
+        # Set the central widget of the application (the visualizer + tree_view)
         self.setCentralWidget(self.splitter1)
 
         self.center()
