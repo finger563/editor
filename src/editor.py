@@ -30,6 +30,8 @@ from meta import Model, Attribute, Children
 
 from tree_view import TreeView
 
+from test_model import TestModel
+
 class Editor(QtGui.QMainWindow):
 
     # Models the editor is designed to load/edit/save
@@ -55,10 +57,7 @@ class Editor(QtGui.QMainWindow):
         self.proxy_model.setFilterRole(ItemModel.filter_role)
 
         # Set up the actual model
-        self.rootNode = Model()
-        self.rootNode.add_child(Model())
-        self.rootNode.add_child(Model())
-        self.model = ItemModel(self.rootNode)
+        self.model = ItemModel(TestModel)
 
         # Link the actual model and the proxy model
         self.proxy_model.setSourceModel(self.model)
@@ -137,6 +136,11 @@ class Editor(QtGui.QMainWindow):
         cp = QtGui.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def clearModels(self):
+        self.meta_model = None
+        self.model = None
+        self.view_model = None
 
     def clearEditor(self):
         self.openEditorTabs = {}
