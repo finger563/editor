@@ -5,7 +5,7 @@ from PyQt4 import QtCore
 
 class Worker(QtCore.QThread):
 
-    def __init__(self, parent = None):
+    def __init__(self, parent):
         super(Worker, self).__init__(parent)
         self.exiting = False
 

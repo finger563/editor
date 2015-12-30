@@ -14,7 +14,7 @@ class ItemModel(QtCore.QAbstractItemModel):
     sort_role = QtCore.Qt.UserRole
     filter_role = QtCore.Qt.UserRole + 1
     
-    def __init__(self, root, parent=None):
+    def __init__(self, root, parent = None):
         super(ItemModel, self).__init__(parent)
         self.rootNode = root
 
@@ -117,8 +117,8 @@ class ItemModel(QtCore.QAbstractItemModel):
 
 class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
 
-    def __init__(self):
-        super(SortFilterProxyModel,self).__init__()
+    def __init__(self, parent):
+        super(SortFilterProxyModel,self).__init__(parent)
 
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)

@@ -23,7 +23,7 @@ import syntax
 # NEED TO USE VALIDATORS
 
 class AttributeEditor(QtGui.QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent):
         super(AttributeEditor,self).__init__(parent)
         self.setContentsMargins(0,0,0,0)
         self.setMaximumWidth(300)
@@ -39,6 +39,24 @@ class AttributeEditor(QtGui.QWidget):
     def setModel(self, proxyModel):
         self._proxyModel = proxyModel
         self._dataMapper.setModel(proxyModel.sourceModel())
+
+    def init_ui(self, item, output_obj, output_func = None):
+        if self._unsaved_edits:
+            reply = QtGui.QMessageBox.question(self, 'Save?',
+                                               "Save attribute edits?",
+                                               QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                               QtGui.QMessageBox.Yes)
+            if reply == QtGui.QMessageBox.Yes:
+                self.save(None)
+        self.init_layout()
+        self._output_obj = output_obj
+        self._output_func = output_func
+        self.add_header(item.viewModel())
+        for key,attr in item.model().attributes.iteritems():
+            if attr.editable:
+                self.add_attribute(key,attr)
+        self.add_ok_cancel()
+        self._unsaved_edits = False
 
     def init_layout(self):
         self._input_dict = {}
@@ -115,7 +133,7 @@ class AttributeEditor(QtGui.QWidget):
             obj.setText(str(attr.value))
             #self._input_dict[name] = obj
         elif attr.kind in ['code']:
-            obj = CodeEditor()
+            obj = CodeEditor(self)
             self.highlight = syntax.CodeHighlighter(obj.document())
             #obj.textChanged.connect(self.updateEdits)
             obj.setText(attr.value)
@@ -126,7 +144,6 @@ class AttributeEditor(QtGui.QWidget):
             obj.addItems(attr.options)
             obj.setCurrentIndex(attr.options.index(attr.value))
             #self._input_dict[name] = obj
-        '''
         elif 'file' in attr.kind:
             obj = PushButton()
             obj.setText(attr.value)
@@ -151,7 +168,6 @@ class AttributeEditor(QtGui.QWidget):
                     print 'Unknown dictionary value type: {}'.format(_type)
                     break
             obj.setLayout(layout)
-        '''
         if obj:
             if label: self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)

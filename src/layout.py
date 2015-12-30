@@ -19,7 +19,7 @@ class AnchorLayout(QtGui.QGraphicsAnchorLayout):
     edge_padding = 10
     item_spacing = 10
     
-    def __init__(self, parent = None):
+    def __init__(self, parent):
         super(AnchorLayout, self).__init__(parent)
         self.setSpacing(self.item_spacing)
 

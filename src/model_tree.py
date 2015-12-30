@@ -9,7 +9,7 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 class ModelTreeItem(QtGui.QTreeWidgetItem):
-    def __init__(self, parent = None, obj = None):
+    def __init__(self, parent, obj = None):
         super(ModelTreeItem, self).__init__(parent)
         self.setObject(obj)
 
@@ -24,7 +24,7 @@ class ModelTree(QtGui.QTreeWidget):
         super(ModelTree,self).__init__(parent)
         self.setExpandsOnDoubleClick(False)
         
-    def load_model(self, model, parent = None):
+    def load_model(self, model, parent):
         item = ModelTreeItem(parent)
         if not parent:
             self.addTopLevelItem(item)
@@ -37,7 +37,7 @@ class ModelTree(QtGui.QTreeWidget):
             self.load_model(child, item)
         item.setExpanded(True)
 
-    def load_meta_model(self, meta_model, parent = None):
+    def load_meta_model(self, meta_model, parent):
         item = ModelTreeItem(parent)
         if not parent:
             self.addTopLevelItem(item)

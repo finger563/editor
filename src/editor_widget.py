@@ -24,7 +24,7 @@ from action import Action
 from layout import layout_create
 
 class EditorScene(QtGui.QGraphicsScene):
-    def __init__(self, parent = None):
+    def __init__(self, parent):
         super(EditorScene, self).__init__(parent)
         self._root = None
 
@@ -134,7 +134,7 @@ class EditorView(QtGui.QGraphicsView):
                                              parent = t ) )
         return t
 
-    def buildViewModel(self, view_model, parent = None):
+    def buildViewModel(self, view_model, parent):
         t = ViewModelItem(parent = parent, view_model = view_model)
         for cvm in view_model.children:
             t.addChild(self.buildViewModel(cvm, t))

@@ -16,7 +16,7 @@ class CodeEditor(QtGui.QTextEdit):
     """
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super(CodeEditor, self).__init__(parent)
         self.completer = QtGui.QCompleter()
         self.completer.setWidget(self)

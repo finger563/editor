@@ -27,12 +27,13 @@ class QtHandler(logging.Handler):
         # originally: XStream.stdout().write("{}\n".format(record))
 
 
+"""
 logger = logging.getLogger(__name__)
 handler = QtHandler()
 handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
-
+"""
 class XStream(QtCore.QObject):
     _stdout = None
     _stderr = None
@@ -58,7 +59,7 @@ class XStream(QtCore.QObject):
         return XStream._stderr
 
 class OutputWidget(QtGui.QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent):
         super(OutputWidget, self).__init__(parent)
 
         self._console = QtGui.QTextBrowser(self)
@@ -69,11 +70,11 @@ class OutputWidget(QtGui.QWidget):
         layout.addWidget(self._console)
         self.setLayout(layout)
 
-        XStream.stdout().messageWritten.connect( self._console.insertPlainText )
-        XStream.stderr().messageWritten.connect( self._console.insertPlainText )
+        #XStream.stdout().messageWritten.connect( self._console.insertPlainText )
+        #XStream.stderr().messageWritten.connect( self._console.insertPlainText )
 
 class TabbedOutputWidget(QtGui.QTabWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent):
         super(TabbedOutputWidget, self).__init__(parent)
         self.setMovable(True)
         self.setTabsClosable(True)

@@ -99,7 +99,7 @@ class Editor(QtGui.QMainWindow):
         saveAction.setStatusTip('Save.')
         saveAction.triggered.connect(self.saveEvent)
 
-        self.mode_selector = QtGui.QComboBox()
+        self.mode_selector = QtGui.QComboBox(self)
         self.mode_selector.addItems(self.editor_modes)
         self.mode_selector.setCurrentIndex(self.editor_modes.index(self.editor_mode))
         self.mode_selector.currentIndexChanged.connect(self.changeMode)
@@ -116,7 +116,7 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_add_action("toolbar2",testAction)
         self.toolbar_add_action("toolbar2",saveAction)
 
-        self.proxy_model = SortFilterProxyModel()
+        self.proxy_model = SortFilterProxyModel(self)
         self.proxy_model.setDynamicSortFilter(True)
         self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.proxy_model.setSortRole(ItemModel.sort_role)
