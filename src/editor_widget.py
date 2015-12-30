@@ -73,6 +73,7 @@ class EditorView(QtGui.QGraphicsView):
         self.view_type = view_type
         self._root_model = obj
 
+        '''
         try:
             if not fname:
                 fname = obj.kind + '.view'
@@ -94,6 +95,14 @@ class EditorView(QtGui.QGraphicsView):
                 r = ViewModelItem(
                     view_model = ViewModel(kind = obj.kind)
                 )
+        '''
+        if not fname:
+            fname = obj.kind + '.view'
+        vm = self.openVM(fname)
+        if self.view_type == 'model':
+            r = self.buildModel( model = obj, view_model = vm)
+        elif self.view_type == 'view model':
+            r = self.buildViewModel( view_model = vm)
 
         scene.setRoot(r)
         scene.addItem(r)
@@ -119,7 +128,8 @@ class EditorView(QtGui.QGraphicsView):
                     layout_item = ModelItem( parent = t,
                                              view_model = ViewModel( kind = 'Container',
                                                                      draw_style = 'hidden',
-                                                                     layout = cvm['layout style'].value,))
+                                                                     layout = cvm['layout style'].value,),
+                                             model = None)
                     layout_item.viewModel()['kind'].value = 'Container'
                     layout_item.viewModel()['draw style'].value = 'hidden'
                     layout_item.viewModel()['layout config'].value = cvm['layout config'].value

@@ -23,7 +23,7 @@ class ModelItem(EditorItem):
 
     def initializeFlags(self):
         super(ModelItem,self).initializeFlags()
-        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True)
 
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
@@ -42,10 +42,11 @@ class ModelItem(EditorItem):
     def addNewItem(self, _type):
         def genericItem(e):
             print _type.__name__
+            child = _type()
             self.addChild(
-                ModelItem( self,
+                ModelItem( parent = self,
                            view_model = ViewModel( kind = _type.__name__ ),
-                           model = copy.deepcopy(_type())
+                           model = child
                        )
             )
         return genericItem

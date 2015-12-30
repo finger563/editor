@@ -129,21 +129,15 @@ class AttributeEditor(QtGui.QWidget):
         obj = None
         if attr.kind in ['float','int','integer','double','string']:
             obj = QtGui.QLineEdit()
-            #obj.editingFinished.connect(self.updateEdits)
             obj.setText(str(attr.value))
-            #self._input_dict[name] = obj
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
             self.highlight = syntax.CodeHighlighter(obj.document())
-            #obj.textChanged.connect(self.updateEdits)
             obj.setText(attr.value)
-            #self._input_dict[name] = obj
         elif attr.kind in ['list_entry'] and attr.value in attr.options:
             obj = QtGui.QComboBox()
-            #obj.currentIndexChanged.connect(self.updateEdits)
             obj.addItems(attr.options)
             obj.setCurrentIndex(attr.options.index(attr.value))
-            #self._input_dict[name] = obj
         elif 'file' in attr.kind:
             obj = PushButton()
             obj.setText(attr.value)
@@ -169,6 +163,7 @@ class AttributeEditor(QtGui.QWidget):
                     break
             obj.setLayout(layout)
         if obj:
+            self._input_dict[name] = obj
             if label: self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
             self.obj = obj

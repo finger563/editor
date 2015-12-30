@@ -6,8 +6,6 @@ AbstractItemModel base class.
 """
 
 from PyQt4 import QtCore, QtGui
-import metamodel.base as classes
-import metamodel.importer as rosmod
 
 class ItemModel(QtCore.QAbstractItemModel):
 
@@ -45,8 +43,8 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DecorationRole:
             if index.column() == 0:
                 kind = node.kind
-                if kind == "Hardware":
-                    return QtGui.QIcon(QtGui.QPixmap("icons/model/Hardware.png"))
+                # MAKE THIS GENERIC TO GET ICONS PROPERLY
+                return QtGui.QIcon(QtGui.QPixmap("icons/model/" + kind + ".png"))
         if role == ItemModel.sort_role:
             return node.kind            
         if role == ItemModel.filter_role:
@@ -128,92 +126,3 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
                 inChildren = True
                 break
         return QtCore.QString(self.sourceModel().data(index0, self.filterRole())).contains(self.filterRegExp()) or inChildren
-
-def main():
-    import sys
-    from attribute_widget import AttributeEditor
-
-    app = QtGui.QApplication(sys.argv)
-
-    rootNode = rosmod.Project()
-    rootNode['name'].value = "Project Root"
-
-    dep = rosmod.Deployment()
-    dep['name'].value = "My Deployment"
-    rootNode.add_child(dep)
-
-    sw = rosmod.Software()
-    sw['name'].value = "My Software"
-    rootNode.add_child(sw)
-
-    pkg = rosmod.Package()
-    pkg['name'].value = "My Package"
-    sw.add_child(pkg)
-
-    comp = rosmod.Component()
-    comp['name'].value = "My Component"
-    pkg.add_child(comp)
-
-    tmr = rosmod.Timer()
-    tmr['name'].value = "My Timer"
-    comp.add_child(tmr)
-
-    hw = rosmod.Hardware()
-    hw['name'].value = "My Hardware"
-    rootNode.add_child(hw)
-
-    ''' SET UP THE MODEL, PROXY MODEL '''
-    
-    #proxyModel = QtGui.QSortFilterProxyModel()
-    proxyModel = SortFilterProxyModel()
-    proxyModel.setDynamicSortFilter(True)
-    proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
-    proxyModel.setSortRole(ItemModel.sort_role)
-    proxyModel.setFilterRole(ItemModel.filter_role)
-
-    model = ItemModel(rootNode)
-
-    proxyModel.setSourceModel(model)
-
-    ''' SET UP THE ACTUAL WIDGETS '''
-
-    mainWidget = QtGui.QWidget()
-
-    filterEdit = QtGui.QLineEdit()
-    filterEdit.textChanged.connect(proxyModel.setFilterRegExp)
-
-    ae = AttributeEditor(mainWidget)
-    ae.setModel(proxyModel)
-
-    treeView = QtGui.QTreeView()
-    treeView.setModel(proxyModel)
-    treeView.setSortingEnabled(True)
-    treeView.selectionModel().currentChanged.connect(ae.setSelection)
-    treeView.show()
-
-    treeView2 = QtGui.QTreeView()
-    treeView2.setModel(proxyModel)
-    treeView2.setSortingEnabled(True)
-    treeView2.setSelectionModel(treeView.selectionModel())
-    treeView2.show()
-
-    vbox = QtGui.QVBoxLayout()
-    vbox.addWidget(filterEdit)
-    vbox.addWidget(treeView)
-    vbox.addWidget(treeView2)
-    #vbox.addWidget(ae)
-    mainWidget.setLayout(vbox)
-    mainWidget.show()
-    app.setActiveWindow(mainWidget)
-
-    ae.show()
-    ae.raise_()
-
-    swIndex = model.index(1,0, QtCore.QModelIndex())
-    model.insertRows(0,5,swIndex)
-    #model.removeRows(1,1)
-
-    sys.exit(app.exec_())
-
-if __name__ == "__main__":
-    main()

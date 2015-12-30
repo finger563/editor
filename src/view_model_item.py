@@ -46,7 +46,7 @@ class ViewModelItem(EditorItem):
     def addNewItem(self):
         def genericItem(e):
             self.addChild(
-                ViewModelItem( self,
+                ViewModelItem( parent = self,
                                view_model = ViewModel()
                            )
             )

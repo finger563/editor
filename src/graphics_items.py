@@ -76,13 +76,6 @@ class TextItem(QtGui.QGraphicsTextItem):
         cursor.clearSelection()
         self.setTextCursor(cursor)
 
-    def mousePressEvent(self,e):
-        e.ignore()
-    def mouseMoveEvent(self, e):
-        e.ignore()
-    def mouseReleaseEvent(self, e):
-        e.ignore()
-
     def updateGeometry(self):
         self.setTextWidth(-1)
         self.setTextWidth(self.boundingRect().width())
