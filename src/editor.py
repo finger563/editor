@@ -17,6 +17,7 @@ and deployment.
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
+from PyQt4.QtCore import Qt
 
 from action import Action
 from worker import Worker
@@ -127,6 +128,8 @@ class Editor(QtGui.QMainWindow):
         self.proxy_model.setSourceModel(self.model)
 
         self.tree_view = QtGui.QTreeView()
+        self.tree_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree_view.customContextMenuRequested.connect(self.treeViewContextMenuEvent)
         self.tree_view.setModel(self.proxy_model)
         self.tree_view.doubleClicked.connect(self.treeItemDoubleClicked)
         self.tree_view.setSortingEnabled(False)
@@ -178,6 +181,24 @@ class Editor(QtGui.QMainWindow):
             tree.load_model(project)
         elif self.editor_mode in ['view model','meta model']:
             tree.load_meta_model(project)
+
+    def treeViewContextMenuEvent(self, position):
+        indexes = self.tree_view.selectedIndexes()
+        if len(indexes) > 1:
+            return
+        
+        mi = self.proxy_model.mapToSource(indexes[0])
+        item = self.model.getModel( mi )
+
+        menu = QtGui.QMenu()
+
+        delSelf = Action('', 'Delete', self)
+        menu.addAction(delSelf)
+
+        for a in item.children._allowed:
+            addAction = Action('', 'Add new {}'.format(a.__name__), self)
+            menu.addAction(addAction)
+        menu.exec_(self.tree_view.viewport().mapToGlobal(position))
 
     def treeItemDoubleClicked(self, modelIndex):
         mi = self.proxy_model.mapToSource(modelIndex)
