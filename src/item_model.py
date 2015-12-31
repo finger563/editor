@@ -94,10 +94,8 @@ class ItemModel(QtCore.QAbstractItemModel):
         for row in range(rows):
             childCount = parentNode.child_count()
             _type = parentNode.children._allowed[0]
-            childNode = _type(
-                name=rosmod.Name( "new {} {}".format(_type.__name__,
-                                                     childCount) )
-            )
+            childNode = _type()
+            childNode['Name'].value = 'New {} {}'.format( _type.__name__, childCount)
             success = parentNode.insert_child(position, childNode)
 
         self.endInsertRows()
@@ -126,3 +124,94 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
                 inChildren = True
                 break
         return QtCore.QString(self.sourceModel().data(index0, self.filterRole())).contains(self.filterRegExp()) or inChildren
+
+def main():
+    import sys
+    from attribute_widget import AttributeEditor
+    from meta import Model, Attribute, Children
+
+    app = QtGui.QApplication(sys.argv)
+
+    rootNode = Model()
+    rootNode['Name'].value = "Project Root"
+
+    dep = Model()
+    dep['Name'].value = "My Deployment"
+    rootNode.add_child(dep)
+
+    sw = Model()
+    sw['Name'].value = "My Software"
+    rootNode.add_child(sw)
+
+    pkg = Model()
+    pkg['Name'].value = "My Package"
+    sw.add_child(pkg)
+
+    comp = Model()
+    comp['Name'].value = "My Component"
+    pkg.add_child(comp)
+
+    tmr = Model()
+    tmr['Name'].value = "My Timer"
+    comp.add_child(tmr)
+
+    hw = Model()
+    hw['Name'].value = "My Hardware"
+    rootNode.add_child(hw)
+
+    ''' SET UP THE MODEL, PROXY MODEL '''
+    
+    #proxyModel = QtGui.QSortFilterProxyModel()
+    proxyModel = SortFilterProxyModel(None)
+    proxyModel.setDynamicSortFilter(True)
+    proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+    proxyModel.setSortRole(ItemModel.sort_role)
+    proxyModel.setFilterRole(ItemModel.filter_role)
+
+    model = ItemModel(rootNode)
+
+    proxyModel.setSourceModel(model)
+
+    ''' SET UP THE ACTUAL WIDGETS '''
+
+    mainWidget = QtGui.QWidget()
+
+    filterEdit = QtGui.QLineEdit()
+    filterEdit.textChanged.connect(proxyModel.setFilterRegExp)
+
+    ae = AttributeEditor(mainWidget)
+    ae.setModel(proxyModel)
+
+    treeView = QtGui.QTreeView()
+    treeView.setModel(proxyModel)
+    treeView.setSortingEnabled(True)
+    treeView.selectionModel().currentChanged.connect(ae.setSelection)
+    treeView.show()
+
+    treeView2 = QtGui.QTreeView()
+    treeView2.setModel(proxyModel)
+    treeView2.setSortingEnabled(True)
+    treeView2.setSelectionModel(treeView.selectionModel())
+    treeView2.show()
+
+    vbox = QtGui.QVBoxLayout()
+    vbox.addWidget(filterEdit)
+    vbox.addWidget(treeView)
+    vbox.addWidget(treeView2)
+    #vbox.addWidget(ae)
+    mainWidget.setLayout(vbox)
+    mainWidget.show()
+    app.setActiveWindow(mainWidget)
+
+    ae.show()
+    ae.raise_()
+
+    swIndex = model.index(1,0, QtCore.QModelIndex())
+    model.insertRows(0,5,swIndex)
+    #model.removeRows(1,1)
+
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()
+

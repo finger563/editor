@@ -31,19 +31,16 @@ class TreeView(QtGui.QTreeView):
         m = self.model().sourceModel()
         if indexes:
             mi = self.model().mapToSource( indexes[0] )
-        else:
-            mi = QtCore.QModelIndex()
+            item = m.getModel( mi )
 
-        item = m.getModel( mi )
-        for a in item.children._allowed:
-            addAction = QtGui.QAction('Add New {}'.format(a.__name__), self)
-            addAction.triggered.connect(self.addTreeItem(mi, a))
-            menu.addAction(addAction)
+            for a in item.children._allowed:
+                addAction = QtGui.QAction('Add New {}'.format(a.__name__), self)
+                addAction.triggered.connect(self.addTreeItem(mi, a))
+                menu.addAction(addAction)
             
-        menu.exec_(e.globalPos())
+            menu.exec_(e.globalPos())
 
     def addTreeItem(self, mi, _type):
         def genericItem(e):
-            item = self.model().sourceModel().getModel( mi )
-            item.add_child( _type() )
+            self.model().sourceModel().insertRows( 0, 1, mi )
         return genericItem
