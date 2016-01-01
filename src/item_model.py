@@ -42,13 +42,12 @@ class ItemModel(QtCore.QAbstractItemModel):
                 return node.attributes.values()[index.column()].value
         if role == QtCore.Qt.DecorationRole:
             if index.column() == 0:
-                kind = node.kind
-                # MAKE THIS GENERIC TO GET ICONS PROPERLY
+                kind = node.kind()
                 return QtGui.QIcon(QtGui.QPixmap("icons/model/" + kind + ".png"))
         if role == ItemModel.sort_role:
-            return node.kind            
+            return node.kind()
         if role == ItemModel.filter_role:
-            return node.kind
+            return node.kind()
         return None
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
@@ -87,13 +86,15 @@ class ItemModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
         return self.createIndex(parentNode.row(), 0, parentNode)  # data model needs to have a row method, e.g. parent.children.index(self)
 
-    def insertRows(self, position, rows, parent=QtCore.QModelIndex()):
+    def insertRows(self, position, rows, parent=QtCore.QModelIndex(), _type = None):
+
+        assert _type != None, '_type is None!'
+
         parentNode= self.getModel(parent)
         self.beginInsertRows(parent, position, position + rows - 1)
 
         for row in range(rows):
             childCount = parentNode.child_count()
-            _type = parentNode.children._allowed[0]
             childNode = _type()
             childNode['Name'].value = 'New {} {}'.format( _type.__name__, childCount)
             success = parentNode.insert_child(position, childNode)

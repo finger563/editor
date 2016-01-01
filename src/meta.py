@@ -14,6 +14,15 @@ __status__ = "Production"
 import os
 from collections import OrderedDict, MutableSequence
 
+def get_children(model, kind):
+    if model.kind() == kind:
+        return [model]
+    else:
+        kids = []
+        for c in model.children:
+            kids.extend(get_children(c, kind))
+        return kids
+
 class Attribute(object):
     """Generic Attributes class
 
@@ -50,14 +59,12 @@ class Model(object):
     """Generic Model/Container class
 
     Every Model has the following:
-    kind -- The Domain-specific kind of Model e.g. Component, Port etc.
     parent -- A parent Model Object.
     children -- A list of children (Model) objects.
     attributes -- A dictionary of attributes.
     """
-    def __init__(self, parent = None, kind = 'FCO'):
+    def __init__(self, parent = None):
         super(Model, self).__init__()
-        self.kind = kind
         self.parent = parent
 
         self.children = Children(allowed=[Model], 
@@ -76,6 +83,9 @@ class Model(object):
 
     def child_count(self):
         return len(self.children)
+
+    def kind(self):
+        return self.__class__.__name__
 
     def child(self, position):
         if position < self.child_count():
@@ -108,15 +118,6 @@ class Model(object):
 
     def add_attribute(self, name, kind, value):
         self[name] = Attribute(kind, value)
-
-    def get_children(self, kind):
-        if self.kind == kind:
-            return [self]
-        else:
-            kids = []
-            for c in self.children:
-                kids.extend(c.get_children(kind))
-            return kids
 
 class Children(MutableSequence):
     """Children List
