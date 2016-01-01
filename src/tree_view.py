@@ -51,8 +51,5 @@ class TreeView(QtGui.QTreeView):
 
     def delTreeItem(self, mi):
         def genericItem(e):
-            item = self.model().sourceModel().getModel(mi)
-            r = item.row()
-            p = self.model().sourceModel().parent(mi)
-            self.model().sourceModel().removeRows( r, 1, p )
+            self.model().sourceModel().removeRows( mi.row(), 1, mi.parent() )
         return genericItem
