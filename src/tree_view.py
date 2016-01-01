@@ -33,6 +33,10 @@ class TreeView(QtGui.QTreeView):
             mi = self.model().mapToSource( indexes[0] )
             item = m.getModel( mi )
 
+            delAction = QtGui.QAction('Delete {}'.format(item['Name'].value), self)
+            delAction.triggered.connect(self.delTreeItem(mi))
+            menu.addAction(delAction)
+
             for a in item.children._allowed:
                 addAction = QtGui.QAction('Add New {}'.format(a.__name__), self)
                 addAction.triggered.connect(self.addTreeItem(mi, a))
@@ -43,4 +47,12 @@ class TreeView(QtGui.QTreeView):
     def addTreeItem(self, mi, _type):
         def genericItem(e):
             self.model().sourceModel().insertRows( 0, 1, mi )
+        return genericItem
+
+    def delTreeItem(self, mi):
+        def genericItem(e):
+            item = self.model().sourceModel().getModel(mi)
+            r = item.row()
+            p = self.model().sourceModel().parent(mi)
+            self.model().sourceModel().removeRows( r, 1, p )
         return genericItem
