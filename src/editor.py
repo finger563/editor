@@ -49,7 +49,10 @@ class Editor(QtGui.QMainWindow):
 
     def init_model(self):
         # Set up the editor mode
-        self.editor_mode = 'model'
+        self.editor_mode = 'meta model'
+        self.meta_model = None
+        self.model = None
+        self.view_model = None
 
         # Set up the proxy model for sorting/filtering
         self.proxy_model = SortFilterProxyModel(self)
@@ -102,7 +105,6 @@ class Editor(QtGui.QMainWindow):
         self.tree_view = TreeView()
         self.tree_view.setModel(self.proxy_model)
         self.tree_view.setSortingEnabled(False)
-        #self.tree_view.selectionModel().currentChanged.connnect(self.treeItemDoubleClicked)
 
         # Create the Visualizer
         self.tabbedEditorWidget = TabbedEditor(self)
