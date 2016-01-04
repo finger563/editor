@@ -4,17 +4,24 @@ View Model
 These classes contain all the relevant
 infomation required to configure or draw
 a view for a model
-
-* author: William Emfinger
-* website: github.com/finger563/editor
-* last edited: August 2015
 """
+
+__author__ = "William Emfinger"
+__copyright__ = "Copyright 2016, ROSMOD"
+__credits__ = ["William Emfinger", "Pranav Srinivas Kumar"]
+__license__ = "GPL"
+__version__ = "0.4"
+__maintainer__ = "William Emfinger"
+__email__ = "emfinger@isis.vanderbilt.edu"
+__status__ = "Production"
 
 from collections import OrderedDict
 
+from meta import Model, Pointer, Attribute, Children
+
 import view_attributes as view_attr
 
-class ViewModel(object):
+class ViewModel(Model):
     def __init__(self,
                  kind = 'Container',
                  root = 'top left',
@@ -31,50 +38,40 @@ class ViewModel(object):
                  width = 50.0,
                  height = 50.0,
                  layout = 'horizontal'):
-        self.attributes = OrderedDict()
-        
+        super(ViewModel, self).__init__()
+        self.children = Children(allowed=[ViewModel],
+                                 cardinality = {ViewModel\
+                                                : '0..*'})
+
         # describe the model
-        self['kind'] = view_attr.Object(kind)
-        self['scope'] = view_attr.Scope(scope)
+        self.set_attribute('Kind', view_attr.Object(kind))
+        self.set_attribute('Scope', view_attr.Scope(scope))
 
         # describe the drawing of the object
-        self['layout style'] = view_attr.Layout_Style(layout)
-        self['width'] = view_attr.Width(width)
-        self['height'] = view_attr.Height(height)
-        self['draw style'] = view_attr.Draw_Style(draw_style)
-        self['icon'] = view_attr.Icon(icon_file)
-        self['color'] = view_attr.Color(color)
-        self['text location'] = view_attr.Text_Location(text_loc)
-        self['text horizontal alignment'] = view_attr.Text_Horizontal_Alignment(text_ha)
-        self['text vertical alignment'] = view_attr.Text_Vertical_Alignment(text_va)
+        self.set_attribute('layout style',view_attr.Layout_Style(layout))
+        self.set_attribute('width',view_attr.Width(width))
+        self.set_attribute('height',view_attr.Height(height))
+        self.set_attribute('draw style',view_attr.Draw_Style(draw_style))
+        self.set_attribute('icon',view_attr.Icon(icon_file))
+        self.set_attribute('color',view_attr.Color(color))
+        self.set_attribute('text location',view_attr.Text_Location(text_loc))
+        self.set_attribute('text horizontal alignment',view_attr.Text_Horizontal_Alignment(text_ha))
+        self.set_attribute('text vertical alignment',view_attr.Text_Vertical_Alignment(text_va))
 
         # these are relevant for objects which are children of layouts
-        self['layout config'] = view_attr.Layout_Config({})
-        self['root'] = view_attr.Root(root)
-        #self['anchor'] = view_attr.Anchor(anchor)
+        self.set_attribute('layout config',view_attr.Layout_Config({}))
+        self.set_attribute('root',view_attr.Root(root))
+        #self.set_attribute('anchor',view_attr.Anchor(anchor))
 
-        # these are relevant for associations
-        self['source'] = view_attr.Source(src)
-        self['destination'] = view_attr.Source(dst)
+        # these are relevant for Lines
+        self.set_attribute('source',view_attr.Source(src))
+        self.set_attribute('destination',view_attr.Source(dst))
 
         self.children = []
 
-    def __getitem__(self, key):
-        return self.attributes[key]
-
-    def __setitem__(self, key, value):
-        self.attributes[key] = value
-
-    def add_child(self, child):
-        if child not in self.children:
-            self.children.append(child)
-
-    def remove_child(self, child):
-        self.children = [x for x in self.children if x != child]
-
     def toStr(self, printKids = True, prefix = ''):
         retstr = ''
-        retstr += '{}Kind: {}\n'.format(prefix,self['kind'].value)
+        retstr += '{}Kind: {}\n'.format(prefix,self['Kind'])
         if printKids:
             for c in self.children:
                 retstr += "{}{}\n".format(prefix,c)

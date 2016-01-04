@@ -31,7 +31,7 @@ from editor_widget import TabbedEditor, EditorView
 
 from item_model import ItemModel, SortFilterProxyModel
 
-from meta import Model, Attribute, Children
+from meta import Model, Pointer, Attribute, Children
 
 from tree_view import TreeView
 

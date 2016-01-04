@@ -14,7 +14,7 @@ __maintainer__ = "William Emfinger"
 __email__ = "emfinger@isis.vanderbilt.edu"
 __status__ = "Production"
 
-from meta import Model, Attribute, Children
+from meta import Model, Pointer, Attribute, Children
 
 TestModel = Model()
 TestModel['Name'] = 'Test Model'
@@ -66,6 +66,22 @@ c7.add_child(c9)
 c7.add_child(c10)
 c7.add_child(c11)
 c7.add_child(c12)
+
+msg_ref1 = Pointer()
+msg_ref1['Name'] = 'Ref'
+msg_ref2 = Pointer()
+msg_ref2['Name'] = 'Ref'
+
+c9.add_child(msg_ref1)
+c10.add_child(msg_ref2)
+
+srv_ref1 = Pointer()
+srv_ref1['Name'] = 'Ref'
+srv_ref2 = Pointer()
+srv_ref2['Name'] = 'Ref'
+
+c11.add_child(srv_ref1)
+c12.add_child(srv_ref2)
 
 c13 = Model()
 c13['Name'] = 'Host'
