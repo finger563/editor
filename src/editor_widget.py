@@ -30,16 +30,13 @@ from layout import layout_create
 class EditorScene(QtGui.QGraphicsScene):
     def __init__(self, parent):
         super(EditorScene, self).__init__(parent)
-        self._root = None
-
-    def setRoot(self, r):
-        self._root = r
-
-    def getRoot(self):
-        return self._root
 
     def viewModel(self):
         return self.views()[0].viewModel()
+
+    def model(self):
+        print self.views()
+        return self.views()[0].model()
 
     def contextMenuEvent(self, event):
         item = self.itemAt(event.scenePos())
@@ -71,11 +68,15 @@ class EditorView(QtGui.QGraphicsView):
         self._proxyModel = None
         self._dataMapper = QtGui.QDataWidgetMapper()
 
+    def model(self):
+        return self._proxyModel
+
     def setProxyModel(self, proxyModel):
         self._proxyModel = proxyModel
         self._dataMapper.setModel(proxyModel.sourceModel())
+        self.aw.setProxyModel( proxyModel )
 
-    def init_ui(self, proxy = None, fname = ''):
+    def init_ui(self, modelIndex, fname = ''):
         scene = EditorScene(self)
         self.setScene(scene)
 
@@ -94,19 +95,24 @@ class EditorView(QtGui.QGraphicsView):
             self.loadVM(fname)
             r = self.buildView( model = obj )
         except Exception, e:
+            m = self._proxyModel.sourceModel()
+            mi = QtCore.QModelIndex( modelIndex )
+            mi = self._proxyModel.mapToSource( mi )
+            item = m.getModel( mi )
             print 'WARNING: Could not load \'{}\' to generate view for {}:\n\t{}'.format(
-                fname, obj['name'], e
+                fname, item['Name'], e
             )
             # How to initialize self.view_model here?
             self.view_model = None
-            r = EditorItem( model = obj )
+            r = EditorItem( modelIndex )
 
-        scene.setRoot(r)
         scene.addItem(r)
 
         self.show()
 
     def viewModel(self):
+        # the view model is not encapsulated by data/item models
+        # it is directly accessible class objects with attributes etc.
         return self.view_model
 
     def buildView(self, model, parent = None):

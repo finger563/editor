@@ -25,13 +25,12 @@ from graphics_items import RoundRectItem, TextItem
 class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
-                 parent = None,
-                 model = None):
+                 modelIndex,
+                 parent = None):
         super(EditorItem, self).__init__(parent)
-        # scene parent of this item, e.g. the scene or an enclosing object
-        self._parent = None
 
         # perhaps just point this to the ItemModel()?
+        self.index = modelIndex
         
         # Should not store a pointer to the model here,
         # it is bad practice.  Should figure out which 
@@ -39,7 +38,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         # is just a view) and then use that index to fetch 
         # the updated model any time an action is required
         # e.g. edit, add, delete
-        self._model = model
+        #self._model = model
 
         # graphics item which represents
         self._item = None
@@ -52,36 +51,25 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.initializeFlags()
         self.updateGraphicsItem()
 
-    def model(self):
-        return self._model
-        
-    def __getitem__(self, key):
-        return self.model()[key]
-
-    def __setitem__(self, key, value):
-        self.model()[key] = value
-
     def viewModel(self):
         return self.scene().viewModel()
 
     def updateLabel(self, width, height):
-        if self.isHidden():
-            self._label.setPlainText('')
-        if self.model():
-            if 'name' in self.model().attributes:
-                name = self['name']
-            else:
-                name = self['kind']
-            self._label.setPlainText(name)
-            self._label.setAlignment(
-                self.viewModel()['text horizontal alignment'],
-                self.viewModel()['text vertical alignment']
-            )
-            self._label.setPos(self.viewModel()['text location'], self.pos(), width, height)
+        m = self.index.model().sourceModel()
+        item = m.getModel( self.index )
+        name = item['name']
+        self._label.setPlainText(name)
+        '''
+        self._label.setAlignment(
+            self.viewModel()[item.kind()]['text horizontal alignment'],
+            self.viewModel()[item.kind()]['text vertical alignment']
+        )
+        self._label.setPos(self.viewModel()['text location'], self.pos(), width, height)
+        '''
 
     def createItem(self, width, height):
-        if self.isHidden():
-            self._item = None
+        self._item = RoundRectItem(0, 0, width, height)
+        '''
         draw_style = self.viewModel()['draw style']
         if self.viewModel()['icon'] and draw_style == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
@@ -95,13 +83,15 @@ class EditorItem(QtGui.QGraphicsWidget):
                 self._item = RoundRectItem(0,0,width,height)
             if self._item:
                 self._item.setBrush(QtGui.QColor(self.viewModel()['color']))
+        '''
 
     def loadResources(self):
+        '''
         new_layout = layout_create(self.viewModel()['layout style'])
         if type(self.layout()) != type(new_layout):
             new_layout.fromLayout(self.layout())
             self.setLayout(new_layout)
-
+        '''
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()
@@ -110,9 +100,8 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def paint(self, painter, option, widget = None):
         super(EditorItem, self).paint(painter, option, widget)
-        if not self.isHidden():
-            if self._item:
-                self._item.paint(painter, option, widget)
+        if self._item:
+            self._item.paint(painter, option, widget)
 
     def boundingRect(self):
         minx =0; miny=0; maxx=0;maxy=0
@@ -133,19 +122,21 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def sizeHint(self, which, constraint):
         shw = 0; shh = 0
+        '''
         if type(self.layout()) in valid_layouts:
             sh = self.layout().sizeHint(which, constraint)
             shw = sh.width()
             shh = sh.height()
+        '''
         shw = max( shw, self.boundingRect().width())
         shh = max( shh, self.boundingRect().height())
         return QtCore.QSizeF(
-            max(shw, self.viewModel()['width']),
-            max(shh, self.viewModel()['height'])
+            max(shw, 50), #self.viewModel()['width']),
+            max(shh, 50)  #self.viewModel()['height'])
         )
         
     def updateGraphicsItem(self):
-        self.layout().activate()
+        #self.layout().activate()
         self.prepareGeometryChange()
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
@@ -154,41 +145,31 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.createItem(width, height)
         self.updateGeometry()
         self.update()
-        if self._parent:
-            self._parent.updateGraphicsItem()
 
     def removeChild(self, child):
+        pass
         # Should this just point down to the underlying model's 
         # removeRows() method and then let the updating take effect?
-        self.layout().removeItem(child)
-        child._parent = None
-        self.updateGraphicsItem()
+        #self.layout().removeItem(child)
+        #self.updateGraphicsItem()
 
     def updateChild(self, child):
         self.layout().updateItem(child)
         self.updateGraphicsItem()
 
     def addChild(self, child):
+        pass
         # Should this just point down to the underlying model's 
         # insertRows() method and then let the updating take effect?
-        self.layout().addItem(child)
-        child._parent = self
-        self.updateGraphicsItem()
-
-    def mousePressEvent(self, event):
-        QtGui.QGraphicsWidget.mousePressEvent(self, event)
-
-    def mouseMoveEvent(self, event):
-        QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
-
-    def mouseReleaseEvent(self, event):
-        QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
+        #self.layout().addItem(child)
+        #self.updateGraphicsItem()
 
     def isMovable(self):
         return bool(self.flags() & QtGui.QGraphicsItem.ItemIsMovable)
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
+        pass
         # TODO: need to add the index here; call setSelection() with proper indices
         editor = self.scene().parent().getEditor()
         editor.init_ui(self)
@@ -199,12 +180,6 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.loadResources()
         self.updateGraphicsItem()
                 
-    def hoverEnterEvent(self, event):
-        QtGui.QGraphicsWidget.hoverEnterEvent(self, event)
-
-    def hoverLeaveEvent(self, event):
-        QtGui.QGraphicsWidget.hoverLeaveEvent(self, event)
-
     def initializeFlags(self):
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
@@ -228,11 +203,13 @@ class EditorItem(QtGui.QGraphicsWidget):
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
 
+        item = self.scene().model().mapToSource( self.index )
+
         delSelf = Action('', 'Delete', self)
         delSelf.triggered.connect(self.delete)
         menu.addAction(delSelf)
 
-        for a in self.model().children._allowed:
+        for a in item.children._allowed:
             addAction = Action('', 'Add new {}'.format(a.__name__), self)
             addAction.triggered.connect(self.addNewItem(a))
             menu.addAction(addAction)
@@ -242,19 +219,30 @@ class EditorItem(QtGui.QGraphicsWidget):
     def addNewItem(self, _type):
         def genericItem(e):
             print _type.__name__
-            child = _type()
-            self.addChild( EditorItem( parent = self, model = child ) )
         return genericItem
 
     def delete(self, event):
+        pass
         # What should this method do?
         # Should this just point down to the underlying model's 
         # removeRows() method and then let the updating take effect?
         for i in range(self.layout().count()):
             self.layout().itemAt(0).delete(None)
-        if self._parent:
-            self._parent.removeChild(self)
         if self.scene():
             self.scene().removeItem(self)
-        self._parent = None
+
+    def mousePressEvent(self, event):
+        QtGui.QGraphicsWidget.mousePressEvent(self, event)
+
+    def mouseMoveEvent(self, event):
+        QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
+
+    def mouseReleaseEvent(self, event):
+        QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
+
+    def hoverEnterEvent(self, event):
+        QtGui.QGraphicsWidget.hoverEnterEvent(self, event)
+
+    def hoverLeaveEvent(self, event):
+        QtGui.QGraphicsWidget.hoverLeaveEvent(self, event)
 
