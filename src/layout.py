@@ -128,10 +128,7 @@ class GridLayout(QtGui.QGraphicsGridLayout):
     def addItem(self,item):
         self.removeItem(item)
         if 'grid' not in item.viewModel()['layout config'].value:
-            if item.model() and 'name' in item.model().attributes:
-                name = item['name'].value
-            else:
-                name = item.viewModel()['kind'].value
+            name = item['Name']
             gr, ok = QtGui.QInputDialog.getInteger(None,
                                                    "Item '{}' Row".format(name),
                                                    "Row:", 0, 0)

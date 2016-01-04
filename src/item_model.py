@@ -105,7 +105,8 @@ class ItemModel(QtCore.QAbstractItemModel):
         parentNode = node.parent
         if parentNode == self.rootNode:
             return QtCore.QModelIndex()
-        return self.createIndex(parentNode.row(), 0, parentNode)  # data model needs to have a row method, e.g. parent.children.index(self)
+        return self.createIndex(parentNode.row(), 0, parentNode)  
+        # data model needs to have a row method, e.g. parent.children.index(self)
 
     def insertRows(self, position, rows, parent=QtCore.QModelIndex(), _type = None):
 

@@ -44,9 +44,9 @@ class EditorScene(QtGui.QGraphicsScene):
             item.contextMenuEvent(event)
         else:
             menu = QtGui.QMenu()
-            for a in self.getRoot().model().children._allowed:
+            for a in self.model().children._allowed:
                 addNewItem = Action('','New {}'.format(a.__name__), self)
-                addNewItem.triggered.connect(self.getRoot().addNewItem(a))
+                #addNewItem.triggered.connect(self.addNewItem(a))
                 menu.addAction(addNewItem)
             menu.exec_(event.screenPos())
 
@@ -68,21 +68,23 @@ class EditorView(QtGui.QGraphicsView):
         self._proxyModel = None
         self._dataMapper = QtGui.QDataWidgetMapper()
 
-    def model(self):
+    def proxyModel(self):
         return self._proxyModel
+
+    def model(self):
+        return self._model
 
     def setProxyModel(self, proxyModel):
         self._proxyModel = proxyModel
         self._dataMapper.setModel(proxyModel.sourceModel())
         self.aw.setProxyModel( proxyModel )
 
-    def init_ui(self, modelIndex, fname = ''):
+    def init_ui(self, model, fname = ''):
         scene = EditorScene(self)
         self.setScene(scene)
 
-        # not the right way to handle model viewing;
-        # should not store a reference to the actual model
         # TODO: ADD SELECTED ITEM SOMEHOW
+        self._model = model
 
         # view model is static; will NEVER be edited or viewed,
         # and will never be used by anything but a scene/view and their
@@ -95,16 +97,12 @@ class EditorView(QtGui.QGraphicsView):
             self.loadVM(fname)
             r = self.buildView( model = obj )
         except Exception, e:
-            m = self._proxyModel.sourceModel()
-            mi = QtCore.QModelIndex( modelIndex )
-            mi = self._proxyModel.mapToSource( mi )
-            item = m.getModel( mi )
             print 'WARNING: Could not load \'{}\' to generate view for {}:\n\t{}'.format(
-                fname, item['Name'], e
+                fname, self._model['Name'], e
             )
             # How to initialize self.view_model here?
             self.view_model = None
-            r = EditorItem( modelIndex )
+            r = EditorItem( model )
 
         scene.addItem(r)
 

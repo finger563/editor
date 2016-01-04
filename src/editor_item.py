@@ -55,9 +55,10 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self.scene().viewModel()
 
     def updateLabel(self, width, height):
-        m = self.index.model().sourceModel()
-        item = m.getModel( self.index )
-        name = item['name']
+        #m = self.index.model().sourceModel()
+        #item = m.getModel( self.index )
+        item = self.index
+        name = item['Name']
         self._label.setPlainText(name)
         '''
         self._label.setAlignment(
@@ -169,10 +170,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        pass
         # TODO: need to add the index here; call setSelection() with proper indices
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self)
+        editor.init_ui(self.index)
         editor.show()
         editor.raise_()
 
@@ -222,7 +222,6 @@ class EditorItem(QtGui.QGraphicsWidget):
         return genericItem
 
     def delete(self, event):
-        pass
         # What should this method do?
         # Should this just point down to the underlying model's 
         # removeRows() method and then let the updating take effect?

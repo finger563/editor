@@ -194,9 +194,9 @@ class Editor(QtGui.QMainWindow):
         name = item["Name"]
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
-            #ev.setProxyModel( self.proxy_model )
-            #ev.init_ui( modelIndex = modelIndex, 
-            #            fname = item.kind() + '.view' )
+            ev.setProxyModel( self.proxy_model )
+            ev.init_ui( model = item,
+                        fname = item.kind() + '.view' )
             # TODO: FIX THIS SO THAT THE VIEW'S EDITOR MODEL IS SET TO THE VIEW'S SELECTION CHANGED
             #self.tree_view.selectionModel().currentChanged.connect(ev.getEditor().setSelection)
             self.openEditorTabs[name] = ev
