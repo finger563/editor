@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-"""This file defines Meta-Meta-Model."""
+'''This file defines Meta-Meta-Model.'''
 
-__author__ = "William Emfinger"
-__copyright__ = "Copyright 2016, ROSMOD"
-__credits__ = ["William Emfinger", "Pranav Srinivas Kumar"]
-__license__ = "GPL"
-__version__ = "0.4"
-__maintainer__ = "William Emfinger"
-__email__ = "emfinger@isis.vanderbilt.edu"
-__status__ = "Production"
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 import os
 from collections import OrderedDict, MutableSequence
@@ -24,12 +24,12 @@ def get_children(model, kind):
         return kids
 
 class Attribute(object):
-    """Generic Attributes class
+    '''Generic Attributes class
 
     Each Attribute has the following:
     kind -- The datatype of the attribute e.g. string, pointer, float, bool etc.
-    value -- The value of the attributes e.g. "my_component", 1.642 etc.
-    """
+    value -- The value of the attributes e.g. 'my_component', 1.642 etc.
+    '''
     tooltip = ''
     display = ''
     options = []
@@ -50,13 +50,13 @@ class Attribute(object):
             self.value,tmp = variant.toDouble()
 
 class Model(object):
-    """Generic Model/Container class
+    '''Generic Model/Container class
 
     Every Model has the following:
     parent -- A parent Model Object.
     children -- A list of children (Model) objects.
     attributes -- A dictionary of attributes.
-    """
+    '''
     def __init__(self, parent = None):
         super(Model, self).__init__()
         self.parent = parent
@@ -122,8 +122,8 @@ class Model(object):
         self.set_attribute(name, Attribute(kind, value))
 
 class Pointer(Model):
-    """
-    """
+    '''
+    '''
     def __init__(self, src = None, dst = None, src_type = 'Model', dst_type = 'Model'):
         super(Pointer, self).__init__()
         # How to properly encapsulate these so they can be edited / viewed easily with
@@ -136,12 +136,12 @@ class Pointer(Model):
         self.add_attribute('Name', 'string', 'Pointer')
 
 class Children(MutableSequence):
-    """Children List
+    '''Children List
     
     _inner -- Contents of the list
     _allowed -- The list will accept only object types contained in _allowed
     _cardinality -- Cardinality of each accepted type
-    """
+    '''
     def __init__(self, it=(), allowed=(), cardinality=()):
         self._inner = list(it)
         self._allowed = allowed
@@ -170,9 +170,9 @@ class Children(MutableSequence):
                     if str(type(item)) not in children_types:
                         return self._inner.insert(index, item)
                     else:
-                        print "ERROR::Cardinality Error!"
+                        print 'ERROR::Cardinality Error!'
                 else:
                     return self._inner.insert(index, item)
         else:
-            print "ERROR::Cannot add child: " + str(item)
+            print 'ERROR::Cannot add child: ' + str(item)
             return self._inner

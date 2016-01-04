@@ -1,14 +1,19 @@
-"""
+'''
 Model Item
 
 This class defines the widget
 which allows for viewing and editing
 of models.
+'''
 
-* author: William Emfinger
-* website: github.com/finger563/editor 
-* last edited: August 2015
-"""
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -16,7 +21,6 @@ from PyQt4 import QtGui
 import view_attributes as view_attr
 from layout import layout_create, valid_layouts
 from graphics_items import RoundRectItem, TextItem
-from view_model import ViewModel
 
 class EditorItem(QtGui.QGraphicsWidget):
 
@@ -24,29 +28,30 @@ class EditorItem(QtGui.QGraphicsWidget):
                  parent = None,
                  model = None,
                  view_model = ViewModel()):
-        self._parent = None
-        self._model = model
-        self._view_model = view_model
-
-        self._mouseOver = False
-        self._drag = False
-        self._original_pos = None
-
-        self._label = None
-        self._item = None
-        
         super(EditorItem, self).__init__(parent)
+        # scene parent of this item, e.g. the scene or an enclosing object
+        self._parent = None
 
+        # perhaps just point this to the ItemModel()?
+        
+        # Should not store a pointer to the model here,
+        # it is bad practice.  Should figure out which 
+        # index into the model this points to (since this
+        # is just a view) and then use that index to fetch 
+        # the updated model any time an action is required
+        # e.g. edit, add, delete
+        self._model = model
+
+        # graphics item which represents
+        self._item = None
+        # text label of this item
         self._label = TextItem( '' , parent = self)
 
         self.loadResources()
-        self.setAcceptDrops(True)
+        #self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
         self.initializeFlags()
         self.updateGraphicsItem()
-
-    def viewModel(self):
-        return self._view_model
 
     def model(self):
         return self._model
@@ -57,14 +62,17 @@ class EditorItem(QtGui.QGraphicsWidget):
     def __setitem__(self, key, value):
         self.model()[key] = value
 
+    def viewModel(self):
+        return self.scene().viewModel()
+
     def updateLabel(self, width, height):
         if self.isHidden():
             self._label.setPlainText('')
         if self.model():
             if 'name' in self.model().attributes:
-                name = self.model()['name'].value
+                name = self['name'].value
             else:
-                name = self.model()['kind'].value
+                name = self['kind'].value
             self._label.setPlainText(name)
             self._label.setAlignment(
                 self.viewModel()['text horizontal alignment'].value,
@@ -151,6 +159,8 @@ class EditorItem(QtGui.QGraphicsWidget):
             self._parent.updateGraphicsItem()
 
     def removeChild(self, child):
+        # Should this just point down to the underlying model's 
+        # removeRows() method and then let the updating take effect?
         self.layout().removeItem(child)
         child._parent = None
         self.updateGraphicsItem()
@@ -160,63 +170,32 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.updateGraphicsItem()
 
     def addChild(self, child):
+        # Should this just point down to the underlying model's 
+        # insertRows() method and then let the updating take effect?
         self.layout().addItem(child)
         child._parent = self
         self.updateGraphicsItem()
 
     def mousePressEvent(self, event):
-        if not self.isHidden():
-            QtGui.QGraphicsWidget.mousePressEvent(self, event)
-            self._drag_pos = self.mapFromScene(event.scenePos())
-            self._original_pos = self.pos()
+        QtGui.QGraphicsWidget.mousePressEvent(self, event)
 
     def mouseMoveEvent(self, event):
         QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
-        if self.isMovable():
-            self._drag = True
 
     def mouseReleaseEvent(self, event):
-        if self.isHidden():
-            if self._parent: self._parent.mouseReleaseEvent(event)
-        else:
-            QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
-            if self._drag:
-                self._drag = False
-                newParent = [x for x in self.scene().items(event.scenePos()) if x != self and issubclass(type(x),EditorItem)]
-                currentParent = self._parent
-                if newParent:
-                    p = newParent[0]
-                    if p == currentParent:
-                        p.updateChild(self)
-                    else:
-                        if currentParent:
-                            currentParent.removeChild(self)
-                        p.addChild(self)
-                elif currentParent:
-                    currentParent.removeChild(self)
-                    self.setParentItem(None)
-                    self.setParent(self.scene())
-                    self.setPos(event.scenePos() - self._drag_pos)
-            self.updateGraphicsItem()
-
-    def isHidden(self):
-        return self.viewModel()['draw style'].value in ['hidden']
+        QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)
 
     def isMovable(self):
         return bool(self.flags() & QtGui.QGraphicsItem.ItemIsMovable)
 
     def mouseDoubleClickEvent(self, event):
-        if self.isHidden():
-            if self._parent: self._parent.mouseDoubleClickEvent(event)
-        else:
-            QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-            if self.model():
-                editor = self.scene().parent().getEditor()
-                editor.init_ui(self,
-                               self.model().attributes,
-                               lambda a : self.updateAttributes(a))
-                editor.show()
-                editor.raise_()
+        QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
+        editor = self.scene().parent().getEditor()
+        editor.init_ui(self,
+                       self.model().attributes,
+                       lambda a : self.updateAttributes(a))
+        editor.show()
+        editor.raise_()
 
     def updateAttributes(self,attrs):
         self.loadResources()
@@ -237,18 +216,21 @@ class EditorItem(QtGui.QGraphicsWidget):
     def getAnchors(self):
         a = self.boundingRect()
         anchorList = {
-            "bottom left": a.bottomLeft(),
-            "bottom right": a.bottomRight(),
-            "top left": a.topLeft(),
-            "top right": a.topRight(),
-            "center left": (a.topLeft() + a.bottomLeft()) / 2.0,
-            "center right": (a.topRight() + a.bottomRight()) / 2.0,
-            "top center": (a.topLeft() + a.topRight()) / 2.0,
-            "bottom center": (a.bottomLeft() + a.bottomRight()) / 2.0
+            'bottom left': a.bottomLeft(),
+            'bottom right': a.bottomRight(),
+            'top left': a.topLeft(),
+            'top right': a.topRight(),
+            'center left': (a.topLeft() + a.bottomLeft()) / 2.0,
+            'center right': (a.topRight() + a.bottomRight()) / 2.0,
+            'top center': (a.topLeft() + a.topRight()) / 2.0,
+            'bottom center': (a.bottomLeft() + a.bottomRight()) / 2.0
         }
         return anchorList
 
     def delete(self, event):
+        # What should this method do?
+        # Should this just point down to the underlying model's 
+        # removeRows() method and then let the updating take effect?
         for i in range(self.layout().count()):
             self.layout().itemAt(0).delete(None)
         if self._parent:

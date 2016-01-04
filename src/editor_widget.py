@@ -1,18 +1,18 @@
-"""
+'''
 Editor Widget 
 
 These classes allow users to view
 and edit models in the project in tabs.
-"""
+'''
 
-__author__ = "William Emfinger"
-__copyright__ = "Copyright 2016, ROSMOD"
-__credits__ = ["William Emfinger", "Pranav Srinivas Kumar"]
-__license__ = "GPL"
-__version__ = "0.4"
-__maintainer__ = "William Emfinger"
-__email__ = "emfinger@isis.vanderbilt.edu"
-__status__ = "Production"
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -38,6 +38,9 @@ class EditorScene(QtGui.QGraphicsScene):
 
     def getRoot(self):
         return self._root
+
+    def viewModel(self):
+        return self.views()[0].viewModel()
 
     def contextMenuEvent(self, event):
         item = self.itemAt(event.scenePos())
@@ -72,49 +75,40 @@ class EditorView(QtGui.QGraphicsView):
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
-    def init_ui(self, obj = None, fname = '', view_type = 'model'):
+    def init_ui(self, obj = None, fname = ''):
         scene = EditorScene(self)
         self.setScene(scene)
-        self.view_type = view_type
+
+        # not the right way to handle model viewing;
+        # should not store a reference to the actual model
         self._root_model = obj
 
-        '''
+        # view model is static; will NEVER be edited or viewed,
+        # and will never be used by anything but a scene/view and their
+        # children, so we keep a reference to the view model open here
+        self.view_model = None
+
         try:
             if not fname:
                 fname = obj.kind + '.view'
-            vm = self.openVM(fname)
-            if self.view_type == 'model':
-                r = self.buildModel( model = obj, view_model = vm)
-            elif self.view_type == 'view model':
-                r = self.buildViewModel( view_model = vm)
+            self.view_model = self.openVM(fname)
+            r = self.buildModel( model = obj )
         except Exception, e:
-            print "WARNING: Could not load '{}' to generate '{}' view for {}:\n\t{}".format(
-                fname, self.view_type, obj['name'].value, e
+            print 'WARNING: Could not load \'{}\' to generate view for {}:\n\t{}'.format(
+                fname, obj['name'].value, e
             )
-            if self.view_type in ['model']:
-                r = ModelItem(
-                    model = obj,
-                    view_model = ViewModel(kind = obj.kind)
-                )
-            elif self.view_type in ['view model','meta model']:
-                r = ViewModelItem(
-                    view_model = ViewModel(kind = obj.kind)
-                )
-        '''
-        if not fname:
-            fname = obj.kind + '.view'
-        vm = self.openVM(fname)
-        if self.view_type == 'model':
-            r = self.buildModel( model = obj, view_model = vm)
-        elif self.view_type == 'view model':
-            r = self.buildViewModel( view_model = vm)
+            # How to initialize self.view_model here?
+            r = ModelItem( model = obj )
 
         scene.setRoot(r)
         scene.addItem(r)
 
         self.show()
 
-    def buildModel(self, model, view_model, parent = None):
+    def viewModel(self):
+        return self.view_model
+
+    def buildModel(self, model, parent = None):
         vm = view_model
         _kind = vm['kind'].value
         objs = []
@@ -154,24 +148,6 @@ class EditorView(QtGui.QGraphicsView):
         for cvm in view_model.children:
             t.addChild(self.buildViewModel(cvm, t))
         return t
-
-    def saveVM(self, fname):
-        root_items = [x for x in self.scene().items() if isinstance(x,ViewModelItem) and not x._parent]
-        if not root_items:
-            print "ERROR: MUST HAVE AT LEAST ONE ITEM"
-            return -1
-        elif len(root_items) > 1:
-            print "WARNING: ADDING TOP LEVEL CONTAINER TO {}".format(fname)
-            root = ViewModelItem( view_model = ViewModel() )
-            for r in root_items:
-                root.addChild(r)
-        else:
-            root = root_items[0]
-        jsonpickle.set_encoder_options('simplejson',indent=4)
-        encoded_output = jsonpickle.encode(root.viewModel())
-        with open(fname, 'w') as f:
-            f.write(encoded_output)
-        return 0
 
     def openVM(self, fname):
         with open(fname, 'r') as f:

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
+'''
 Meta-Model Editor 
 
 This program allows users to operate 
@@ -9,16 +9,16 @@ on meta-models and models using loadable
 libraries to perform meta-model specific
 operations such as generation, analysis,
 and deployment.
-"""
+'''
 
-__author__ = "William Emfinger"
-__copyright__ = "Copyright 2016, ROSMOD"
-__credits__ = ["William Emfinger", "Pranav Srinivas Kumar"]
-__license__ = "GPL"
-__version__ = "0.4"
-__maintainer__ = "William Emfinger"
-__email__ = "emfinger@isis.vanderbilt.edu"
-__status__ = "Production"
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -32,6 +32,7 @@ from editor_widget import TabbedEditor, EditorView
 from item_model import ItemModel, SortFilterProxyModel
 
 from meta import Model, Pointer, Attribute, Children
+from view_model import ViewModel
 
 from tree_view import TreeView
 
@@ -42,7 +43,7 @@ class Editor(QtGui.QMainWindow):
     # Models the editor is designed to load/edit/save
     # All inherit at some point from the original base model classes
     # Defined in meta.py
-    editor_modes = ['model','meta model','view model']
+    editor_modes = ['Model','Meta Model','View Model']
 
     filter_types = ['Meta','Name']
 
@@ -50,14 +51,11 @@ class Editor(QtGui.QMainWindow):
         super(Editor, self).__init__()
         self.init_model()
         self.init_ui()
-        self.setWindowIcon(QtGui.QIcon("icons/editor.png"))
+        self.setWindowIcon(QtGui.QIcon('icons/editor.png'))
 
     def init_model(self):
         # Set up the editor mode
-        self.editor_mode = 'meta model'
-        self.meta_model = None
-        self.model = None
-        self.view_model = None
+        self.editor_mode = 'Meta Model'
 
         # Set up the proxy model for sorting/filtering
         self.proxy_model = SortFilterProxyModel(self)
@@ -67,7 +65,19 @@ class Editor(QtGui.QMainWindow):
         self.proxy_model.setFilterRole(ItemModel.filter_role)
 
         # Set up the actual model
-        self.model = ItemModel(TestModel)
+        vm = ViewModel()
+        pkg = ViewModel()
+        pkg['Name'] = 'Package'
+        vm.add_child(pkg)
+
+        root = TestModel
+        #root = vm
+        
+        # the model stores the reference to the model that is currently
+        # being edited/viewed; this can be a regular model, a view model,
+        # or even a meta-model.  All these models inherit from the meta-metamodel
+        # so have the same interfaces and can be interacted with in the same way
+        self.model = ItemModel(root)
 
         # Link the actual model and the proxy model
         self.proxy_model.setSourceModel(self.model)
@@ -75,13 +85,13 @@ class Editor(QtGui.QMainWindow):
 
     def init_ui(self):
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
-        self.setStyleSheet("""QToolTip {
+        self.setStyleSheet('''QToolTip {
                            background-color: black;
                            color: white;
                            border: black solid 1px
-                           }""")
+                           }''')
         self.setGeometry(300,300,800,600)
-        self.setWindowTitle("Editor")
+        self.setWindowTitle('Editor')
 
         # Create the actions for the program
         exitAction = Action('icons/toolbar/stop.png', '&Exit', self)        
@@ -102,8 +112,8 @@ class Editor(QtGui.QMainWindow):
 
         # Set up the toolbars for the program
         self.toolbar_init()
-        self.toolbar_create("toolbar1")
-        self.toolbar_add_action("toolbar1",exitAction)
+        self.toolbar_create('toolbar1')
+        self.toolbar_add_action('toolbar1',exitAction)
         self.toolbar_add_widget('toolbar1',self.mode_selector)
 
         # Set up the Tree View Widget
@@ -114,7 +124,7 @@ class Editor(QtGui.QMainWindow):
         # Set up filtering on the tree_view
         self.filter_widget = QtGui.QWidget()
         self.filter_hbox = QtGui.QHBoxLayout()
-        self.filter_label = QtGui.QLabel("Filter:")
+        self.filter_label = QtGui.QLabel('Filter:')
         self.filter_type = QtGui.QComboBox(self)
         self.filter_type.addItems(self.filter_types)
         self.filter_type.setCurrentIndex(self.filter_types.index(self.model.filter_type))
@@ -156,9 +166,7 @@ class Editor(QtGui.QMainWindow):
         self.move(qr.topLeft())
 
     def clearModels(self):
-        self.meta_model = None
         self.model = None
-        self.view_model = None
 
     def clearEditor(self):
         self.openEditorTabs = {}
@@ -177,11 +185,25 @@ class Editor(QtGui.QMainWindow):
             self.clearEditor()
             # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
         
+    def saveModel(self, fname):
+        # NEED TO CONVERT FROM EDITOR_WIDGET IMPLEMENTATION TO EDITOR IMPLEMENTATION
+        # EDITOR SAVES AND LOADS MODELS; THEY CAN BE META-MODELS, VIEW MODELS, OR MODELS
+
+        # fix this: all models are the same, and we don't save scene anymore; just save
+        # the model itself!  the mode of the editor determines what is being edited / what is editable
+        # e.g. *.model, *.meta, *.view
+        root = None
+        jsonpickle.set_encoder_options('simplejson',indent=4)
+        encoded_output = jsonpickle.encode(root)
+        with open(fname, 'w') as f:
+            f.write(encoded_output)
+        return 0
+
     def closeEvent(self, event):
         event.accept()
         return
         reply = QtGui.QMessageBox.question(self, 'Quit',
-                                           "You're sure you want to quit?", QtGui.QMessageBox.Yes | 
+                                           'Sure you want to quit?', QtGui.QMessageBox.Yes | 
                                            QtGui.QMessageBox.No, QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
@@ -210,7 +232,7 @@ class Editor(QtGui.QMainWindow):
         context_menu_create, \
         context_menu_add_action
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import sys
     app = QtGui.QApplication(sys.argv)
     editor = Editor()

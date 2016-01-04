@@ -1,19 +1,19 @@
-"""
+'''
 View Model
 
 These classes contain all the relevant
 infomation required to configure or draw
 a view for a model
-"""
+'''
 
-__author__ = "William Emfinger"
-__copyright__ = "Copyright 2016, ROSMOD"
-__credits__ = ["William Emfinger", "Pranav Srinivas Kumar"]
-__license__ = "GPL"
-__version__ = "0.4"
-__maintainer__ = "William Emfinger"
-__email__ = "emfinger@isis.vanderbilt.edu"
-__status__ = "Production"
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from collections import OrderedDict
 
@@ -67,13 +67,11 @@ class ViewModel(Model):
         self.set_attribute('source',view_attr.Source(src))
         self.set_attribute('destination',view_attr.Source(dst))
 
-        self.children = []
-
     def toStr(self, printKids = True, prefix = ''):
         retstr = ''
         retstr += '{}Kind: {}\n'.format(prefix,self['Kind'])
         if printKids:
             for c in self.children:
-                retstr += "{}{}\n".format(prefix,c)
+                retstr += '{}{}\n'.format(prefix,c)
                 retstr += c.toStr(printKids, prefix + '\t')
         return retstr
