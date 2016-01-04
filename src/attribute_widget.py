@@ -34,13 +34,16 @@ class AttributeEditor(QtGui.QWidget):
         self._unsaved_edits = False
         self._layout = None
 
+        # Should probably use ManualSubmit as an option
+        # since we have the cancel option to allow
+        # the edits to be canceled
         self._dataMapper = QtGui.QDataWidgetMapper()
 
-    def setModel(self, proxyModel):
+    def setProxyModel(self, proxyModel):
         self._proxyModel = proxyModel
         self._dataMapper.setModel(proxyModel.sourceModel())
 
-    def init_ui(self, item, output_obj, output_func = None):
+    def init_ui(self, item):
         if self._unsaved_edits:
             reply = QtGui.QMessageBox.question(self, 'Save?',
                                                "Save attribute edits?",
@@ -49,17 +52,12 @@ class AttributeEditor(QtGui.QWidget):
             if reply == QtGui.QMessageBox.Yes:
                 self.save(None)
         self.init_layout()
-        self._output_obj = output_obj
-        self._output_func = output_func
-        self.add_header(item.viewModel())
-        for key,attr in item.model().attributes.iteritems():
-            if attr.editable:
-                self.add_attribute(key,attr)
+        self.add_header(item)
+        self.init_attributes(item.attributes)
         self.add_ok_cancel()
         self._unsaved_edits = False
 
     def init_layout(self):
-        self._input_dict = {}
         while self._layout and self._layout.count():
             child = self._layout.takeAt(0)
             child.widget().deleteLater()
@@ -78,6 +76,15 @@ class AttributeEditor(QtGui.QWidget):
         
         self.updateGeo()
 
+    def init_attributes(self, attr):
+        i = 0
+        for key,attr in attr.iteritems():
+            if attr.editable:
+                obj = self.add_attribute(key, attr)
+                if obj:
+                    self._dataMapper.addMapping(obj, i)
+                    i += 1
+
     def setSelection(self, current, old):
         current = self._proxyModel.mapToSource(current)
         
@@ -93,13 +100,7 @@ class AttributeEditor(QtGui.QWidget):
             return
 
         self.add_header(node)
-        i = 0
-        for key,attr in node.attributes.iteritems():
-            if attr.editable:
-                obj = self.add_attribute(key, attr)
-                if obj:
-                    self._dataMapper.addMapping(obj, i)
-                    i += 1
+        self.init_attributes(node.attributes)
         self.add_ok_cancel()
         self.unhide(None)
 
@@ -108,17 +109,9 @@ class AttributeEditor(QtGui.QWidget):
         label.setText("Properties")
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
+        pix = QtGui.QPixmap( 'icons/model/' + item.kind() + '.png').scaled(30,30)
+        label.setPixmap(pix)
         self._layout.addWidget(label)
-        '''
-        obj = None
-        if attrs['draw style'].value in ['icon']:
-            pix = QtGui.QPixmap( attrs['icon'].value).scaled(30,30)
-            obj = QtGui.QLabel()
-            obj.setPixmap(pix)
-
-        if obj:
-            self._layout.addWidget(obj)
-        '''
 
     def add_attribute(self, name, attr):
         label = QtGui.QLabel()
@@ -145,25 +138,21 @@ class AttributeEditor(QtGui.QWidget):
             obj.clicked.connect(
                 lambda : self.open_file(name, obj, attr.kind.split('_')[1])
             )
-            self._input_dict[name] = obj
         elif 'dictionary' in attr.kind:
             label = None
             _type = attr.kind.split('_')[1]
             obj = QtGui.QGroupBox(name)
             layout = QtGui.QFormLayout()
-            self._input_dict[name] = {}
             for key_name in attr.options:
                 if 'bool' in _type:
                     cb = QtGui.QCheckBox()
                     cb.setChecked(bool(attr.value[key_name]))
                     layout.addRow(QtGui.QLabel(key_name+':'), cb)
-                    self._input_dict[name][key_name] = cb
                 else:
                     print 'Unknown dictionary value type: {}'.format(_type)
                     break
             obj.setLayout(layout)
         if obj:
-            self._input_dict[name] = obj
             if label: self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
             self.obj = obj
@@ -234,6 +223,8 @@ class AttributeEditor(QtGui.QWidget):
         self.hideAnimation.start()
 
     def save(self, event):
+        pass
+        '''
         for name,obj in self._input_dict.iteritems():
             kind = self._output_obj[name].kind
             if kind in ['string']:
@@ -256,10 +247,12 @@ class AttributeEditor(QtGui.QWidget):
         #self.hide(event)
         if self._output_func: self._output_func(self._output_obj)
         self._unsaved_edits = False
+        '''
 
     def cancel(self, event):
         self.hide(event)
         self._unsaved_edits = False
+        # TODO: Clear the dataMapper here so nothing gets accidentally overwritten
 
     def hide(self, event):
         self._displayed = False

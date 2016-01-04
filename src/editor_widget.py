@@ -61,19 +61,27 @@ class EditorView(QtGui.QGraphicsView):
 
     def __init__(self, parent):
         super(EditorView,self).__init__(parent)
-        self.aw = AttributeEditor(self)
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        self._command_key_pressed = False
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
-    def init_ui(self, obj = None, fname = ''):
+        self.aw = AttributeEditor(self)
+        self._command_key_pressed = False
+        
+        self._proxyModel = None
+        self._dataMapper = QtGui.QDataWidgetMapper()
+
+    def setProxyModel(self, proxyModel):
+        self._proxyModel = proxyModel
+        self._dataMapper.setModel(proxyModel.sourceModel())
+
+    def init_ui(self, proxy = None, fname = ''):
         scene = EditorScene(self)
         self.setScene(scene)
 
         # not the right way to handle model viewing;
         # should not store a reference to the actual model
-        self._root_model = obj
+        # TODO: ADD SELECTED ITEM SOMEHOW
 
         # view model is static; will NEVER be edited or viewed,
         # and will never be used by anything but a scene/view and their
@@ -90,6 +98,7 @@ class EditorView(QtGui.QGraphicsView):
                 fname, obj['name'], e
             )
             # How to initialize self.view_model here?
+            self.view_model = None
             r = EditorItem( model = obj )
 
         scene.setRoot(r)

@@ -189,10 +189,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
+        # TODO: need to add the index here; call setSelection() with proper indices
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self,
-                       self.model().attributes,
-                       lambda a : self.updateAttributes(a))
+        editor.init_ui(self)
         editor.show()
         editor.raise_()
 

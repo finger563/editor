@@ -184,6 +184,24 @@ class Editor(QtGui.QMainWindow):
             self.editor_mode = text
             self.clearEditor()
             # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
+
+    def openModelView(self, modelIndex):
+        mi = self.proxy_model.mapToSource(modelIndex)
+        item = self.model.getModel( mi )
+        name = item["name"]
+        if name not in self.openEditorTabs:
+            ev = EditorView( self.tabbedEditorWidget )
+            ev.init_ui( obj = item, fname = item.kind + '.view' )
+            ev.getEditor().setProxyModel(self.proxy_model)
+            # TODO: FIX THIS SO THAT THE VIEW'S EDITOR MODEL IS SET TO THE VIEW'S SELECTION CHANGED
+            #self.tree_view.selectionModel().currentChanged.connect(ev.getEditor().setSelection)
+            self.openEditorTabs[name] = ev
+            self.tabbedEditorWidget.addTab( ev, name )
+        elif self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]) < 0:
+            ev = self.openEditorTabs[name]
+            self.tabbedEditorWidget.addTab( ev, name )
+        self.tabbedEditorWidget.setCurrentIndex(
+            self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]))
         
     def saveModel(self, fname):
         # NEED TO CONVERT FROM EDITOR_WIDGET IMPLEMENTATION TO EDITOR IMPLEMENTATION
