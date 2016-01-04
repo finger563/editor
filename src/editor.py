@@ -121,6 +121,8 @@ class Editor(QtGui.QMainWindow):
         self.tree_view.setModel(self.proxy_model)
         self.tree_view.setSortingEnabled(False)
         self.tree_view.doubleClicked.connect(self.openModelView)
+        self.tree_view.expandAll()
+        self.tree_view.setExpandsOnDoubleClick(False) # don't want the tree collapsing when we open views
 
         # Set up filtering on the tree_view
         self.filter_widget = QtGui.QWidget()
@@ -187,16 +189,14 @@ class Editor(QtGui.QMainWindow):
             # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
 
     def openModelView(self, modelIndex):
-        print modelIndex
         mi = self.proxy_model.mapToSource(modelIndex)
         item = self.model.getModel( mi )
         name = item["Name"]
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
-            ev.setProxyModel( self.proxy_model )
-            ev.init_ui( modelIndex = modelIndex, 
-                        fname = item.kind() + '.view' )
-            #ev.getEditor().setProxyModel(self.proxy_model)
+            #ev.setProxyModel( self.proxy_model )
+            #ev.init_ui( modelIndex = modelIndex, 
+            #            fname = item.kind() + '.view' )
             # TODO: FIX THIS SO THAT THE VIEW'S EDITOR MODEL IS SET TO THE VIEW'S SELECTION CHANGED
             #self.tree_view.selectionModel().currentChanged.connect(ev.getEditor().setSelection)
             self.openEditorTabs[name] = ev

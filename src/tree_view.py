@@ -26,8 +26,12 @@ from PyQt4.QtCore import Qt
 
 class TreeView(QtGui.QTreeView):
 
-    def mouseDoubleClickEvent(self, e):
-        QtGui.QTreeView.mouseDoubleClickEvent(self,e)
+    def edit(self, index, trigger, event):
+        # don't want to enter renaming mode every time we 
+        # want to open the graphical editor
+        if trigger == QtGui.QAbstractItemView.DoubleClicked:
+            return False
+        return QtGui.QTreeView.edit(self, index, trigger, event)
 
     def contextMenuEvent(self, e):
         menu = QtGui.QMenu()
