@@ -33,7 +33,7 @@ class TreeView(QtGui.QTreeView):
             mi = self.model().mapToSource( indexes[0] )
             item = m.getModel( mi )
 
-            delAction = QtGui.QAction('Delete {}'.format(item['Name'].value), self)
+            delAction = QtGui.QAction('Delete {}'.format(item['Name']), self)
             delAction.triggered.connect(self.delTreeItem(mi))
             menu.addAction(delAction)
 

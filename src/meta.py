@@ -39,12 +39,6 @@ class Attribute(object):
         self.kind = kind
         self.value = value
 
-    def __setitem__(self, key, val):
-        self.value[key] = val
-
-    def __getitem__(self, key):
-        return self.value[key]
-
     def fromQVariant(self, variant):
         if self.kind in ['string','code','list_entry']:
             self.value = variant.toString()
@@ -54,6 +48,17 @@ class Attribute(object):
             self.value,tmp = variant.toFloat()
         elif self.kind in ['double']:
             self.value,tmp = variant.toDouble()
+
+class Pointer(object):
+    """
+    """
+    def __init__(self, src, dst, src_type, dst_type):
+        super(Pointer, self).__init__()
+        self.kind = kind
+        self.src = src
+        self.dst = dst
+        self.src_type = src_type
+        self.dst_type = dst_type
 
 class Model(object):
     """Generic Model/Container class
@@ -76,10 +81,16 @@ class Model(object):
         self.kwargs = {}
 
     def __getitem__(self, key):
-        return self.attributes[key]
+        return self.attributes[key].value
 
     def __setitem__(self, key, value):
-        self.attributes[key] = value
+        self.attributes[key].value = value
+
+    def get_attribute(self, key):
+        return self.attributes[key]
+
+    def set_attribute(self, key, attr):
+        self.attributes[key] = attr
 
     def child_count(self):
         return len(self.children)
@@ -117,7 +128,7 @@ class Model(object):
         self.children.append(child_model)
 
     def add_attribute(self, name, kind, value):
-        self[name] = Attribute(kind, value)
+        self.set_attribute(name, Attribute(kind, value))
 
 class Children(MutableSequence):
     """Children List
