@@ -26,8 +26,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
                  parent = None,
-                 model = None,
-                 view_model = ViewModel()):
+                 model = None):
         super(EditorItem, self).__init__(parent)
         # scene parent of this item, e.g. the scene or an enclosing object
         self._parent = None
@@ -70,23 +69,23 @@ class EditorItem(QtGui.QGraphicsWidget):
             self._label.setPlainText('')
         if self.model():
             if 'name' in self.model().attributes:
-                name = self['name'].value
+                name = self['name']
             else:
-                name = self['kind'].value
+                name = self['kind']
             self._label.setPlainText(name)
             self._label.setAlignment(
-                self.viewModel()['text horizontal alignment'].value,
-                self.viewModel()['text vertical alignment'].value
+                self.viewModel()['text horizontal alignment'],
+                self.viewModel()['text vertical alignment']
             )
-            self._label.setPos(self.viewModel()['text location'].value, self.pos(), width, height)
+            self._label.setPos(self.viewModel()['text location'], self.pos(), width, height)
 
     def createItem(self, width, height):
         if self.isHidden():
             self._item = None
-        draw_style = self.viewModel()['draw style'].value
-        if self.viewModel()['icon'].value and draw_style == 'icon':
+        draw_style = self.viewModel()['draw style']
+        if self.viewModel()['icon'] and draw_style == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
-            self._item.setPixmap( QtGui.QPixmap(self.viewModel()['icon'].value).scaled(width,height) )
+            self._item.setPixmap( QtGui.QPixmap(self.viewModel()['icon']).scaled(width,height) )
         else:
             if draw_style == 'rect':
                 self._item = QtGui.QGraphicsRectItem(0,0,width,height)
@@ -95,10 +94,10 @@ class EditorItem(QtGui.QGraphicsWidget):
             elif draw_style == 'round rect':
                 self._item = RoundRectItem(0,0,width,height)
             if self._item:
-                self._item.setBrush(QtGui.QColor(self.viewModel()['color'].value))
+                self._item.setBrush(QtGui.QColor(self.viewModel()['color']))
 
     def loadResources(self):
-        new_layout = layout_create(self.viewModel()['layout style'].value)
+        new_layout = layout_create(self.viewModel()['layout style'])
         if type(self.layout()) != type(new_layout):
             new_layout.fromLayout(self.layout())
             self.setLayout(new_layout)
@@ -141,8 +140,8 @@ class EditorItem(QtGui.QGraphicsWidget):
         shw = max( shw, self.boundingRect().width())
         shh = max( shh, self.boundingRect().height())
         return QtCore.QSizeF(
-            max(shw, self.viewModel()['width'].value),
-            max(shh, self.viewModel()['height'].value)
+            max(shw, self.viewModel()['width']),
+            max(shh, self.viewModel()['height'])
         )
         
     def updateGraphicsItem(self):
@@ -226,6 +225,27 @@ class EditorItem(QtGui.QGraphicsWidget):
             'bottom center': (a.bottomLeft() + a.bottomRight()) / 2.0
         }
         return anchorList
+
+    def contextMenuEvent(self, event):
+        menu = QtGui.QMenu()
+
+        delSelf = Action('', 'Delete', self)
+        delSelf.triggered.connect(self.delete)
+        menu.addAction(delSelf)
+
+        for a in self.model().children._allowed:
+            addAction = Action('', 'Add new {}'.format(a.__name__), self)
+            addAction.triggered.connect(self.addNewItem(a))
+            menu.addAction(addAction)
+        
+        menu.exec_(event.screenPos())
+
+    def addNewItem(self, _type):
+        def genericItem(e):
+            print _type.__name__
+            child = _type()
+            self.addChild( EditorItem( parent = self, model = child ) )
+        return genericItem
 
     def delete(self, event):
         # What should this method do?

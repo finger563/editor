@@ -34,23 +34,26 @@ root.add_child( c1 )
 root.add_child( c2 )
 root.add_child( c3 )
 
+# Software
 c4 = Model()
 c4['Name'] = 'Package'
-c5 = Model()
 
 c1.add_child(c4)
 
+# Package
+c5 = Model()
 c5['Name'] = 'Message'
 c6 = Model()
 c6['Name'] = 'Service'
 c7 = Model()
 c7['Name'] = 'Component'
-c8 = Model()
 
 c4.add_child(c5)
 c4.add_child(c6)
 c4.add_child(c7)
 
+# Component
+c8 = Model()
 c8['Name'] = 'Timer'
 c9 = Model()
 c9['Name'] = 'Publisher'
@@ -83,6 +86,7 @@ srv_ref2['Name'] = 'Ref'
 c11.add_child(srv_ref1)
 c12.add_child(srv_ref2)
 
+# Hardware
 c13 = Model()
 c13['Name'] = 'Host'
 c14 = Model()
@@ -100,6 +104,12 @@ c16 = Model()
 c16['Name'] = 'Link'
 
 c14.add_child(c16)
+
+# Deployment 
+hw_ref = Pointer()
+hw_ref['Name'] = 'Hardware Ref'
+
+c3.add_child(hw_ref)
 
 c17 = Model()
 c17['Name'] = 'Node'
