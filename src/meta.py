@@ -3,8 +3,8 @@
 """This file defines Meta-Meta-Model."""
 
 __author__ = "William Emfinger"
-__copyright__ = "Copyright 2015, ROSMOD"
-__credits__ = ["Pranav Srinivas Kumar", "William Emfinger"]
+__copyright__ = "Copyright 2016, ROSMOD"
+__credits__ = ["William Emfinger", "Pranav Srinivas Kumar"]
 __license__ = "GPL"
 __version__ = "0.4"
 __maintainer__ = "William Emfinger"
@@ -49,17 +49,6 @@ class Attribute(object):
         elif self.kind in ['double']:
             self.value,tmp = variant.toDouble()
 
-class Pointer(object):
-    """
-    """
-    def __init__(self, src, dst, src_type, dst_type):
-        super(Pointer, self).__init__()
-        self.kind = kind
-        self.src = src
-        self.dst = dst
-        self.src_type = src_type
-        self.dst_type = dst_type
-
 class Model(object):
     """Generic Model/Container class
 
@@ -72,8 +61,10 @@ class Model(object):
         super(Model, self).__init__()
         self.parent = parent
 
-        self.children = Children(allowed=[Model], 
+        self.children = Children(allowed=[Model,Pointer], 
                                  cardinality = {Model\
+                                                : '0..*',
+                                                Pointer\
                                                 : '0..*'})
 
         self.attributes = OrderedDict()
@@ -129,6 +120,20 @@ class Model(object):
 
     def add_attribute(self, name, kind, value):
         self.set_attribute(name, Attribute(kind, value))
+
+class Pointer(Model):
+    """
+    """
+    def __init__(self, src = None, dst = None, src_type = 'Model', dst_type = 'Model'):
+        super(Pointer, self).__init__()
+        # How to properly encapsulate these so they can be edited / viewed easily with
+        # our current paradigm (which is focused on models and attributes)?
+        self.src = src
+        self.dst = dst
+        self.src_type = src_type
+        self.dst_type = dst_type
+        self.children = Children(allowed=[], cardinality = {})
+        self.add_attribute('Name', 'string', 'Pointer')
 
 class Children(MutableSequence):
     """Children List
