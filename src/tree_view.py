@@ -22,7 +22,8 @@ from PyQt4.QtCore import Qt
 class TreeView(QtGui.QTreeView):
 
     def mouseDoubleClickEvent(self, e):
-        QtGui.QTreeView.mouseDoubleClickEvent(self,e)
+        #QtGui.QTreeView.mouseDoubleClickEvent(self,e)
+        e.ignore()
 
     def contextMenuEvent(self, e):
         menu = QtGui.QMenu()

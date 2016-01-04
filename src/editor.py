@@ -39,7 +39,7 @@ class Editor(QtGui.QMainWindow):
     # Defined in meta.py
     editor_modes = ['model','meta model','view model']
 
-    filter_types = ['Kind','Name']
+    filter_types = ['Meta','Name']
 
     def __init__(self):
         super(Editor, self).__init__()
@@ -106,13 +106,35 @@ class Editor(QtGui.QMainWindow):
         self.tree_view.setModel(self.proxy_model)
         self.tree_view.setSortingEnabled(False)
 
+        # Set up filtering on the tree_view
+        self.filter_widget = QtGui.QWidget()
+        self.filter_hbox = QtGui.QHBoxLayout()
+        self.filter_label = QtGui.QLabel("Filter:")
+        self.filter_type = QtGui.QComboBox(self)
+        self.filter_type.addItems(self.filter_types)
+        self.filter_type.setCurrentIndex(self.filter_types.index(self.model.filter_type))
+        self.filter_type.currentIndexChanged.connect(self.changeFilter)
+        self.filter_hbox.addWidget(self.filter_label)
+        self.filter_hbox.addWidget(self.filter_type)
+        self.filter_widget.setLayout(self.filter_hbox)
+        self.filter_edit = QtGui.QLineEdit()
+        self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
+
+        # Set up the navigator (tree viewer + filter)
+        self.navigator = QtGui.QWidget()
+        self.navigator_vbox = QtGui.QVBoxLayout()
+        self.navigator_vbox.addWidget(self.filter_widget)
+        self.navigator_vbox.addWidget(self.filter_edit)
+        self.navigator_vbox.addWidget(self.tree_view)
+        self.navigator.setLayout(self.navigator_vbox)
+        
         # Create the Visualizer
         self.tabbedEditorWidget = TabbedEditor(self)
         self.openEditorTabs = {}
 
         # Split the main part into visualizer and tree_view
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.splitter1.addWidget(self.tree_view)
+        self.splitter1.addWidget(self.navigator)
         self.splitter1.addWidget(self.tabbedEditorWidget)
         self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 * self.geometry().x()/4.0])
 
@@ -136,6 +158,12 @@ class Editor(QtGui.QMainWindow):
     def clearEditor(self):
         self.openEditorTabs = {}
         self.tabbedEditorWidget.clear()
+
+    def changeFilter(self, index):
+        text = self.filter_type.currentText()
+        if text != self.model.filter_type:
+            self.model.set_filter_type(text)
+            self.proxy_model.invalidate()
 
     def changeMode(self, index):
         text = self.mode_selector.currentText()

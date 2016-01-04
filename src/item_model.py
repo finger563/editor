@@ -15,6 +15,7 @@ class ItemModel(QtCore.QAbstractItemModel):
     def __init__(self, root, parent = None):
         super(ItemModel, self).__init__(parent)
         self.rootNode = root
+        self.filter_type = 'Meta'
 
     def getModel(self, index):
         if index.isValid():
@@ -32,6 +33,9 @@ class ItemModel(QtCore.QAbstractItemModel):
         
     def columnCount(self, parent):
         return 1
+
+    def set_filter_type(self, _type):
+        self.filter_type = _type
         
     def data(self, index, role):
         if not index.isValid():
@@ -47,7 +51,12 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == ItemModel.sort_role:
             return node.kind()
         if role == ItemModel.filter_role:
-            return node.kind()
+            f = None
+            if self.filter_type == 'Meta':
+                f = node.kind()
+            elif self.filter_type == 'Name':
+                f = node['Name']
+            return f
         return None
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
