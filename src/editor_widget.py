@@ -35,8 +35,10 @@ class EditorScene(QtGui.QGraphicsScene):
         return self.views()[0].viewModel()
 
     def model(self):
-        print self.views()
         return self.views()[0].model()
+
+    def proxyModel(self):
+        return self.views()[0].proxyModel()
 
     def contextMenuEvent(self, event):
         item = self.itemAt(event.scenePos())
@@ -46,9 +48,19 @@ class EditorScene(QtGui.QGraphicsScene):
             menu = QtGui.QMenu()
             for a in self.model().children._allowed:
                 addNewItem = Action('','New {}'.format(a.__name__), self)
-                #addNewItem.triggered.connect(self.addNewItem(a))
+                addNewItem.triggered.connect(self.addViewItem(QtCore.QModelIndex(),a))
                 menu.addAction(addNewItem)
             menu.exec_(event.screenPos())
+
+    def addViewItem(self, mi, _type):
+        def genericItem(e):
+            self.proxyModel().sourceModel().insertRows( 0, 1, mi, _type )
+        return genericItem
+
+    def delViewItem(self, mi):
+        def genericItem(e):
+            self.proxyModel().sourceModel().removeRows( mi.row(), 1, mi.parent() )
+        return genericItem
 
 class EditorView(QtGui.QGraphicsView):
 
@@ -95,15 +107,14 @@ class EditorView(QtGui.QGraphicsView):
             if not fname:
                 fname = obj.kind + '.view'
             self.loadVM(fname)
-            r = self.buildView( model = obj )
         except Exception, e:
             print 'WARNING: Could not load \'{}\' to generate view for {}:\n\t{}'.format(
                 fname, self._model['Name'], e
             )
             # How to initialize self.view_model here?
             self.view_model = None
-            r = EditorItem( model )
 
+        r = self.buildView( model = model )
         scene.addItem(r)
 
         self.show()
@@ -114,7 +125,7 @@ class EditorView(QtGui.QGraphicsView):
         return self.view_model
 
     def buildView(self, model, parent = None):
-        t = EditorItem(parent = parent, model = model)
+        t = EditorItem(parent = parent, modelIndex = model)
         for cm in model.children:
             t.addChild(self.buildView(cm, t))
         return t
@@ -129,6 +140,7 @@ class EditorView(QtGui.QGraphicsView):
 
     def mousePressEvent(self, event):
         QtGui.QGraphicsView.mousePressEvent(self, event)
+        self.aw.unhide(None)
 
     def mouseReleaseEvent(self, event):
         QtGui.QGraphicsView.mouseReleaseEvent(self, event)

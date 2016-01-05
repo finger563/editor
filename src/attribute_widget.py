@@ -106,12 +106,18 @@ class AttributeEditor(QtGui.QWidget):
 
     def add_header(self, item):
         label = QtGui.QLabel()
-        label.setText("Properties")
+        label.setText("Properties:")
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
-        pix = QtGui.QPixmap( 'icons/model/' + item.kind() + '.png').scaled(30,30)
-        label.setPixmap(pix)
-        self._layout.addWidget(label)
+        pix = QtGui.QLabel()
+        pix.setPixmap(QtGui.QPixmap( 'icons/model/' + item.kind() + '.png').scaled(30,30))
+        qw = QtGui.QWidget()
+        hbox = QtGui.QHBoxLayout()
+        hbox.setAlignment(QtCore.Qt.AlignLeft)
+        qw.setLayout(hbox)
+        hbox.addWidget(pix)
+        hbox.addWidget(label)
+        self._layout.addWidget(qw)
 
     def add_attribute(self, name, attr):
         label = QtGui.QLabel()
