@@ -58,10 +58,9 @@ class Editor(QtGui.QMainWindow):
         self.editor_mode = self.editor_modes[0]
         self.filter_mode = self.filter_types[0]
 
-        self.model = None
-        self.proxy_model = None
-
         self.init_ui()
+        self.clearModels()
+
         self.setWindowIcon(QtGui.QIcon('icons/editor.png'))
 
     def init_ui(self):
@@ -75,17 +74,17 @@ class Editor(QtGui.QMainWindow):
         self.setWindowTitle('Editor')
 
         # Create the actions for the program
-        exitAction = Action('icons/toolbar/stop.png', '&Exit', self)        
+        exitAction = Action('icons/toolbar/stop.png', 'Exit', self)        
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close) # note that this will call closeEvent
 
-        openAction = Action('icons/toolbar/open.png', '&Open', self)
+        openAction = Action('icons/toolbar/open.png', 'Open', self)
         openAction.setStatusTip('Open.')
         openAction.setShortcut('Ctrl+O')
         openAction.triggered.connect(self.openModel)
 
-        saveAction = Action('icons/toolbar/save.png', '&Save', self)
+        saveAction = Action('icons/toolbar/save.png', 'Save', self)
         saveAction.setStatusTip('Save.')
         saveAction.setShortcut('Ctrl+S')
         saveAction.triggered.connect(self.saveModel)
@@ -191,6 +190,9 @@ class Editor(QtGui.QMainWindow):
         
     def clearModels(self):
         self.model = None
+        self.proxy_model = None
+        self.tree_view.reset()
+        self.tree_view.setModel(None)
 
     def clearEditor(self):
         self.openEditorTabs = {}
@@ -207,6 +209,7 @@ class Editor(QtGui.QMainWindow):
         text = str(self.mode_selector.currentText())
         if text != self.editor_mode:
             self.editor_mode = text
+            self.clearModels()
             self.clearEditor()
             # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
 
