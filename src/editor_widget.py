@@ -23,9 +23,27 @@ import jsonpickle, copy
 
 from attribute_widget import AttributeEditor
 from editor_item import EditorItem
-from view_model import ViewModel
-from action import Action
 from layout import layout_create
+
+class EditorViewDelegate(QtGui.QItemDelegate):
+    def __init__(self, parent=None):
+        super(EditorViewDelegate, self).__init__(parent)
+
+    def setEditorData(self, editor, index):
+        if type(editor) == EditorView:
+            text = index.data().toString()
+            #print 'text: \'{}\''.format(text)
+            i = editor.parent().parent().indexOf(editor)
+            editor.parent().parent().setTabText(i, text)
+            return
+        return super(EditorViewDelegate, self).setEditorData(editor, index)
+
+    def setModelData(self, editor, model, index):
+        if type(editor) == EditorView:
+            #text = index.data().toString()
+            #print 'set data: \'{}\''.format(text)
+            return
+        return super(EditorViewDelegate, self).setModelData(editor, model, index)
 
 class EditorScene(QtGui.QGraphicsScene):
     def __init__(self, parent):
@@ -47,7 +65,7 @@ class EditorScene(QtGui.QGraphicsScene):
         else:
             menu = QtGui.QMenu()
             for a in self.model().children._allowed:
-                addNewItem = Action('','New {}'.format(a.__name__), self)
+                addNewItem = QtGui.QAction('New {}'.format(a.__name__), self)
                 addNewItem.triggered.connect(self.addViewItem(QtCore.QModelIndex(),a))
                 menu.addAction(addNewItem)
             menu.exec_(event.screenPos())
@@ -105,7 +123,7 @@ class EditorView(QtGui.QGraphicsView):
         parent = index.parent()
         self._dataMapper.setRootIndex(parent)
         self._dataMapper.setCurrentModelIndex(index)
-        self._itemDelegate = EditorItemDelegate(self)
+        self._itemDelegate = EditorViewDelegate(self)
         self._dataMapper.setItemDelegate(self._itemDelegate)
         self._dataMapper.addMapping(self, 0)
 
@@ -133,16 +151,11 @@ class EditorView(QtGui.QGraphicsView):
 
     def buildView(self, index, parent = None):
         t = EditorItem( index = index, parent = parent )
-        '''
-        for cm in model.children:
-            if self.viewModel():
+        if self.viewModel():
+            for cm in model.children:
                 # TODO: Replace this with view-model specific loading code
                 if cm.kind() in self.viewModel().children:
                     t.addChild(self.buildView(cm, t))
-            else:
-                c = self.buildView(cm, t)
-                t.addChild(c)
-        '''
         return t
 
     def loadVM(self, fname):
@@ -155,7 +168,6 @@ class EditorView(QtGui.QGraphicsView):
 
     def mousePressEvent(self, event):
         QtGui.QGraphicsView.mousePressEvent(self, event)
-        self.aw.unhide(None)
 
     def mouseReleaseEvent(self, event):
         QtGui.QGraphicsView.mouseReleaseEvent(self, event)
@@ -197,21 +209,6 @@ class EditorView(QtGui.QGraphicsView):
             self.verticalScrollBar().setValue(move.y() + self.verticalScrollBar().value())
         else:
             QtGui.QGraphicsView.wheelEvent(self, event)
-
-class EditorItemDelegate(QtGui.QItemDelegate):
-    def __init__(self, parent=None):
-        super(EditorItemDelegate, self).__init__(parent)
-
-    def setEditorData(self, editor, index):
-        if type(editor) == EditorView:
-            text = index.data().toString()
-            i = editor.parent().parent().indexOf(editor)
-            editor.parent().parent().setTabText(i, text)
-            return
-        return super(EditorItemDelegate, self).setEditorData(editor, index)
-
-    def setModelData(self, editor, model, index):
-        return super(EditorItemDelegate, self).setModelData(editor, model, index)
 
 class TabbedEditor(QtGui.QTabWidget):
     def __init__(self, parent):

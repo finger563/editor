@@ -22,6 +22,27 @@ import view_attributes as view_attr
 from layout import layout_create, valid_layouts
 from graphics_items import RoundRectItem, TextItem
 
+class EditorItemWidget(QtGui.QWidget):
+    def __init__(self, parent=None, ei = None):
+        super(EditorItemWidget, self).__init__(parent)
+        self.item = ei
+
+class EditorItemDelegate(QtGui.QItemDelegate):
+    def __init__(self, parent=None):
+        super(EditorItemDelegate, self).__init__(parent)
+
+    def setEditorData(self, editor, index):
+        if type(editor) == EditorItemWidget:
+            text = index.data().toString()
+            # SET THE EDITOR ITEM TEXT HERE
+            return
+        return super(EditorItemDelegate, self).setEditorData(editor, index)
+
+    def setModelData(self, editor, model, index):
+        if type(editor) == EditorItemWidget:
+            return
+        return super(EditorItemDelegate, self).setModelData(editor, model, index)
+
 class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
@@ -39,6 +60,10 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.dataMapper.setModel(self.modelindex.model())
         self.dataMapper.setRootIndex(self.modelindex.parent())
         self.dataMapper.setCurrentModelIndex(self.modelindex)
+        self.delegate = EditorItemDelegate(self)
+        self.dataMapper.setItemDelegate(self.delegate)
+        self.itemWidget = EditorItemWidget(None,self)
+        self.dataMapper.addMapping(self.itemWidget, 0)
         
         # Should not store a pointer to the model here,
         # it is bad practice.  Should figure out which 
@@ -176,6 +201,16 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
+        '''
+        e = QtGui.QMouseEvent(
+            QtCore.QEvent.GraphicsSceneMouseDoubleClick,
+            event.screenPos(),
+            event.button(),
+            event.buttons(),
+            event.modifiers()
+        )
+        self.itemWidget.mouseDoubleClickEvent(e)
+        '''
         editor = self.scene().parent().getEditor()
         editor.update( self.dataMapper )
         editor.show()
@@ -211,7 +246,7 @@ class EditorItem(QtGui.QGraphicsWidget):
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
 
-        item = self.index #.scene().model().mapToSource( self.index )
+        item = self.modelindex.model().getModel(self.modelindex)
 
         delSelf = QtGui.QAction('Delete', self)
         delSelf.triggered.connect(self.delete)
@@ -226,7 +261,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def addNewItem(self, _type):
         def genericItem(e):
-            print _type.__name__
+            self.modelindex.model().insertRows( 0, 1, self.modelindex, _type )
         return genericItem
 
     def delete(self, event):
