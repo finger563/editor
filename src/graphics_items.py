@@ -78,7 +78,7 @@ class TextItem(QtGui.QGraphicsTextItem):
 
     def updateGeometry(self):
         self.setTextWidth(-1)
-        self.setTextWidth(self.boundingRect().width())
+        #self.setTextWidth(self.boundingRect().width())
         self.setAlignment(self._ha, self._va)
 
 class RoundRectItem(QtGui.QGraphicsRectItem):

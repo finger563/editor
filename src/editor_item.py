@@ -36,6 +36,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             text = index.data().toString()
             # SET THE EDITOR ITEM TEXT HERE
             editor.item._label.setPlainText(text)
+            editor.item.updateGraphicsItem()
             return
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
@@ -82,11 +83,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         return self.scene().viewModel()
 
     def updateLabel(self, width, height):
-        #m = self.index.model().sourceModel()
-        #item = m.getModel( self.index )
-        item = self.index
-        name = item['Name']
-        self._label.setPlainText(name)
+        self._label.updateGeometry()
         '''
         self._label.setAlignment(
             self.viewModel()[item.kind()]['text horizontal alignment'],
@@ -125,7 +122,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()
-        #self.updateLabel(width, height)
+        self.updateLabel(width, height)
         self.createItem(width, height)
 
     def paint(self, painter, option, widget = None):
@@ -135,12 +132,17 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def boundingRect(self):
         minx =0; miny=0; maxx=0;maxy=0
+        # TODO: there is a dependency between the text size and the item size
+        #       because it's all max-based, when the text shrinks the item should
+        #       shrink too but can't because the rect is preventing it
+        '''
         if self._item:
             brect = self._item.boundingRect()
             minx = min(brect.x(),minx)
             miny = min(brect.y(),miny)
             maxx = max(maxx, brect.x() + brect.width())
             maxy = max(maxy, brect.y() + brect.height())
+        '''
         if self._label:
             brect = self._label.boundingRect()
             minx = min(brect.x(),minx)
@@ -168,7 +170,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()
-        #self.updateLabel(width, height)
+        self.updateLabel(width, height)
         self.createItem(width, height)
         self.updateGeometry()
         self.update()
