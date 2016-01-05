@@ -80,12 +80,14 @@ class Editor(QtGui.QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close) # note that this will call closeEvent
 
-        openAction = Action('icons/toolbar/open.png', '&Save', self)
+        openAction = Action('icons/toolbar/open.png', '&Open', self)
         openAction.setStatusTip('Open.')
+        openAction.setShortcut('Ctrl+O')
         openAction.triggered.connect(self.openModel)
 
         saveAction = Action('icons/toolbar/save.png', '&Save', self)
         saveAction.setStatusTip('Save.')
+        saveAction.setShortcut('Ctrl+S')
         saveAction.triggered.connect(self.saveModel)
 
         # Create the widgets for the program (embeddable in the toolbar or elsewhere)
@@ -98,13 +100,15 @@ class Editor(QtGui.QMainWindow):
         self.menubar_init()
         self.menubar_add_menu('&File')
         self.menu_add_action('&File',exitAction)
+        self.menu_add_action('&File',openAction)
+        self.menu_add_action('&File',saveAction)
 
         # Set up the toolbars for the program
         self.toolbar_init()
         self.toolbar_create('toolbar1')
         self.toolbar_add_action('toolbar1',exitAction)
-        self.toolbar_add_action('toolbar1',saveAction)
         self.toolbar_add_action('toolbar1',openAction)
+        self.toolbar_add_action('toolbar1',saveAction)
         self.toolbar_add_widget('toolbar1',self.mode_selector)
 
         # Set up the Tree View Widget
