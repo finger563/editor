@@ -1,0 +1,1218 @@
+{
+    "py/object": "meta.Model",
+    "attributes": {
+        "py/object": "collections.OrderedDict",
+        "__reduce__": [
+            {
+                "py/type": "collections.OrderedDict"
+            },
+            {
+                "py/tuple": [
+                    [
+                        [
+                            "Name",
+                            {
+                                "py/object": "meta.Attribute",
+                                "kind": "string",
+                                "value": "Test Model"
+                            }
+                        ]
+                    ]
+                ]
+            }
+        ]
+    },
+    "children": {
+        "py/object": "meta.Children",
+        "_allowed": [
+            {
+                "py/type": "meta.Model"
+            },
+            {
+                "py/type": "meta.Pointer"
+            }
+        ],
+        "_inner": [
+            {
+                "py/object": "meta.Model",
+                "attributes": {
+                    "py/object": "collections.OrderedDict",
+                    "__reduce__": [
+                        {
+                            "py/type": "collections.OrderedDict"
+                        },
+                        {
+                            "py/tuple": [
+                                [
+                                    [
+                                        "Name",
+                                        {
+                                            "py/object": "meta.Attribute",
+                                            "kind": "string",
+                                            "value": "Project"
+                                        }
+                                    ]
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                "children": {
+                    "py/object": "meta.Children",
+                    "_allowed": [
+                        {
+                            "py/type": "meta.Model"
+                        },
+                        {
+                            "py/type": "meta.Pointer"
+                        }
+                    ],
+                    "_inner": [
+                        {
+                            "py/object": "meta.Model",
+                            "attributes": {
+                                "py/object": "collections.OrderedDict",
+                                "__reduce__": [
+                                    {
+                                        "py/type": "collections.OrderedDict"
+                                    },
+                                    {
+                                        "py/tuple": [
+                                            [
+                                                [
+                                                    "Name",
+                                                    {
+                                                        "py/object": "meta.Attribute",
+                                                        "kind": "string",
+                                                        "value": "Software"
+                                                    }
+                                                ]
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            },
+                            "children": {
+                                "py/object": "meta.Children",
+                                "_allowed": [
+                                    {
+                                        "py/type": "meta.Model"
+                                    },
+                                    {
+                                        "py/type": "meta.Pointer"
+                                    }
+                                ],
+                                "_inner": [
+                                    {
+                                        "py/object": "meta.Model",
+                                        "attributes": {
+                                            "py/object": "collections.OrderedDict",
+                                            "__reduce__": [
+                                                {
+                                                    "py/type": "collections.OrderedDict"
+                                                },
+                                                {
+                                                    "py/tuple": [
+                                                        [
+                                                            [
+                                                                "Name",
+                                                                {
+                                                                    "py/object": "meta.Attribute",
+                                                                    "kind": "string",
+                                                                    "value": "Package"
+                                                                }
+                                                            ]
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "children": {
+                                            "py/object": "meta.Children",
+                                            "_allowed": [
+                                                {
+                                                    "py/type": "meta.Model"
+                                                },
+                                                {
+                                                    "py/type": "meta.Pointer"
+                                                }
+                                            ],
+                                            "_inner": [
+                                                {
+                                                    "py/object": "meta.Model",
+                                                    "attributes": {
+                                                        "py/object": "collections.OrderedDict",
+                                                        "__reduce__": [
+                                                            {
+                                                                "py/type": "collections.OrderedDict"
+                                                            },
+                                                            {
+                                                                "py/tuple": [
+                                                                    [
+                                                                        [
+                                                                            "Name",
+                                                                            {
+                                                                                "py/object": "meta.Attribute",
+                                                                                "kind": "string",
+                                                                                "value": "Message"
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    "children": {
+                                                        "py/object": "meta.Children",
+                                                        "_allowed": [
+                                                            {
+                                                                "py/type": "meta.Model"
+                                                            },
+                                                            {
+                                                                "py/type": "meta.Pointer"
+                                                            }
+                                                        ],
+                                                        "_inner": [],
+                                                        "py/seq": [],
+                                                        "_cardinality": {
+                                                            "<class 'meta.Pointer'>": "0..*",
+                                                            "<class 'meta.Model'>": "0..*"
+                                                        }
+                                                    },
+                                                    "parent": {
+                                                        "py/id": 24
+                                                    },
+                                                    "kwargs": {}
+                                                },
+                                                {
+                                                    "py/object": "meta.Model",
+                                                    "attributes": {
+                                                        "py/object": "collections.OrderedDict",
+                                                        "__reduce__": [
+                                                            {
+                                                                "py/type": "collections.OrderedDict"
+                                                            },
+                                                            {
+                                                                "py/tuple": [
+                                                                    [
+                                                                        [
+                                                                            "Name",
+                                                                            {
+                                                                                "py/object": "meta.Attribute",
+                                                                                "kind": "string",
+                                                                                "value": "Service"
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    "children": {
+                                                        "py/object": "meta.Children",
+                                                        "_allowed": [
+                                                            {
+                                                                "py/type": "meta.Model"
+                                                            },
+                                                            {
+                                                                "py/type": "meta.Pointer"
+                                                            }
+                                                        ],
+                                                        "_inner": [],
+                                                        "py/seq": [],
+                                                        "_cardinality": {
+                                                            "<class 'meta.Pointer'>": "0..*",
+                                                            "<class 'meta.Model'>": "0..*"
+                                                        }
+                                                    },
+                                                    "parent": {
+                                                        "py/id": 24
+                                                    },
+                                                    "kwargs": {}
+                                                },
+                                                {
+                                                    "py/object": "meta.Model",
+                                                    "attributes": {
+                                                        "py/object": "collections.OrderedDict",
+                                                        "__reduce__": [
+                                                            {
+                                                                "py/type": "collections.OrderedDict"
+                                                            },
+                                                            {
+                                                                "py/tuple": [
+                                                                    [
+                                                                        [
+                                                                            "Name",
+                                                                            {
+                                                                                "py/object": "meta.Attribute",
+                                                                                "kind": "string",
+                                                                                "value": "Component"
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    "children": {
+                                                        "py/object": "meta.Children",
+                                                        "_allowed": [
+                                                            {
+                                                                "py/type": "meta.Model"
+                                                            },
+                                                            {
+                                                                "py/type": "meta.Pointer"
+                                                            }
+                                                        ],
+                                                        "_inner": [
+                                                            {
+                                                                "py/object": "meta.Model",
+                                                                "attributes": {
+                                                                    "py/object": "collections.OrderedDict",
+                                                                    "__reduce__": [
+                                                                        {
+                                                                            "py/type": "collections.OrderedDict"
+                                                                        },
+                                                                        {
+                                                                            "py/tuple": [
+                                                                                [
+                                                                                    [
+                                                                                        "Name",
+                                                                                        {
+                                                                                            "py/object": "meta.Attribute",
+                                                                                            "kind": "string",
+                                                                                            "value": "Timer"
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "children": {
+                                                                    "py/object": "meta.Children",
+                                                                    "_allowed": [
+                                                                        {
+                                                                            "py/type": "meta.Model"
+                                                                        },
+                                                                        {
+                                                                            "py/type": "meta.Pointer"
+                                                                        }
+                                                                    ],
+                                                                    "_inner": [],
+                                                                    "py/seq": [],
+                                                                    "_cardinality": {
+                                                                        "<class 'meta.Pointer'>": "0..*",
+                                                                        "<class 'meta.Model'>": "0..*"
+                                                                    }
+                                                                },
+                                                                "parent": {
+                                                                    "py/id": 48
+                                                                },
+                                                                "kwargs": {}
+                                                            },
+                                                            {
+                                                                "py/object": "meta.Model",
+                                                                "attributes": {
+                                                                    "py/object": "collections.OrderedDict",
+                                                                    "__reduce__": [
+                                                                        {
+                                                                            "py/type": "collections.OrderedDict"
+                                                                        },
+                                                                        {
+                                                                            "py/tuple": [
+                                                                                [
+                                                                                    [
+                                                                                        "Name",
+                                                                                        {
+                                                                                            "py/object": "meta.Attribute",
+                                                                                            "kind": "string",
+                                                                                            "value": "Publisher"
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "children": {
+                                                                    "py/object": "meta.Children",
+                                                                    "_allowed": [
+                                                                        {
+                                                                            "py/type": "meta.Model"
+                                                                        },
+                                                                        {
+                                                                            "py/type": "meta.Pointer"
+                                                                        }
+                                                                    ],
+                                                                    "_inner": [
+                                                                        {
+                                                                            "py/object": "meta.Pointer",
+                                                                            "src": null,
+                                                                            "dst_type": "Model",
+                                                                            "src_type": "Model",
+                                                                            "parent": {
+                                                                                "py/id": 64
+                                                                            },
+                                                                            "dst": null,
+                                                                            "kwargs": {},
+                                                                            "attributes": {
+                                                                                "py/object": "collections.OrderedDict",
+                                                                                "__reduce__": [
+                                                                                    {
+                                                                                        "py/type": "collections.OrderedDict"
+                                                                                    },
+                                                                                    {
+                                                                                        "py/tuple": [
+                                                                                            [
+                                                                                                [
+                                                                                                    "Name",
+                                                                                                    {
+                                                                                                        "py/object": "meta.Attribute",
+                                                                                                        "kind": "string",
+                                                                                                        "value": "Ref"
+                                                                                                    }
+                                                                                                ]
+                                                                                            ]
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "children": {
+                                                                                "py/object": "meta.Children",
+                                                                                "_allowed": [],
+                                                                                "_inner": [],
+                                                                                "py/seq": [],
+                                                                                "_cardinality": {}
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "py/seq": [
+                                                                        {
+                                                                            "py/id": 72
+                                                                        }
+                                                                    ],
+                                                                    "_cardinality": {
+                                                                        "<class 'meta.Pointer'>": "0..*",
+                                                                        "<class 'meta.Model'>": "0..*"
+                                                                    }
+                                                                },
+                                                                "parent": {
+                                                                    "py/id": 48
+                                                                },
+                                                                "kwargs": {}
+                                                            },
+                                                            {
+                                                                "py/object": "meta.Model",
+                                                                "attributes": {
+                                                                    "py/object": "collections.OrderedDict",
+                                                                    "__reduce__": [
+                                                                        {
+                                                                            "py/type": "collections.OrderedDict"
+                                                                        },
+                                                                        {
+                                                                            "py/tuple": [
+                                                                                [
+                                                                                    [
+                                                                                        "Name",
+                                                                                        {
+                                                                                            "py/object": "meta.Attribute",
+                                                                                            "kind": "string",
+                                                                                            "value": "Subscriber"
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "children": {
+                                                                    "py/object": "meta.Children",
+                                                                    "_allowed": [
+                                                                        {
+                                                                            "py/type": "meta.Model"
+                                                                        },
+                                                                        {
+                                                                            "py/type": "meta.Pointer"
+                                                                        }
+                                                                    ],
+                                                                    "_inner": [
+                                                                        {
+                                                                            "py/object": "meta.Pointer",
+                                                                            "src": null,
+                                                                            "dst_type": "Model",
+                                                                            "src_type": "Model",
+                                                                            "parent": {
+                                                                                "py/id": 80
+                                                                            },
+                                                                            "dst": null,
+                                                                            "kwargs": {},
+                                                                            "attributes": {
+                                                                                "py/object": "collections.OrderedDict",
+                                                                                "__reduce__": [
+                                                                                    {
+                                                                                        "py/type": "collections.OrderedDict"
+                                                                                    },
+                                                                                    {
+                                                                                        "py/tuple": [
+                                                                                            [
+                                                                                                [
+                                                                                                    "Name",
+                                                                                                    {
+                                                                                                        "py/object": "meta.Attribute",
+                                                                                                        "kind": "string",
+                                                                                                        "value": "Ref"
+                                                                                                    }
+                                                                                                ]
+                                                                                            ]
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "children": {
+                                                                                "py/object": "meta.Children",
+                                                                                "_allowed": [],
+                                                                                "_inner": [],
+                                                                                "py/seq": [],
+                                                                                "_cardinality": {}
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "py/seq": [
+                                                                        {
+                                                                            "py/id": 88
+                                                                        }
+                                                                    ],
+                                                                    "_cardinality": {
+                                                                        "<class 'meta.Pointer'>": "0..*",
+                                                                        "<class 'meta.Model'>": "0..*"
+                                                                    }
+                                                                },
+                                                                "parent": {
+                                                                    "py/id": 48
+                                                                },
+                                                                "kwargs": {}
+                                                            },
+                                                            {
+                                                                "py/object": "meta.Model",
+                                                                "attributes": {
+                                                                    "py/object": "collections.OrderedDict",
+                                                                    "__reduce__": [
+                                                                        {
+                                                                            "py/type": "collections.OrderedDict"
+                                                                        },
+                                                                        {
+                                                                            "py/tuple": [
+                                                                                [
+                                                                                    [
+                                                                                        "Name",
+                                                                                        {
+                                                                                            "py/object": "meta.Attribute",
+                                                                                            "kind": "string",
+                                                                                            "value": "Client"
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "children": {
+                                                                    "py/object": "meta.Children",
+                                                                    "_allowed": [
+                                                                        {
+                                                                            "py/type": "meta.Model"
+                                                                        },
+                                                                        {
+                                                                            "py/type": "meta.Pointer"
+                                                                        }
+                                                                    ],
+                                                                    "_inner": [
+                                                                        {
+                                                                            "py/object": "meta.Pointer",
+                                                                            "src": null,
+                                                                            "dst_type": "Model",
+                                                                            "src_type": "Model",
+                                                                            "parent": {
+                                                                                "py/id": 96
+                                                                            },
+                                                                            "dst": null,
+                                                                            "kwargs": {},
+                                                                            "attributes": {
+                                                                                "py/object": "collections.OrderedDict",
+                                                                                "__reduce__": [
+                                                                                    {
+                                                                                        "py/type": "collections.OrderedDict"
+                                                                                    },
+                                                                                    {
+                                                                                        "py/tuple": [
+                                                                                            [
+                                                                                                [
+                                                                                                    "Name",
+                                                                                                    {
+                                                                                                        "py/object": "meta.Attribute",
+                                                                                                        "kind": "string",
+                                                                                                        "value": "Ref"
+                                                                                                    }
+                                                                                                ]
+                                                                                            ]
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "children": {
+                                                                                "py/object": "meta.Children",
+                                                                                "_allowed": [],
+                                                                                "_inner": [],
+                                                                                "py/seq": [],
+                                                                                "_cardinality": {}
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "py/seq": [
+                                                                        {
+                                                                            "py/id": 104
+                                                                        }
+                                                                    ],
+                                                                    "_cardinality": {
+                                                                        "<class 'meta.Pointer'>": "0..*",
+                                                                        "<class 'meta.Model'>": "0..*"
+                                                                    }
+                                                                },
+                                                                "parent": {
+                                                                    "py/id": 48
+                                                                },
+                                                                "kwargs": {}
+                                                            },
+                                                            {
+                                                                "py/object": "meta.Model",
+                                                                "attributes": {
+                                                                    "py/object": "collections.OrderedDict",
+                                                                    "__reduce__": [
+                                                                        {
+                                                                            "py/type": "collections.OrderedDict"
+                                                                        },
+                                                                        {
+                                                                            "py/tuple": [
+                                                                                [
+                                                                                    [
+                                                                                        "Name",
+                                                                                        {
+                                                                                            "py/object": "meta.Attribute",
+                                                                                            "kind": "string",
+                                                                                            "value": "Server"
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "children": {
+                                                                    "py/object": "meta.Children",
+                                                                    "_allowed": [
+                                                                        {
+                                                                            "py/type": "meta.Model"
+                                                                        },
+                                                                        {
+                                                                            "py/type": "meta.Pointer"
+                                                                        }
+                                                                    ],
+                                                                    "_inner": [
+                                                                        {
+                                                                            "py/object": "meta.Pointer",
+                                                                            "src": null,
+                                                                            "dst_type": "Model",
+                                                                            "src_type": "Model",
+                                                                            "parent": {
+                                                                                "py/id": 112
+                                                                            },
+                                                                            "dst": null,
+                                                                            "kwargs": {},
+                                                                            "attributes": {
+                                                                                "py/object": "collections.OrderedDict",
+                                                                                "__reduce__": [
+                                                                                    {
+                                                                                        "py/type": "collections.OrderedDict"
+                                                                                    },
+                                                                                    {
+                                                                                        "py/tuple": [
+                                                                                            [
+                                                                                                [
+                                                                                                    "Name",
+                                                                                                    {
+                                                                                                        "py/object": "meta.Attribute",
+                                                                                                        "kind": "string",
+                                                                                                        "value": "Ref"
+                                                                                                    }
+                                                                                                ]
+                                                                                            ]
+                                                                                        ]
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "children": {
+                                                                                "py/object": "meta.Children",
+                                                                                "_allowed": [],
+                                                                                "_inner": [],
+                                                                                "py/seq": [],
+                                                                                "_cardinality": {}
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "py/seq": [
+                                                                        {
+                                                                            "py/id": 120
+                                                                        }
+                                                                    ],
+                                                                    "_cardinality": {
+                                                                        "<class 'meta.Pointer'>": "0..*",
+                                                                        "<class 'meta.Model'>": "0..*"
+                                                                    }
+                                                                },
+                                                                "parent": {
+                                                                    "py/id": 48
+                                                                },
+                                                                "kwargs": {}
+                                                            }
+                                                        ],
+                                                        "py/seq": [
+                                                            {
+                                                                "py/id": 56
+                                                            },
+                                                            {
+                                                                "py/id": 64
+                                                            },
+                                                            {
+                                                                "py/id": 80
+                                                            },
+                                                            {
+                                                                "py/id": 96
+                                                            },
+                                                            {
+                                                                "py/id": 112
+                                                            }
+                                                        ],
+                                                        "_cardinality": {
+                                                            "<class 'meta.Pointer'>": "0..*",
+                                                            "<class 'meta.Model'>": "0..*"
+                                                        }
+                                                    },
+                                                    "parent": {
+                                                        "py/id": 24
+                                                    },
+                                                    "kwargs": {}
+                                                }
+                                            ],
+                                            "py/seq": [
+                                                {
+                                                    "py/id": 32
+                                                },
+                                                {
+                                                    "py/id": 40
+                                                },
+                                                {
+                                                    "py/id": 48
+                                                }
+                                            ],
+                                            "_cardinality": {
+                                                "<class 'meta.Pointer'>": "0..*",
+                                                "<class 'meta.Model'>": "0..*"
+                                            }
+                                        },
+                                        "parent": {
+                                            "py/id": 16
+                                        },
+                                        "kwargs": {}
+                                    }
+                                ],
+                                "py/seq": [
+                                    {
+                                        "py/id": 24
+                                    }
+                                ],
+                                "_cardinality": {
+                                    "<class 'meta.Pointer'>": "0..*",
+                                    "<class 'meta.Model'>": "0..*"
+                                }
+                            },
+                            "parent": {
+                                "py/id": 8
+                            },
+                            "kwargs": {}
+                        },
+                        {
+                            "py/object": "meta.Model",
+                            "attributes": {
+                                "py/object": "collections.OrderedDict",
+                                "__reduce__": [
+                                    {
+                                        "py/type": "collections.OrderedDict"
+                                    },
+                                    {
+                                        "py/tuple": [
+                                            [
+                                                [
+                                                    "Name",
+                                                    {
+                                                        "py/object": "meta.Attribute",
+                                                        "kind": "string",
+                                                        "value": "Hardware"
+                                                    }
+                                                ]
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            },
+                            "children": {
+                                "py/object": "meta.Children",
+                                "_allowed": [
+                                    {
+                                        "py/type": "meta.Model"
+                                    },
+                                    {
+                                        "py/type": "meta.Pointer"
+                                    }
+                                ],
+                                "_inner": [
+                                    {
+                                        "py/object": "meta.Model",
+                                        "attributes": {
+                                            "py/object": "collections.OrderedDict",
+                                            "__reduce__": [
+                                                {
+                                                    "py/type": "collections.OrderedDict"
+                                                },
+                                                {
+                                                    "py/tuple": [
+                                                        [
+                                                            [
+                                                                "Name",
+                                                                {
+                                                                    "py/object": "meta.Attribute",
+                                                                    "kind": "string",
+                                                                    "value": "Host"
+                                                                }
+                                                            ]
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "children": {
+                                            "py/object": "meta.Children",
+                                            "_allowed": [
+                                                {
+                                                    "py/type": "meta.Model"
+                                                },
+                                                {
+                                                    "py/type": "meta.Pointer"
+                                                }
+                                            ],
+                                            "_inner": [
+                                                {
+                                                    "py/object": "meta.Model",
+                                                    "attributes": {
+                                                        "py/object": "collections.OrderedDict",
+                                                        "__reduce__": [
+                                                            {
+                                                                "py/type": "collections.OrderedDict"
+                                                            },
+                                                            {
+                                                                "py/tuple": [
+                                                                    [
+                                                                        [
+                                                                            "Name",
+                                                                            {
+                                                                                "py/object": "meta.Attribute",
+                                                                                "kind": "string",
+                                                                                "value": "Interface"
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    "children": {
+                                                        "py/object": "meta.Children",
+                                                        "_allowed": [
+                                                            {
+                                                                "py/type": "meta.Model"
+                                                            },
+                                                            {
+                                                                "py/type": "meta.Pointer"
+                                                            }
+                                                        ],
+                                                        "_inner": [],
+                                                        "py/seq": [],
+                                                        "_cardinality": {
+                                                            "<class 'meta.Pointer'>": "0..*",
+                                                            "<class 'meta.Model'>": "0..*"
+                                                        }
+                                                    },
+                                                    "parent": {
+                                                        "py/id": 136
+                                                    },
+                                                    "kwargs": {}
+                                                }
+                                            ],
+                                            "py/seq": [
+                                                {
+                                                    "py/id": 144
+                                                }
+                                            ],
+                                            "_cardinality": {
+                                                "<class 'meta.Pointer'>": "0..*",
+                                                "<class 'meta.Model'>": "0..*"
+                                            }
+                                        },
+                                        "parent": {
+                                            "py/id": 128
+                                        },
+                                        "kwargs": {}
+                                    },
+                                    {
+                                        "py/object": "meta.Model",
+                                        "attributes": {
+                                            "py/object": "collections.OrderedDict",
+                                            "__reduce__": [
+                                                {
+                                                    "py/type": "collections.OrderedDict"
+                                                },
+                                                {
+                                                    "py/tuple": [
+                                                        [
+                                                            [
+                                                                "Name",
+                                                                {
+                                                                    "py/object": "meta.Attribute",
+                                                                    "kind": "string",
+                                                                    "value": "Route"
+                                                                }
+                                                            ]
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "children": {
+                                            "py/object": "meta.Children",
+                                            "_allowed": [
+                                                {
+                                                    "py/type": "meta.Model"
+                                                },
+                                                {
+                                                    "py/type": "meta.Pointer"
+                                                }
+                                            ],
+                                            "_inner": [
+                                                {
+                                                    "py/object": "meta.Model",
+                                                    "attributes": {
+                                                        "py/object": "collections.OrderedDict",
+                                                        "__reduce__": [
+                                                            {
+                                                                "py/type": "collections.OrderedDict"
+                                                            },
+                                                            {
+                                                                "py/tuple": [
+                                                                    [
+                                                                        [
+                                                                            "Name",
+                                                                            {
+                                                                                "py/object": "meta.Attribute",
+                                                                                "kind": "string",
+                                                                                "value": "Link"
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    "children": {
+                                                        "py/object": "meta.Children",
+                                                        "_allowed": [
+                                                            {
+                                                                "py/type": "meta.Model"
+                                                            },
+                                                            {
+                                                                "py/type": "meta.Pointer"
+                                                            }
+                                                        ],
+                                                        "_inner": [],
+                                                        "py/seq": [],
+                                                        "_cardinality": {
+                                                            "<class 'meta.Pointer'>": "0..*",
+                                                            "<class 'meta.Model'>": "0..*"
+                                                        }
+                                                    },
+                                                    "parent": {
+                                                        "py/id": 152
+                                                    },
+                                                    "kwargs": {}
+                                                }
+                                            ],
+                                            "py/seq": [
+                                                {
+                                                    "py/id": 160
+                                                }
+                                            ],
+                                            "_cardinality": {
+                                                "<class 'meta.Pointer'>": "0..*",
+                                                "<class 'meta.Model'>": "0..*"
+                                            }
+                                        },
+                                        "parent": {
+                                            "py/id": 128
+                                        },
+                                        "kwargs": {}
+                                    }
+                                ],
+                                "py/seq": [
+                                    {
+                                        "py/id": 136
+                                    },
+                                    {
+                                        "py/id": 152
+                                    }
+                                ],
+                                "_cardinality": {
+                                    "<class 'meta.Pointer'>": "0..*",
+                                    "<class 'meta.Model'>": "0..*"
+                                }
+                            },
+                            "parent": {
+                                "py/id": 8
+                            },
+                            "kwargs": {}
+                        },
+                        {
+                            "py/object": "meta.Model",
+                            "attributes": {
+                                "py/object": "collections.OrderedDict",
+                                "__reduce__": [
+                                    {
+                                        "py/type": "collections.OrderedDict"
+                                    },
+                                    {
+                                        "py/tuple": [
+                                            [
+                                                [
+                                                    "Name",
+                                                    {
+                                                        "py/object": "meta.Attribute",
+                                                        "kind": "string",
+                                                        "value": "Deployment"
+                                                    }
+                                                ]
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            },
+                            "children": {
+                                "py/object": "meta.Children",
+                                "_allowed": [
+                                    {
+                                        "py/type": "meta.Model"
+                                    },
+                                    {
+                                        "py/type": "meta.Pointer"
+                                    }
+                                ],
+                                "_inner": [
+                                    {
+                                        "py/object": "meta.Pointer",
+                                        "src": null,
+                                        "dst_type": "Model",
+                                        "src_type": "Model",
+                                        "parent": {
+                                            "py/id": 168
+                                        },
+                                        "dst": null,
+                                        "kwargs": {},
+                                        "attributes": {
+                                            "py/object": "collections.OrderedDict",
+                                            "__reduce__": [
+                                                {
+                                                    "py/type": "collections.OrderedDict"
+                                                },
+                                                {
+                                                    "py/tuple": [
+                                                        [
+                                                            [
+                                                                "Name",
+                                                                {
+                                                                    "py/object": "meta.Attribute",
+                                                                    "kind": "string",
+                                                                    "value": "Hardware Ref"
+                                                                }
+                                                            ]
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "children": {
+                                            "py/object": "meta.Children",
+                                            "_allowed": [],
+                                            "_inner": [],
+                                            "py/seq": [],
+                                            "_cardinality": {}
+                                        }
+                                    },
+                                    {
+                                        "py/object": "meta.Model",
+                                        "attributes": {
+                                            "py/object": "collections.OrderedDict",
+                                            "__reduce__": [
+                                                {
+                                                    "py/type": "collections.OrderedDict"
+                                                },
+                                                {
+                                                    "py/tuple": [
+                                                        [
+                                                            [
+                                                                "Name",
+                                                                {
+                                                                    "py/object": "meta.Attribute",
+                                                                    "kind": "string",
+                                                                    "value": "Node"
+                                                                }
+                                                            ]
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "children": {
+                                            "py/object": "meta.Children",
+                                            "_allowed": [
+                                                {
+                                                    "py/type": "meta.Model"
+                                                },
+                                                {
+                                                    "py/type": "meta.Pointer"
+                                                }
+                                            ],
+                                            "_inner": [
+                                                {
+                                                    "py/object": "meta.Model",
+                                                    "attributes": {
+                                                        "py/object": "collections.OrderedDict",
+                                                        "__reduce__": [
+                                                            {
+                                                                "py/type": "collections.OrderedDict"
+                                                            },
+                                                            {
+                                                                "py/tuple": [
+                                                                    [
+                                                                        [
+                                                                            "Name",
+                                                                            {
+                                                                                "py/object": "meta.Attribute",
+                                                                                "kind": "string",
+                                                                                "value": "Component Instance"
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    "children": {
+                                                        "py/object": "meta.Children",
+                                                        "_allowed": [
+                                                            {
+                                                                "py/type": "meta.Model"
+                                                            },
+                                                            {
+                                                                "py/type": "meta.Pointer"
+                                                            }
+                                                        ],
+                                                        "_inner": [],
+                                                        "py/seq": [],
+                                                        "_cardinality": {
+                                                            "<class 'meta.Pointer'>": "0..*",
+                                                            "<class 'meta.Model'>": "0..*"
+                                                        }
+                                                    },
+                                                    "parent": {
+                                                        "py/id": 184
+                                                    },
+                                                    "kwargs": {}
+                                                }
+                                            ],
+                                            "py/seq": [
+                                                {
+                                                    "py/id": 192
+                                                }
+                                            ],
+                                            "_cardinality": {
+                                                "<class 'meta.Pointer'>": "0..*",
+                                                "<class 'meta.Model'>": "0..*"
+                                            }
+                                        },
+                                        "parent": {
+                                            "py/id": 168
+                                        },
+                                        "kwargs": {}
+                                    }
+                                ],
+                                "py/seq": [
+                                    {
+                                        "py/id": 176
+                                    },
+                                    {
+                                        "py/id": 184
+                                    }
+                                ],
+                                "_cardinality": {
+                                    "<class 'meta.Pointer'>": "0..*",
+                                    "<class 'meta.Model'>": "0..*"
+                                }
+                            },
+                            "parent": {
+                                "py/id": 8
+                            },
+                            "kwargs": {}
+                        }
+                    ],
+                    "py/seq": [
+                        {
+                            "py/id": 16
+                        },
+                        {
+                            "py/id": 128
+                        },
+                        {
+                            "py/id": 168
+                        }
+                    ],
+                    "_cardinality": {
+                        "<class 'meta.Pointer'>": "0..*",
+                        "<class 'meta.Model'>": "0..*"
+                    }
+                },
+                "parent": {
+                    "py/id": 0
+                },
+                "kwargs": {}
+            }
+        ],
+        "py/seq": [
+            {
+                "py/id": 8
+            }
+        ],
+        "_cardinality": {
+            "<class 'meta.Pointer'>": "0..*",
+            "<class 'meta.Model'>": "0..*"
+        }
+    },
+    "parent": null,
+    "kwargs": {}
+}

@@ -53,39 +53,17 @@ class Editor(QtGui.QMainWindow):
 
     def __init__(self):
         super(Editor, self).__init__()
-        self.init_model()
+
+        # Set up the editor mode
+        self.editor_mode = self.editor_modes[0]
+        self.filter_mode = self.filter_types[0]
+
+        self.model = None
+        self.proxy_model = None
+
         self.init_ui()
         self.setWindowIcon(QtGui.QIcon('icons/editor.png'))
 
-    def init_model(self):
-        # Set up the editor mode
-        self.editor_mode = 'Meta Model'
-
-        # Set up the proxy model for sorting/filtering
-        self.proxy_model = SortFilterProxyModel(self)
-        self.proxy_model.setDynamicSortFilter(True)
-        self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        self.proxy_model.setSortRole(ItemModel.sort_role)
-        self.proxy_model.setFilterRole(ItemModel.filter_role)
-
-        # Set up the actual model
-        vm = ViewModel()
-        pkg = ViewModel()
-        pkg['Name'] = 'Package'
-        vm.add_child(pkg)
-
-        root = TestModel
-        #root = vm
-        
-        # the model stores the reference to the model that is currently
-        # being edited/viewed; this can be a regular model, a view model,
-        # or even a meta-model.  All these models inherit from the meta-metamodel
-        # so have the same interfaces and can be interacted with in the same way
-        self.model = ItemModel(root)
-
-        # Link the actual model and the proxy model
-        self.proxy_model.setSourceModel(self.model)
-        
     def init_ui(self):
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
         self.setStyleSheet('''QToolTip {
@@ -101,6 +79,10 @@ class Editor(QtGui.QMainWindow):
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close) # note that this will call closeEvent
+
+        openAction = Action('icons/toolbar/open.png', '&Save', self)
+        openAction.setStatusTip('Open.')
+        openAction.triggered.connect(self.openModel)
 
         saveAction = Action('icons/toolbar/save.png', '&Save', self)
         saveAction.setStatusTip('Save.')
@@ -122,14 +104,13 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_create('toolbar1')
         self.toolbar_add_action('toolbar1',exitAction)
         self.toolbar_add_action('toolbar1',saveAction)
+        self.toolbar_add_action('toolbar1',openAction)
         self.toolbar_add_widget('toolbar1',self.mode_selector)
 
         # Set up the Tree View Widget
         self.tree_view = TreeView()
-        self.tree_view.setModel(self.proxy_model)
         self.tree_view.setSortingEnabled(False)
         self.tree_view.doubleClicked.connect(self.openModelView)
-        self.tree_view.expandAll()
         self.tree_view.setExpandsOnDoubleClick(False) # don't want the tree collapsing when we open views
 
         # Set up filtering on the tree_view
@@ -138,13 +119,12 @@ class Editor(QtGui.QMainWindow):
         self.filter_label = QtGui.QLabel('Filter:')
         self.filter_type = QtGui.QComboBox(self)
         self.filter_type.addItems(self.filter_types)
-        self.filter_type.setCurrentIndex(self.filter_types.index(self.model.filter_type))
+        self.filter_type.setCurrentIndex(0)
         self.filter_type.currentIndexChanged.connect(self.changeFilter)
         self.filter_hbox.addWidget(self.filter_label)
         self.filter_hbox.addWidget(self.filter_type)
         self.filter_widget.setLayout(self.filter_hbox)
         self.filter_edit = QtGui.QLineEdit()
-        self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
 
         # Set up the navigator (tree viewer + filter)
         self.navigator = QtGui.QWidget()
@@ -185,6 +165,26 @@ class Editor(QtGui.QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    def load_model(self, model):
+        # Set up the proxy model for sorting/filtering
+        self.proxy_model = SortFilterProxyModel(self)
+        self.proxy_model.setDynamicSortFilter(True)
+        self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.proxy_model.setSortRole(ItemModel.sort_role)
+        self.proxy_model.setFilterRole(ItemModel.filter_role)
+
+        # the model stores the reference to the model that is currently
+        # being edited/viewed; this can be a regular model, a view model,
+        # or even a meta-model.  All these models inherit from the meta-metamodel
+        # so have the same interfaces and can be interacted with in the same way
+        self.model = ItemModel(model)
+        self.model.set_filter_type(self.filter_mode)
+        # Link the actual model and the proxy model
+        self.proxy_model.setSourceModel(self.model)
+        self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
+        self.tree_view.setModel(self.proxy_model)
+        self.tree_view.expandAll()
+        
     def clearModels(self):
         self.model = None
 
@@ -194,12 +194,13 @@ class Editor(QtGui.QMainWindow):
 
     def changeFilter(self, index):
         text = self.filter_type.currentText()
-        if text != self.model.filter_type:
+        self.filter_mode = text
+        if self.model and self.proxy_model:
             self.model.set_filter_type(text)
             self.proxy_model.invalidate()
 
     def changeMode(self, index):
-        text = self.mode_selector.currentText()
+        text = str(self.mode_selector.currentText())
         if text != self.editor_mode:
             self.editor_mode = text
             self.clearEditor()
@@ -222,6 +223,22 @@ class Editor(QtGui.QMainWindow):
         self.tabbedEditorWidget.setCurrentIndex(
             self.tabbedEditorWidget.indexOf(ev) )
         
+    def openModel(self, event):
+        ftype = '{}'.format(self.editor_mode.lower().split()[0])
+        fname = QtGui.QFileDialog.getOpenFileName(
+            self,
+            'Open {}'.format(self.editor_mode),
+            '',
+            '{} Files (*.{})'.format(self.editor_mode, ftype),
+            options = QtGui.QFileDialog.Options()
+        )
+        if fname:
+            self.clearModels()
+            self.clearEditor()
+            with open(fname, 'r') as f:
+                m = jsonpickle.decode(f.read())
+                self.load_model(m)
+
     def saveModel(self, event):
         ftype = '{}'.format(self.editor_mode.lower().split()[0])
         fname = QtGui.QFileDialog.getSaveFileName(
@@ -234,6 +251,10 @@ class Editor(QtGui.QMainWindow):
         if fname:
             if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
+            # TODO: Make this change depending on the editor mode
+            #       e.g. in model mode, simply serialize the root object
+            #       but for view models and meta-models, we need to (?) convert
+            #       the models before serialization
             jsonpickle.set_encoder_options('simplejson',indent=4)
             encoded_output = jsonpickle.encode(root)
             with open(fname, 'w') as f:
