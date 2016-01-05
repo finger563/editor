@@ -87,6 +87,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         '''
 
     def loadResources(self):
+        self.setLayout( layout_create( 'horizontal' ) )
         '''
         new_layout = layout_create(self.viewModel()['layout style'])
         if type(self.layout()) != type(new_layout):
@@ -106,6 +107,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def boundingRect(self):
         minx =0; miny=0; maxx=0;maxy=0
+        sh = self.layout().sizeHint( QtCore.Qt.SizeHint(), QtCore.QSizeF() )
+        maxx = sh.width()
+        maxy = sh.height()
         if self._item:
             brect = self._item.boundingRect()
             minx = min(brect.x(),minx)
@@ -147,23 +151,22 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.updateGeometry()
         self.update()
 
-    def removeChild(self, child):
-        pass
-        # Should this just point down to the underlying model's 
-        # removeRows() method and then let the updating take effect?
-        #self.layout().removeItem(child)
-        #self.updateGraphicsItem()
-
     def updateChild(self, child):
         self.layout().updateItem(child)
         self.updateGraphicsItem()
 
-    def addChild(self, child):
+    def removeChild(self, child):
         pass
         # Should this just point down to the underlying model's 
+        # removeRows() method and then let the updating take effect?
+        self.layout().removeItem(child)
+        self.updateGraphicsItem()
+
+    def addChild(self, child):
+        # Should this just point down to the underlying model's 
         # insertRows() method and then let the updating take effect?
-        #self.layout().addItem(child)
-        #self.updateGraphicsItem()
+        self.layout().addItem(child)
+        self.updateGraphicsItem()
 
     def isMovable(self):
         return bool(self.flags() & QtGui.QGraphicsItem.ItemIsMovable)

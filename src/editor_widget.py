@@ -126,19 +126,16 @@ class EditorView(QtGui.QGraphicsView):
 
         self.show()
 
-    def buildView(self, model, parent = None, offset = QtCore.QPointF()):
+    def buildView(self, model, parent = None):
         t = EditorItem(parent = parent, modelIndex = model)
-        t.setPos( offset )
-        o = QtCore.QPointF( t.size().width(), 0 ) 
         for cm in model.children:
             if self.viewModel():
                 # TODO: Replace this with view-model specific loading code
                 if cm.kind() in self.viewModel().children:
                     t.addChild(self.buildView(cm, t))
             else:
-                c = self.buildView(cm, t, o)
+                c = self.buildView(cm, t)
                 t.addChild(c)
-                o.setY( o.y() + c.size().height() )
         return t
 
     def loadVM(self, fname):
