@@ -80,6 +80,13 @@ class EditorView(QtGui.QGraphicsView):
         self._proxyModel = None
         self._dataMapper = QtGui.QDataWidgetMapper()
 
+    def viewModel(self):
+        # the view model is not encapsulated by data/item models
+        # it is directly accessible class objects with attributes etc.
+        # TODO: Figure out the structure of the view model and how
+        # to access the classes and attributes of the view-model
+        return self.view_model
+
     def proxyModel(self):
         return self._proxyModel
 
@@ -119,15 +126,19 @@ class EditorView(QtGui.QGraphicsView):
 
         self.show()
 
-    def viewModel(self):
-        # the view model is not encapsulated by data/item models
-        # it is directly accessible class objects with attributes etc.
-        return self.view_model
-
-    def buildView(self, model, parent = None):
+    def buildView(self, model, parent = None, offset = QtCore.QPointF()):
         t = EditorItem(parent = parent, modelIndex = model)
+        t.setPos( offset )
+        o = QtCore.QPointF( t.size().width(), 0 ) 
         for cm in model.children:
-            t.addChild(self.buildView(cm, t))
+            if self.viewModel():
+                # TODO: Replace this with view-model specific loading code
+                if cm.kind() in self.viewModel().children:
+                    t.addChild(self.buildView(cm, t))
+            else:
+                c = self.buildView(cm, t, o)
+                t.addChild(c)
+                o.setY( o.y() + c.size().height() )
         return t
 
     def loadVM(self, fname):
