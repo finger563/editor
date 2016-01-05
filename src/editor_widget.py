@@ -106,12 +106,9 @@ class EditorView(QtGui.QGraphicsView):
         self._dataMapper.setRootIndex(parent)
         self._dataMapper.setCurrentModelIndex(index)
         model = index.model().getModel(index)
-        label = QtGui.QLineEdit() # QtGui.QLabel(model['Name'])
-        label.setText(model['Name'])
-        label.setReadOnly(True)
-        label.mousePressEvent.connect(self.parent().parent().tabBar().tabButton(i).mousePressEvent)
-        self.parent().parent().tabBar().setTabButton(i, QtGui.QTabBar.LeftSide, label)
-        self._dataMapper.addMapping(label, 0)
+        self.label = QtGui.QLabel(model['Name'])
+        self.parent().parent().tabBar().setTabButton(i, QtGui.QTabBar.LeftSide, self.label)
+        self._dataMapper.addMapping(self.label, 0, "text")
 
         # view model is static; will NEVER be edited or viewed,
         # and will never be used by anything but a scene/view and their
