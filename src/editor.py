@@ -36,7 +36,11 @@ from view_model import ViewModel
 
 from tree_view import TreeView
 
+from output import TabbedOutputWidget
+
+# For testing purposes
 from test_model import TestModel
+import jsonpickle
 
 class Editor(QtGui.QMainWindow):
 
@@ -98,6 +102,10 @@ class Editor(QtGui.QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close) # note that this will call closeEvent
 
+        saveAction = Action('icons/toolbar/save.png', '&Save', self)
+        saveAction.setStatusTip('Save.')
+        saveAction.triggered.connect(self.saveModel)
+
         # Create the widgets for the program (embeddable in the toolbar or elsewhere)
         self.mode_selector = QtGui.QComboBox(self)
         self.mode_selector.addItems(self.editor_modes)
@@ -113,6 +121,7 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_init()
         self.toolbar_create('toolbar1')
         self.toolbar_add_action('toolbar1',exitAction)
+        self.toolbar_add_action('toolbar1',saveAction)
         self.toolbar_add_widget('toolbar1',self.mode_selector)
 
         # Set up the Tree View Widget
@@ -155,8 +164,17 @@ class Editor(QtGui.QMainWindow):
         self.splitter1.addWidget(self.tabbedEditorWidget)
         self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 * self.geometry().x()/4.0])
 
-        # Set the central widget of the application (the visualizer + tree_view)
-        self.setCentralWidget(self.splitter1)
+        # Split the Editor to show output
+        self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.splitter2.addWidget(self.splitter1)
+
+        # Set up the tabbed output viewer
+        self.tabbedOutput = TabbedOutputWidget(self)
+        self.splitter2.addWidget(self.tabbedOutput)
+        self.splitter2.setSizes([3.0 * self.geometry().y()/4.0, self.geometry().y()/4.0])
+
+        # Set the central widget of the application
+        self.setCentralWidget(self.splitter2)
 
         self.center()
         self.show()
@@ -204,19 +222,23 @@ class Editor(QtGui.QMainWindow):
         self.tabbedEditorWidget.setCurrentIndex(
             self.tabbedEditorWidget.indexOf(ev) )
         
-    def saveModel(self, fname):
-        # NEED TO CONVERT FROM EDITOR_WIDGET IMPLEMENTATION TO EDITOR IMPLEMENTATION
-        # EDITOR SAVES AND LOADS MODELS; THEY CAN BE META-MODELS, VIEW MODELS, OR MODELS
-
-        # fix this: all models are the same, and we don't save scene anymore; just save
-        # the model itself!  the mode of the editor determines what is being edited / what is editable
-        # e.g. *.model, *.meta, *.view
-        root = None
-        jsonpickle.set_encoder_options('simplejson',indent=4)
-        encoded_output = jsonpickle.encode(root)
-        with open(fname, 'w') as f:
-            f.write(encoded_output)
-        return 0
+    def saveModel(self, event):
+        ftype = '{}'.format(self.editor_mode.lower().split()[0])
+        fname = QtGui.QFileDialog.getSaveFileName(
+            self,
+            'Save {}'.format(self.editor_mode),
+            '',
+            '{} Files (*.{})'.format(self.editor_mode, ftype),
+            options = QtGui.QFileDialog.Options()
+        )
+        if fname:
+            if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
+            root = self.model.getModel(QtCore.QModelIndex())
+            jsonpickle.set_encoder_options('simplejson',indent=4)
+            encoded_output = jsonpickle.encode(root)
+            with open(fname, 'w') as f:
+                f.write(encoded_output)
+            return 0
 
     def closeEvent(self, event):
         event.accept()
