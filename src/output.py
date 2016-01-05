@@ -14,7 +14,7 @@ They should also support color.
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-#import syntax
+import syntax
 import sys
 import logging
 
@@ -23,7 +23,7 @@ class QtHandler(logging.Handler):
         logging.Handler.__init__(self)
     def emit(self, record):
         record = self.format(record)
-        if record: XStream.stdout().write('%s\n'%record)
+        if record: XStream.stdout().write('{}\n'.format(record))
         # originally: XStream.stdout().write("{}\n".format(record))
 
 
@@ -64,14 +64,14 @@ class OutputWidget(QtGui.QWidget):
 
         self._console = QtGui.QTextBrowser(self)
 
-        #self._highlight = syntax.PythonHighlighter(self._console.document())
+        self._highlight = syntax.OutputHighlighter(self._console.document())
 
         layout = QtGui.QVBoxLayout(self)
         layout.addWidget(self._console)
         self.setLayout(layout)
 
-        #XStream.stdout().messageWritten.connect( self._console.insertPlainText )
-        #XStream.stderr().messageWritten.connect( self._console.insertPlainText )
+        XStream.stdout().messageWritten.connect( self._console.insertPlainText )
+        XStream.stderr().messageWritten.connect( self._console.insertPlainText )
 
 class TabbedOutputWidget(QtGui.QTabWidget):
     def __init__(self, parent):
@@ -81,10 +81,8 @@ class TabbedOutputWidget(QtGui.QTabWidget):
         self.setUsesScrollButtons(True)
 
         ow = OutputWidget(self)
-        self.addTab(ow, "Output 1")
-        ow = OutputWidget(self)
-        self.addTab(ow, "Output 2")
-        
+        self.addTab(ow, "Output")
+
         self.tabCloseRequested.connect(self.onTabClose)
 
     def onTabClose(self,index):

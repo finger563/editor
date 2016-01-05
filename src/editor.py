@@ -147,12 +147,12 @@ class Editor(QtGui.QMainWindow):
         self.splitter1.addWidget(self.tabbedEditorWidget)
         self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 * self.geometry().x()/4.0])
 
+        # Set up the tabbed output viewer
+        self.tabbedOutput = TabbedOutputWidget(self)
+
         # Split the Editor to show output
         self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
-
-        # Set up the tabbed output viewer
-        self.tabbedOutput = TabbedOutputWidget(self)
         self.splitter2.addWidget(self.tabbedOutput)
         self.splitter2.setSizes([3.0 * self.geometry().y()/4.0, self.geometry().y()/4.0])
 
