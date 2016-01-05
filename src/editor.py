@@ -38,9 +38,9 @@ from tree_view import TreeView
 
 from output import TabbedOutputWidget
 
-# For testing purposes
-from test_model import TestModel
-import jsonpickle
+def convertMetaToModel(name):
+    new_type = type( name, (Model, object, ), { '__init__' : Model.__init__ })
+    return new_type
 
 class Editor(QtGui.QMainWindow):
 
@@ -55,11 +55,12 @@ class Editor(QtGui.QMainWindow):
         super(Editor, self).__init__()
 
         # Set up the editor mode
-        self.editor_mode = self.editor_modes[0]
+        self.editor_mode = self.editor_modes[1]
         self.filter_mode = self.filter_types[0]
 
         self.init_ui()
         self.clearModels()
+        self.open_model('test_model.meta')
 
         self.setWindowIcon(QtGui.QIcon('icons/editor.png'))
 
@@ -242,11 +243,28 @@ class Editor(QtGui.QMainWindow):
         if fname:
             self.clearModels()
             self.clearEditor()
-            with open(fname, 'r') as f:
-                m = jsonpickle.decode(f.read())
-                self.load_model(m)
+            self.open_model(fname)
+
+    def open_model(self, fname):
+        import jsonpickle
+        with open(fname, 'r') as f:
+            m = jsonpickle.decode(f.read())
+            self.load_model(m)
 
     def saveModel(self, event):
+        import dill
+        root = self.model.getModel(QtCore.QModelIndex())
+        test = convertMetaToModel(root.children[0]['Name'])
+        test_obj = test()
+        test_obj['Name'] = 'New Test Object'
+        with open('test.model', 'w') as f:
+            dill.dump(test_obj, f)
+        with open('test.model', 'r') as f:
+            m = dill.load(f)
+        print m['Name']
+        return
+
+        import jsonpickle
         ftype = '{}'.format(self.editor_mode.lower().split()[0])
         fname = QtGui.QFileDialog.getSaveFileName(
             self,
@@ -258,10 +276,12 @@ class Editor(QtGui.QMainWindow):
         if fname:
             if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
+            
             # TODO: Make this change depending on the editor mode
             #       e.g. in model mode, simply serialize the root object
             #       but for view models and meta-models, we need to (?) convert
             #       the models before serialization
+            
             jsonpickle.set_encoder_options('simplejson',indent=4)
             encoded_output = jsonpickle.encode(root)
             with open(fname, 'w') as f:
