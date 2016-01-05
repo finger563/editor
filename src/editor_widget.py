@@ -96,14 +96,22 @@ class EditorView(QtGui.QGraphicsView):
     def setProxyModel(self, proxyModel):
         self._proxyModel = proxyModel
         self._dataMapper.setModel(proxyModel.sourceModel())
-        self.aw.setProxyModel( proxyModel )
 
-    def init_ui(self, model, fname = ''):
+    def init_ui(self, index, fname = ''):
         scene = EditorScene(self)
         self.setScene(scene)
 
-        # TODO: ADD SELECTED ITEM SOMEHOW
-        self._model = model
+        i = self.parent().indexOf(self)
+        parent = index.parent()
+        self._dataMapper.setRootIndex(parent)
+        self._dataMapper.setCurrentModelIndex(index)
+        model = index.model().getModel(index)
+        label = QtGui.QLineEdit() # QtGui.QLabel(model['Name'])
+        label.setText(model['Name'])
+        label.setReadOnly(True)
+        label.mousePressEvent.connect(self.parent().parent().tabBar().tabButton(i).mousePressEvent)
+        self.parent().parent().tabBar().setTabButton(i, QtGui.QTabBar.LeftSide, label)
+        self._dataMapper.addMapping(label, 0)
 
         # view model is static; will NEVER be edited or viewed,
         # and will never be used by anything but a scene/view and their
@@ -116,18 +124,19 @@ class EditorView(QtGui.QGraphicsView):
             self.loadVM(fname)
         except Exception, e:
             print 'WARNING: Could not load \'{}\' to generate view for {}:\n\t{}'.format(
-                fname, self._model['Name'], e
+                fname, model['Name'], e
             )
             # How to initialize self.view_model here?
             self.view_model = None
 
-        r = self.buildView( model = model )
+        r = self.buildView( index )
         scene.addItem(r)
 
         self.show()
 
-    def buildView(self, model, parent = None):
-        t = EditorItem(parent = parent, modelIndex = model)
+    def buildView(self, index, parent = None):
+        t = EditorItem( index = index, parent = parent )
+        '''
         for cm in model.children:
             if self.viewModel():
                 # TODO: Replace this with view-model specific loading code
@@ -136,6 +145,7 @@ class EditorView(QtGui.QGraphicsView):
             else:
                 c = self.buildView(cm, t)
                 t.addChild(c)
+        '''
         return t
 
     def loadVM(self, fname):
@@ -199,6 +209,6 @@ class TabbedEditor(QtGui.QTabWidget):
         self.setUsesScrollButtons(True)
 
         self.tabCloseRequested.connect(self.onTabClose)
-       
+
     def onTabClose(self,index):
         self.removeTab(index)

@@ -37,25 +37,7 @@ class AttributeEditor(QtGui.QWidget):
         # Should probably use ManualSubmit as an option
         # since we have the cancel option to allow
         # the edits to be canceled
-        self._dataMapper = QtGui.QDataWidgetMapper()
-
-    def setProxyModel(self, proxyModel):
-        self._proxyModel = proxyModel
-        self._dataMapper.setModel(proxyModel.sourceModel())
-
-    def init_ui(self, item):
-        if self._unsaved_edits:
-            reply = QtGui.QMessageBox.question(self, 'Save?',
-                                               "Save attribute edits?",
-                                               QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                               QtGui.QMessageBox.Yes)
-            if reply == QtGui.QMessageBox.Yes:
-                self.save(None)
-        self.init_layout()
-        self.add_header(item)
-        self.init_attributes(item.attributes)
-        self.add_ok_cancel()
-        self._unsaved_edits = False
+        self.dataMapper = QtGui.QDataWidgetMapper()
 
     def init_layout(self):
         while self._layout and self._layout.count():
@@ -82,20 +64,15 @@ class AttributeEditor(QtGui.QWidget):
             if attr.editable:
                 obj = self.add_attribute(key, attr)
                 if obj:
-                    self._dataMapper.addMapping(obj, i)
-                    i += 1
+                    self.dataMapper.addMapping(obj, i)
+            i += 1 # the index into attributes
 
-    def setSelection(self, current, old):
-        current = self._proxyModel.mapToSource(current)
-        
-        parent = current.parent()
-        self._dataMapper.setRootIndex(parent)
-        #self._dataMapper.clearMapping()
-        self._dataMapper.setCurrentModelIndex(current)
-
+    def update(self, dataMapper):
+        self.dataMapper = dataMapper
         self.init_layout()
 
-        node = current.internalPointer()
+        r = self.dataMapper.model().getModel( self.dataMapper.rootIndex() )
+        node = r.child(self.dataMapper.currentIndex())
         if not node:
             return
 

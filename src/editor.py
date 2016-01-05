@@ -82,7 +82,6 @@ class Editor(QtGui.QMainWindow):
         # Link the actual model and the proxy model
         self.proxy_model.setSourceModel(self.model)
         
-
     def init_ui(self):
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
         self.setStyleSheet('''QToolTip {
@@ -195,17 +194,15 @@ class Editor(QtGui.QMainWindow):
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
             ev.setProxyModel( self.proxy_model )
-            ev.init_ui( model = item,
-                        fname = item.kind() + '.view' )
             # TODO: FIX THIS SO THAT THE VIEW'S EDITOR MODEL IS SET TO THE VIEW'S SELECTION CHANGED
-            #self.tree_view.selectionModel().currentChanged.connect(ev.getEditor().setSelection)
             self.openEditorTabs[name] = ev
-            self.tabbedEditorWidget.addTab( ev, name )
-        elif self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]) < 0:
+        else:
             ev = self.openEditorTabs[name]
-            self.tabbedEditorWidget.addTab( ev, name )
+        self.tabbedEditorWidget.addTab( ev, "" )
+        ev.init_ui( index = mi,
+                    fname = item.kind() + '.view' )
         self.tabbedEditorWidget.setCurrentIndex(
-            self.tabbedEditorWidget.indexOf(self.openEditorTabs[name]))
+            self.tabbedEditorWidget.indexOf(ev) )
         
     def saveModel(self, fname):
         # NEED TO CONVERT FROM EDITOR_WIDGET IMPLEMENTATION TO EDITOR IMPLEMENTATION

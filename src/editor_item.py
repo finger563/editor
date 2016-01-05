@@ -25,12 +25,20 @@ from graphics_items import RoundRectItem, TextItem
 class EditorItem(QtGui.QGraphicsWidget):
 
     def __init__(self,
-                 modelIndex,
+                 index,
                  parent = None):
         super(EditorItem, self).__init__(parent)
 
+        # Perhaps need an ItemDelegate/StyledItemDelegate
+        # which transforms data from editor to model and back
+
         # perhaps just point this to the ItemModel()?
-        self.index = modelIndex
+        #self.index = modelIndex
+        self.modelindex = index
+        self.dataMapper = QtGui.QDataWidgetMapper()
+        self.dataMapper.setModel(self.modelindex.model())
+        self.dataMapper.setRootIndex(self.modelindex.parent())
+        self.dataMapper.setCurrentModelIndex(self.modelindex)
         
         # Should not store a pointer to the model here,
         # it is bad practice.  Should figure out which 
@@ -43,7 +51,8 @@ class EditorItem(QtGui.QGraphicsWidget):
         # graphics item which represents
         self._item = None
         # text label of this item
-        self._label = TextItem( '' , parent = self)
+        item = self.modelindex.model().getModel(self.modelindex)
+        self._label = TextItem( item['Name'] , parent = self)
 
         self.loadResources()
         #self.setAcceptDrops(True)
@@ -70,6 +79,7 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def createItem(self, width, height):
         self._item = RoundRectItem(0, 0, width, height)
+        self._item.setBrush(QtGui.QColor('light blue'))
         '''
         draw_style = self.viewModel()['draw style']
         if self.viewModel()['icon'] and draw_style == 'icon':
@@ -97,7 +107,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()
-        self.updateLabel(width, height)
+        #self.updateLabel(width, height)
         self.createItem(width, height)
 
     def paint(self, painter, option, widget = None):
@@ -107,9 +117,6 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def boundingRect(self):
         minx =0; miny=0; maxx=0;maxy=0
-        sh = self.layout().sizeHint( QtCore.Qt.SizeHint(), QtCore.QSizeF() )
-        maxx = sh.width()
-        maxy = sh.height()
         if self._item:
             brect = self._item.boundingRect()
             minx = min(brect.x(),minx)
@@ -127,12 +134,9 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def sizeHint(self, which, constraint):
         shw = 0; shh = 0
-        '''
-        if type(self.layout()) in valid_layouts:
-            sh = self.layout().sizeHint(which, constraint)
-            shw = sh.width()
-            shh = sh.height()
-        '''
+        sh = self.layout().sizeHint(which, constraint)
+        shw = sh.width()
+        shh = sh.height()
         shw = max( shw, self.boundingRect().width())
         shh = max( shh, self.boundingRect().height())
         return QtCore.QSizeF(
@@ -146,7 +150,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
         height = sh.height()
-        self.updateLabel(width, height)
+        #self.updateLabel(width, height)
         self.createItem(width, height)
         self.updateGeometry()
         self.update()
@@ -156,7 +160,6 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.updateGraphicsItem()
 
     def removeChild(self, child):
-        pass
         # Should this just point down to the underlying model's 
         # removeRows() method and then let the updating take effect?
         self.layout().removeItem(child)
@@ -173,9 +176,8 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def mouseDoubleClickEvent(self, event):
         QtGui.QGraphicsWidget.mouseDoubleClickEvent(self, event)
-        # TODO: need to add the index here; call setSelection() with proper indices
         editor = self.scene().parent().getEditor()
-        editor.init_ui(self.index)
+        editor.update( self.dataMapper )
         editor.show()
         editor.raise_()
 
@@ -183,6 +185,9 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.loadResources()
         self.updateGraphicsItem()
                 
+    '''
+    BELOW HERE ARE NOT AS RELEVANT RIGHT NOW
+    '''
     def initializeFlags(self):
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
@@ -206,14 +211,14 @@ class EditorItem(QtGui.QGraphicsWidget):
     def contextMenuEvent(self, event):
         menu = QtGui.QMenu()
 
-        item = self.scene().model().mapToSource( self.index )
+        item = self.index #.scene().model().mapToSource( self.index )
 
-        delSelf = Action('', 'Delete', self)
+        delSelf = QtGui.QAction('Delete', self)
         delSelf.triggered.connect(self.delete)
         menu.addAction(delSelf)
 
         for a in item.children._allowed:
-            addAction = Action('', 'Add new {}'.format(a.__name__), self)
+            addAction = QtGui.QAction('Add new {}'.format(a.__name__), self)
             addAction.triggered.connect(self.addNewItem(a))
             menu.addAction(addAction)
         
