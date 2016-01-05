@@ -35,6 +35,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         if type(editor) == EditorItemWidget:
             text = index.data().toString()
             # SET THE EDITOR ITEM TEXT HERE
+            editor.item._label.setPlainText(text)
             return
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
@@ -65,14 +66,6 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.itemWidget = EditorItemWidget(None,self)
         self.dataMapper.addMapping(self.itemWidget, 0)
         
-        # Should not store a pointer to the model here,
-        # it is bad practice.  Should figure out which 
-        # index into the model this points to (since this
-        # is just a view) and then use that index to fetch 
-        # the updated model any time an action is required
-        # e.g. edit, add, delete
-        #self._model = model
-
         # graphics item which represents
         self._item = None
         # text label of this item
