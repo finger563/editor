@@ -105,15 +105,15 @@ class EditorView(QtGui.QGraphicsView):
         parent = index.parent()
         self._dataMapper.setRootIndex(parent)
         self._dataMapper.setCurrentModelIndex(index)
-        model = index.model().getModel(index)
-        self.label = QtGui.QLabel(model['Name'])
-        self.parent().parent().tabBar().setTabButton(i, QtGui.QTabBar.LeftSide, self.label)
-        self._dataMapper.addMapping(self.label, 0, "text")
+        self._itemDelegate = EditorItemDelegate(self)
+        self._dataMapper.setItemDelegate(self._itemDelegate)
+        self._dataMapper.addMapping(self, 0)
 
         # view model is static; will NEVER be edited or viewed,
         # and will never be used by anything but a scene/view and their
         # children, so we keep a reference to the view model open here
         self.view_model = None
+        model = index.model().getModel(index)
 
         try:
             if not fname:
@@ -197,6 +197,21 @@ class EditorView(QtGui.QGraphicsView):
             self.verticalScrollBar().setValue(move.y() + self.verticalScrollBar().value())
         else:
             QtGui.QGraphicsView.wheelEvent(self, event)
+
+class EditorItemDelegate(QtGui.QItemDelegate):
+    def __init__(self, parent=None):
+        super(EditorItemDelegate, self).__init__(parent)
+
+    def setEditorData(self, editor, index):
+        if type(editor) == EditorView:
+            text = index.data().toString()
+            i = editor.parent().parent().indexOf(editor)
+            editor.parent().parent().setTabText(i, text)
+            return
+        return super(EditorItemDelegate, self).setEditorData(editor, index)
+
+    def setModelData(self, editor, model, index):
+        return super(EditorItemDelegate, self).setModelData(editor, model, index)
 
 class TabbedEditor(QtGui.QTabWidget):
     def __init__(self, parent):

@@ -198,7 +198,7 @@ class Editor(QtGui.QMainWindow):
             self.openEditorTabs[name] = ev
         else:
             ev = self.openEditorTabs[name]
-        self.tabbedEditorWidget.addTab( ev, "" )
+        self.tabbedEditorWidget.addTab( ev, name )
         ev.init_ui( index = mi,
                     fname = item.kind() + '.view' )
         self.tabbedEditorWidget.setCurrentIndex(
