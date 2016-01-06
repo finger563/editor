@@ -31,7 +31,7 @@ from editor_widget import TabbedEditor, EditorView
 
 from item_model import ItemModel, SortFilterProxyModel
 
-#from meta import Model, Pointer, Model_Attribute, Attribute, Children
+from meta import Model, Pointer, Model_Attribute, Attribute, Children, get_children
 from view_model import ViewModel
 
 from tree_view import TreeView
@@ -42,8 +42,16 @@ def convertMetaToModel(model):
     # TODO: Fix this so that everything is properly initialized:
     #       e.g. attributes, pointers, Children (_allowed), etc.
     new_type = type( model['Name'], (Model, object, ), { '__init__' : Model.__init__ })
-    # TODO: Go through the children of 'model' who are POINTERS and add new children
     # TODO: Go through the children of 'model' who are MODEL_ATTRIBUTES and add attributes
+    attrs = get_children(model, 'Model_Attribute')
+    for a in attrs:
+        new_attr = type( a['Name'], (Attribute, object, ), { '__init__' : Attribute.__init__ })
+        new_attr.kind = a['Kind']
+        new_attr.tooltip = a['Tooltip']
+        new_attr.display = a['Display']
+        new_attr.editable = a['Editable']
+        # TODO: Figure out how to add this new type to the init of the model
+    # TODO: Go through the children of 'model' who are POINTERS and add new children
     return new_type
 
 class Editor(QtGui.QMainWindow):

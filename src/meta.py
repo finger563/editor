@@ -132,8 +132,7 @@ class Model_Attribute(Model):
     def __init__(self, parent = None, name = 'Attribute', kind = Attribute.allowed_types[0], tooltip = '', display = '', options = [], editable = True):
         super(Model_Attribute, self).__init__(parent)
 
-        self.children = Children(allowed=[], 
-                                 cardinality = {})
+        self.children = Children(allowed=[], cardinality = {})
         self['Name'] = name
         self.set_attribute( 'Kind', Attribute( 'list_entry', kind ) )
         self.get_attribute( 'Kind' ).options = Attribute.allowed_types
@@ -142,8 +141,13 @@ class Model_Attribute(Model):
         self.set_attribute( 'Editable', Attribute( 'bool', editable ) )
         # TODO: Figure out how to handle options, i.e. they could be a simple list of strings
         #       or they may be references to other types of objects
+        #       e.g. pointer src_kind options is dynamic based on the FCO names
+        #       also, SCOPING is another issue for these options
         
 class Pointer(Model):
+    # TODO: Figure out how pointers will actually be used; how they are displayed, edited, etc.
+    # TODO: Figure out how to properly create pointers in the meta-model
+    # TODO: Integrate scoping ideas into pointers (for their options when editing src/dst)
     '''
     '''
     def __init__(self, parent = None, src = None, dst = None, src_type = 'Model', dst_type = 'Model'):
