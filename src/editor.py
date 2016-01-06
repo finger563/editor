@@ -262,6 +262,8 @@ class Editor(QtGui.QMainWindow):
         with open('test.model', 'r') as f:
             m = dill.load(f)
         print m['Name']
+        # TODO: Figure out proper handling of meta-/view-/model serialization
+        #       perhaps serialize all class defs out as a dict of name -> class def?
         return
 
         import jsonpickle
