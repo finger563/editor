@@ -38,7 +38,14 @@ from tree_view import TreeView
 
 from output import TabbedOutputWidget
 
-def convertMetaToModel(model):
+def convertModelToMeta(model):
+    '''
+    This function is used to create classes based on the editor's current model.
+    It works on Model instances, which can have pointers, models, and model_attributes
+    as children.  By converting the models in to named classes subclassing Model and adding
+    named attributes subclassing Attribute it forms a new class structure which describes the
+    meta model and which can be used to instantiate models.  
+    '''
     # TODO: Fix this so that everything is properly initialized:
     #       e.g. attributes, pointers, Children (_allowed), etc.
     new_type = type( model['Name'], (Model, object, ), { '__init__' : Model.__init__ })
@@ -55,12 +62,24 @@ def convertMetaToModel(model):
     return new_type
 
 class Editor(QtGui.QMainWindow):
+    '''
+    The main editor class, which enables creating, loading, editing, and saving of 
+    models, meta-models, and view-models.  
 
-    # Models the editor is designed to load/edit/save
-    # All inherit at some point from the original base model classes
-    # Defined in meta.py
+    Models are saved as *.model files and contain the metamodel they were created with.
+
+    Meta-models are saved as *.meta files and can be used to create new models.
+
+    View-models are saved as *.view files and are automatically loaded as <Model Type>.view
+    for each model that is opened in the visualizer.
+    '''
+
+    '''Models the editor is designed to load/edit/save
+    All inherit at some point from the original base model classes
+    Defined in meta.py'''
     editor_modes = ['Model','Meta Model','View Model']
 
+    # Ways the tree view can filter the model (based on Meta-Type or Name)
     filter_types = ['Meta','Name']
 
     def __init__(self):
@@ -184,6 +203,9 @@ class Editor(QtGui.QMainWindow):
         self.move(qr.topLeft())
 
     def load_model(self, model):
+        '''
+        :param in model: the root object of a model, which is loaded into the tree-viewer and proxy models
+        '''
         # Set up the proxy model for sorting/filtering
         self.proxy_model = SortFilterProxyModel(self)
         self.proxy_model.setDynamicSortFilter(True)
@@ -204,16 +226,19 @@ class Editor(QtGui.QMainWindow):
         self.tree_view.expandAll()
         
     def clearModels(self):
+        '''Clears all model data from the editor.'''
         self.model = None
         self.proxy_model = None
         self.tree_view.reset()
         self.tree_view.setModel(None)
 
-    def clearEditor(self):
+    def clearViewer(self):
+        '''Close all visualizer views.'''
         self.openEditorTabs = {}
         self.tabbedEditorWidget.clear()
 
     def changeFilter(self, index):
+        '''Event callback for when the user changes the filter type for the navigator.'''
         text = self.filter_type.currentText()
         self.filter_mode = text
         if self.model and self.proxy_model:
@@ -221,14 +246,21 @@ class Editor(QtGui.QMainWindow):
             self.proxy_model.invalidate()
 
     def changeMode(self, index):
+        '''Event callback for when the user changes the editor mode.'''
         text = str(self.mode_selector.currentText())
         if text != self.editor_mode:
             self.editor_mode = text
             self.clearModels()
-            self.clearEditor()
+            self.clearViewer()
             # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
 
     def openModelView(self, modelIndex):
+        '''
+        Event callback for when the user double-clicks on a model item in the tree-viewer.
+        Sends the model item to the visualizer and creates a new EditorView for it if one does not exist.
+
+        :param in modelIndex: index into the AbstractItemModel which has been selected for viewing.
+        '''
         mi = self.proxy_model.mapToSource(modelIndex)
         item = self.model.getModel( mi )
         name = item["Name"]
@@ -246,6 +278,7 @@ class Editor(QtGui.QMainWindow):
             self.tabbedEditorWidget.indexOf(ev) )
         
     def openModel(self, event):
+        '''Callback to allow the user to select a model file based on the current mode of the editor.'''
         ftype = '{}'.format(self.editor_mode.lower().split()[0])
         fname = QtGui.QFileDialog.getOpenFileName(
             self,
@@ -256,16 +289,18 @@ class Editor(QtGui.QMainWindow):
         )
         if fname:
             self.clearModels()
-            self.clearEditor()
+            self.clearViewer()
             self.open_model(fname)
 
     def open_model(self, fname):
+        '''Decodes a saved *.{model, meta, view} file and loads it into the editor.'''
         import jsonpickle
         with open(fname, 'r') as f:
             m = jsonpickle.decode(f.read())
             self.load_model(m)
 
     def saveModel(self, event):
+        '''Saves a model according to the current mode of the editor.'''
         import dill
         root = self.model.getModel(QtCore.QModelIndex())
         test = convertMetaToModel(root.children[0])
