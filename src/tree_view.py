@@ -40,6 +40,8 @@ class TreeView(QtGui.QTreeView):
         m = self.model().sourceModel()
         if indexes:
             mi = self.model().mapToSource( indexes[0] )
+            if not mi.isValid():
+                return
             item = m.getModel( mi )
 
             delAction = QtGui.QAction('Delete {}'.format(item['Name']), self)

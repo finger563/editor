@@ -109,11 +109,8 @@ class ItemModel(QtCore.QAbstractItemModel):
         # data model needs to have a row method, e.g. parent.children.index(self)
 
     def insertRows(self, position, rows, parent=QtCore.QModelIndex(), _type = None):
-
-        assert _type != None, '_type is None!'
-
-        parentNode= self.getModel(parent)
         self.beginInsertRows(parent, position, position + rows - 1)
+        parentNode= self.getModel(parent)
 
         for row in range(rows):
             childCount = parentNode.child_count()
@@ -138,6 +135,7 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def __init__(self, parent):
         super(SortFilterProxyModel,self).__init__(parent)
 
+    '''
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
         inChildren = False
@@ -146,7 +144,7 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
                 inChildren = True
                 break
         return QtCore.QString(self.sourceModel().data(index0, self.filterRole())).contains(self.filterRegExp()) or inChildren
-
+    '''
 def main():
     import sys
     from attribute_widget import AttributeEditor

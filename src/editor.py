@@ -39,6 +39,17 @@ from tree_view import TreeView
 
 from output import TabbedOutputWidget
 
+# TODO: Need to be able to load multiple models and compose themn together; e.g if two people
+#       are working on a large model and want to separately make packages or components or hardwares.
+#       This would be useful for splitting out relevant parts of the model and reusing it as a library,
+#       e.g. the cluster hardware model would be a good example.  To do this we need to solve the issues
+#       of meta-model conflicts and model composition (need to figure out which one is root and where the
+#       other 'root' goes.
+
+# TODO: Figure out how to update the meta-model without completely losing the edits to existing models if
+#       possible.  Perhaps just allow loading simultaneously the model + meta-model; and attempting to 
+#       resolve model changes when meta-model edits are performed.
+
 def convertModelToMeta(model):
     '''
     This function is used to create classes based on the editor's current model.
@@ -62,7 +73,7 @@ def convertModelToMeta(model):
         elif type(obj) == Model_Attribute:
             k = obj['Kind']  # for some reason, putting obj['Kind'] in place of k does not work
             def attrInit(self):
-                Attribute.__init__(self, k, None)
+                Attribute.__init__(self, k, 'test')
             new_attr = type(
                 obj['Name'],
                 (Attribute, object, ),
