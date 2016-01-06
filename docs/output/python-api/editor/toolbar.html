@@ -37,7 +37,7 @@
         <link rel="prev" title="Action" href="action.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -47,17 +47,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-        
-          <a href="../../index.html" class="icon icon-home"> Editor
-        
+          
+            <a href="../../index.html" class="icon icon-home"> Editor
+          
 
-        
-        </a>
+          
+          </a>
 
-        
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -66,25 +76,15 @@
   </form>
 </div>
 
-        
-      </div>
+          
+        </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-          
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../getting-started.html#using-the-editor">Using the Editor</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../getting-started.html#metamodling">MetaModling</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../getting-started.html#developing-a-module">Developing a Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../getting-started.html#installation">Installation</a></li>
-</ul>
-</li>
-</ul>
-</li>
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../editor-api.html">Editor API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="editor-widget.html">Editor-Widget</a></li>
@@ -97,10 +97,10 @@
 </li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -115,7 +115,13 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../../index.html">Docs</a> &raquo;</li>
       
@@ -132,7 +138,8 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-toolbar">
 <span id="toolbar"></span><h1>Toolbar<a class="headerlink" href="#module-toolbar" title="Permalink to this headline">¶</a></h1>
@@ -140,11 +147,6 @@
 <p>This program provides an API for 
 library code to add toolbars,
 buttons and actions to the GUI.</p>
-<dl class="function">
-<dt id="toolbar.toolbar_init">
-<code class="descclassname">toolbar.</code><code class="descname">toolbar_init</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#toolbar.toolbar_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="function">
 <dt id="toolbar.toolbar_create">
 <code class="descclassname">toolbar.</code><code class="descname">toolbar_create</code><span class="sig-paren">(</span><em>self</em>, <em>tb_name</em><span class="sig-paren">)</span><a class="headerlink" href="#toolbar.toolbar_create" title="Permalink to this definition">¶</a></dt>
@@ -167,7 +169,7 @@ buttons and actions to the GUI.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>string tb_name</strong> (<em>in</em>) &#8211; name used to create the toolbar from <code class="xref py py-func docutils literal"><span class="pre">Editor.toolbar_create()</span></code>.</li>
-<li><strong>Action tb_action</strong> (<em>in</em>) &#8211; <a class="reference internal" href="action.html#action.Action" title="action.Action"><code class="xref py py-class docutils literal"><span class="pre">action.Action</span></code></a> object to bind to the toolbar.</li>
+<li><strong>Action tb_action</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">action.Action</span></code> object to bind to the toolbar.</li>
 </ul>
 </td>
 </tr>
@@ -176,13 +178,26 @@ buttons and actions to the GUI.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="toolbar.toolbar_remove">
-<code class="descclassname">toolbar.</code><code class="descname">toolbar_remove</code><span class="sig-paren">(</span><em>self</em>, <em>tb_name</em><span class="sig-paren">)</span><a class="headerlink" href="#toolbar.toolbar_remove" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="toolbar.toolbar_add_widget">
+<code class="descclassname">toolbar.</code><code class="descname">toolbar_add_widget</code><span class="sig-paren">(</span><em>self</em>, <em>tb_name</em>, <em>tb_widget</em><span class="sig-paren">)</span><a class="headerlink" href="#toolbar.toolbar_add_widget" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string tb_name</strong> (<em>in</em>) &#8211; name used to create the toolbar from <code class="xref py py-func docutils literal"><span class="pre">Editor.toolbar_create()</span></code>.</li>
+<li><strong>Action tb_widget</strong> (<em>in</em>) &#8211; any pyQt widget to add to the toolbar.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
 
+           </div>
           </div>
           <footer>
   
@@ -199,9 +214,10 @@ buttons and actions to the GUI.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015, finger563.
+
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 

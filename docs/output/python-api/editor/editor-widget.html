@@ -38,7 +38,7 @@
         <link rel="prev" title="Editor" href="editor.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -48,17 +48,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-        
-          <a href="../../index.html" class="icon icon-home"> Editor
-        
+          
+            <a href="../../index.html" class="icon icon-home"> Editor
+          
 
-        
-        </a>
+          
+          </a>
 
-        
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -67,25 +77,15 @@
   </form>
 </div>
 
-        
-      </div>
+          
+        </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-          
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../getting-started.html#using-the-editor">Using the Editor</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../getting-started.html#metamodling">MetaModling</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../getting-started.html#developing-a-module">Developing a Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../getting-started.html#installation">Installation</a></li>
-</ul>
-</li>
-</ul>
-</li>
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../editor-api.html">Editor API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="">Editor-Widget</a></li>
@@ -98,10 +98,10 @@
 </li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -116,7 +116,13 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../../index.html">Docs</a> &raquo;</li>
       
@@ -133,206 +139,18 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-editor_widget">
 <span id="editor-widget"></span><h1>Editor-Widget<a class="headerlink" href="#module-editor_widget" title="Permalink to this headline">¶</a></h1>
 <p>Editor Widget</p>
 <p>These classes allow users to view
 and edit models in the project in tabs.</p>
-<ul class="simple">
-<li>author: William Emfinger</li>
-<li>website: github.com/finger563/editor</li>
-<li>last edited: August 2015</li>
-</ul>
-<dl class="function">
-<dt id="editor_widget.distance">
-<code class="descclassname">editor_widget.</code><code class="descname">distance</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.distance" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="editor_widget.getClosestPoint">
-<code class="descclassname">editor_widget.</code><code class="descname">getClosestPoint</code><span class="sig-paren">(</span><em>cp</em>, <em>pDict</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.getClosestPoint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="editor_widget.EditorItem">
-<em class="property">class </em><code class="descclassname">editor_widget.</code><code class="descname">EditorItem</code><span class="sig-paren">(</span><em>parent=None</em>, <em>draw_style='icon'</em>, <em>image_file=''</em>, <em>width=100</em>, <em>height=100</em>, <em>layout='horizontal'</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
-<dt id="editor_widget.EditorItem.layout_styles">
-<code class="descname">layout_styles</code><em class="property"> = ['horizontal', 'vertical', 'grid', 'anchor']</em><a class="headerlink" href="#editor_widget.EditorItem.layout_styles" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="editor_widget.EditorItem.draw_styles">
-<code class="descname">draw_styles</code><em class="property"> = ['icon', 'ellipse', 'rect', 'round rect']</em><a class="headerlink" href="#editor_widget.EditorItem.draw_styles" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.loadResources">
-<code class="descname">loadResources</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.loadResources" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.paint">
-<code class="descname">paint</code><span class="sig-paren">(</span><em>painter</em>, <em>option</em>, <em>widget=None</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.paint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.boundingRect">
-<code class="descname">boundingRect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.boundingRect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.sizeHint">
-<code class="descname">sizeHint</code><span class="sig-paren">(</span><em>which</em>, <em>constraint</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.sizeHint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.updateGraphicsItem">
-<code class="descname">updateGraphicsItem</code><span class="sig-paren">(</span><em>width=0</em>, <em>height=0</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.updateGraphicsItem" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.removeChild">
-<code class="descname">removeChild</code><span class="sig-paren">(</span><em>child</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.removeChild" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.addChild">
-<code class="descname">addChild</code><span class="sig-paren">(</span><em>child</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.addChild" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.parentEditorItem">
-<code class="descname">parentEditorItem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.parentEditorItem" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.mousePressEvent">
-<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.mousePressEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.mouseMoveEvent">
-<code class="descname">mouseMoveEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.mouseReleaseEvent">
-<code class="descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.hoverEnterEvent">
-<code class="descname">hoverEnterEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.hoverEnterEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.hoverLeaveEvent">
-<code class="descname">hoverLeaveEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.hoverLeaveEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.initializeFlags">
-<code class="descname">initializeFlags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.initializeFlags" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorItem.contextMenuEvent">
-<code class="descname">contextMenuEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorItem.contextMenuEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="editor_widget.EditorScene">
-<em class="property">class </em><code class="descclassname">editor_widget.</code><code class="descname">EditorScene</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorScene" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="editor_widget.EditorScene.contextMenuEvent">
-<code class="descname">contextMenuEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorScene.contextMenuEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="editor_widget.EditorView">
-<em class="property">class </em><code class="descclassname">editor_widget.</code><code class="descname">EditorView</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
-<dt id="editor_widget.EditorView.drag_mode_key">
-<code class="descname">drag_mode_key</code><em class="property"> = 16777249</em><a class="headerlink" href="#editor_widget.EditorView.drag_mode_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="editor_widget.EditorView.scroll_mode_key">
-<code class="descname">scroll_mode_key</code><em class="property"> = 16777249</em><a class="headerlink" href="#editor_widget.EditorView.scroll_mode_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="editor_widget.EditorView.attr_width">
-<code class="descname">attr_width</code><em class="property"> = 100</em><a class="headerlink" href="#editor_widget.EditorView.attr_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.init_ui">
-<code class="descname">init_ui</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.init_ui" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.mousePressEvent">
-<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.mousePressEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.mouseReleaseEvent">
-<code class="descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.mouseDoubleClickEvent">
-<code class="descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.keyPressEvent">
-<code class="descname">keyPressEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.keyPressEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.keyReleaseEvent">
-<code class="descname">keyReleaseEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.keyReleaseEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.resizeEvent">
-<code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.resizeEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.toggle">
-<code class="descname">toggle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.toggle" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="editor_widget.EditorView.wheelEvent">
-<code class="descname">wheelEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView.wheelEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="editor_widget.TabbedEditor">
-<em class="property">class </em><code class="descclassname">editor_widget.</code><code class="descname">TabbedEditor</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.TabbedEditor" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="editor_widget.TabbedEditor.onTabClose">
-<code class="descname">onTabClose</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.TabbedEditor.onTabClose" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 </div>
 
 
+           </div>
           </div>
           <footer>
   
@@ -351,9 +169,10 @@ and edit models in the project in tabs.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015, finger563.
+
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 

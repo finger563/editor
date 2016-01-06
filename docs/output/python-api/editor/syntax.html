@@ -38,7 +38,7 @@
         <link rel="prev" title="Output" href="output.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -48,17 +48,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-        
-          <a href="../../index.html" class="icon icon-home"> Editor
-        
+          
+            <a href="../../index.html" class="icon icon-home"> Editor
+          
 
-        
-        </a>
+          
+          </a>
 
-        
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -67,25 +77,15 @@
   </form>
 </div>
 
-        
-      </div>
+          
+        </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-          
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../getting-started.html#using-the-editor">Using the Editor</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../getting-started.html#metamodling">MetaModling</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../getting-started.html#developing-a-module">Developing a Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../getting-started.html#installation">Installation</a></li>
-</ul>
-</li>
-</ul>
-</li>
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../editor-api.html">Editor API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="editor-widget.html">Editor-Widget</a></li>
@@ -98,10 +98,10 @@
 </li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -116,7 +116,13 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../../index.html">Docs</a> &raquo;</li>
       
@@ -133,7 +139,8 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-syntax">
 <span id="syntax"></span><h1>Syntax<a class="headerlink" href="#module-syntax" title="Permalink to this headline">¶</a></h1>
@@ -144,33 +151,40 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="syntax.PythonHighlighter">
-<em class="property">class </em><code class="descclassname">syntax.</code><code class="descname">PythonHighlighter</code><span class="sig-paren">(</span><em>document</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.PythonHighlighter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Syntax highlighter for the Python language.</p>
-<dl class="attribute">
-<dt id="syntax.PythonHighlighter.keywords">
-<code class="descname">keywords</code><em class="property"> = ['and', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'yield', 'None', 'True', 'False']</em><a class="headerlink" href="#syntax.PythonHighlighter.keywords" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="syntax.PythonHighlighter.operators">
-<code class="descname">operators</code><em class="property"> = ['=', '==', '!=', '&lt;', '&lt;=', '&gt;', '&gt;=', '\\+', '-', '\\*', '/', '//', '\\%', '\\*\\*', '\\+=', '-=', '\\*=', '/=', '\\%=', '\\^', '\\|', '\\&amp;', '\\~', '&gt;&gt;', '&lt;&lt;']</em><a class="headerlink" href="#syntax.PythonHighlighter.operators" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="syntax.PythonHighlighter.braces">
-<code class="descname">braces</code><em class="property"> = ['\\{', '\\}', '\\(', '\\)', '\\[', '\\]']</em><a class="headerlink" href="#syntax.PythonHighlighter.braces" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dt id="syntax.CodeHighlighter">
+<em class="property">class </em><code class="descclassname">syntax.</code><code class="descname">CodeHighlighter</code><span class="sig-paren">(</span><em>document</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.CodeHighlighter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Syntax highlighter for the Code Mission language.</p>
 <dl class="method">
-<dt id="syntax.PythonHighlighter.highlightBlock">
-<code class="descname">highlightBlock</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.PythonHighlighter.highlightBlock" title="Permalink to this definition">¶</a></dt>
+<dt id="syntax.CodeHighlighter.highlightBlock">
+<code class="descname">highlightBlock</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.CodeHighlighter.highlightBlock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply syntax highlighting to the given block of text.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="syntax.PythonHighlighter.match_multiline">
-<code class="descname">match_multiline</code><span class="sig-paren">(</span><em>text</em>, <em>delimiter</em>, <em>in_state</em>, <em>style</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.PythonHighlighter.match_multiline" title="Permalink to this definition">¶</a></dt>
+<dt id="syntax.CodeHighlighter.match_multiline">
+<code class="descname">match_multiline</code><span class="sig-paren">(</span><em>text</em>, <em>delimiter</em>, <em>in_state</em>, <em>style</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.CodeHighlighter.match_multiline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do highlighting of multi-line strings. <code class="docutils literal"><span class="pre">delimiter</span></code> should be a
+<code class="docutils literal"><span class="pre">QRegExp</span></code> for triple-single-quotes or triple-double-quotes, and
+<code class="docutils literal"><span class="pre">in_state</span></code> should be a unique integer to represent the corresponding
+state changes when inside those strings. Returns True if we&#8217;re still
+inside a multi-line string when this function is finished.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="syntax.OutputHighlighter">
+<em class="property">class </em><code class="descclassname">syntax.</code><code class="descname">OutputHighlighter</code><span class="sig-paren">(</span><em>document</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.OutputHighlighter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Syntax highlighter for the Code Mission language.</p>
+<dl class="method">
+<dt id="syntax.OutputHighlighter.highlightBlock">
+<code class="descname">highlightBlock</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.OutputHighlighter.highlightBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply syntax highlighting to the given block of text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="syntax.OutputHighlighter.match_multiline">
+<code class="descname">match_multiline</code><span class="sig-paren">(</span><em>text</em>, <em>delimiter</em>, <em>in_state</em>, <em>style</em><span class="sig-paren">)</span><a class="headerlink" href="#syntax.OutputHighlighter.match_multiline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do highlighting of multi-line strings. <code class="docutils literal"><span class="pre">delimiter</span></code> should be a
 <code class="docutils literal"><span class="pre">QRegExp</span></code> for triple-single-quotes or triple-double-quotes, and
 <code class="docutils literal"><span class="pre">in_state</span></code> should be a unique integer to represent the corresponding
@@ -183,6 +197,7 @@ inside a multi-line string when this function is finished.</p>
 </div>
 
 
+           </div>
           </div>
           <footer>
   
@@ -201,9 +216,10 @@ inside a multi-line string when this function is finished.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015, finger563.
+
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
