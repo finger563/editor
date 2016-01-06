@@ -240,29 +240,6 @@ class Editor(QtGui.QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def load_model(self, model):
-        '''
-        :param in model: the root object of a model, which is loaded into the tree-viewer and proxy models
-        '''
-        # Set up the proxy model for sorting/filtering
-        self.proxy_model = SortFilterProxyModel(self)
-        self.proxy_model.setDynamicSortFilter(True)
-        self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        self.proxy_model.setSortRole(ItemModel.sort_role)
-        self.proxy_model.setFilterRole(ItemModel.filter_role)
-
-        # the model stores the reference to the model that is currently
-        # being edited/viewed; this can be a regular model, a view model,
-        # or even a meta-model.  All these models inherit from the meta-metamodel
-        # so have the same interfaces and can be interacted with in the same way
-        self.model = ItemModel(model)
-        self.model.set_filter_type(self.filter_mode)
-        # Link the actual model and the proxy model
-        self.proxy_model.setSourceModel(self.model)
-        self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
-        self.tree_view.setModel(self.proxy_model)
-        self.tree_view.expandAll()
-        
     def clearModels(self):
         '''Clears all model data from the editor.'''
         self.model = None
@@ -332,22 +309,51 @@ class Editor(QtGui.QMainWindow):
 
     def open_model(self, fname):
         '''Decodes a saved *.{model, meta, view} file and loads it into the editor.'''
-        import jsonpickle
+        import jsonpickle, dill
         with open(fname, 'r') as f:
-            m = jsonpickle.decode(f.read())
-            self.load_model(m)
+            #m = jsonpickle.decode(f.read())
+            m = dill.load(f)
+            root = Model()
+            root.children._allowed.append(m)
+            root.children._cardinality[m] = '1'
+            root.add_child(m())
+            self.load_model(root)
 
+    def load_model(self, model):
+        '''
+        :param in model: the root object of a model, which is loaded into the tree-viewer and proxy models
+        '''
+        # Set up the proxy model for sorting/filtering
+        self.proxy_model = SortFilterProxyModel(self)
+        self.proxy_model.setDynamicSortFilter(True)
+        self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.proxy_model.setSortRole(ItemModel.sort_role)
+        self.proxy_model.setFilterRole(ItemModel.filter_role)
+
+        # the model stores the reference to the model that is currently
+        # being edited/viewed; this can be a regular model, a view model,
+        # or even a meta-model.  All these models inherit from the meta-metamodel
+        # so have the same interfaces and can be interacted with in the same way
+        self.model = ItemModel(model)
+        self.model.set_filter_type(self.filter_mode)
+        # Link the actual model and the proxy model
+        self.proxy_model.setSourceModel(self.model)
+        self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
+        self.tree_view.setModel(self.proxy_model)
+        self.tree_view.expandAll()
+        
     def saveModel(self, event):
         '''Saves a model according to the current mode of the editor.'''
         import dill
         root = self.model.getModel(QtCore.QModelIndex())
         test = convertModelToMeta(root.children[0])
-        test_obj = test()
-        test_obj['Name'] = 'New Test Object'
+        test_obj = test
+        #test_obj['Name'] = 'New Test Object'
         with open('test.model', 'w') as f:
             dill.dump(test_obj, f)
         with open('test.model', 'r') as f:
             m = dill.load(f)
+        m = m()
         print m['Name']
         for name,a in m.attributes.iteritems():
             print name, a, a.kind

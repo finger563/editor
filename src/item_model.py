@@ -120,9 +120,8 @@ class ItemModel(QtCore.QAbstractItemModel):
             childNode = _type()
             childNode['Name'] = 'New_{}_{}'.format( _type.__name__, childCount)
             success = parentNode.insert_child(position, childNode)
-
         self.endInsertRows()
-        return True
+        return success
 
     def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
         parentNode= self.getModel(parent)

@@ -117,9 +117,12 @@ class Model(object):
     def insert_child(self, position, child_model):
         if position < 0 or position > self.child_count():
             return False
-        child_model.parent = self
-        self.children.insert(position, child_model)
-        return True
+        try:
+            self.children.insert(position, child_model)
+            child_model.parent = self
+            return True
+        except:
+            return False
 
     def add_child(self, child_model):
         child_model.parent = self
@@ -196,12 +199,13 @@ class Children(MutableSequence):
         if type(item) in self._allowed:
             if item not in self._inner:
                 item_cardinality = self._cardinality[type(item)]
-                children_types = [str(type(val)) for val in self._inner]
+                children_types = [type(val) for val in self._inner]
                 if item_cardinality == '1':
-                    if str(type(item)) not in children_types:
+                    if type(item) not in children_types:
                         return self._inner.insert(index, item)
                     else:
                         print 'ERROR::Cardinality Error!'
+                        raise 'Cardinality Error'
                 else:
                     return self._inner.insert(index, item)
         else:
