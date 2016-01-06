@@ -1,15 +1,20 @@
-"""
+'''
 Output Widget 
 
 These classes allow output windows (in tabs)
 to which stderr/stdout can be redirected.  
 
 They should also support color.
+'''
 
-* author: William Emfinger
-* website: github.com/finger563/editor 
-* last edited: July 2015
-"""
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -24,16 +29,16 @@ class QtHandler(logging.Handler):
     def emit(self, record):
         record = self.format(record)
         if record: XStream.stdout().write('{}\n'.format(record))
-        # originally: XStream.stdout().write("{}\n".format(record))
+        # originally: XStream.stdout().write('{}\n'.format(record))
 
 
-"""
+'''
 logger = logging.getLogger(__name__)
 handler = QtHandler()
-handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
-"""
+'''
 class XStream(QtCore.QObject):
     _stdout = None
     _stderr = None
@@ -81,7 +86,7 @@ class TabbedOutputWidget(QtGui.QTabWidget):
         self.setUsesScrollButtons(True)
 
         ow = OutputWidget(self)
-        self.addTab(ow, "Output")
+        self.addTab(ow, 'Output')
 
         self.tabCloseRequested.connect(self.onTabClose)
 
