@@ -148,6 +148,33 @@
 <p>This program provides an API for 
 library code to add actions
 to the GUI for use in the viewer, menubar, etc.</p>
+<dl class="class">
+<dt id="action.Action">
+<em class="property">class </em><code class="descclassname">action.</code><code class="descname">Action</code><span class="sig-paren">(</span><em>icon_file</em>, <em>text</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#action.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper class for Qt&#8217;s QAction so that other library code doesn&#8217;t have to
+import pyQt.  (Unnecessary?)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="action.action_create">
+<code class="descclassname">action.</code><code class="descname">action_create</code><span class="sig-paren">(</span><em>self</em>, <em>action_name</em>, <em>icon</em>, <em>title</em>, <em>actionFunc</em>, <em>tooltip</em>, <em>shortcut</em><span class="sig-paren">)</span><a class="headerlink" href="#action.action_create" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string action_name</strong> (<em>in</em>) &#8211; unique name used as a key to store the action</li>
+<li><strong>string icon</strong> (<em>in</em>) &#8211; filename for the action&#8217;s icon</li>
+<li><strong>string title</strong> (<em>in</em>) &#8211; full title of the action for display (menu, toolbar, context menu, etc.)</li>
+<li><strong>actionFunc</strong> (<em>in</em>) &#8211; callback function for the action</li>
+<li><strong>string shortcut</strong> (<em>in</em>) &#8211; Qt formatted shortcut for the action, e.g. &#8216;Ctrl+O&#8217;.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 

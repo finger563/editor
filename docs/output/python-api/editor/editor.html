@@ -150,6 +150,174 @@ on meta-models and models using loadable
 libraries to perform meta-model specific
 operations such as generation, analysis,
 and deployment.</p>
+<dl class="function">
+<dt id="editor.convertModelToMeta">
+<code class="descclassname">editor.</code><code class="descname">convertModelToMeta</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.convertModelToMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to create classes based on the editor&#8217;s current model.
+It works on Model instances, which can have pointers, models, and model_attributes
+as children.  By converting the models in to named classes subclassing Model and adding
+named attributes subclassing Attribute it forms a new class structure which describes the
+meta model and which can be used to instantiate models.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="editor.Editor">
+<em class="property">class </em><code class="descclassname">editor.</code><code class="descname">Editor</code><a class="headerlink" href="#editor.Editor" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main editor class, which enables creating, loading, editing, and saving of 
+models, meta-models, and view-models.</p>
+<p>Models are saved as <a href="#id1"><span class="problematic" id="id2">*</span></a>.model files and contain the metamodel they were created with.</p>
+<p>Meta-models are saved as <a href="#id3"><span class="problematic" id="id4">*</span></a>.meta files and can be used to create new models.</p>
+<p>View-models are saved as <a href="#id5"><span class="problematic" id="id6">*</span></a>.view files and are automatically loaded as &lt;Model Type&gt;.view
+for each model that is opened in the visualizer.</p>
+<dl class="method">
+<dt id="editor.Editor.load_model">
+<code class="descname">load_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.load_model" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<em>in</em>) &#8211; the root object of a model, which is loaded into the tree-viewer and proxy models</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.clearModels">
+<code class="descname">clearModels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.clearModels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears all model data from the editor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.clearViewer">
+<code class="descname">clearViewer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.clearViewer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close all visualizer views.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.changeFilter">
+<code class="descname">changeFilter</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.changeFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event callback for when the user changes the filter type for the navigator.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.changeMode">
+<code class="descname">changeMode</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.changeMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event callback for when the user changes the editor mode.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.openModelView">
+<code class="descname">openModelView</code><span class="sig-paren">(</span><em>modelIndex</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.openModelView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event callback for when the user double-clicks on a model item in the tree-viewer.
+Sends the model item to the visualizer and creates a new EditorView for it if one does not exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelIndex</strong> (<em>in</em>) &#8211; index into the AbstractItemModel which has been selected for viewing.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.openModel">
+<code class="descname">openModel</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.openModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback to allow the user to select a model file based on the current mode of the editor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.open_model">
+<code class="descname">open_model</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.open_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decodes a saved <a href="#id7"><span class="problematic" id="id8">*</span></a>.{model, meta, view} file and loads it into the editor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.saveModel">
+<code class="descname">saveModel</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.saveModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a model according to the current mode of the editor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.menu_add_action">
+<code class="descname">menu_add_action</code><span class="sig-paren">(</span><em>menu_name</em>, <em>menu_action</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.menu_add_action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string menu_name</strong> (<em>in</em>) &#8211; name used to create the menu from <a class="reference internal" href="#editor.Editor.menubar_add_menu" title="editor.Editor.menubar_add_menu"><code class="xref py py-func docutils literal"><span class="pre">Editor.menubar_add_menu()</span></code></a>.</li>
+<li><strong>Action menu_action</strong> (<em>in</em>) &#8211; <a class="reference internal" href="action.html#action.Action" title="action.Action"><code class="xref py py-class docutils literal"><span class="pre">action.Action</span></code></a> object to bind to the menu.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.menubar_add_menu">
+<code class="descname">menubar_add_menu</code><span class="sig-paren">(</span><em>menu_name</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.menubar_add_menu" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string menu_name</strong> (<em>in</em>) &#8211; name of the menu, shortcut (denoted by &amp;) optional (note that the &amp; will be stripped)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.toolbar_add_action">
+<code class="descname">toolbar_add_action</code><span class="sig-paren">(</span><em>tb_name</em>, <em>tb_action</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.toolbar_add_action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string tb_name</strong> (<em>in</em>) &#8211; name used to create the toolbar from <a class="reference internal" href="#editor.Editor.toolbar_create" title="editor.Editor.toolbar_create"><code class="xref py py-func docutils literal"><span class="pre">Editor.toolbar_create()</span></code></a>.</li>
+<li><strong>Action tb_action</strong> (<em>in</em>) &#8211; <a class="reference internal" href="action.html#action.Action" title="action.Action"><code class="xref py py-class docutils literal"><span class="pre">action.Action</span></code></a> object to bind to the toolbar.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.toolbar_add_widget">
+<code class="descname">toolbar_add_widget</code><span class="sig-paren">(</span><em>tb_name</em>, <em>tb_widget</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.toolbar_add_widget" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string tb_name</strong> (<em>in</em>) &#8211; name used to create the toolbar from <a class="reference internal" href="#editor.Editor.toolbar_create" title="editor.Editor.toolbar_create"><code class="xref py py-func docutils literal"><span class="pre">Editor.toolbar_create()</span></code></a>.</li>
+<li><strong>Action tb_widget</strong> (<em>in</em>) &#8211; any pyQt widget to add to the toolbar.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Editor.toolbar_create">
+<code class="descname">toolbar_create</code><span class="sig-paren">(</span><em>tb_name</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.toolbar_create" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string tb_name</strong> (<em>in</em>) &#8211; name of the toolbar</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

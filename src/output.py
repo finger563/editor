@@ -64,6 +64,9 @@ class XStream(QtCore.QObject):
         return XStream._stderr
 
 class OutputWidget(QtGui.QWidget):
+    '''
+    Widget for redirecting and highlighting/formatting stdout/sderr.
+    '''
     def __init__(self, parent):
         super(OutputWidget, self).__init__(parent)
 
@@ -79,6 +82,9 @@ class OutputWidget(QtGui.QWidget):
         XStream.stderr().messageWritten.connect( self._console.insertPlainText )
 
 class TabbedOutputWidget(QtGui.QTabWidget):
+    '''
+    Tabbed widget for holding various types of output, e.g. stdout/stderr or embedded consoles.
+    '''
     def __init__(self, parent):
         super(TabbedOutputWidget, self).__init__(parent)
         self.setMovable(True)

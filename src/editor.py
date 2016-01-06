@@ -74,9 +74,11 @@ class Editor(QtGui.QMainWindow):
     for each model that is opened in the visualizer.
     '''
 
-    '''Models the editor is designed to load/edit/save
+    '''
+    Models the editor is designed to load/edit/save
     All inherit at some point from the original base model classes
-    Defined in meta.py'''
+    Defined in meta.py
+    '''
     editor_modes = ['Model','Meta Model','View Model']
 
     # Ways the tree view can filter the model (based on Meta-Type or Name)
