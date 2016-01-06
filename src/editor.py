@@ -25,6 +25,7 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 
 import copy
+from collections import OrderedDict
 
 from action import Action
 from editor_widget import TabbedEditor, EditorView
@@ -46,19 +47,54 @@ def convertModelToMeta(model):
     named attributes subclassing Attribute it forms a new class structure which describes the
     meta model and which can be used to instantiate models.  
     '''
+
+    allowed_kids = OrderedDict()
+    attr_types = OrderedDict()
+    for obj in model.children:
+        # These will be the available children_types of the class
+        if type(obj) == Model:
+            allowed_kids[convertModelToMeta(obj)] = obj['Cardinality']
+        # These will be pointers to other classes
+        elif type(obj) == Pointer:
+            # TODO: Go through the children of 'model' who are POINTERS and add new children
+            pass
+        # These will be the attributes of the new class
+        elif type(obj) == Model_Attribute:
+            k = obj['Kind']  # for some reason, putting obj['Kind'] in place of k does not work
+            def attrInit(self):
+                Attribute.__init__(self, k, None)
+            new_attr = type(
+                obj['Name'],
+                (Attribute, object, ),
+                {
+                    '__init__' : attrInit,
+                    'kind' : obj['Kind'],
+                    'tooltip' : obj['Tooltip'],
+                    'display' : obj['Display'],
+                    'editable' : obj['Editable'],
+                }
+            )
+            attr_types[obj['Name']] = new_attr
+
+    # Define the init function inline here for the new class, make sure all attributes,
+    # pointers, children, etc. are set up properly
+    def modelInit(self, parent = None):
+        Model.__init__(self, parent)
+        self.attributes = OrderedDict()
+        self.add_attribute('Name', 'string', '{}'.format(self.__class__.__name__))
+        self.children = Children(allowed=allowed_kids.keys(), cardinality = allowed_kids)
+        for name,attr in attr_types.iteritems():
+            self.set_attribute(name, attr())
+
     # TODO: Fix this so that everything is properly initialized:
     #       e.g. attributes, pointers, Children (_allowed), etc.
-    new_type = type( model['Name'], (Model, object, ), { '__init__' : Model.__init__ })
-    # TODO: Go through the children of 'model' who are MODEL_ATTRIBUTES and add attributes
-    attrs = get_children(model, 'Model_Attribute')
-    for a in attrs:
-        new_attr = type( a['Name'], (Attribute, object, ), { '__init__' : Attribute.__init__ })
-        new_attr.kind = a['Kind']
-        new_attr.tooltip = a['Tooltip']
-        new_attr.display = a['Display']
-        new_attr.editable = a['Editable']
-        # TODO: Figure out how to add this new type to the init of the model
-    # TODO: Go through the children of 'model' who are POINTERS and add new children
+    new_type = type( 
+        model['Name'], 
+        (Model, object, ), 
+        { 
+            '__init__' : modelInit
+        }
+    )
     return new_type
 
 class Editor(QtGui.QMainWindow):
@@ -305,7 +341,7 @@ class Editor(QtGui.QMainWindow):
         '''Saves a model according to the current mode of the editor.'''
         import dill
         root = self.model.getModel(QtCore.QModelIndex())
-        test = convertMetaToModel(root.children[0])
+        test = convertModelToMeta(root.children[0])
         test_obj = test()
         test_obj['Name'] = 'New Test Object'
         with open('test.model', 'w') as f:
@@ -313,6 +349,10 @@ class Editor(QtGui.QMainWindow):
         with open('test.model', 'r') as f:
             m = dill.load(f)
         print m['Name']
+        for name,a in m.attributes.iteritems():
+            print name, a, a.kind
+        print m.children._allowed
+        print m.children._cardinality
         # TODO: Figure out proper handling of meta-/view-/model serialization
         #       perhaps serialize all class defs out as a dict of name -> class def?
         return

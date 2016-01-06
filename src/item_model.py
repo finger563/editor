@@ -118,7 +118,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         for row in range(rows):
             childCount = parentNode.child_count()
             childNode = _type()
-            childNode['Name'] = 'New {} {}'.format( _type.__name__, childCount)
+            childNode['Name'] = 'New_{}_{}'.format( _type.__name__, childCount)
             success = parentNode.insert_child(position, childNode)
 
         self.endInsertRows()
@@ -156,30 +156,30 @@ def main():
     app = QtGui.QApplication(sys.argv)
 
     rootNode = Model()
-    rootNode['Name'] = "Project Root"
+    rootNode['Name'] = "Project_Root"
 
     dep = Model()
-    dep['Name'] = "My Deployment"
+    dep['Name'] = "My_Deployment"
     rootNode.add_child(dep)
 
     sw = Model()
-    sw['Name'] = "My Software"
+    sw['Name'] = "My_Software"
     rootNode.add_child(sw)
 
     pkg = Model()
-    pkg['Name'] = "My Package"
+    pkg['Name'] = "My_Package"
     sw.add_child(pkg)
 
     comp = Model()
-    comp['Name'] = "My Component"
+    comp['Name'] = "My_Component"
     pkg.add_child(comp)
 
     tmr = Model()
-    tmr['Name'] = "My Timer"
+    tmr['Name'] = "My_Timer"
     comp.add_child(tmr)
 
     hw = Model()
-    hw['Name'] = "My Hardware"
+    hw['Name'] = "My_Hardware"
     rootNode.add_child(hw)
 
     ''' SET UP THE MODEL, PROXY MODEL '''

@@ -42,7 +42,7 @@ class Attribute(object):
 
     def fromQVariant(self, variant):
         if self.kind in ['string','code','list_entry']:
-            self.value = variant.toString()
+            self.value = str(variant.toString())
         elif self.kind in ['int','integer']:
             self.value,tmp = variant.toInt()
         elif self.kind in ['float']:
@@ -74,6 +74,8 @@ class Model(object):
 
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', 'Root')
+        self.add_attribute('Cardinality', 'list_entry', Children.valid_cardinalities[0])
+        self.get_attribute('Cardinality').options = Children.valid_cardinalities
         self.kwargs = {}
 
     def __getitem__(self, key):
@@ -131,9 +133,9 @@ class Model_Attribute(Model):
     '''
     def __init__(self, parent = None, name = 'Attribute', kind = Attribute.allowed_types[0], tooltip = '', display = '', options = [], editable = True):
         super(Model_Attribute, self).__init__(parent)
-
         self.children = Children(allowed=[], cardinality = {})
-        self['Name'] = name
+        self.attributes = OrderedDict()
+        self.add_attribute( 'Name', 'string', name )
         self.set_attribute( 'Kind', Attribute( 'list_entry', kind ) )
         self.get_attribute( 'Kind' ).options = Attribute.allowed_types
         self.set_attribute( 'Tooltip', Attribute( 'string', tooltip ) )
@@ -162,6 +164,9 @@ class Pointer(Model):
         self.add_attribute('Name', 'string', 'Pointer')
 
 class Children(MutableSequence):
+
+    valid_cardinalities = [ '0..*', '1..*', '1' ]
+
     '''Children List
     
     _inner -- Contents of the list
