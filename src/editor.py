@@ -46,6 +46,10 @@ from output import TabbedOutputWidget
 #       of meta-model conflicts and model composition (need to figure out which one is root and where the
 #       other 'root' goes.
 
+# TODO: Allow for messages/services which are purely references to libarary/standard messages/services.
+#       Perhaps just allow publishers/subscribers/clients/servers to point to messages/services which
+#       are not in the model and are specified as a string just as they would be in the code?
+
 # TODO: Figure out how to update the meta-model without completely losing the edits to existing models if
 #       possible.  Perhaps just allow loading simultaneously the model + meta-model; and attempting to 
 #       resolve model changes when meta-model edits are performed.
@@ -73,7 +77,9 @@ def convertModelToMeta(model):
         elif type(obj) == Model_Attribute:
             k = obj['Kind']  # for some reason, putting obj['Kind'] in place of k does not work
             def attrInit(self):
-                Attribute.__init__(self, k, 'test')
+                # TODO: Test to make sure that all possible attributes get workable values
+                Attribute.__init__(self, k, '')
+                self.value = ''
             new_attr = type(
                 obj['Name'],
                 (Attribute, object, ),
