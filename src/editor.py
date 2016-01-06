@@ -31,15 +31,19 @@ from editor_widget import TabbedEditor, EditorView
 
 from item_model import ItemModel, SortFilterProxyModel
 
-from meta import Model, Pointer, Attribute, Children
+#from meta import Model, Pointer, Model_Attribute, Attribute, Children
 from view_model import ViewModel
 
 from tree_view import TreeView
 
 from output import TabbedOutputWidget
 
-def convertMetaToModel(name):
-    new_type = type( name, (Model, object, ), { '__init__' : Model.__init__ })
+def convertMetaToModel(model):
+    # TODO: Fix this so that everything is properly initialized:
+    #       e.g. attributes, pointers, Children (_allowed), etc.
+    new_type = type( model['Name'], (Model, object, ), { '__init__' : Model.__init__ })
+    # TODO: Go through the children of 'model' who are POINTERS and add new children
+    # TODO: Go through the children of 'model' who are MODEL_ATTRIBUTES and add attributes
     return new_type
 
 class Editor(QtGui.QMainWindow):
@@ -60,7 +64,9 @@ class Editor(QtGui.QMainWindow):
 
         self.init_ui()
         self.clearModels()
-        self.open_model('test_model.meta')
+        #self.open_model('test_model.meta')
+        from test_model import TestModel
+        self.load_model(TestModel)
 
         self.setWindowIcon(QtGui.QIcon('icons/editor.png'))
 
@@ -254,7 +260,7 @@ class Editor(QtGui.QMainWindow):
     def saveModel(self, event):
         import dill
         root = self.model.getModel(QtCore.QModelIndex())
-        test = convertMetaToModel(root.children[0]['Name'])
+        test = convertMetaToModel(root.children[0])
         test_obj = test()
         test_obj['Name'] = 'New Test Object'
         with open('test.model', 'w') as f:

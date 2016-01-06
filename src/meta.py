@@ -30,6 +30,7 @@ class Attribute(object):
     kind -- The datatype of the attribute e.g. string, pointer, float, bool etc.
     value -- The value of the attributes e.g. 'my_component', 1.642 etc.
     '''
+    allowed_types = ['string', 'code', 'list_entry', 'int', 'float', 'double', 'bool']
     tooltip = ''
     display = ''
     options = []
@@ -48,6 +49,8 @@ class Attribute(object):
             self.value,tmp = variant.toFloat()
         elif self.kind in ['double']:
             self.value,tmp = variant.toDouble()
+        elif self.kind in ['bool']:
+            self.value = variant.toBool()
 
 class Model(object):
     '''Generic Model/Container class
@@ -61,10 +64,12 @@ class Model(object):
         super(Model, self).__init__()
         self.parent = parent
 
-        self.children = Children(allowed=[Model,Pointer], 
+        self.children = Children(allowed=[Model,Pointer,Model_Attribute], 
                                  cardinality = {Model\
                                                 : '0..*',
                                                 Pointer\
+                                                : '0..*',
+                                                Model_Attribute\
                                                 : '0..*'})
 
         self.attributes = OrderedDict()
@@ -121,11 +126,28 @@ class Model(object):
     def add_attribute(self, name, kind, value):
         self.set_attribute(name, Attribute(kind, value))
 
+class Model_Attribute(Model):
+    '''
+    '''
+    def __init__(self, parent = None, name = 'Attribute', kind = Attribute.allowed_types[0], tooltip = '', display = '', options = [], editable = True):
+        super(Model_Attribute, self).__init__(parent)
+
+        self.children = Children(allowed=[], 
+                                 cardinality = {})
+        self['Name'] = name
+        self.set_attribute( 'Kind', Attribute( 'list_entry', kind ) )
+        self.get_attribute( 'Kind' ).options = Attribute.allowed_types
+        self.set_attribute( 'Tooltip', Attribute( 'string', tooltip ) )
+        self.set_attribute( 'Display', Attribute( 'string', display ) )
+        self.set_attribute( 'Editable', Attribute( 'bool', editable ) )
+        # TODO: Figure out how to handle options, i.e. they could be a simple list of strings
+        #       or they may be references to other types of objects
+        
 class Pointer(Model):
     '''
     '''
-    def __init__(self, src = None, dst = None, src_type = 'Model', dst_type = 'Model'):
-        super(Pointer, self).__init__()
+    def __init__(self, parent = None, src = None, dst = None, src_type = 'Model', dst_type = 'Model'):
+        super(Pointer, self).__init__(parent)
         # How to properly encapsulate these so they can be edited / viewed easily with
         # our current paradigm (which is focused on models and attributes)?
         self.src = src

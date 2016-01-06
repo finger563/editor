@@ -106,6 +106,9 @@ class AttributeEditor(QtGui.QWidget):
         if attr.kind in ['float','int','integer','double','string']:
             obj = QtGui.QLineEdit()
             obj.setText(str(attr.value))
+        elif attr.kind in ['bool']:
+            obj = QtGui.QCheckBox()
+            obj.setChecked(attr.value)
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
             self.highlight = syntax.CodeHighlighter(obj.document())

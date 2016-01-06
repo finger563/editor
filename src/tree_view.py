@@ -45,7 +45,6 @@ class TreeView(QtGui.QTreeView):
             delAction = QtGui.QAction('Delete {}'.format(item['Name']), self)
             delAction.triggered.connect(self.delTreeItem(mi))
             menu.addAction(delAction)
-
             for a in item.children._allowed:
                 addAction = QtGui.QAction('Add New {}'.format(a.__name__), self)
                 addAction.triggered.connect(self.addTreeItem(mi, a))
