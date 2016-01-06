@@ -31,6 +31,15 @@ class Attribute(object):
     value -- The value of the attributes e.g. 'my_component', 1.642 etc.
     '''
     allowed_types = ['string', 'code', 'list_entry', 'int', 'float', 'double', 'bool']
+    default_vals = {
+        'string' : '',
+        'code' : '',
+        'list_entry' : [],
+        'int' : 0,
+        'float' : 0.0,
+        'double' : 0.0,
+        'bool' : True
+    }
     tooltip = ''
     display = ''
     options = []

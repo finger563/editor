@@ -64,7 +64,7 @@ def convertModelToMeta(model):
     '''
 
     allowed_kids = OrderedDict()
-    attr_types = OrderedDict()
+    attr_dict = OrderedDict()
     for obj in model.children:
         # These will be the available children_types of the class
         if type(obj) == Model:
@@ -75,23 +75,20 @@ def convertModelToMeta(model):
             pass
         # These will be the attributes of the new class
         elif type(obj) == Model_Attribute:
-            k = obj['Kind']  # for some reason, putting obj['Kind'] in place of k does not work
             def attrInit(self):
                 # TODO: Test to make sure that all possible attributes get workable values
-                Attribute.__init__(self, k, '')
-                self.value = ''
+                Attribute.__init__(self, obj['Kind'], Attribute.default_vals[obj['Kind']])
             new_attr = type(
                 obj['Name'],
                 (Attribute, object, ),
                 {
                     '__init__' : attrInit,
-                    'kind' : obj['Kind'],
                     'tooltip' : obj['Tooltip'],
                     'display' : obj['Display'],
                     'editable' : obj['Editable'],
                 }
             )
-            attr_types[obj['Name']] = new_attr
+            attr_dict[obj['Name']] = new_attr()
 
     # Define the init function inline here for the new class, make sure all attributes,
     # pointers, children, etc. are set up properly
@@ -100,8 +97,8 @@ def convertModelToMeta(model):
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', '{}'.format(self.__class__.__name__))
         self.children = Children(allowed=allowed_kids.keys(), cardinality = allowed_kids)
-        for name,attr in attr_types.iteritems():
-            self.set_attribute(name, attr())
+        for name,attr in attr_dict.iteritems():
+            self.set_attribute(name, attr)
 
     # TODO: Fix this so that everything is properly initialized:
     #       e.g. attributes, pointers, Children (_allowed), etc.
@@ -368,14 +365,6 @@ class Editor(QtGui.QMainWindow):
         #test_obj['Name'] = 'New Test Object'
         with open('test.model', 'w') as f:
             dill.dump(test_obj, f)
-        with open('test.model', 'r') as f:
-            m = dill.load(f)
-        m = m()
-        print m['Name']
-        for name,a in m.attributes.iteritems():
-            print name, a, a.kind
-        print m.children._allowed
-        print m.children._cardinality
         # TODO: Figure out proper handling of meta-/view-/model serialization
         #       perhaps serialize all class defs out as a dict of name -> class def?
         return

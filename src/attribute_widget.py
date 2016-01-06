@@ -102,8 +102,6 @@ class AttributeEditor(QtGui.QWidget):
         label.setToolTip(attr.tooltip)
         label.setWordWrap(True)
 
-        print name, attr, attr.kind, attr.value
-
         obj = None
         if attr.kind in ['float','int','integer','double','string']:
             obj = QtGui.QLineEdit()
