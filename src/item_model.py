@@ -19,6 +19,8 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
+# TODO: Fix bug when insertRows fails because of cardinality error
+
 
 class ItemModel(QtCore.QAbstractItemModel):
     '''Implements the :class:`QAbstractItemModel` to interact with the
@@ -175,9 +177,8 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
             if self.filterAcceptsRow(r, index0):
                 inChildren = True
                 break
-        return QtCore.QString(
-            self.sourceModel().data(index0, self.filterRole())
-        ).contains(self.filterRegExp()) or inChildren
+        text = self.sourceModel().data(index0, self.filterRole())
+        return QtCore.QString(text).contains(self.filterRegExp()) or inChildren
 
 
 def main():
