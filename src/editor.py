@@ -79,7 +79,8 @@ from output import TabbedOutputWidget
 
 # TODO: Add pointer conversion operations to 'convertModelToMeta()'
 
-# TODO: Make names only unique within scopes; figure out how to enforce it
+# TODO: Make names only unique within scopes; enforce that no two children
+#       of the same parent share the same name.
 
 # TODO: Models can have same names depending on scope; make sure we
 #       use uniqueness here! (Editor.openEditorTabs)

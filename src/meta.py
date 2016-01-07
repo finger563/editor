@@ -110,10 +110,12 @@ class Model(object):
         super(Model, self).__init__()
         self.parent = parent
 
-        self.children = Children(allowed=[Model, Pointer, Model_Attribute],
+        self.children = Children(allowed=[Model,
+                                          Model_Pointer,
+                                          Model_Attribute],
                                  cardinality={Model:
                                               '0..*',
-                                              Pointer:
+                                              Model_Pointer:
                                               '0..*',
                                               Model_Attribute:
                                               '0..*'})
@@ -179,6 +181,52 @@ class Model(object):
 
     def add_attribute(self, name, kind, value):
         self.set_attribute(name, Attribute(kind, value))
+
+
+class Model_Pointer(Model):
+    '''
+    '''
+    def __init__(self,
+                 parent=None,
+                 name='Pointer',
+                 dst_type='Model',
+                 tooltip='',
+                 display=''):
+        super(Model_Pointer, self).__init__(parent)
+        self.children = Children(allowed=[], cardinality={})
+        self.attributes = OrderedDict()
+        self.add_attribute('Name', 'string', name)
+
+        def getNames(m):
+            retList = []
+            if type(m) == Model:
+                retList.append(m['Name'])
+            for c in m.children:
+                retList.extend(getNames(c))
+            return retList
+
+        def new_get_options(s, m):
+            r = m
+            while r.parent is not None:
+                r = r.parent
+            r = r.children[0]
+            return getNames(r)
+
+        def attrInit(s):
+            Attribute.__init__(s, 'list', dst_type)
+
+        a = type('Pointer',
+                 (Attribute, object, ),
+                 {
+                     '__init__': attrInit,
+                 }
+             )
+
+        a.get_options = lambda s: new_get_options(s, self)
+        self.set_attribute('Destination Type', a())
+
+        self.set_attribute('Tooltip', Attribute('string', tooltip))
+        self.set_attribute('Display', Attribute('string', display))
 
 
 class Model_Attribute(Model):

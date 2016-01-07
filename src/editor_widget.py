@@ -21,6 +21,9 @@ from editor_item import EditorItem
 # TODO: Add in view-model specific loading code once view_model has
 #       been fully specified
 
+# TODO: Can we set up the viewer so that by default it shows a model
+#       similarly to how webgme shows the meta-model?
+
 
 class EditorViewDelegate(QtGui.QItemDelegate):
     '''Handles the mapping between :class:`EditorView`'s data and the
