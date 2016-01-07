@@ -414,7 +414,6 @@ class Editor(QtGui.QMainWindow):
             if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
             root = root.children[0] # the actual root is not displayed and is always a Model()
-            print root['Name']
             # TODO: Test with meta, view, and model
             with open(fname, 'w') as f:
                 dill.dump(root, f)

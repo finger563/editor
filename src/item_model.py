@@ -110,7 +110,6 @@ class ItemModel(QtCore.QAbstractItemModel):
 
     def insertRows(self, position, rows, parent=QtCore.QModelIndex(), _type = None):
         self.beginInsertRows(parent, position, position + rows - 1)
-        print type(parent.model())
         parentNode= self.getModel(parent)
 
         for row in range(rows):
