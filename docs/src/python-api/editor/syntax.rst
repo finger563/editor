@@ -1,0 +1,6 @@
+Syntax
+======
+
+.. automodule:: syntax
+   :members:
+

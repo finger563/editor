@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Editor-Widget &mdash; Editor 0.1.0 documentation</title>
+  <title>Meta &mdash; Editor 0.1.0 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   
     <link rel="top" title="Editor 0.1.0 documentation" href="../../index.html"/>
         <link rel="up" title="Editor API" href="../../editor-api.html"/>
-        <link rel="next" title="Editor-Item" href="editor-item.html"/>
-        <link rel="prev" title="Item-Model" href="item-model.html"/> 
+        <link rel="next" title="Item-Model" href="item-model.html"/>
+        <link rel="prev" title="Editor" href="editor.html"/> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -88,9 +88,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../editor-api.html">Editor API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="meta.html">Meta</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Meta</a></li>
 <li class="toctree-l2"><a class="reference internal" href="item-model.html">Item-Model</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Editor-Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editor-widget.html">Editor-Widget</a></li>
 <li class="toctree-l2"><a class="reference internal" href="editor-item.html">Editor-Item</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphics-items.html">Graphics-Items</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree-view.html">Tree View</a></li>
@@ -136,11 +136,11 @@
       
           <li><a href="../../editor-api.html">Editor API</a> &raquo;</li>
       
-    <li>Editor-Widget</li>
+    <li>Meta</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/python-api/editor/editor-widget.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/python-api/editor/meta.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -150,11 +150,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-editor_widget">
-<span id="editor-widget"></span><h1>Editor-Widget<a class="headerlink" href="#module-editor_widget" title="Permalink to this headline">¶</a></h1>
-<p>Editor Widget</p>
-<p>These classes allow users to view
-and edit models in the project in tabs.</p>
+  <div class="section" id="module-meta">
+<span id="meta"></span><h1>Meta<a class="headerlink" href="#module-meta" title="Permalink to this headline">¶</a></h1>
+<p>This file defines Meta-Meta-Model.</p>
+<dl class="class">
+<dt id="meta.Attribute">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Attribute</code><span class="sig-paren">(</span><em>kind</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic Attributes class</p>
+<p>Each Attribute has the following:
+kind &#8211; The datatype of the attribute e.g. string, pointer, float, bool etc.
+value &#8211; The value of the attributes e.g. &#8216;my_component&#8217;, 1.642 etc.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="meta.Model">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic Model/Container class</p>
+<p>Every Model has the following:
+parent &#8211; A parent Model Object.
+children &#8211; A list of children (Model) objects.
+attributes &#8211; A dictionary of attributes.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="meta.Model_Attribute">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Model_Attribute</code><span class="sig-paren">(</span><em>parent=None</em>, <em>name='Attribute'</em>, <em>kind='string'</em>, <em>tooltip=''</em>, <em>display=''</em>, <em>options=[]</em>, <em>editable=True</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Model_Attribute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="meta.Pointer">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Pointer</code><span class="sig-paren">(</span><em>parent=None</em>, <em>src=None</em>, <em>dst=None</em>, <em>src_type='Model'</em>, <em>dst_type='Model'</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Pointer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 
@@ -164,10 +191,10 @@ and edit models in the project in tabs.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="editor-item.html" class="btn btn-neutral float-right" title="Editor-Item" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="item-model.html" class="btn btn-neutral float-right" title="Item-Model" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="item-model.html" class="btn btn-neutral" title="Item-Model" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="editor.html" class="btn btn-neutral" title="Editor" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

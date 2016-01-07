@@ -17,13 +17,11 @@ __status__ = 'Production'
 from meta import Model, Attribute
 
 objects = ['Container', 'Association']
-'''
-import inspect
-test = inspect.getmembers(classes, inspect.isclass)
-for key,val in test:
-    if issubclass(val,Model):
-        objects.append(key)
-'''
+#import inspect
+#test = inspect.getmembers(classes, inspect.isclass)
+#for key,val in test:
+#    if issubclass(val,Model):
+#        objects.append(key)
 
 # model related
 class Object(Attribute):
