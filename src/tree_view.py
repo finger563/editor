@@ -1,24 +1,21 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
-Meta-Model Editor 
+'''
+The Tree View provides a viewer for the model 
+as a collapsable, editable tree.  Furthermore the
+tree supports filtering on its proxy model for quickly
+navigating large projects.
+'''
 
-This program allows users to operate 
-on meta-models and models using loadable
-libraries to perform meta-model specific
-operations such as generation, analysis,
-and deployment.
-"""
-
-__author__ = "William Emfinger"
-__copyright__ = "Copyright 2016, ROSMOD"
-__credits__ = ["William Emfinger", "Pranav Srinivas Kumar"]
-__license__ = "GPL"
-__version__ = "0.4"
-__maintainer__ = "William Emfinger"
-__email__ = "emfinger@isis.vanderbilt.edu"
-__status__ = "Production"
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui

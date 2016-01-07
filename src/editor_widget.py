@@ -1,8 +1,6 @@
 '''
-Editor Widget 
-
 These classes allow users to view
-and edit models in the project in tabs.
+and edit models graphically in tabs.
 '''
 
 __author__ = 'William Emfinger'
@@ -26,6 +24,11 @@ from editor_item import EditorItem
 from layout import layout_create
 
 class EditorViewDelegate(QtGui.QItemDelegate):
+    '''
+    Handles the mapping between :class:`EditorView`'s data and the model's data.  Ensures that
+    whenever the view's data are edited, the model's data get updated and vise-versa.  This enables
+    ensuring that the tab's name changes whenever its associated model changes, for instance.
+    '''
     def __init__(self, parent=None):
         super(EditorViewDelegate, self).__init__(parent)
 
@@ -46,6 +49,10 @@ class EditorViewDelegate(QtGui.QItemDelegate):
         return super(EditorViewDelegate, self).setModelData(editor, model, index)
 
 class EditorScene(QtGui.QGraphicsScene):
+    '''
+    Subclass of :class:`QGraphicsScene` which holds all the :class:`EditorItem`s which are 
+    themselves subclasses of :class:`QGraphicsWidget`.
+    '''
     def __init__(self, parent):
         super(EditorScene, self).__init__(parent)
 
@@ -81,6 +88,12 @@ class EditorScene(QtGui.QGraphicsScene):
         return genericItem
 
 class EditorView(QtGui.QGraphicsView):
+    '''
+    Subclass of :class:`QGraphicsView` which acts as a viewer for some subset of the
+    model.  Automatically loads whatever :class:`ViewModel` is associated with the view's
+    model, as *<Model Name>.view*.  If the view file cannot be loaded or found, a default
+    implementation simply creates a :class:`EditorItem` object representing the model.
+    '''
 
     drag_mode_key = QtCore.Qt.Key_Control
     scroll_mode_key = QtCore.Qt.Key_Control

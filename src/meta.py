@@ -27,8 +27,9 @@ class Attribute(object):
     '''Generic Attributes class
 
     Each Attribute has the following:
-    kind -- The datatype of the attribute e.g. string, pointer, float, bool etc.
-    value -- The value of the attributes e.g. 'my_component', 1.642 etc.
+
+    * kind -- The datatype of the attribute e.g. string, pointer, float, bool etc.
+    * value -- The value of the attributes e.g. 'my_component', 1.642 etc.
     '''
     allowed_types = ['string', 'code', 'list', 'int', 'float', 'double', 'bool']
     default_vals = {
@@ -68,9 +69,10 @@ class Model(object):
     '''Generic Model/Container class
 
     Every Model has the following:
-    parent -- A parent Model Object.
-    children -- A list of children (Model) objects.
-    attributes -- A dictionary of attributes.
+
+    * parent -- A parent Model Object.
+    * children -- A list of children (Model) objects.
+    * attributes -- A dictionary of attributes.
     '''
     def __init__(self, parent = None):
         super(Model, self).__init__()

@@ -1,6 +1,4 @@
 '''
-View Attributes
-
 These classes specify the attributes
 that a view object can have when editing views
 '''

@@ -1,21 +1,21 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
+'''
 This implements the model 
 for the metamodel in the MVC
 paradigm.  It uses Qt's 
 AbstractItemModel base class.
-"""
+'''
 
-__author__ = "William Emfinger"
-__copyright__ = "Copyright 2016, ROSMOD"
-__credits__ = ["William Emfinger", "Pranav Srinivas Kumar"]
-__license__ = "GPL"
-__version__ = "0.4"
-__maintainer__ = "William Emfinger"
-__email__ = "emfinger@isis.vanderbilt.edu"
-__status__ = "Production"
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
@@ -59,7 +59,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DecorationRole:
             if index.column() == 0:
                 kind = node.kind()
-                return QtGui.QIcon(QtGui.QPixmap("icons/model/" + kind + ".png"))
+                return QtGui.QIcon(QtGui.QPixmap('icons/model/' + kind + '.png'))
         if role == ItemModel.sort_role:
             return node.kind()
         if role == ItemModel.filter_role:
@@ -83,7 +83,7 @@ class ItemModel(QtCore.QAbstractItemModel):
     def headerData(self, section, orientation, role):
         if role == QtCore.Qt.DisplayRole:
             if section == 0:
-                return "Model"
+                return 'Model'
         
     def flags(self, index):
         f = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
@@ -153,30 +153,30 @@ def main():
     app = QtGui.QApplication(sys.argv)
 
     rootNode = Model()
-    rootNode['Name'] = "Project_Root"
+    rootNode['Name'] = 'Project_Root'
 
     dep = Model()
-    dep['Name'] = "My_Deployment"
+    dep['Name'] = 'My_Deployment'
     rootNode.add_child(dep)
 
     sw = Model()
-    sw['Name'] = "My_Software"
+    sw['Name'] = 'My_Software'
     rootNode.add_child(sw)
 
     pkg = Model()
-    pkg['Name'] = "My_Package"
+    pkg['Name'] = 'My_Package'
     sw.add_child(pkg)
 
     comp = Model()
-    comp['Name'] = "My_Component"
+    comp['Name'] = 'My_Component'
     pkg.add_child(comp)
 
     tmr = Model()
-    tmr['Name'] = "My_Timer"
+    tmr['Name'] = 'My_Timer'
     comp.add_child(tmr)
 
     hw = Model()
-    hw['Name'] = "My_Hardware"
+    hw['Name'] = 'My_Hardware'
     rootNode.add_child(hw)
 
     ''' SET UP THE MODEL, PROXY MODEL '''
@@ -232,6 +232,6 @@ def main():
 
     sys.exit(app.exec_())
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 

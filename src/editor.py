@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 '''
-Meta-Model Editor 
-
 This program allows users to operate 
 on meta-models and models using loadable
 libraries to perform meta-model specific

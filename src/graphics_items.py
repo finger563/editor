@@ -1,13 +1,16 @@
-"""
-Graphics Items
-
+'''
 These classes are custom items implementing
 draw styles not natively found in qgraphics*items
+'''
 
-* author: William Emfinger
-* website: github.com/finger563/editor 
-* last edited: August 2015
-"""
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -38,6 +41,11 @@ def alignmentToQt(a):
     return aq
 
 class TextItem(QtGui.QGraphicsTextItem):
+    '''
+    Acts as a label for a :class:`EditorItem`.  Extends :class:`QGraphicsTextItem` with
+    more functionality for setting the alignment and position of the text relative to its
+    parent :class:`EditorItem`.
+    '''
     def __init__(self, text = '', parent = None, scene = None,
                  ha = QtCore.Qt.AlignLeft,
                  va = QtCore.Qt.AlignTop):
@@ -82,6 +90,10 @@ class TextItem(QtGui.QGraphicsTextItem):
         self.setAlignment(self._ha, self._va)
 
 class RoundRectItem(QtGui.QGraphicsRectItem):
+    '''
+    Extends :class:`QGraphicsRectItem` to support drawing a rectangle with
+    rounded edges.
+    '''
     def __init__(self, x, y, w, h, xr = 0.1, yr = 0.1, parent = None):
         super(RoundRectItem, self).__init__(x,y,w,h,parent)
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)

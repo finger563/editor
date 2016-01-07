@@ -1,6 +1,4 @@
 '''
-View Model
-
 These classes contain all the relevant
 infomation required to configure or draw
 a view for a model
@@ -22,6 +20,10 @@ from meta import Model, Pointer, Attribute, Children
 import view_attributes as view_attr
 
 class ViewModel(Model):
+    '''
+    Subclass of :class:`Model` which contains attributes that specify view controls
+    for objects, such as anchor points, relative text location, draw style, etc.
+    '''
     def __init__(self,
                  kind = 'Container',
                  root = 'top left',
