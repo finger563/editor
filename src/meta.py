@@ -11,25 +11,29 @@ __maintainer__ = 'William Emfinger'
 __email__ = 'emfinger@isis.vanderbilt.edu'
 __status__ = 'Production'
 
-import os
 from collections import OrderedDict, MutableSequence
 
 # TODO: Figure out how exactly to create pointers in meta-models
 
-# TODO: Figure out how to convert pointer meta-models into pointers in real-models,
-#       need to determine what objects they correspond to, what their interaction paradigm
-#       is, and how they will be edited (and viewed)
+# TODO: Figure out how to convert pointer meta-models into pointers in
+#       real-models, need to determine what objects they correspond
+#       to, what their interaction paradigm is, and how they will be
+#       edited (and viewed)
 #
-#       Perhaps Pointers get serialized into attributes whose options are objects of that type?
-#       Need support for getting all objects of a type within a scope of a model at run-time
+#       Perhaps Pointers get serialized into attributes whose options
+#       are objects of that type?  Need support for getting all
+#       objects of a type within a scope of a model at run-time
 
-# TODO: Figure out how to properly handle dependencies between objects (esp. attributes)
+# TODO: Figure out how to properly handle dependencies between objects
+#       (esp. attributes)
 
 # TODO: Add scoping to some dependent attributes (e.g. for pointers etc.)
 
-# TODO: Figure out how to handle options for attributes, i.e. they could be a simple list of strings
-#       or they may be references to other types of objects
-#       e.g. pointer src_kind options is dynamic based on the FCO names
+# TODO: Figure out how to handle options for attributes, i.e. they
+#       could be a simple list of strings or they may be references to
+#       other types of objects e.g. pointer src_kind options is
+#       dynamic based on the FCO names
+
 
 def get_children(model, kind):
     if model.kind() == kind:
@@ -40,28 +44,38 @@ def get_children(model, kind):
             kids.extend(get_children(c, kind))
         return kids
 
+
 class Attribute(object):
     '''Generic Attributes class
 
     Each Attribute has the following:
 
-    * kind -- The datatype of the attribute e.g. string, pointer, float, bool etc.
+    * kind -- The datatype of the attribute e.g. pointer, float, bool etc.
     * value -- The value of the attributes e.g. 'my_component', 1.642 etc.
     '''
-    allowed_types = ['string', 'code', 'list', 'int', 'float', 'double', 'bool']
+    allowed_types = [
+        'string',
+        'code',
+        'list',
+        'int',
+        'float',
+        'double',
+        'bool'
+    ]
     default_vals = {
-        'string' : '',
-        'code' : '',
-        'list' : [],
-        'int' : 0,
-        'float' : 0.0,
-        'double' : 0.0,
-        'bool' : True
+        'string': '',
+        'code': '',
+        'list': [],
+        'int': 0,
+        'float': 0.0,
+        'double': 0.0,
+        'bool': True
     }
     tooltip = ''
     display = ''
     options = []
     editable = True
+
     def __init__(self, kind, value):
         super(Attribute, self).__init__()
         self.kind = kind
@@ -71,16 +85,17 @@ class Attribute(object):
         return self.options
 
     def fromQVariant(self, variant):
-        if self.kind in ['string','code','list']:
+        if self.kind in ['string', 'code', 'list']:
             self.value = str(variant.toString())
-        elif self.kind in ['int','integer']:
-            self.value,tmp = variant.toInt()
+        elif self.kind in ['int', 'integer']:
+            self.value, tmp = variant.toInt()
         elif self.kind in ['float']:
-            self.value,tmp = variant.toFloat()
+            self.value, tmp = variant.toFloat()
         elif self.kind in ['double']:
-            self.value,tmp = variant.toDouble()
+            self.value, tmp = variant.toDouble()
         elif self.kind in ['bool']:
             self.value = variant.toBool()
+
 
 class Model(object):
     '''Generic Model/Container class
@@ -91,22 +106,25 @@ class Model(object):
     * children -- A list of children (Model) objects.
     * attributes -- A dictionary of attributes.
     '''
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(Model, self).__init__()
         self.parent = parent
 
-        self.children = Children(allowed=[Model,Pointer,Model_Attribute], 
-                                 cardinality = {Model\
-                                                : '0..*',
-                                                Pointer\
-                                                : '0..*',
-                                                Model_Attribute\
-                                                : '0..*'})
+        self.children = Children(allowed=[Model, Pointer, Model_Attribute],
+                                 cardinality={Model:
+                                              '0..*',
+                                              Pointer:
+                                              '0..*',
+                                              Model_Attribute:
+                                              '0..*'})
 
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', 'Root')
-        self.add_attribute('Cardinality', 'list', Children.valid_cardinalities[0])
-        self.get_attribute('Cardinality').options = Children.valid_cardinalities
+        self.add_attribute('Cardinality',
+                           'list', 
+                           Children.valid_cardinalities[0])
+        self.get_attribute(
+            'Cardinality').options = Children.valid_cardinalities
         self.kwargs = {}
 
     def __getitem__(self, key):
@@ -162,40 +180,56 @@ class Model(object):
     def add_attribute(self, name, kind, value):
         self.set_attribute(name, Attribute(kind, value))
 
+
 class Model_Attribute(Model):
     '''
     '''
-    def __init__(self, parent = None, name = 'Attribute', kind = Attribute.allowed_types[0], tooltip = '', display = '', options = [], editable = True):
+    def __init__(self,
+                 parent=None,
+                 name='Attribute',
+                 kind=Attribute.allowed_types[0],
+                 tooltip='',
+                 display='',
+                 options=[],
+                 editable=True):
         super(Model_Attribute, self).__init__(parent)
-        self.children = Children(allowed=[], cardinality = {})
+        self.children = Children(allowed=[], cardinality={})
         self.attributes = OrderedDict()
-        self.add_attribute( 'Name', 'string', name )
-        self.set_attribute( 'Kind', Attribute( 'list', kind ) )
-        self.get_attribute( 'Kind' ).options = Attribute.allowed_types
-        self.set_attribute( 'Tooltip', Attribute( 'string', tooltip ) )
-        self.set_attribute( 'Display', Attribute( 'string', display ) )
-        self.set_attribute( 'Editable', Attribute( 'bool', editable ) )
-        
+        self.add_attribute('Name', 'string', name)
+        self.set_attribute('Kind', Attribute('list', kind))
+        self.get_attribute('Kind').options = Attribute.allowed_types
+        self.set_attribute('Tooltip', Attribute('string', tooltip))
+        self.set_attribute('Display', Attribute('string', display))
+        self.set_attribute('Editable', Attribute('bool', editable))
+
+
 class Pointer(Model):
     '''
     '''
-    def __init__(self, parent = None, src = None, dst = None, src_type = 'Model', dst_type = 'Model'):
+    def __init__(self,
+                 parent=None,
+                 src=None,
+                 dst=None,
+                 src_type='Model',
+                 dst_type='Model'):
         super(Pointer, self).__init__(parent)
-        # How to properly encapsulate these so they can be edited / viewed easily with
-        # our current paradigm (which is focused on models and attributes)?
+        # How to properly encapsulate these so they can be edited /
+        # viewed easily with our current paradigm (which is focused on
+        # models and attributes)?
         self.src = src
         self.dst = dst
         self.src_type = src_type
         self.dst_type = dst_type
-        self.children = Children(allowed=[], cardinality = {})
+        self.children = Children(allowed=[], cardinality={})
         self.add_attribute('Name', 'string', 'Pointer')
+
 
 class Children(MutableSequence):
 
-    valid_cardinalities = [ '0..*', '1..*', '1' ]
+    valid_cardinalities = ['0..*', '1..*', '1']
 
     '''Children List
-    
+
     _inner -- Contents of the list
     _allowed -- The list will accept only object types contained in _allowed
     _cardinality -- Cardinality of each accepted type
@@ -207,18 +241,25 @@ class Children(MutableSequence):
 
     def __len__(self):
         return len(self._inner)
+
     def __iter__(self):
         return iter(self._inner)
+
     def __contains__(self, item):
         return item in self._inner
+
     def __getitem__(self, index):
         return self._inner[index]
+
     def __setitem__(self, index, value):
         self._inner[index] = value
+
     def __delitem__(self, index):
         del self._inner[index]
+
     def __repr__(self):
         return 'Children({})'.format(self._inner)
+
     def insert(self, index, item):
         if type(item) in self._allowed:
             if item not in self._inner:
@@ -228,7 +269,11 @@ class Children(MutableSequence):
                     if type(item) not in children_types:
                         return self._inner.insert(index, item)
                     else:
-                        print 'ERROR::Cardinality Error!'
+                        print 'ERROR: Cardinality Insert Error:\n\t{}'.format(
+                            'An object of type \'{}\' already exists!'.format(
+                                item.__class__.__name__
+                            )
+                        )
                         raise 'Cardinality Error'
                 else:
                     return self._inner.insert(index, item)

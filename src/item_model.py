@@ -19,8 +19,6 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
-# TODO: Fix bug when insertRows fails because of cardinality error
-
 
 class ItemModel(QtCore.QAbstractItemModel):
     '''Implements the :class:`QAbstractItemModel` to interact with the
@@ -143,6 +141,9 @@ class ItemModel(QtCore.QAbstractItemModel):
             childNode['Name'] = 'New_{}_{}'.format(_type.__name__,
                                                    childCount)
             success = parentNode.insert_child(position, childNode)
+            if not success:
+                self.beginResetModel()
+                self.endResetModel()
         self.endInsertRows()
         return success
 
