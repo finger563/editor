@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-The Tree View provides a viewer for the model 
+The Tree View provides a viewer for the model
 as a collapsable, editable tree.  Furthermore the
 tree supports filtering on its proxy model for quickly
 navigating large projects.
@@ -17,14 +17,13 @@ __maintainer__ = 'William Emfinger'
 __email__ = 'emfinger@isis.vanderbilt.edu'
 __status__ = 'Production'
 
-from PyQt4 import QtCore
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
+
 
 class TreeView(QtGui.QTreeView):
 
     def edit(self, index, trigger, event):
-        # don't want to enter renaming mode every time we 
+        # don't want to enter renaming mode every time we
         # want to open the graphical editor
         if trigger == QtGui.QAbstractItemView.DoubleClicked:
             return False
@@ -36,27 +35,29 @@ class TreeView(QtGui.QTreeView):
         indexes = self.selectedIndexes()
         m = self.model().sourceModel()
         if indexes:
-            mi = self.model().mapToSource( indexes[0] )
+            mi = self.model().mapToSource(indexes[0])
             if not mi.isValid():
                 return
-            item = m.getModel( mi )
+            item = m.getModel(mi)
 
             delAction = QtGui.QAction('Delete {}'.format(item['Name']), self)
             delAction.triggered.connect(self.delTreeItem(mi))
             menu.addAction(delAction)
             for a in item.children._allowed:
-                addAction = QtGui.QAction('Add New {}'.format(a.__name__), self)
+                addAction = QtGui.QAction(
+                    'Add New {}'.format(a.__name__),
+                    self
+                )
                 addAction.triggered.connect(self.addTreeItem(mi, a))
                 menu.addAction(addAction)
-            
             menu.exec_(e.globalPos())
 
     def addTreeItem(self, mi, _type):
         def genericItem(e):
-            self.model().sourceModel().insertRows( 0, 1, mi, _type )
+            self.model().sourceModel().insertRows(0, 1, mi, _type)
         return genericItem
 
     def delTreeItem(self, mi):
         def genericItem(e):
-            self.model().sourceModel().removeRows( mi.row(), 1, mi.parent() )
+            self.model().sourceModel().removeRows(mi.row(), 1, mi.parent())
         return genericItem
