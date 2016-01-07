@@ -19,6 +19,9 @@ from meta import Model, Pointer, Attribute, Children
 
 import view_attributes as view_attr
 
+# TODO: Figure out the structure of the view model and how
+#       to access the classes and attributes of the view-model
+
 class ViewModel(Model):
     '''
     Subclass of :class:`Model` which contains attributes that specify view controls

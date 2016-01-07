@@ -22,21 +22,31 @@ import view_attributes as view_attr
 from layout import layout_create, valid_layouts
 from graphics_items import RoundRectItem, TextItem, PushButton
 
+# TODO: Make ItemDelegate work for dictionary editor created in
+#       attribute editor
+
+# TODO: there is a dependency between the text size and the item size
+#       of EditorItem because it's all max-based, when the text
+#       shrinks the item should shrink too but can't because the rect
+#       is preventing it
+
+
 class EditorItemWidget(QtGui.QWidget):
+    '''Wrapper class for :class:`EditorItem` so that an
+    :class:`EditorItem` can be configured and automatically used with
+    :class:`EditorItemDelegate`
     '''
-    Wrapper class for :class:`EditorItem` so that an :class:`EditorItem` can be configured and automatically
-    used with :class:`EditorItemDelegate`
-    '''
-    def __init__(self, parent=None, ei = None):
+    def __init__(self, parent=None, ei=None):
         super(EditorItemWidget, self).__init__(parent)
         self.item = ei
 
+
 class EditorItemDelegate(QtGui.QItemDelegate):
-    '''
-    Handles the mapping between :class:`EditorItem`'s data and the model's data.  Ensures that
-    whenever the item's data are edited, the model's data get updated and vise-versa.  This eables
-    ensuring that the graphics object's text label changes whenever its associated model changes, 
-    for instance.
+    '''Handles the mapping between :class:`EditorItem`'s data and the
+    model's data.  Ensures that whenever the item's data are edited,
+    the model's data get updated and vise-versa.  This eables ensuring
+    that the graphics object's text label changes whenever its
+    associated model changes, for instance.
     '''
     def __init__(self, parent=None):
         super(EditorItemDelegate, self).__init__(parent)
@@ -51,13 +61,14 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
     def setModelData(self, editor, model, index):
-        # TODO: Make ItemDelegate work for dictionary editor created in attribute editor
         if type(editor) == EditorItemWidget:
             return
         elif type(editor) == PushButton:
             model.setData(index, editor.text())
             return
-        return super(EditorItemDelegate, self).setModelData(editor, model, index)
+        return super(EditorItemDelegate,
+                     self).setModelData(editor, model, index)
+
 
 class EditorItem(QtGui.QGraphicsWidget):
     '''
@@ -65,14 +76,13 @@ class EditorItem(QtGui.QGraphicsWidget):
     '''
     def __init__(self,
                  index,
-                 parent = None):
+                 parent=None):
         super(EditorItem, self).__init__(parent)
 
         # Perhaps need an ItemDelegate/StyledItemDelegate
         # which transforms data from editor to model and back
 
         # perhaps just point this to the ItemModel()?
-        #self.index = modelIndex
         self.modelindex = index
         self.dataMapper = QtGui.QDataWidgetMapper()
         self.dataMapper.setModel(self.modelindex.model())
@@ -80,17 +90,17 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.dataMapper.setCurrentModelIndex(self.modelindex)
         self.delegate = EditorItemDelegate(self)
         self.dataMapper.setItemDelegate(self.delegate)
-        self.itemWidget = EditorItemWidget(None,self)
+        self.itemWidget = EditorItemWidget(None, self)
         self.dataMapper.addMapping(self.itemWidget, 0)
         
         # graphics item which represents
         self._item = None
         # text label of this item
         item = self.modelindex.model().getModel(self.modelindex)
-        self._label = TextItem( item['Name'] , parent = self)
+        self._label = TextItem(item['Name'], parent=self)
 
         self.loadResources()
-        #self.setAcceptDrops(True)
+        # self.setAcceptDrops(True)
         self.setAcceptHoverEvents(True)
         self.initializeFlags()
         self.updateGraphicsItem()
@@ -105,7 +115,12 @@ class EditorItem(QtGui.QGraphicsWidget):
             self.viewModel()[item.kind()]['text horizontal alignment'],
             self.viewModel()[item.kind()]['text vertical alignment']
         )
-        self._label.setPos(self.viewModel()['text location'], self.pos(), width, height)
+        self._label.setPos(
+            self.viewModel()['text location'],
+            self.pos(),
+            width,
+            height
+        )
         '''
 
     def createItem(self, width, height):
@@ -115,7 +130,9 @@ class EditorItem(QtGui.QGraphicsWidget):
         draw_style = self.viewModel()['draw style']
         if self.viewModel()['icon'] and draw_style == 'icon':
             self._item = QtGui.QGraphicsPixmapItem()
-            self._item.setPixmap( QtGui.QPixmap(self.viewModel()['icon']).scaled(width,height) )
+            self._item.setPixmap(
+                QtGui.QPixmap(self.viewModel()['icon']).scaled(width,height)
+            )
         else:
             if draw_style == 'rect':
                 self._item = QtGui.QGraphicsRectItem(0,0,width,height)
@@ -128,7 +145,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         '''
 
     def loadResources(self):
-        self.setLayout( layout_create( 'horizontal' ) )
+        self.setLayout(layout_create('horizontal'))
         '''
         new_layout = layout_create(self.viewModel()['layout style'])
         if type(self.layout()) != type(new_layout):
@@ -141,16 +158,16 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.updateLabel(width, height)
         self.createItem(width, height)
 
-    def paint(self, painter, option, widget = None):
+    def paint(self, painter, option, widget=None):
         super(EditorItem, self).paint(painter, option, widget)
         if self._item:
             self._item.paint(painter, option, widget)
 
     def boundingRect(self):
-        minx =0; miny=0; maxx=0;maxy=0
-        # TODO: there is a dependency between the text size and the item size
-        #       because it's all max-based, when the text shrinks the item should
-        #       shrink too but can't because the rect is preventing it
+        minx = 0
+        miny = 0
+        maxx = 0
+        maxy = 0
         '''
         if self._item:
             brect = self._item.boundingRect()
@@ -161,27 +178,28 @@ class EditorItem(QtGui.QGraphicsWidget):
         '''
         if self._label:
             brect = self._label.boundingRect()
-            minx = min(brect.x(),minx)
-            miny = min(brect.y(),miny)
+            minx = min(brect.x(), minx)
+            miny = min(brect.y(), miny)
             maxx = max(maxx, brect.x() + brect.width())
             maxy = max(maxy, brect.y() + brect.height())
-        retRect = QtCore.QRectF(minx,miny, maxx-minx, maxy-miny)
+        retRect = QtCore.QRectF(minx, miny, maxx-minx, maxy-miny)
         return retRect
 
     def sizeHint(self, which, constraint):
-        shw = 0; shh = 0
+        shw = 0
+        shh = 0
         sh = self.layout().sizeHint(which, constraint)
         shw = sh.width()
         shh = sh.height()
-        shw = max( shw, self.boundingRect().width())
-        shh = max( shh, self.boundingRect().height())
+        shw = max(shw, self.boundingRect().width())
+        shh = max(shh, self.boundingRect().height())
         return QtCore.QSizeF(
-            max(shw, 50), #self.viewModel()['width']),
-            max(shh, 50)  #self.viewModel()['height'])
+            max(shw, 50),  # self.viewModel()['width']),
+            max(shh, 50)  # self.viewModel()['height'])
         )
         
     def updateGraphicsItem(self):
-        #self.layout().activate()
+        # self.layout().activate()
         self.prepareGeometryChange()
         sh = self.sizeHint(QtCore.Qt.SizeHint(), QtCore.QSizeF())
         width = sh.width()
@@ -196,13 +214,13 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.updateGraphicsItem()
 
     def removeChild(self, child):
-        # Should this just point down to the underlying model's 
+        # Should this just point down to the underlying model's
         # removeRows() method and then let the updating take effect?
         self.layout().removeItem(child)
         self.updateGraphicsItem()
 
     def addChild(self, child):
-        # Should this just point down to the underlying model's 
+        # Should this just point down to the underlying model's
         # insertRows() method and then let the updating take effect?
         self.layout().addItem(child)
         self.updateGraphicsItem()
@@ -223,11 +241,11 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.itemWidget.mouseDoubleClickEvent(e)
         '''
         editor = self.scene().parent().getEditor()
-        editor.update( self.dataMapper )
+        editor.update(self.dataMapper)
         editor.show()
         editor.raise_()
 
-    def updateAttributes(self,attrs):
+    def updateAttributes(self, attrs):
         self.loadResources()
         self.updateGraphicsItem()
                 
@@ -272,12 +290,12 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def addNewItem(self, _type):
         def genericItem(e):
-            self.modelindex.model().insertRows( 0, 1, self.modelindex, _type )
+            self.modelindex.model().insertRows(0, 1, self.modelindex, _type)
         return genericItem
 
     def delete(self, event):
         # What should this method do?
-        # Should this just point down to the underlying model's 
+        # Should this just point down to the underlying model's
         # removeRows() method and then let the updating take effect?
         for i in range(self.layout().count()):
             self.layout().itemAt(0).delete(None)
@@ -288,7 +306,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         QtGui.QGraphicsWidget.mousePressEvent(self, event)
 
     def mouseMoveEvent(self, event):
-        QtGui.QGraphicsWidget.mouseMoveEvent(self,event)
+        QtGui.QGraphicsWidget.mouseMoveEvent(self, event)
 
     def mouseReleaseEvent(self, event):
         QtGui.QGraphicsWidget.mouseReleaseEvent(self, event)

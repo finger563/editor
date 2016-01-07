@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 '''
-This implements the model 
+This implements the model
 for the metamodel in the MVC
-paradigm.  It uses Qt's 
+paradigm.  It uses Qt's
 AbstractItemModel base class.
 '''
 
@@ -19,12 +19,16 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
-class ItemModel(QtCore.QAbstractItemModel):
 
+class ItemModel(QtCore.QAbstractItemModel):
+    '''Implements the :class:`QAbstractItemModel` to interact with the
+    underlying data-model, and create :class:`QModelIndex` objects for
+    retrieving and setting data.
+    '''
     sort_role = QtCore.Qt.UserRole
     filter_role = QtCore.Qt.UserRole + 1
-    
-    def __init__(self, root, parent = None):
+
+    def __init__(self, root, parent=None):
         super(ItemModel, self).__init__(parent)
         self.rootNode = root
         self.filter_type = 'Meta'
@@ -42,13 +46,13 @@ class ItemModel(QtCore.QAbstractItemModel):
         else:
             parentNode = parent.internalPointer()
         return parentNode.child_count()  # should be implemented by data model
-        
+
     def columnCount(self, parent):
         return 1
 
     def set_filter_type(self, _type):
         self.filter_type = _type
-        
+
     def data(self, index, role):
         if not index.isValid():
             return None
@@ -59,7 +63,9 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DecorationRole:
             if index.column() == 0:
                 kind = node.kind()
-                return QtGui.QIcon(QtGui.QPixmap('icons/model/' + kind + '.png'))
+                return QtGui.QIcon(
+                    QtGui.QPixmap('icons/model/' + kind + '.png')
+                )
         if role == ItemModel.sort_role:
             return node.kind()
         if role == ItemModel.filter_role:
@@ -76,53 +82,74 @@ class ItemModel(QtCore.QAbstractItemModel):
             node = index.internalPointer()
             if role == QtCore.Qt.EditRole:
                 node.attributes.values()[index.column()].fromQVariant(value)
-                self.dataChanged.emit(index,index)
+                self.dataChanged.emit(index, index)
                 return True
         return False
-    
+
     def headerData(self, section, orientation, role):
         if role == QtCore.Qt.DisplayRole:
             if section == 0:
                 return 'Model'
-        
+
     def flags(self, index):
         f = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
         if index.column() == 0:
             f = f | QtCore.Qt.ItemIsEditable
         return f
-        
+
     def index(self, row, column, parent):
+        '''Returns a :class:`QModelIndex` for the child of the parent at row,
+        col.
+        :param in int row: row number
+        :param in int column: column number
+        :param in parent: :class:`QModelIndex` of the parent
+        '''
         parentNode = self.getModel(parent)
-        childItem = parentNode.child(row)   # child should be implemented by data model
+        # child should be implemented by data model
+        childItem = parentNode.child(row)
         if not childItem:
             return QtCore.QModelIndex()
         else:
             return self.createIndex(row, column, childItem)
-        
+
     def parent(self, index):
-        #index.row() , index.column()
+        '''Returns a :class:`QModelIndex` for the parent of index.'''
+        # index.row() , index.column()
         node = self.getModel(index)
         parentNode = node.parent
         if parentNode == self.rootNode:
             return QtCore.QModelIndex()
-        return self.createIndex(parentNode.row(), 0, parentNode)  
-        # data model needs to have a row method, e.g. parent.children.index(self)
+        return self.createIndex(parentNode.row(), 0, parentNode)
+        # data model needs to have a row method,
+        # e.g. parent.children.index(self)
 
-    def insertRows(self, position, rows, parent=QtCore.QModelIndex(), _type = None):
+    def insertRows(self, position, rows, parent=QtCore.QModelIndex(),
+                   _type=None):
+        '''Adds children to the model at position.
+        :param in position: a :class:`QModelIndex` where the new children go
+        :param in rows: number of new children to insert
+        :param in parent: :class:`QModelIndex` of the parent of new children
+        '''
         self.beginInsertRows(parent, position, position + rows - 1)
-        parentNode= self.getModel(parent)
+        parentNode = self.getModel(parent)
 
         for row in range(rows):
             childCount = parentNode.child_count()
             childNode = _type()
-            childNode['Name'] = 'New_{}_{}'.format( _type.__name__, childCount)
+            childNode['Name'] = 'New_{}_{}'.format(_type.__name__,
+                                                   childCount)
             success = parentNode.insert_child(position, childNode)
         self.endInsertRows()
         return success
 
     def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
-        parentNode= self.getModel(parent)
-        self.beginRemoveRows(parent, position, position + rows  -1)
+        '''Removes children from the model at position.
+        :param in position: a :class:`QModelIndex` where the children start
+        :param in rows: number of children to delete
+        :param in parent: :class:`QModelIndex` of the parent of the children
+        '''
+        parentNode = self.getModel(parent)
+        self.beginRemoveRows(parent, position, position + rows - 1)
 
         for row in range(rows):
             success = parentNode.remove_child(position)
@@ -130,25 +157,30 @@ class ItemModel(QtCore.QAbstractItemModel):
         self.endRemoveRows()
         return success
 
+
 class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
-
-    def __init__(self, parent):
-        super(SortFilterProxyModel,self).__init__(parent)
-
+    '''Extends :class:`QSortFilterProxyModel` to customize filtering on a
+    :class:`QAbstractItemModel`.
     '''
+    def __init__(self, parent):
+        super(SortFilterProxyModel, self).__init__(parent)
+
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
         inChildren = False
         for r in range(index0.internalPointer().child_count()):
-            if self.filterAcceptsRow(r,index0):
+            if self.filterAcceptsRow(r, index0):
                 inChildren = True
                 break
-        return QtCore.QString(self.sourceModel().data(index0, self.filterRole())).contains(self.filterRegExp()) or inChildren
-    '''
+        return QtCore.QString(
+            self.sourceModel().data(index0, self.filterRole())
+        ).contains(self.filterRegExp()) or inChildren
+
+
 def main():
     import sys
     from attribute_widget import AttributeEditor
-    from meta import Model, Attribute, Children
+    from meta import Model
 
     app = QtGui.QApplication(sys.argv)
 
@@ -181,7 +213,6 @@ def main():
 
     ''' SET UP THE MODEL, PROXY MODEL '''
     
-    #proxyModel = QtGui.QSortFilterProxyModel()
     proxyModel = SortFilterProxyModel(None)
     proxyModel.setDynamicSortFilter(True)
     proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
@@ -218,7 +249,6 @@ def main():
     vbox.addWidget(filterEdit)
     vbox.addWidget(treeView)
     vbox.addWidget(treeView2)
-    #vbox.addWidget(ae)
     mainWidget.setLayout(vbox)
     mainWidget.show()
     app.setActiveWindow(mainWidget)
@@ -226,12 +256,11 @@ def main():
     ae.show()
     ae.raise_()
 
-    swIndex = model.index(1,0, QtCore.QModelIndex())
-    model.insertRows(0,5,swIndex)
-    #model.removeRows(1,1)
+    swIndex = model.index(1, 0, QtCore.QModelIndex())
+    model.insertRows(0, 5, swIndex)
+    # model.removeRows(1, 1)
 
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()
-

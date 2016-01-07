@@ -19,24 +19,31 @@ __status__ = 'Production'
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from collections import OrderedDict
 from graphics_items import PushButton
 
 from code_editor import CodeEditor
 
 # TODO: Integrate validators into the attribute editor
+
 # TODO: Figure out how to handle dependent attribute editing
 #       e.g. options/options_type & scope depending on on the kind of attribute
 
+# TODO: Convert attribute editor dataMapper to ManualSubmit to allow
+#       cancelling edits Make sure that changing it here doesn't
+#       affect the EditorItem's interaction
+
+# TODO: Create an object here which fully encapsulates dictionary editing
+
+
 class AttributeEditor(QtGui.QWidget):
-    '''
-    Enables editing of the attributes of a model object.  Interfaces with a 
-    subclass of a :class:`QDataWidgetMapper` to enable automatic updating back and 
-    forth between the model and the editor.
+    '''Enables editing of the attributes of a model object.  Interfaces
+    with a subclass of a :class:`QDataWidgetMapper` to enable
+    automatic updating back and forth between the model and the
+    editor.
     '''
     def __init__(self, parent):
-        super(AttributeEditor,self).__init__(parent)
-        self.setContentsMargins(0,0,0,0)
+        super(AttributeEditor, self).__init__(parent)
+        self.setContentsMargins(0, 0, 0, 0)
         self.setMaximumWidth(300)
 
         self.vbox = QtGui.QVBoxLayout()
@@ -45,8 +52,6 @@ class AttributeEditor(QtGui.QWidget):
         self._unsaved_edits = False
         self._layout = None
 
-        # TODO: Convert attribute editor dataMapper to ManualSubmit to allow cancelling edits
-        #       Make sure that changing it here doesn't affect the EditorItem's interaction
         self.dataMapper = QtGui.QDataWidgetMapper()
 
     def init_layout(self):
@@ -64,13 +69,13 @@ class AttributeEditor(QtGui.QWidget):
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
         self.vbox.addWidget(self.scrollArea)
-        self._layout.setContentsMargins(20,20,20,20)
-        
+        self._layout.setContentsMargins(20, 20, 20, 20)
+
         self.updateGeo()
 
     def init_attributes(self, attr):
-        i = 0 # index into attributes (if it were a list)
-        for key,attr in attr.iteritems():
+        i = 0  # index into attributes (if it were a list)
+        for key, attr in attr.iteritems():
             if attr.editable:
                 obj = self.add_attribute(key, attr)
                 if obj:
@@ -81,7 +86,7 @@ class AttributeEditor(QtGui.QWidget):
         self.dataMapper = dataMapper
         self.init_layout()
 
-        r = self.dataMapper.model().getModel( self.dataMapper.rootIndex() )
+        r = self.dataMapper.model().getModel(self.dataMapper.rootIndex())
         node = r.child(self.dataMapper.currentIndex())
         if not node:
             return
@@ -97,7 +102,9 @@ class AttributeEditor(QtGui.QWidget):
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
         pix = QtGui.QLabel()
-        pix.setPixmap(QtGui.QPixmap( 'icons/model/' + item.kind() + '.png').scaled(30,30))
+        pix.setPixmap(
+            QtGui.QPixmap('icons/model/' + item.kind() + '.png').scaled(30, 30)
+        )
         qw = QtGui.QWidget()
         hbox = QtGui.QHBoxLayout()
         hbox.setAlignment(QtCore.Qt.AlignLeft)
@@ -112,9 +119,8 @@ class AttributeEditor(QtGui.QWidget):
         label.setToolTip(attr.tooltip)
         label.setWordWrap(True)
 
-        # TODO: Fix file setting now that everything's been converted to MVC
         obj = None
-        if attr.kind in ['float','int','integer','double','string']:
+        if attr.kind in ['float', 'int', 'double', 'string']:
             obj = QtGui.QLineEdit()
             obj.setText(str(attr.value))
         elif attr.kind in ['bool']:
@@ -133,10 +139,9 @@ class AttributeEditor(QtGui.QWidget):
             obj.setText(attr.value)
             obj.setMaximumWidth(self.maximumWidth() * 0.8)
             obj.clicked.connect(
-                lambda : self.open_file(name, obj, attr.kind.split('_')[1])
+                lambda: self.open_file(name, obj, attr.kind.split('_')[1])
             )
         elif 'dictionary' in attr.kind:
-            # TODO: Create an object here which fully encapsulates dictionary editing
             label = None
             _type = attr.kind.split('_')[1]
             obj = QtGui.QGroupBox(name)
@@ -151,7 +156,8 @@ class AttributeEditor(QtGui.QWidget):
                     break
             obj.setLayout(layout)
         if obj:
-            if label: self._layout.addWidget(label)
+            if label:
+                self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
             self.obj = obj
             self._layout.addWidget(obj)
@@ -160,13 +166,13 @@ class AttributeEditor(QtGui.QWidget):
     def add_ok_cancel(self):
         ok_cancel_widget = QtGui.QWidget(self)
         ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
-        
-        button = QtGui.QPushButton('Save',self)
+
+        button = QtGui.QPushButton('Save', self)
         button.setToolTip('Save the updated attributes.')
         button.clicked.connect(self.save)
         ok_cancel_layout.addWidget(button)
 
-        button = QtGui.QPushButton('Close',self)
+        button = QtGui.QPushButton('Close', self)
         button.setToolTip('Close the attribute editor.')
         button.clicked.connect(self.cancel)
         ok_cancel_layout.addWidget(button)
@@ -175,23 +181,26 @@ class AttributeEditor(QtGui.QWidget):
         self._layout.addWidget(ok_cancel_widget)
 
     def open_file(self, name, obj, file_type):
-        fileName = QtGui.QFileDialog.getOpenFileName(self,
-                                                     "Select {} file".format(name),
-                                                     obj.text(),
-                                                     "All Files (*);;{} Files (*.{})".format(name,file_type),
-                                                     options = QtGui.QFileDialog.Options())
+        fileName = QtGui.QFileDialog.getOpenFileName(
+            self,
+            "Select {} file".format(name),
+            obj.text(),
+            "All Files (*);;{} Files (*.{})".format(name, file_type),
+            options=QtGui.QFileDialog.Options()
+        )
         if fileName:
             obj.setText(fileName)
 
     def open_dir(self, name, obj):
         pass
 
-    def updateEdits(self, event = None):
+    def updateEdits(self, event=None):
         self._unsaved_edits = True
 
     def updateGeo(self):
         rect = self.getNewRect(self._displayed)
-        self.setGeometry(rect.x(), rect.y(), rect.x() + rect.width(), rect.y() + rect.height())
+        self.setGeometry(rect.x(), rect.y(), rect.x() + rect.width(),
+                         rect.y() + rect.height())
 
     def getNewRect(self, displayed):
         _myw = self.parent().geometry().width()
@@ -250,16 +259,14 @@ class AttributeEditor(QtGui.QWidget):
     def cancel(self, event):
         self.hide(event)
         self._unsaved_edits = False
-        # TODO: Clear the dataMapper here so nothing gets accidentally overwritten
 
     def hide(self, event):
         self._displayed = False
-        self.animate(event,self._displayed)
+        self.animate(event, self._displayed)
 
     def unhide(self, event):
         self._displayed = True
-        self.animate(event,self._displayed)
+        self.animate(event, self._displayed)
 
     def mouseDoubleClickEvent(self, event):
-        #self.hide(event)
-        return
+        self.hide(event)

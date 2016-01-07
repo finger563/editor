@@ -14,6 +14,23 @@ __status__ = 'Production'
 import os
 from collections import OrderedDict, MutableSequence
 
+# TODO: Figure out how exactly to create pointers in meta-models
+
+# TODO: Figure out how to convert pointer meta-models into pointers in real-models,
+#       need to determine what objects they correspond to, what their interaction paradigm
+#       is, and how they will be edited (and viewed)
+#
+#       Perhaps Pointers get serialized into attributes whose options are objects of that type?
+#       Need support for getting all objects of a type within a scope of a model at run-time
+
+# TODO: Figure out how to properly handle dependencies between objects (esp. attributes)
+
+# TODO: Add scoping to some dependent attributes (e.g. for pointers etc.)
+
+# TODO: Figure out how to handle options for attributes, i.e. they could be a simple list of strings
+#       or they may be references to other types of objects
+#       e.g. pointer src_kind options is dynamic based on the FCO names
+
 def get_children(model, kind):
     if model.kind() == kind:
         return [model]
@@ -158,17 +175,8 @@ class Model_Attribute(Model):
         self.set_attribute( 'Tooltip', Attribute( 'string', tooltip ) )
         self.set_attribute( 'Display', Attribute( 'string', display ) )
         self.set_attribute( 'Editable', Attribute( 'bool', editable ) )
-        # TODO: Figure out how to handle options, i.e. they could be a simple list of strings
-        #       or they may be references to other types of objects
-        #       e.g. pointer src_kind options is dynamic based on the FCO names
-        #       also, SCOPING is another issue for these options
         
 class Pointer(Model):
-    # TODO: Figure out how pointers will actually be used; how they are displayed, edited, etc.
-    #       Perhaps Pointers get serialized into attributes whose options are objects of that type?
-    #       Need support for getting all objects of a type within a scope of a model at run-time
-    # TODO: Figure out how to properly create pointers in the meta-model
-    # TODO: Integrate scoping ideas into pointers (for their options when editing src/dst)
     '''
     '''
     def __init__(self, parent = None, src = None, dst = None, src_type = 'Model', dst_type = 'Model'):
