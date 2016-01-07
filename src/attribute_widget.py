@@ -34,6 +34,11 @@ from code_editor import CodeEditor
 
 # TODO: Create an object here which fully encapsulates dictionary editing
 
+# TODO: Probably need objects which display strings for
+#       editing/choosing, but which actually map to objects underneath
+#       (e.g. pointer selection).  Need some sort of mapper/delegate
+#       for these editors which perofrm the mapping
+
 
 class AttributeEditor(QtGui.QWidget):
     '''Enables editing of the attributes of a model object.  Interfaces
@@ -129,11 +134,14 @@ class AttributeEditor(QtGui.QWidget):
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
             obj.setText(attr.value)
-        elif attr.kind in ['list'] and attr.value in attr.get_options():
+        elif attr.kind in ['list']:
             options = attr.get_options()
             obj = QtGui.QComboBox()
             obj.addItems(options)
-            obj.setCurrentIndex(options.index(attr.value))
+            i = 0
+            if attr.value in options:
+                i = options.index(attr.value)
+            obj.setCurrentIndex(i)
         elif 'file' in attr.kind:
             obj = PushButton()
             obj.setText(attr.value)

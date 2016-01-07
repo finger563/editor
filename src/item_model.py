@@ -141,6 +141,9 @@ class ItemModel(QtCore.QAbstractItemModel):
             childNode['Name'] = 'New_{}_{}'.format(_type.__name__,
                                                    childCount)
             success = parentNode.insert_child(position, childNode)
+            if not success:
+                self.beginResetModel()
+                self.endResetModel()
         self.endInsertRows()
         return success
 
@@ -175,9 +178,8 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
             if self.filterAcceptsRow(r, index0):
                 inChildren = True
                 break
-        return QtCore.QString(
-            self.sourceModel().data(index0, self.filterRole())
-        ).contains(self.filterRegExp()) or inChildren
+        text = self.sourceModel().data(index0, self.filterRole())
+        return QtCore.QString(text).contains(self.filterRegExp()) or inChildren
 
 
 def main():

@@ -21,6 +21,9 @@ from editor_item import EditorItem
 # TODO: Add in view-model specific loading code once view_model has
 #       been fully specified
 
+# TODO: Can we set up the viewer so that by default it shows a model
+#       similarly to how webgme shows the meta-model?
+
 
 class EditorViewDelegate(QtGui.QItemDelegate):
     '''Handles the mapping between :class:`EditorView`'s data and the
@@ -154,10 +157,11 @@ class EditorView(QtGui.QGraphicsView):
                 fname = model.kind + '.view'
             self.loadVM(fname)
         except Exception, e:
-            print 'WARNING: Could not load \'{}\''
-            'to generate view for {}:\n\t{}'.format(
-                fname, model['Name'], e
+            errStr = 'WARNING: Could not load \'{}\''.format(fname)
+            errStr += ' to generate view for {}:\n\t{}'.format(
+                model['Name'], e
             )
+            print errStr
             # How to initialize self.view_model here?
             self.view_model = None
 

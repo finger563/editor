@@ -52,13 +52,16 @@ from output import TabbedOutputWidget
 #       object references (by having the value of the pointer be the
 #       object's key into the dict; but would also allow lookups into
 #       deserialized data and storage of meta-data (e.g.  UUID for
-#       meta-model/version number
+#       meta-model/version number: import uuid)
 
 # TODO: Allow for messages/services which are purely references to
 #       libarary/standard messages/services.  Perhaps just allow
 #       publishers/subscribers/clients/servers to point to
 #       messages/services which are not in the model and are specified
 #       as a string just as they would be in the code?
+#
+#       This could require objects which may allow multiple types, how
+#       would that integrate into our current editing paradigm?
 #
 #       Note: if they have the same definitions and name (and thus MD5
 #       hash) they will work out of the box
@@ -76,7 +79,8 @@ from output import TabbedOutputWidget
 
 # TODO: Add pointer conversion operations to 'convertModelToMeta()'
 
-# TODO: Make names only unique within scopes; figure out how to enforce it
+# TODO: Make names only unique within scopes; enforce that no two children
+#       of the same parent share the same name.
 
 # TODO: Models can have same names depending on scope; make sure we
 #       use uniqueness here! (Editor.openEditorTabs)
