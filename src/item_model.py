@@ -100,6 +100,7 @@ class ItemModel(QtCore.QAbstractItemModel):
     def index(self, row, column, parent):
         '''Returns a :class:`QModelIndex` for the child of the parent at row,
         col.
+
         :param in int row: row number
         :param in int column: column number
         :param in parent: :class:`QModelIndex` of the parent
@@ -126,6 +127,7 @@ class ItemModel(QtCore.QAbstractItemModel):
     def insertRows(self, position, rows, parent=QtCore.QModelIndex(),
                    _type=None):
         '''Adds children to the model at position.
+
         :param in position: a :class:`QModelIndex` where the new children go
         :param in rows: number of new children to insert
         :param in parent: :class:`QModelIndex` of the parent of new children
@@ -144,6 +146,7 @@ class ItemModel(QtCore.QAbstractItemModel):
 
     def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
         '''Removes children from the model at position.
+
         :param in position: a :class:`QModelIndex` where the children start
         :param in rows: number of children to delete
         :param in parent: :class:`QModelIndex` of the parent of the children
