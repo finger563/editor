@@ -166,10 +166,20 @@ retrieving and setting data.</p>
 <dt id="item_model.ItemModel.index">
 <code class="descname">index</code><span class="sig-paren">(</span><em>row</em>, <em>column</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.ItemModel.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> for the child of the parent at row,
-col.
-:param in int row: row number
-:param in int column: column number
-:param in parent: <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent</p>
+col.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>int row</strong> (<em>in</em>) &#8211; row number</li>
+<li><strong>int column</strong> (<em>in</em>) &#8211; column number</li>
+<li><strong>parent</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -181,19 +191,39 @@ col.
 <dl class="method">
 <dt id="item_model.ItemModel.insertRows">
 <code class="descname">insertRows</code><span class="sig-paren">(</span><em>position</em>, <em>rows</em>, <em>parent=&lt;PyQt4.QtCore.QModelIndex object&gt;</em>, <em>_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.ItemModel.insertRows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds children to the model at position.
-:param in position: a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> where the new children go
-:param in rows: number of new children to insert
-:param in parent: <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent of new children</p>
+<dd><p>Adds children to the model at position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> (<em>in</em>) &#8211; a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> where the new children go</li>
+<li><strong>rows</strong> (<em>in</em>) &#8211; number of new children to insert</li>
+<li><strong>parent</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent of new children</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="item_model.ItemModel.removeRows">
 <code class="descname">removeRows</code><span class="sig-paren">(</span><em>position</em>, <em>rows</em>, <em>parent=&lt;PyQt4.QtCore.QModelIndex object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.ItemModel.removeRows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes children from the model at position.
-:param in position: a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> where the children start
-:param in rows: number of children to delete
-:param in parent: <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent of the children</p>
+<dd><p>Removes children from the model at position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> (<em>in</em>) &#8211; a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> where the children start</li>
+<li><strong>rows</strong> (<em>in</em>) &#8211; number of children to delete</li>
+<li><strong>parent</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent of the children</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
