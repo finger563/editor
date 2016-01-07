@@ -152,10 +152,59 @@
             
   <div class="section" id="module-item_model">
 <span id="item-model"></span><h1>Item-Model<a class="headerlink" href="#module-item_model" title="Permalink to this headline">¶</a></h1>
-<p>This implements the model 
+<p>This implements the model
 for the metamodel in the MVC
-paradigm.  It uses Qt&#8217;s 
+paradigm.  It uses Qt&#8217;s
 AbstractItemModel base class.</p>
+<dl class="class">
+<dt id="item_model.ItemModel">
+<em class="property">class </em><code class="descclassname">item_model.</code><code class="descname">ItemModel</code><span class="sig-paren">(</span><em>root</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.ItemModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the <code class="xref py py-class docutils literal"><span class="pre">QAbstractItemModel</span></code> to interact with the
+underlying data-model, and create <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> objects for
+retrieving and setting data.</p>
+<dl class="method">
+<dt id="item_model.ItemModel.index">
+<code class="descname">index</code><span class="sig-paren">(</span><em>row</em>, <em>column</em>, <em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.ItemModel.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> for the child of the parent at row,
+col.
+:param in int row: row number
+:param in int column: column number
+:param in parent: <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="item_model.ItemModel.parent">
+<code class="descname">parent</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.ItemModel.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> for the parent of index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="item_model.ItemModel.insertRows">
+<code class="descname">insertRows</code><span class="sig-paren">(</span><em>position</em>, <em>rows</em>, <em>parent=&lt;PyQt4.QtCore.QModelIndex object&gt;</em>, <em>_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.ItemModel.insertRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds children to the model at position.
+:param in position: a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> where the new children go
+:param in rows: number of new children to insert
+:param in parent: <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent of new children</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="item_model.ItemModel.removeRows">
+<code class="descname">removeRows</code><span class="sig-paren">(</span><em>position</em>, <em>rows</em>, <em>parent=&lt;PyQt4.QtCore.QModelIndex object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.ItemModel.removeRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes children from the model at position.
+:param in position: a <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> where the children start
+:param in rows: number of children to delete
+:param in parent: <code class="xref py py-class docutils literal"><span class="pre">QModelIndex</span></code> of the parent of the children</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="item_model.SortFilterProxyModel">
+<em class="property">class </em><code class="descclassname">item_model.</code><code class="descname">SortFilterProxyModel</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#item_model.SortFilterProxyModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends <code class="xref py py-class docutils literal"><span class="pre">QSortFilterProxyModel</span></code> to customize filtering on a
+<code class="xref py py-class docutils literal"><span class="pre">QAbstractItemModel</span></code>.</p>
+</dd></dl>
+
 </div>
 
 

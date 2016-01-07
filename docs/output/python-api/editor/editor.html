@@ -152,7 +152,7 @@
             
   <div class="section" id="module-editor">
 <span id="editor"></span><h1>Editor<a class="headerlink" href="#module-editor" title="Permalink to this headline">¶</a></h1>
-<p>This program allows users to operate 
+<p>This program allows users to operate
 on meta-models and models using loadable
 libraries to perform meta-model specific
 operations such as generation, analysis,
@@ -160,23 +160,28 @@ and deployment.</p>
 <dl class="function">
 <dt id="editor.convertModelToMeta">
 <code class="descclassname">editor.</code><code class="descname">convertModelToMeta</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.convertModelToMeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used to create classes based on the editor&#8217;s current model.
-It works on Model instances, which can have pointers, models, and model_attributes
-as children.  By converting the models in to named classes subclassing Model and adding
-named attributes subclassing Attribute it forms a new class structure which describes the
-meta model and which can be used to instantiate models.</p>
+<dd><p>This function is used to create classes based on the editor&#8217;s
+current model.  It works on Model instances, which can have
+pointers, models, and model_attributes as children.  By converting
+the models in to named classes subclassing Model and adding named
+attributes subclassing Attribute it forms a new class structure
+which describes the meta model and which can be used to
+instantiate models.</p>
 <p>Returns the class of the root type of the meta model</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="editor.Editor">
 <em class="property">class </em><code class="descclassname">editor.</code><code class="descname">Editor</code><a class="headerlink" href="#editor.Editor" title="Permalink to this definition">¶</a></dt>
-<dd><p>The main editor class, which enables creating, loading, editing, and saving of 
-models, meta-models, and view-models.</p>
-<p>Models are saved as *.model files and contain the metamodel they were created with.</p>
-<p>Meta-models are saved as *.meta files and can be used to create new models.</p>
-<p>View-models are saved as *.view files and are automatically loaded as &lt;Model Type&gt;.view
-for each model that is opened in the visualizer.</p>
+<dd><p>The main editor class, which enables creating, loading, editing,
+and saving of models, meta-models, and view-models.</p>
+<p>Models are saved as *.model files and contain the metamodel they
+were created with.</p>
+<p>Meta-models are saved as *.meta files and can be used to create
+new models.</p>
+<p>View-models are saved as *.view files and are automatically
+loaded as &lt;Model Type&gt;.view for each model that is opened in the
+visualizer.</p>
 <dl class="method">
 <dt id="editor.Editor.clearModels">
 <code class="descname">clearModels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.clearModels" title="Permalink to this definition">¶</a></dt>
@@ -192,7 +197,8 @@ for each model that is opened in the visualizer.</p>
 <dl class="method">
 <dt id="editor.Editor.changeFilter">
 <code class="descname">changeFilter</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.changeFilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event callback for when the user changes the filter type for the navigator.</p>
+<dd><p>Event callback for when the user changes the filter type for the
+navigator.</p>
 </dd></dl>
 
 <dl class="method">
@@ -204,13 +210,15 @@ for each model that is opened in the visualizer.</p>
 <dl class="method">
 <dt id="editor.Editor.openModelView">
 <code class="descname">openModelView</code><span class="sig-paren">(</span><em>modelIndex</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.openModelView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event callback for when the user double-clicks on a model item in the tree-viewer.
-Sends the model item to the visualizer and creates a new EditorView for it if one does not exist.</p>
+<dd><p>Event callback for when the user double-clicks on a model item in
+the tree-viewer.  Sends the model item to the visualizer and
+creates a new EditorView for it if one does not exist.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelIndex</strong> (<em>in</em>) &#8211; index into the AbstractItemModel which has been selected for viewing.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelIndex</strong> (<em>in</em>) &#8211; index into the AbstractItemModel which
+has been selected for viewing.</td>
 </tr>
 </tbody>
 </table>
@@ -225,13 +233,15 @@ Sends the model item to the visualizer and creates a new EditorView for it if on
 <dl class="method">
 <dt id="editor.Editor.openModel">
 <code class="descname">openModel</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.openModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback to allow the user to select a model file based on the current mode of the editor.</p>
+<dd><p>Callback to allow the user to select a model file based on the
+current mode of the editor.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="editor.Editor.open_model">
 <code class="descname">open_model</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="headerlink" href="#editor.Editor.open_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decodes a saved *.{model, meta, view} file and loads it into the editor.</p>
+<dd><p>Decodes a saved *.{model, meta, view} file and loads it into the
+editor.</p>
 </dd></dl>
 
 <dl class="method">
@@ -241,7 +251,8 @@ Sends the model item to the visualizer and creates a new EditorView for it if on
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<em>in</em>) &#8211; the root object of a model, which is loaded into the tree-viewer and proxy models</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<em>in</em>) &#8211; the root object of a model, which is loaded into
+the tree-viewer and proxy models</td>
 </tr>
 </tbody>
 </table>
