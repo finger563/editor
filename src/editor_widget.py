@@ -154,10 +154,11 @@ class EditorView(QtGui.QGraphicsView):
                 fname = model.kind + '.view'
             self.loadVM(fname)
         except Exception, e:
-            print 'WARNING: Could not load \'{}\''
-            'to generate view for {}:\n\t{}'.format(
-                fname, model['Name'], e
+            errStr = 'WARNING: Could not load \'{}\''.format(fname)
+            errStr += ' to generate view for {}:\n\t{}'.format(
+                model['Name'], e
             )
+            print errStr
             # How to initialize self.view_model here?
             self.view_model = None
 

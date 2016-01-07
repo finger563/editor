@@ -213,9 +213,6 @@ class Pointer(Model):
                  src_type='Model',
                  dst_type='Model'):
         super(Pointer, self).__init__(parent)
-        # How to properly encapsulate these so they can be edited /
-        # viewed easily with our current paradigm (which is focused on
-        # models and attributes)?
         self.src = src
         self.dst = dst
         self.src_type = src_type
@@ -225,16 +222,26 @@ class Pointer(Model):
 
 
 class Children(MutableSequence):
-
-    valid_cardinalities = ['0..*', '1..*', '1']
-
-    '''Children List
+    '''Children list which extends :class:`MutableSequence` and enforces
+    item type and cardinality rules.
 
     _inner -- Contents of the list
     _allowed -- The list will accept only object types contained in _allowed
     _cardinality -- Cardinality of each accepted type
+
     '''
+
+    valid_cardinalities = ['0..*', '1..*', '1']
+
     def __init__(self, it=(), allowed=(), cardinality=()):
+        '''
+        :param in allowed: :class:`List` containing the allowed types of
+            children
+        :param in cardinality: :class:`Dictionary` of key:value pairs
+            mapping object type to its cardinality string, e.g.
+            Model: '0..*'
+
+        '''
         self._inner = list(it)
         self._allowed = allowed
         self._cardinality = cardinality
