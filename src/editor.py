@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-This program allows users to operate 
+This program allows users to operate
 on meta-models and models using loadable
 libraries to perform meta-model specific
 operations such as generation, analysis,
@@ -20,9 +20,7 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
 
-import copy
 from collections import OrderedDict
 
 from action import Action
@@ -30,56 +28,71 @@ from editor_widget import TabbedEditor, EditorView
 
 from item_model import ItemModel, SortFilterProxyModel
 
-from meta import Model, Pointer, Model_Attribute, Attribute, Children, get_children
+from meta import Model, Pointer, Model_Attribute, Attribute, Children
 from view_model import ViewModel
 
 from tree_view import TreeView
 
 from output import TabbedOutputWidget
 
-# TODO: Need to be able to load multiple models and compose themn together; e.g if two people
-#       are working on a large model and want to separately make packages or components or hardwares.
-#       This would be useful for splitting out relevant parts of the model and reusing it as a library,
-#       e.g. the cluster hardware model would be a good example.  To do this we need to solve the issues
-#       of meta-model conflicts and model composition (need to figure out which one is root and where the
-#       other 'root' goes.
+# TODO: Need to be able to load multiple models and compose them
+#       together; e.g if two people are working on a large model and
+#       want to separately make packages or components or hardwares.
+#       This would be useful for splitting out relevant parts of the
+#       model and reusing it as a library, e.g. the cluster hardware
+#       model would be a good example.  To do this we need to solve
+#       the issues of meta-model conflicts and model composition (need
+#       to figure out which one is root and where the other 'root'
+#       goes.
 #
 #       Perhaps make the loaded model read-only?
 
-# TODO: possibly change serialization to use dicts?  I.e. convert all models into dicts before serializing?
-#       This would still allow object references (by having the value of the pointer be the object's key
-#       into the dict; but would also allow lookups into deserialized data and storage of meta-data (e.g.
-#       UUID for meta-model/version number
+# TODO: possibly change serialization to use dicts?  I.e. convert all
+#       models into dicts before serializing?  This would still allow
+#       object references (by having the value of the pointer be the
+#       object's key into the dict; but would also allow lookups into
+#       deserialized data and storage of meta-data (e.g.  UUID for
+#       meta-model/version number
 
-# TODO: Allow for messages/services which are purely references to libarary/standard messages/services.
-#       Perhaps just allow publishers/subscribers/clients/servers to point to messages/services which
-#       are not in the model and are specified as a string just as they would be in the code?
+# TODO: Allow for messages/services which are purely references to
+#       libarary/standard messages/services.  Perhaps just allow
+#       publishers/subscribers/clients/servers to point to
+#       messages/services which are not in the model and are specified
+#       as a string just as they would be in the code?
 #
-#       Note: if they have the same definitions and name (and thus MD5 hash) they will work out of the box
+#       Note: if they have the same definitions and name (and thus MD5
+#       hash) they will work out of the box
 
-# TODO: View-Models are incomplete and not usable; their attributes don't necessarily work and editing
-#       a view model should probably require knowledge of the meta-model, so the meta-model should be 
-#       loaded as well
+# TODO: View-Models are incomplete and not usable; their attributes
+#       don't necessarily work and editing a view model should
+#       probably require knowledge of the meta-model, so the
+#       meta-model should be loaded as well
 
-# TODO: Figure out how to update the meta-model without completely losing the edits to existing models if
-#       possible.  Perhaps just allow loading simultaneously the model + meta-model; and attempting to 
-#       resolve model changes when meta-model edits are performed.
+# TODO: Figure out how to update the meta-model without completely
+#       losing the edits to existing models if possible.  Perhaps just
+#       allow loading simultaneously the model + meta-model; and
+#       attempting to resolve model changes when meta-model edits are
+#       performed.
 
 # TODO: Add pointer conversion operations to 'convertModelToMeta()'
 
 # TODO: Make names only unique within scopes; figure out how to enforce it
 
-# TODO: Models can have same names depending on scope; make sure we use uniqueness here! (Editor.openEditorTabs)
+# TODO: Models can have same names depending on scope; make sure we
+#       use uniqueness here! (Editor.openEditorTabs)
+
 
 def convertModelToMeta(model):
-    '''
-    This function is used to create classes based on the editor's current model.
-    It works on Model instances, which can have pointers, models, and model_attributes
-    as children.  By converting the models in to named classes subclassing Model and adding
-    named attributes subclassing Attribute it forms a new class structure which describes the
-    meta model and which can be used to instantiate models.  
+    '''This function is used to create classes based on the editor's
+    current model.  It works on Model instances, which can have
+    pointers, models, and model_attributes as children.  By converting
+    the models in to named classes subclassing Model and adding named
+    attributes subclassing Attribute it forms a new class structure
+    which describes the meta model and which can be used to
+    instantiate models.
 
     Returns the class of the root type of the meta model
+
     '''
 
     allowed_kids = OrderedDict()
@@ -94,49 +107,58 @@ def convertModelToMeta(model):
         # These will be the attributes of the new class
         elif type(obj) == Model_Attribute:
             def attrInit(self):
-                Attribute.__init__(self, obj['Kind'], Attribute.default_vals[obj['Kind']])
+                Attribute.__init__(self, obj['Kind'],
+                                   Attribute.default_vals[obj['Kind']])
             new_attr = type(
                 obj['Name'],
                 (Attribute, object, ),
                 {
-                    '__init__' : attrInit,
-                    'tooltip' : obj['Tooltip'],
-                    'display' : obj['Display'],
-                    'editable' : obj['Editable'],
+                    '__init__': attrInit,
+                    'tooltip': obj['Tooltip'],
+                    'display': obj['Display'],
+                    'editable': obj['Editable'],
                 }
             )
             attr_dict[obj['Name']] = new_attr()
 
-    # Define the init function inline here for the new class, make sure all attributes,
-    # pointers, children, etc. are set up properly
-    def modelInit(self, parent = None):
+    # Define the init function inline here for the new class, make
+    # sure all attributes, pointers, children, etc. are set up
+    # properly
+    def modelInit(self, parent=None):
         Model.__init__(self, parent)
         self.attributes = OrderedDict()
-        self.add_attribute('Name', 'string', '{}'.format(self.__class__.__name__))
-        self.children = Children(allowed=allowed_kids.keys(), cardinality = allowed_kids)
-        for name,attr in attr_dict.iteritems():
+        self.add_attribute('Name',
+                           'string',
+                           '{}'.format(self.__class__.__name__))
+        self.children = Children(allowed=allowed_kids.keys(),
+                                 cardinality=allowed_kids)
+        for name, attr in attr_dict.iteritems():
             self.set_attribute(name, attr)
 
-    new_type = type( 
-        model['Name'], 
-        (Model, object, ), 
-        { 
-            '__init__' : modelInit
+    new_type = type(
+        model['Name'],
+        (Model, object, ),
+        {
+            '__init__': modelInit
         }
     )
     return new_type
 
+
 class Editor(QtGui.QMainWindow):
-    '''
-    The main editor class, which enables creating, loading, editing, and saving of 
-    models, meta-models, and view-models.  
+    '''The main editor class, which enables creating, loading, editing,
+    and saving of models, meta-models, and view-models.
 
-    Models are saved as \*.model files and contain the metamodel they were created with.
+    Models are saved as \*.model files and contain the metamodel they
+    were created with.
 
-    Meta-models are saved as \*.meta files and can be used to create new models.
+    Meta-models are saved as \*.meta files and can be used to create
+    new models.
 
-    View-models are saved as \*.view files and are automatically loaded as <Model Type>.view
-    for each model that is opened in the visualizer.
+    View-models are saved as \*.view files and are automatically
+    loaded as <Model Type>.view for each model that is opened in the
+    visualizer.
+
     '''
 
     '''
@@ -144,10 +166,10 @@ class Editor(QtGui.QMainWindow):
     All inherit at some point from the original base model classes
     Defined in meta.py
     '''
-    editor_modes = ['Model','Meta Model','View Model']
+    editor_modes = ['Model', 'Meta Model', 'View Model']
 
     # Ways the tree view can filter the model (based on Meta-Type or Name)
-    filter_types = ['Meta','Name']
+    filter_types = ['Meta', 'Name']
 
     def __init__(self):
         super(Editor, self).__init__()
@@ -158,9 +180,6 @@ class Editor(QtGui.QMainWindow):
 
         self.init_ui()
         self.clearModels()
-        #self.open_model('test_model.meta')
-        #from test_model import TestModel
-        #self.load_model(TestModel)
 
         self.setWindowIcon(QtGui.QIcon('icons/editor.png'))
 
@@ -171,14 +190,15 @@ class Editor(QtGui.QMainWindow):
                            color: white;
                            border: black solid 1px
                            }''')
-        self.setGeometry(300,300,800,600)
+        self.setGeometry(300, 300, 800, 600)
         self.setWindowTitle('Editor')
 
         # Create the actions for the program
-        exitAction = Action('icons/toolbar/stop.png', 'Exit', self)        
+        exitAction = Action('icons/toolbar/stop.png', 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(self.close) # note that this will call closeEvent
+        # note that this will call closeEvent
+        exitAction.triggered.connect(self.close)
 
         newAction = Action('icons/toolbar/new.png', 'New', self)
         newAction.setStatusTip('New.')
@@ -195,34 +215,38 @@ class Editor(QtGui.QMainWindow):
         saveAction.setShortcut('Ctrl+S')
         saveAction.triggered.connect(self.saveModel)
 
-        # Create the widgets for the program (embeddable in the toolbar or elsewhere)
+        # Create the widgets for the program (embeddable in the
+        # toolbar or elsewhere)
         self.mode_selector = QtGui.QComboBox(self)
         self.mode_selector.addItems(self.editor_modes)
-        self.mode_selector.setCurrentIndex(self.editor_modes.index(self.editor_mode))
+        self.mode_selector.setCurrentIndex(
+            self.editor_modes.index(self.editor_mode)
+        )
         self.mode_selector.currentIndexChanged.connect(self.changeMode)
 
         # Set up the Menus for the program
         self.menubar_init()
         self.menubar_add_menu('&File')
-        self.menu_add_action('&File',exitAction)
-        self.menu_add_action('&File',newAction)
-        self.menu_add_action('&File',openAction)
-        self.menu_add_action('&File',saveAction)
+        self.menu_add_action('&File', exitAction)
+        self.menu_add_action('&File', newAction)
+        self.menu_add_action('&File', openAction)
+        self.menu_add_action('&File', saveAction)
 
         # Set up the toolbars for the program
         self.toolbar_init()
         self.toolbar_create('toolbar1')
-        self.toolbar_add_action('toolbar1',exitAction)
-        self.toolbar_add_action('toolbar1',newAction)
-        self.toolbar_add_action('toolbar1',openAction)
-        self.toolbar_add_action('toolbar1',saveAction)
-        self.toolbar_add_widget('toolbar1',self.mode_selector)
+        self.toolbar_add_action('toolbar1', exitAction)
+        self.toolbar_add_action('toolbar1', newAction)
+        self.toolbar_add_action('toolbar1', openAction)
+        self.toolbar_add_action('toolbar1', saveAction)
+        self.toolbar_add_widget('toolbar1', self.mode_selector)
 
         # Set up the Tree View Widget
         self.tree_view = TreeView()
         self.tree_view.setSortingEnabled(False)
         self.tree_view.doubleClicked.connect(self.openModelView)
-        self.tree_view.setExpandsOnDoubleClick(False) # don't want the tree collapsing when we open views
+        # don't want the tree collapsing when we open views
+        self.tree_view.setExpandsOnDoubleClick(False)
 
         # Set up filtering on the tree_view
         self.filter_widget = QtGui.QWidget()
@@ -253,7 +277,8 @@ class Editor(QtGui.QMainWindow):
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.navigator)
         self.splitter1.addWidget(self.tabbedEditorWidget)
-        self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 * self.geometry().x()/4.0])
+        self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 *
+                                 self.geometry().x()/4.0])
 
         # Set up the tabbed output viewer
         self.tabbedOutput = TabbedOutputWidget(self)
@@ -262,7 +287,8 @@ class Editor(QtGui.QMainWindow):
         self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
         self.splitter2.addWidget(self.tabbedOutput)
-        self.splitter2.setSizes([3.0 * self.geometry().y()/4.0, self.geometry().y()/4.0])
+        self.splitter2.setSizes([3.0 * self.geometry().y()/4.0,
+                                 self.geometry().y()/4.0])
 
         # Set the central widget of the application
         self.setCentralWidget(self.splitter2)
@@ -289,7 +315,9 @@ class Editor(QtGui.QMainWindow):
         self.tabbedEditorWidget.clear()
 
     def changeFilter(self, index):
-        '''Event callback for when the user changes the filter type for the navigator.'''
+        '''Event callback for when the user changes the filter type for the
+        navigator.
+        '''
         text = self.filter_type.currentText()
         self.filter_mode = text
         if self.model and self.proxy_model:
@@ -305,27 +333,29 @@ class Editor(QtGui.QMainWindow):
             self.clearViewer()
 
     def openModelView(self, modelIndex):
-        '''
-        Event callback for when the user double-clicks on a model item in the tree-viewer.
-        Sends the model item to the visualizer and creates a new EditorView for it if one does not exist.
+        '''Event callback for when the user double-clicks on a model item in
+        the tree-viewer.  Sends the model item to the visualizer and
+        creates a new EditorView for it if one does not exist.
 
-        :param in modelIndex: index into the AbstractItemModel which has been selected for viewing.
+        :param in modelIndex: index into the AbstractItemModel which
+        has been selected for viewing.
+
         '''
         mi = self.proxy_model.mapToSource(modelIndex)
-        item = self.model.getModel( mi )
+        item = self.model.getModel(mi)
         name = item["Name"]
         if name not in self.openEditorTabs:
-            ev = EditorView( self.tabbedEditorWidget )
-            ev.setProxyModel( self.proxy_model )
+            ev = EditorView(self.tabbedEditorWidget)
+            ev.setProxyModel(self.proxy_model)
             self.openEditorTabs[name] = ev
         else:
             ev = self.openEditorTabs[name]
-        self.tabbedEditorWidget.addTab( ev, name )
-        ev.init_ui( index = mi,
-                    fname = item.kind() + '.view' )
+        self.tabbedEditorWidget.addTab(ev, name)
+        ev.init_ui(index=mi, fname=item.kind() + '.view')
         self.tabbedEditorWidget.setCurrentIndex(
-            self.tabbedEditorWidget.indexOf(ev) )
-        
+            self.tabbedEditorWidget.indexOf(ev)
+        )
+
     def newModel(self, event):
         '''Callback for creating a new (meta-, view-) model.'''
         self.clearModels()
@@ -337,7 +367,7 @@ class Editor(QtGui.QMainWindow):
                 'Select Meta Model',
                 '',
                 'Meta Model Files (*.meta)',
-                options = QtGui.QFileDialog.Options()
+                options=QtGui.QFileDialog.Options()
             )
             if fname:
                 meta_root = self.open_model(fname)
@@ -353,14 +383,16 @@ class Editor(QtGui.QMainWindow):
             self.load_model(root)
 
     def openModel(self, event):
-        '''Callback to allow the user to select a model file based on the current mode of the editor.'''
+        '''Callback to allow the user to select a model file based on the
+        current mode of the editor.
+        '''
         ftype = '{}'.format(self.editor_mode.lower().split()[0])
         fname = QtGui.QFileDialog.getOpenFileName(
             self,
             'Open {}'.format(self.editor_mode),
             '',
             '{} Files (*.{})'.format(self.editor_mode, ftype),
-            options = QtGui.QFileDialog.Options()
+            options=QtGui.QFileDialog.Options()
         )
         if fname:
             self.clearModels()
@@ -369,21 +401,24 @@ class Editor(QtGui.QMainWindow):
             self.load_model(root)
 
     def open_model(self, fname):
-        '''Decodes a saved \*.{model, meta, view} file and loads it into the editor.'''
+        '''Decodes a saved \*.{model, meta, view} file and loads it into the
+        editor.
+        '''
         import dill
         with open(fname, 'r') as f:
             m = dill.load(f)
             return m
 
     def load_model(self, model):
-        '''
-        :param in model: the root object of a model, which is loaded into the tree-viewer and proxy models
+        ''':param in model: the root object of a model, which is loaded into
+        the tree-viewer and proxy models
         '''
 
-        # Set up the hidden Root model, with the 'model' object as its only child
+        # Set up the hidden Root model, with the 'model' object as its
+        # only child
         root = Model()
         root.children._allowed = [model.__class__]
-        root.children._cardinality = { model.__class__ : '1' }
+        root.children._cardinality = {model.__class__: '1'}
         root.add_child(model)
 
         # Set up the proxy model for sorting/filtering
@@ -393,10 +428,11 @@ class Editor(QtGui.QMainWindow):
         self.proxy_model.setSortRole(ItemModel.sort_role)
         self.proxy_model.setFilterRole(ItemModel.filter_role)
 
-        # the model stores the reference to the model that is currently
-        # being edited/viewed; this can be a regular model, a view model,
-        # or even a meta-model.  All these models inherit from the meta-metamodel
-        # so have the same interfaces and can be interacted with in the same way
+        # the model stores the reference to the model that is
+        # currently being edited/viewed; this can be a regular model,
+        # a view model, or even a meta-model.  All these models
+        # inherit from the meta-metamodel so have the same interfaces
+        # and can be interacted with in the same way
         self.model = ItemModel(root)
         self.model.set_filter_type(self.filter_mode)
         # Link the actual model and the proxy model
@@ -414,12 +450,14 @@ class Editor(QtGui.QMainWindow):
             'Save {}'.format(self.editor_mode),
             '',
             '{} Files (*.{})'.format(self.editor_mode, ftype),
-            options = QtGui.QFileDialog.Options()
+            options=QtGui.QFileDialog.Options()
         )
         if fname:
-            if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
+            if fname[-len(ftype):] != ftype:
+                fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
-            root = root.children[0] # the actual root is not displayed and is always a Model()
+            # the actual root is not displayed and is always a Model()
+            root = root.children[0]
             with open(fname, 'w') as f:
                 dill.dump(root, f)
             return 0
@@ -427,14 +465,15 @@ class Editor(QtGui.QMainWindow):
     def closeEvent(self, event):
         event.accept()
         return
-        reply = QtGui.QMessageBox.question(self, 'Quit',
-                                           'Sure you want to quit?', QtGui.QMessageBox.Yes | 
-                                           QtGui.QMessageBox.No, QtGui.QMessageBox.No)
+        reply = QtGui.QMessageBox.question(
+            self, 'Quit',
+            'Sure you want to quit?', QtGui.QMessageBox.Yes |
+            QtGui.QMessageBox.No, QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
             event.accept()
         else:
-            event.ignore() 
+            event.ignore()
 
     from menubar import \
         menubar_init, \

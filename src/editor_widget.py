@@ -15,21 +15,19 @@ __status__ = 'Production'
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from collections import OrderedDict
-
-import jsonpickle, copy
-
 from attribute_widget import AttributeEditor
 from editor_item import EditorItem
-from layout import layout_create
 
-# TODO: Add in view-model specific loading code once view_model has been fully specified
+# TODO: Add in view-model specific loading code once view_model has
+#       been fully specified
+
 
 class EditorViewDelegate(QtGui.QItemDelegate):
-    '''
-    Handles the mapping between :class:`EditorView`'s data and the model's data.  Ensures that
-    whenever the view's data are edited, the model's data get updated and vise-versa.  This enables
-    ensuring that the tab's name changes whenever its associated model changes, for instance.
+    '''Handles the mapping between :class:`EditorView`'s data and the
+    model's data.  Ensures that whenever the view's data are edited,
+    the model's data get updated and vise-versa.  This enables
+    ensuring that the tab's name changes whenever its associated model
+    changes, for instance.
     '''
     def __init__(self, parent=None):
         super(EditorViewDelegate, self).__init__(parent)
@@ -37,7 +35,7 @@ class EditorViewDelegate(QtGui.QItemDelegate):
     def setEditorData(self, editor, index):
         if type(editor) == EditorView:
             text = index.data().toString()
-            #print 'text: \'{}\''.format(text)
+            # print 'text: \'{}\''.format(text)
             i = editor.parent().parent().indexOf(editor)
             editor.parent().parent().setTabText(i, text)
             return
@@ -45,15 +43,17 @@ class EditorViewDelegate(QtGui.QItemDelegate):
 
     def setModelData(self, editor, model, index):
         if type(editor) == EditorView:
-            #text = index.data().toString()
-            #print 'set data: \'{}\''.format(text)
+            # text = index.data().toString()
+            # print 'set data: \'{}\''.format(text)
             return
-        return super(EditorViewDelegate, self).setModelData(editor, model, index)
+        return super(EditorViewDelegate, self).setModelData(editor,
+                                                            model, index)
+
 
 class EditorScene(QtGui.QGraphicsScene):
-    '''
-    Subclass of :class:`QGraphicsScene` which holds all the :class:`EditorItem` which are 
-    themselves subclasses of :class:`QGraphicsWidget`.
+    '''Subclass of :class:`QGraphicsScene` which holds all the
+    :class:`EditorItem` which are themselves subclasses of
+    :class:`QGraphicsWidget`.
     '''
     def __init__(self, parent):
         super(EditorScene, self).__init__(parent)
@@ -75,26 +75,30 @@ class EditorScene(QtGui.QGraphicsScene):
             menu = QtGui.QMenu()
             for a in self.model().children._allowed:
                 addNewItem = QtGui.QAction('New {}'.format(a.__name__), self)
-                addNewItem.triggered.connect(self.addViewItem(QtCore.QModelIndex(),a))
+                addNewItem.triggered.connect(
+                    self.addViewItem(QtCore.QModelIndex(), a))
                 menu.addAction(addNewItem)
             menu.exec_(event.screenPos())
 
     def addViewItem(self, mi, _type):
         def genericItem(e):
-            self.proxyModel().sourceModel().insertRows( 0, 1, mi, _type )
+            self.proxyModel().sourceModel().insertRows(0, 1, mi, _type)
         return genericItem
 
     def delViewItem(self, mi):
         def genericItem(e):
-            self.proxyModel().sourceModel().removeRows( mi.row(), 1, mi.parent() )
+            self.proxyModel().sourceModel().removeRows(mi.row(), 1,
+                                                       mi.parent())
         return genericItem
 
+
 class EditorView(QtGui.QGraphicsView):
-    '''
-    Subclass of :class:`QGraphicsView` which acts as a viewer for some subset of the
-    model.  Automatically loads whatever :class:`ViewModel` is associated with the view's
-    model, as *<Model Name>.view*.  If the view file cannot be loaded or found, a default
-    implementation simply creates a :class:`EditorItem` object representing the model.
+    '''Subclass of :class:`QGraphicsView` which acts as a viewer for some
+    subset of the model.  Automatically loads whatever
+    :class:`ViewModel` is associated with the view's model, as *<Model
+    Name>.view*.  If the view file cannot be loaded or found, a
+    default implementation simply creates a :class:`EditorItem` object
+    representing the model.
     '''
 
     drag_mode_key = QtCore.Qt.Key_Control
@@ -102,14 +106,14 @@ class EditorView(QtGui.QGraphicsView):
     close_aw_key = QtCore.Qt.Key_Escape
 
     def __init__(self, parent):
-        super(EditorView,self).__init__(parent)
+        super(EditorView, self).__init__(parent)
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
         self.aw = AttributeEditor(self)
         self._command_key_pressed = False
-        
+
         self._proxyModel = None
         self._dataMapper = QtGui.QDataWidgetMapper()
 
@@ -128,11 +132,10 @@ class EditorView(QtGui.QGraphicsView):
         self._proxyModel = proxyModel
         self._dataMapper.setModel(proxyModel.sourceModel())
 
-    def init_ui(self, index, fname = ''):
+    def init_ui(self, index, fname=''):
         scene = EditorScene(self)
         self.setScene(scene)
 
-        i = self.parent().indexOf(self)
         parent = index.parent()
         self._dataMapper.setRootIndex(parent)
         self._dataMapper.setCurrentModelIndex(index)
@@ -148,31 +151,31 @@ class EditorView(QtGui.QGraphicsView):
 
         try:
             if not fname:
-                fname = obj.kind + '.view'
+                fname = model.kind + '.view'
             self.loadVM(fname)
         except Exception, e:
-            print 'WARNING: Could not load \'{}\' to generate view for {}:\n\t{}'.format(
+            print 'WARNING: Could not load \'{}\''
+            'to generate view for {}:\n\t{}'.format(
                 fname, model['Name'], e
             )
             # How to initialize self.view_model here?
             self.view_model = None
 
-        r = self.buildView( index )
+        r = self.buildView(index)
         scene.addItem(r)
 
         self.show()
 
-    def buildView(self, index, parent = None):
-        t = EditorItem( index = index, parent = parent )
+    def buildView(self, index, parent=None):
+        t = EditorItem(index=index, parent=parent)
         if self.viewModel():
-            for cm in model.children:
-                if cm.kind() in self.viewModel().children:
-                    t.addChild(self.buildView(cm, t))
+            pass
         return t
 
     def loadVM(self, fname):
+        import dill
         with open(fname, 'r') as f:
-            vm = jsonpickle.decode(f.read())
+            vm = dill.load(f)
         self.view_model = vm
 
     def getEditor(self):
@@ -217,10 +220,17 @@ class EditorView(QtGui.QGraphicsView):
             self.scale(zoomFactor, zoomFactor)
             oldPosNow = self.mapFromScene(oldPos)
             move = oldPosNow - event.pos()
-            self.horizontalScrollBar().setValue(move.x() + self.horizontalScrollBar().value())
-            self.verticalScrollBar().setValue(move.y() + self.verticalScrollBar().value())
+            self.horizontalScrollBar().setValue(
+                move.x() +
+                self.horizontalScrollBar().value()
+            )
+            self.verticalScrollBar().setValue(
+                move.y() +
+                self.verticalScrollBar().value()
+            )
         else:
             QtGui.QGraphicsView.wheelEvent(self, event)
+
 
 class TabbedEditor(QtGui.QTabWidget):
     def __init__(self, parent):
@@ -231,5 +241,5 @@ class TabbedEditor(QtGui.QTabWidget):
 
         self.tabCloseRequested.connect(self.onTabClose)
 
-    def onTabClose(self,index):
+    def onTabClose(self, index):
         self.removeTab(index)
