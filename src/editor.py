@@ -46,9 +46,16 @@ from output import TabbedOutputWidget
 #       of meta-model conflicts and model composition (need to figure out which one is root and where the
 #       other 'root' goes.
 
+# TODO: possibly change serialization to use dicts?  I.e. convert all models into dicts before serializing?
+#       This would still allow object references (by having the value of the pointer be the object's key
+#       into the dict; but would also allow lookups into deserialized data and storage of meta-data (e.g.
+#       UUID for meta-model/version number
+
 # TODO: Allow for messages/services which are purely references to libarary/standard messages/services.
 #       Perhaps just allow publishers/subscribers/clients/servers to point to messages/services which
 #       are not in the model and are specified as a string just as they would be in the code?
+#
+#       Note: if they have the same definitions and name (and thus MD5 hash) they will work out of the box
 
 # TODO: View-Models are incomplete and not usable; their attributes don't necessarily work and editing
 #       a view model should probably require knowledge of the meta-model, so the meta-model should be 
@@ -414,7 +421,6 @@ class Editor(QtGui.QMainWindow):
             if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
             root = root.children[0] # the actual root is not displayed and is always a Model()
-            print root['Name']
             # TODO: Test with meta, view, and model
             with open(fname, 'w') as f:
                 dill.dump(root, f)

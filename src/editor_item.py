@@ -1,5 +1,5 @@
 '''
-Model Item
+Editor Item
 
 This class defines the widget
 which allows for viewing and editing
@@ -20,14 +20,22 @@ from PyQt4 import QtGui
 
 import view_attributes as view_attr
 from layout import layout_create, valid_layouts
-from graphics_items import RoundRectItem, TextItem
+from graphics_items import RoundRectItem, TextItem, PushButton
 
 class EditorItemWidget(QtGui.QWidget):
+    '''
+    Wrapper class for :class:`EditorItem` so that :class:`EditorItem`s can be configured and automatically
+    used with :class:`EditorItemDelegate`
+    '''
     def __init__(self, parent=None, ei = None):
         super(EditorItemWidget, self).__init__(parent)
         self.item = ei
 
 class EditorItemDelegate(QtGui.QItemDelegate):
+    '''
+    Handles the mapping between :class:`EditorItem`'s data and the model's data.  Ensures that
+    whenever the item's data are edited, the model's data get updated and vise-versa.
+    '''
     def __init__(self, parent=None):
         super(EditorItemDelegate, self).__init__(parent)
 
@@ -41,12 +49,18 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
     def setModelData(self, editor, model, index):
+        # TODO: Make ItemDelegate work for dictionary editor created in attribute editor
         if type(editor) == EditorItemWidget:
+            return
+        elif type(editor) == PushButton:
+            model.setData(index, editor.text())
             return
         return super(EditorItemDelegate, self).setModelData(editor, model, index)
 
 class EditorItem(QtGui.QGraphicsWidget):
-
+    '''
+    Graphical representation of the data-model.
+    '''
     def __init__(self,
                  index,
                  parent = None):

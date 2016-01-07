@@ -12,6 +12,8 @@ from PyQt4 import QtGui
 
 from collections import OrderedDict
 
+from syntax import CodeHighlighter
+
 class CodeEditor(QtGui.QTextEdit):
     """
     """
@@ -31,6 +33,8 @@ class CodeEditor(QtGui.QTextEdit):
              'int8', 'int16', 'int32', 'int64',
              'uint8', 'uint16', 'uint32', 'uint64']
         )
+
+        self.highlighter = CodeHighlighter(self.document())
 
     def insertCompletion(self, completion):
         if (self.completer.widget() != self):

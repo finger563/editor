@@ -1,14 +1,22 @@
-"""
+'''
 Attribute Editor Widget 
 
 These classes allow for an object in the 
 editor's attributes to be edited in a widget
 that slides in from the right of the screen.
 
-* author: William Emfinger
-* website: github.com/finger563/editor 
-* last edited: August 2015
-"""
+Each EditorView (i.e. tab in the editor widget)
+has its own AttributeEditor.
+'''
+
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -18,11 +26,16 @@ from graphics_items import PushButton
 
 from code_editor import CodeEditor
 
-import syntax
-
-# NEED TO USE VALIDATORS
+# TODO: Integrate validators into the attribute editor
+# TODO: Figure out how to handle dependent attribute editing
+#       e.g. options/options_type & scope depending on on the kind of attribute
 
 class AttributeEditor(QtGui.QWidget):
+    '''
+    Enables editing of the attributes of a model object.  Interfaces with a 
+    subclass of a :class:`QDataWidgetMapper` to enable automatic updating back and 
+    forth between the model and the editor.
+    '''
     def __init__(self, parent):
         super(AttributeEditor,self).__init__(parent)
         self.setContentsMargins(0,0,0,0)
@@ -34,9 +47,8 @@ class AttributeEditor(QtGui.QWidget):
         self._unsaved_edits = False
         self._layout = None
 
-        # Should probably use ManualSubmit as an option
-        # since we have the cancel option to allow
-        # the edits to be canceled
+        # TODO: Convert attribute editor dataMapper to ManualSubmit to allow cancelling edits
+        #       Make sure that changing it here doesn't affect the EditorItem's interaction
         self.dataMapper = QtGui.QDataWidgetMapper()
 
     def init_layout(self):
@@ -59,13 +71,13 @@ class AttributeEditor(QtGui.QWidget):
         self.updateGeo()
 
     def init_attributes(self, attr):
-        i = 0
+        i = 0 # index into attributes (if it were a list)
         for key,attr in attr.iteritems():
             if attr.editable:
                 obj = self.add_attribute(key, attr)
                 if obj:
                     self.dataMapper.addMapping(obj, i)
-            i += 1 # the index into attributes
+            i += 1
 
     def update(self, dataMapper):
         self.dataMapper = dataMapper
@@ -112,12 +124,12 @@ class AttributeEditor(QtGui.QWidget):
             obj.setChecked(attr.value)
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
-            self.highlight = syntax.CodeHighlighter(obj.document())
             obj.setText(attr.value)
-        elif attr.kind in ['list'] and attr.value in attr.options:
+        elif attr.kind in ['list'] and attr.value in attr.get_options():
+            options = attr.get_options()
             obj = QtGui.QComboBox()
-            obj.addItems(attr.options)
-            obj.setCurrentIndex(attr.options.index(attr.value))
+            obj.addItems(options)
+            obj.setCurrentIndex(options.index(attr.value))
         elif 'file' in attr.kind:
             obj = PushButton()
             obj.setText(attr.value)
@@ -126,6 +138,7 @@ class AttributeEditor(QtGui.QWidget):
                 lambda : self.open_file(name, obj, attr.kind.split('_')[1])
             )
         elif 'dictionary' in attr.kind:
+            # TODO: Create an object here which fully encapsulates dictionary editing
             label = None
             _type = attr.kind.split('_')[1]
             obj = QtGui.QGroupBox(name)
