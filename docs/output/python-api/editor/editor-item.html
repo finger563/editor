@@ -152,10 +152,30 @@
             
   <div class="section" id="module-editor_item">
 <span id="editor-item"></span><h1>Editor-Item<a class="headerlink" href="#module-editor_item" title="Permalink to this headline">¶</a></h1>
-<p>Model Item</p>
+<p>Editor Item</p>
 <p>This class defines the widget
 which allows for viewing and editing
 of models.</p>
+<dl class="class">
+<dt id="editor_item.EditorItemWidget">
+<em class="property">class </em><code class="descclassname">editor_item.</code><code class="descname">EditorItemWidget</code><span class="sig-paren">(</span><em>parent=None</em>, <em>ei=None</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_item.EditorItemWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper class for <a class="reference internal" href="#editor_item.EditorItem" title="editor_item.EditorItem"><code class="xref py py-class docutils literal"><span class="pre">EditorItem</span></code></a> so that <code class="xref py py-class docutils literal"><span class="pre">EditorItem`s</span> <span class="pre">can</span> <span class="pre">be</span> <span class="pre">configured</span> <span class="pre">and</span> <span class="pre">automatically</span>
+<span class="pre">used</span> <span class="pre">with</span> <span class="pre">:class:`EditorItemDelegate</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="editor_item.EditorItemDelegate">
+<em class="property">class </em><code class="descclassname">editor_item.</code><code class="descname">EditorItemDelegate</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_item.EditorItemDelegate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the mapping between <a class="reference internal" href="#editor_item.EditorItem" title="editor_item.EditorItem"><code class="xref py py-class docutils literal"><span class="pre">EditorItem</span></code></a>&#8216;s data and the model&#8217;s data.  Ensures that
+whenever the item&#8217;s data are edited, the model&#8217;s data get updated and vise-versa.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="editor_item.EditorItem">
+<em class="property">class </em><code class="descclassname">editor_item.</code><code class="descname">EditorItem</code><span class="sig-paren">(</span><em>index</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_item.EditorItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graphical representation of the data-model.</p>
+</dd></dl>
+
 </div>
 
 
