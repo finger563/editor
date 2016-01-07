@@ -152,9 +152,32 @@
             
   <div class="section" id="module-editor_widget">
 <span id="editor-widget"></span><h1>Editor-Widget<a class="headerlink" href="#module-editor_widget" title="Permalink to this headline">¶</a></h1>
-<p>Editor Widget</p>
 <p>These classes allow users to view
-and edit models in the project in tabs.</p>
+and edit models graphically in tabs.</p>
+<dl class="class">
+<dt id="editor_widget.EditorViewDelegate">
+<em class="property">class </em><code class="descclassname">editor_widget.</code><code class="descname">EditorViewDelegate</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorViewDelegate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the mapping between <a class="reference internal" href="#editor_widget.EditorView" title="editor_widget.EditorView"><code class="xref py py-class docutils literal"><span class="pre">EditorView</span></code></a>&#8216;s data and the model&#8217;s data.  Ensures that
+whenever the view&#8217;s data are edited, the model&#8217;s data get updated and vise-versa.  This enables
+ensuring that the tab&#8217;s name changes whenever its associated model changes, for instance.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="editor_widget.EditorScene">
+<em class="property">class </em><code class="descclassname">editor_widget.</code><code class="descname">EditorScene</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorScene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass of <code class="xref py py-class docutils literal"><span class="pre">QGraphicsScene</span></code> which holds all the <code class="xref py py-class docutils literal"><span class="pre">EditorItem`s</span> <span class="pre">which</span> <span class="pre">are</span> 
+<span class="pre">themselves</span> <span class="pre">subclasses</span> <span class="pre">of</span> <span class="pre">:class:`QGraphicsWidget</span></code>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="editor_widget.EditorView">
+<em class="property">class </em><code class="descclassname">editor_widget.</code><code class="descname">EditorView</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_widget.EditorView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass of <code class="xref py py-class docutils literal"><span class="pre">QGraphicsView</span></code> which acts as a viewer for some subset of the
+model.  Automatically loads whatever <code class="xref py py-class docutils literal"><span class="pre">ViewModel</span></code> is associated with the view&#8217;s
+model, as <em>&lt;Model Name&gt;.view</em>.  If the view file cannot be loaded or found, a default
+implementation simply creates a <code class="xref py py-class docutils literal"><span class="pre">EditorItem</span></code> object representing the model.</p>
+</dd></dl>
+
 </div>
 
 

@@ -152,14 +152,23 @@
             
   <div class="section" id="module-graphics_items">
 <span id="graphics-items"></span><h1>Graphics-Items<a class="headerlink" href="#module-graphics_items" title="Permalink to this headline">¶</a></h1>
-<p>Graphics Items</p>
 <p>These classes are custom items implementing
 draw styles not natively found in qgraphics*items</p>
-<ul class="simple">
-<li>author: William Emfinger</li>
-<li>website: github.com/finger563/editor</li>
-<li>last edited: August 2015</li>
-</ul>
+<dl class="class">
+<dt id="graphics_items.TextItem">
+<em class="property">class </em><code class="descclassname">graphics_items.</code><code class="descname">TextItem</code><span class="sig-paren">(</span><em>text=''</em>, <em>parent=None</em>, <em>scene=None</em>, <em>ha=1</em>, <em>va=32</em><span class="sig-paren">)</span><a class="headerlink" href="#graphics_items.TextItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acts as a label for a <code class="xref py py-class docutils literal"><span class="pre">EditorItem</span></code>.  Extends <code class="xref py py-class docutils literal"><span class="pre">QGraphicsTextItem</span></code> with
+more functionality for setting the alignment and position of the text relative to its
+parent <code class="xref py py-class docutils literal"><span class="pre">EditorItem</span></code>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="graphics_items.RoundRectItem">
+<em class="property">class </em><code class="descclassname">graphics_items.</code><code class="descname">RoundRectItem</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>w</em>, <em>h</em>, <em>xr=0.1</em>, <em>yr=0.1</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#graphics_items.RoundRectItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends <code class="xref py py-class docutils literal"><span class="pre">QGraphicsRectItem</span></code> to support drawing a rectangle with
+rounded edges.</p>
+</dd></dl>
+
 </div>
 
 
