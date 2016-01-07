@@ -34,7 +34,9 @@ class EditorItemWidget(QtGui.QWidget):
 class EditorItemDelegate(QtGui.QItemDelegate):
     '''
     Handles the mapping between :class:`EditorItem`'s data and the model's data.  Ensures that
-    whenever the item's data are edited, the model's data get updated and vise-versa.
+    whenever the item's data are edited, the model's data get updated and vise-versa.  This eables
+    ensuring that the graphics object's text label changes whenever its associated model changes, 
+    for instance.
     '''
     def __init__(self, parent=None):
         super(EditorItemDelegate, self).__init__(parent)

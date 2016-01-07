@@ -1,6 +1,4 @@
 '''
-Attribute Editor Widget 
-
 These classes allow for an object in the 
 editor's attributes to be edited in a widget
 that slides in from the right of the screen.
