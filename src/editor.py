@@ -61,6 +61,8 @@ def convertModelToMeta(model):
     as children.  By converting the models in to named classes subclassing Model and adding
     named attributes subclassing Attribute it forms a new class structure which describes the
     meta model and which can be used to instantiate models.  
+
+    Returns the class of the root type of the meta model
     '''
 
     allowed_kids = OrderedDict()
@@ -165,6 +167,11 @@ class Editor(QtGui.QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close) # note that this will call closeEvent
 
+        newAction = Action('icons/toolbar/new.png', 'New', self)
+        newAction.setStatusTip('New.')
+        newAction.setShortcut('Ctrl+N')
+        newAction.triggered.connect(self.newModel)
+
         openAction = Action('icons/toolbar/open.png', 'Open', self)
         openAction.setStatusTip('Open.')
         openAction.setShortcut('Ctrl+O')
@@ -185,6 +192,7 @@ class Editor(QtGui.QMainWindow):
         self.menubar_init()
         self.menubar_add_menu('&File')
         self.menu_add_action('&File',exitAction)
+        self.menu_add_action('&File',newAction)
         self.menu_add_action('&File',openAction)
         self.menu_add_action('&File',saveAction)
 
@@ -192,6 +200,7 @@ class Editor(QtGui.QMainWindow):
         self.toolbar_init()
         self.toolbar_create('toolbar1')
         self.toolbar_add_action('toolbar1',exitAction)
+        self.toolbar_add_action('toolbar1',newAction)
         self.toolbar_add_action('toolbar1',openAction)
         self.toolbar_add_action('toolbar1',saveAction)
         self.toolbar_add_widget('toolbar1',self.mode_selector)
@@ -290,6 +299,7 @@ class Editor(QtGui.QMainWindow):
 
         :param in modelIndex: index into the AbstractItemModel which has been selected for viewing.
         '''
+        # TODO: Models can have same names depending on scope; make sure we use uniqueness here!
         mi = self.proxy_model.mapToSource(modelIndex)
         item = self.model.getModel( mi )
         name = item["Name"]
@@ -306,6 +316,38 @@ class Editor(QtGui.QMainWindow):
         self.tabbedEditorWidget.setCurrentIndex(
             self.tabbedEditorWidget.indexOf(ev) )
         
+    def newModel(self, event):
+        '''Callback for creating a new (meta-, view-) model.'''
+        self.clearModels()
+        self.clearViewer()
+        root = None
+        if self.editor_mode == 'Model':
+            fname = QtGui.QFileDialog.getOpenFileName(
+                self,
+                'Select Meta Model',
+                '',
+                'Meta Model Files (*.meta)',
+                options = QtGui.QFileDialog.Options()
+            )
+            if fname:
+                meta_root = self.open_model(fname)
+                base = convertModelToMeta(meta_root)
+                print base
+                root = Model()
+                root.children._allowed = [base]
+                root.children._cardinality = { base : '1' }
+                root.add_child(base())
+        elif self.editor_mode == 'Meta Model':
+            root = Model()
+            root.add_child(Model())
+        elif self.editor_mode == 'View Model':
+            root = Model()
+            root.children._allowed = [ViewModel]
+            root.children._cardinality = { ViewModel : '1' }
+            root.add_child(ViewModel())
+        if root:
+            self.load_model(root)
+
     def openModel(self, event):
         '''Callback to allow the user to select a model file based on the current mode of the editor.'''
         ftype = '{}'.format(self.editor_mode.lower().split()[0])
@@ -319,19 +361,15 @@ class Editor(QtGui.QMainWindow):
         if fname:
             self.clearModels()
             self.clearViewer()
-            self.open_model(fname)
+            root = self.open_model(fname)
+            self.load_model(root)
 
     def open_model(self, fname):
         '''Decodes a saved *.{model, meta, view} file and loads it into the editor.'''
-        import jsonpickle, dill
+        import dill
         with open(fname, 'r') as f:
-            #m = jsonpickle.decode(f.read())
             m = dill.load(f)
-            root = Model()
-            root.children._allowed.append(m)
-            root.children._cardinality[m] = '1'
-            root.add_child(m())
-            self.load_model(root)
+            return m
 
     def load_model(self, model):
         '''
@@ -359,17 +397,6 @@ class Editor(QtGui.QMainWindow):
     def saveModel(self, event):
         '''Saves a model according to the current mode of the editor.'''
         import dill
-        root = self.model.getModel(QtCore.QModelIndex())
-        test = convertModelToMeta(root.children[0])
-        test_obj = test
-        #test_obj['Name'] = 'New Test Object'
-        with open('test.model', 'w') as f:
-            dill.dump(test_obj, f)
-        # TODO: Figure out proper handling of meta-/view-/model serialization
-        #       perhaps serialize all class defs out as a dict of name -> class def?
-        return
-
-        import jsonpickle
         ftype = '{}'.format(self.editor_mode.lower().split()[0])
         fname = QtGui.QFileDialog.getSaveFileName(
             self,
@@ -381,16 +408,10 @@ class Editor(QtGui.QMainWindow):
         if fname:
             if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
-            
-            # TODO: Make this change depending on the editor mode
-            #       e.g. in model mode, simply serialize the root object
-            #       but for view models and meta-models, we need to (?) convert
-            #       the models before serialization
-            
-            jsonpickle.set_encoder_options('simplejson',indent=4)
-            encoded_output = jsonpickle.encode(root)
+            root = root.children[0]
+            # TODO: Test with meta, view, and model
             with open(fname, 'w') as f:
-                f.write(encoded_output)
+                dill.dump(root, f)
             return 0
 
     def closeEvent(self, event):
