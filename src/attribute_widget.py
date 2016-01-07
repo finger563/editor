@@ -1,14 +1,22 @@
-"""
+'''
 Attribute Editor Widget 
 
 These classes allow for an object in the 
 editor's attributes to be edited in a widget
 that slides in from the right of the screen.
 
-* author: William Emfinger
-* website: github.com/finger563/editor 
-* last edited: August 2015
-"""
+Each EditorView (i.e. tab in the editor widget)
+has its own AttributeEditor.
+'''
+
+__author__ = 'William Emfinger'
+__copyright__ = 'Copyright 2016, ROSMOD'
+__credits__ = ['William Emfinger', 'Pranav Srinivas Kumar']
+__license__ = 'GPL'
+__version__ = '0.4'
+__maintainer__ = 'William Emfinger'
+__email__ = 'emfinger@isis.vanderbilt.edu'
+__status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -23,6 +31,11 @@ from code_editor import CodeEditor
 #       e.g. options/options_type & scope depending on on the kind of attribute
 
 class AttributeEditor(QtGui.QWidget):
+    '''
+    Enables editing of the attributes of a model object.  Interfaces with a 
+    subclass of a :class:`QDataWidgetMapper` to enable automatic updating back and 
+    forth between the model and the editor.
+    '''
     def __init__(self, parent):
         super(AttributeEditor,self).__init__(parent)
         self.setContentsMargins(0,0,0,0)
