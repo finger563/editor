@@ -23,6 +23,8 @@ from attribute_widget import AttributeEditor
 from editor_item import EditorItem
 from layout import layout_create
 
+# TODO: Add in view-model specific loading code once view_model has been fully specified
+
 class EditorViewDelegate(QtGui.QItemDelegate):
     '''
     Handles the mapping between :class:`EditorView`'s data and the model's data.  Ensures that
@@ -50,7 +52,7 @@ class EditorViewDelegate(QtGui.QItemDelegate):
 
 class EditorScene(QtGui.QGraphicsScene):
     '''
-    Subclass of :class:`QGraphicsScene` which holds all the :class:`EditorItem`s which are 
+    Subclass of :class:`QGraphicsScene` which holds all the :class:`EditorItem` which are 
     themselves subclasses of :class:`QGraphicsWidget`.
     '''
     def __init__(self, parent):
@@ -114,8 +116,6 @@ class EditorView(QtGui.QGraphicsView):
     def viewModel(self):
         # the view model is not encapsulated by data/item models
         # it is directly accessible class objects with attributes etc.
-        # TODO: Figure out the structure of the view model and how
-        # to access the classes and attributes of the view-model
         return self.view_model
 
     def proxyModel(self):
@@ -166,7 +166,6 @@ class EditorView(QtGui.QGraphicsView):
         t = EditorItem( index = index, parent = parent )
         if self.viewModel():
             for cm in model.children:
-                # TODO: Replace this with view-model specific loading code
                 if cm.kind() in self.viewModel().children:
                     t.addChild(self.buildView(cm, t))
         return t

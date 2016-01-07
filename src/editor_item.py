@@ -22,6 +22,12 @@ import view_attributes as view_attr
 from layout import layout_create, valid_layouts
 from graphics_items import RoundRectItem, TextItem, PushButton
 
+# TODO: Make ItemDelegate work for dictionary editor created in attribute editor
+
+# TODO: there is a dependency between the text size and the item size of EditorItem
+#       because it's all max-based, when the text shrinks the item should shrink too
+#       but can't because the rect is preventing it
+
 class EditorItemWidget(QtGui.QWidget):
     '''
     Wrapper class for :class:`EditorItem` so that an :class:`EditorItem` can be configured and automatically
@@ -51,7 +57,6 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
     def setModelData(self, editor, model, index):
-        # TODO: Make ItemDelegate work for dictionary editor created in attribute editor
         if type(editor) == EditorItemWidget:
             return
         elif type(editor) == PushButton:
@@ -148,9 +153,6 @@ class EditorItem(QtGui.QGraphicsWidget):
 
     def boundingRect(self):
         minx =0; miny=0; maxx=0;maxy=0
-        # TODO: there is a dependency between the text size and the item size
-        #       because it's all max-based, when the text shrinks the item should
-        #       shrink too but can't because the rect is preventing it
         '''
         if self._item:
             brect = self._item.boundingRect()

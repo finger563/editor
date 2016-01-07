@@ -43,6 +43,8 @@ from output import TabbedOutputWidget
 #       e.g. the cluster hardware model would be a good example.  To do this we need to solve the issues
 #       of meta-model conflicts and model composition (need to figure out which one is root and where the
 #       other 'root' goes.
+#
+#       Perhaps make the loaded model read-only?
 
 # TODO: possibly change serialization to use dicts?  I.e. convert all models into dicts before serializing?
 #       This would still allow object references (by having the value of the pointer be the object's key
@@ -63,6 +65,12 @@ from output import TabbedOutputWidget
 #       possible.  Perhaps just allow loading simultaneously the model + meta-model; and attempting to 
 #       resolve model changes when meta-model edits are performed.
 
+# TODO: Add pointer conversion operations to 'convertModelToMeta()'
+
+# TODO: Make names only unique within scopes; figure out how to enforce it
+
+# TODO: Models can have same names depending on scope; make sure we use uniqueness here! (Editor.openEditorTabs)
+
 def convertModelToMeta(model):
     '''
     This function is used to create classes based on the editor's current model.
@@ -82,12 +90,10 @@ def convertModelToMeta(model):
             allowed_kids[convertModelToMeta(obj)] = obj['Cardinality']
         # These will be pointers to other classes
         elif type(obj) == Pointer:
-            # TODO: Go through the children of 'model' who are POINTERS and add new children
             pass
         # These will be the attributes of the new class
         elif type(obj) == Model_Attribute:
             def attrInit(self):
-                # TODO: Test to make sure that all possible attributes get workable values
                 Attribute.__init__(self, obj['Kind'], Attribute.default_vals[obj['Kind']])
             new_attr = type(
                 obj['Name'],
@@ -111,8 +117,6 @@ def convertModelToMeta(model):
         for name,attr in attr_dict.iteritems():
             self.set_attribute(name, attr)
 
-    # TODO: Fix this so that everything is properly initialized:
-    #       e.g. attributes, pointers, Children (_allowed), etc.
     new_type = type( 
         model['Name'], 
         (Model, object, ), 
@@ -299,7 +303,6 @@ class Editor(QtGui.QMainWindow):
             self.editor_mode = text
             self.clearModels()
             self.clearViewer()
-            # TODO: NEED TO UPDATE TREE VIEW MODEL WITH NEW TYPE OF MODEL
 
     def openModelView(self, modelIndex):
         '''
@@ -308,14 +311,12 @@ class Editor(QtGui.QMainWindow):
 
         :param in modelIndex: index into the AbstractItemModel which has been selected for viewing.
         '''
-        # TODO: Models can have same names depending on scope; make sure we use uniqueness here!
         mi = self.proxy_model.mapToSource(modelIndex)
         item = self.model.getModel( mi )
         name = item["Name"]
         if name not in self.openEditorTabs:
             ev = EditorView( self.tabbedEditorWidget )
             ev.setProxyModel( self.proxy_model )
-            # TODO: FIX THIS SO THAT THE VIEW'S EDITOR MODEL IS SET TO THE VIEW'S SELECTION CHANGED
             self.openEditorTabs[name] = ev
         else:
             ev = self.openEditorTabs[name]
@@ -419,7 +420,6 @@ class Editor(QtGui.QMainWindow):
             if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
             root = root.children[0] # the actual root is not displayed and is always a Model()
-            # TODO: Test with meta, view, and model
             with open(fname, 'w') as f:
                 dill.dump(root, f)
             return 0

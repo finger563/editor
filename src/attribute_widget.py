@@ -25,8 +25,14 @@ from graphics_items import PushButton
 from code_editor import CodeEditor
 
 # TODO: Integrate validators into the attribute editor
+
 # TODO: Figure out how to handle dependent attribute editing
 #       e.g. options/options_type & scope depending on on the kind of attribute
+
+# TODO: Convert attribute editor dataMapper to ManualSubmit to allow cancelling edits
+#       Make sure that changing it here doesn't affect the EditorItem's interaction
+
+# TODO: Create an object here which fully encapsulates dictionary editing
 
 class AttributeEditor(QtGui.QWidget):
     '''
@@ -45,8 +51,6 @@ class AttributeEditor(QtGui.QWidget):
         self._unsaved_edits = False
         self._layout = None
 
-        # TODO: Convert attribute editor dataMapper to ManualSubmit to allow cancelling edits
-        #       Make sure that changing it here doesn't affect the EditorItem's interaction
         self.dataMapper = QtGui.QDataWidgetMapper()
 
     def init_layout(self):
@@ -112,7 +116,6 @@ class AttributeEditor(QtGui.QWidget):
         label.setToolTip(attr.tooltip)
         label.setWordWrap(True)
 
-        # TODO: Fix file setting now that everything's been converted to MVC
         obj = None
         if attr.kind in ['float','int','integer','double','string']:
             obj = QtGui.QLineEdit()
@@ -136,7 +139,6 @@ class AttributeEditor(QtGui.QWidget):
                 lambda : self.open_file(name, obj, attr.kind.split('_')[1])
             )
         elif 'dictionary' in attr.kind:
-            # TODO: Create an object here which fully encapsulates dictionary editing
             label = None
             _type = attr.kind.split('_')[1]
             obj = QtGui.QGroupBox(name)
@@ -250,7 +252,6 @@ class AttributeEditor(QtGui.QWidget):
     def cancel(self, event):
         self.hide(event)
         self._unsaved_edits = False
-        # TODO: Clear the dataMapper here so nothing gets accidentally overwritten
 
     def hide(self, event):
         self._displayed = False
