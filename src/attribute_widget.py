@@ -18,9 +18,9 @@ from graphics_items import PushButton
 
 from code_editor import CodeEditor
 
-import syntax
-
 # TODO: Integrate validators into the attribute editor
+# TODO: Figure out how to handle dependent attribute editing
+#       e.g. options/options_type & scope depending on on the kind of attribute
 
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent):
@@ -111,7 +111,6 @@ class AttributeEditor(QtGui.QWidget):
             obj.setChecked(attr.value)
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
-            self.highlight = syntax.CodeHighlighter(obj.document())
             obj.setText(attr.value)
         elif attr.kind in ['list'] and attr.value in attr.get_options():
             options = attr.get_options()
