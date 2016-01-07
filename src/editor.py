@@ -129,11 +129,11 @@ class Editor(QtGui.QMainWindow):
     The main editor class, which enables creating, loading, editing, and saving of 
     models, meta-models, and view-models.  
 
-    Models are saved as *.model files and contain the metamodel they were created with.
+    Models are saved as \*.model files and contain the metamodel they were created with.
 
-    Meta-models are saved as *.meta files and can be used to create new models.
+    Meta-models are saved as \*.meta files and can be used to create new models.
 
-    View-models are saved as *.view files and are automatically loaded as <Model Type>.view
+    View-models are saved as \*.view files and are automatically loaded as <Model Type>.view
     for each model that is opened in the visualizer.
     '''
 
@@ -370,7 +370,7 @@ class Editor(QtGui.QMainWindow):
             self.load_model(root)
 
     def open_model(self, fname):
-        '''Decodes a saved *.{model, meta, view} file and loads it into the editor.'''
+        '''Decodes a saved \*.{model, meta, view} file and loads it into the editor.'''
         import dill
         with open(fname, 'r') as f:
             m = dill.load(f)
