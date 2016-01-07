@@ -102,6 +102,7 @@ class AttributeEditor(QtGui.QWidget):
         label.setToolTip(attr.tooltip)
         label.setWordWrap(True)
 
+        # TODO: Fix file setting now that everything's been converted to MVC
         obj = None
         if attr.kind in ['float','int','integer','double','string']:
             obj = QtGui.QLineEdit()
@@ -113,7 +114,7 @@ class AttributeEditor(QtGui.QWidget):
             obj = CodeEditor(self)
             self.highlight = syntax.CodeHighlighter(obj.document())
             obj.setText(attr.value)
-        elif attr.kind in ['list_entry'] and attr.value in attr.options:
+        elif attr.kind in ['list'] and attr.value in attr.options:
             obj = QtGui.QComboBox()
             obj.addItems(attr.options)
             obj.setCurrentIndex(attr.options.index(attr.value))

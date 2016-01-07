@@ -50,6 +50,10 @@ from output import TabbedOutputWidget
 #       Perhaps just allow publishers/subscribers/clients/servers to point to messages/services which
 #       are not in the model and are specified as a string just as they would be in the code?
 
+# TODO: View-Models are incomplete and not usable; their attributes don't necessarily work and editing
+#       a view model should probably require knowledge of the meta-model, so the meta-model should be 
+#       loaded as well
+
 # TODO: Figure out how to update the meta-model without completely losing the edits to existing models if
 #       possible.  Perhaps just allow loading simultaneously the model + meta-model; and attempting to 
 #       resolve model changes when meta-model edits are performed.
@@ -344,7 +348,9 @@ class Editor(QtGui.QMainWindow):
             root = Model()
             root.children._allowed = [ViewModel]
             root.children._cardinality = { ViewModel : '1' }
-            root.add_child(ViewModel())
+            m = ViewModel()
+            m['Name'] = 'New_View_Model'
+            root.add_child(m)
         if root:
             self.load_model(root)
 
@@ -408,7 +414,7 @@ class Editor(QtGui.QMainWindow):
         if fname:
             if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
-            root = root.children[0]
+            root = root.children[0] # the actual root is not displayed and is always a Model()
             # TODO: Test with meta, view, and model
             with open(fname, 'w') as f:
                 dill.dump(root, f)

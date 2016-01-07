@@ -30,11 +30,11 @@ class Attribute(object):
     kind -- The datatype of the attribute e.g. string, pointer, float, bool etc.
     value -- The value of the attributes e.g. 'my_component', 1.642 etc.
     '''
-    allowed_types = ['string', 'code', 'list_entry', 'int', 'float', 'double', 'bool']
+    allowed_types = ['string', 'code', 'list', 'int', 'float', 'double', 'bool']
     default_vals = {
         'string' : '',
         'code' : '',
-        'list_entry' : [],
+        'list' : [],
         'int' : 0,
         'float' : 0.0,
         'double' : 0.0,
@@ -50,7 +50,7 @@ class Attribute(object):
         self.value = value
 
     def fromQVariant(self, variant):
-        if self.kind in ['string','code','list_entry']:
+        if self.kind in ['string','code','list']:
             self.value = str(variant.toString())
         elif self.kind in ['int','integer']:
             self.value,tmp = variant.toInt()
@@ -83,7 +83,7 @@ class Model(object):
 
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', 'Root')
-        self.add_attribute('Cardinality', 'list_entry', Children.valid_cardinalities[0])
+        self.add_attribute('Cardinality', 'list', Children.valid_cardinalities[0])
         self.get_attribute('Cardinality').options = Children.valid_cardinalities
         self.kwargs = {}
 
@@ -148,7 +148,7 @@ class Model_Attribute(Model):
         self.children = Children(allowed=[], cardinality = {})
         self.attributes = OrderedDict()
         self.add_attribute( 'Name', 'string', name )
-        self.set_attribute( 'Kind', Attribute( 'list_entry', kind ) )
+        self.set_attribute( 'Kind', Attribute( 'list', kind ) )
         self.get_attribute( 'Kind' ).options = Attribute.allowed_types
         self.set_attribute( 'Tooltip', Attribute( 'string', tooltip ) )
         self.set_attribute( 'Display', Attribute( 'string', display ) )
