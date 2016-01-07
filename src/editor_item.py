@@ -24,7 +24,7 @@ from graphics_items import RoundRectItem, TextItem, PushButton
 
 class EditorItemWidget(QtGui.QWidget):
     '''
-    Wrapper class for :class:`EditorItem` so that :class:`EditorItem`s can be configured and automatically
+    Wrapper class for :class:`EditorItem` so that an :class:`EditorItem` can be configured and automatically
     used with :class:`EditorItemDelegate`
     '''
     def __init__(self, parent=None, ei = None):
