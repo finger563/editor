@@ -20,7 +20,7 @@ from code_editor import CodeEditor
 
 import syntax
 
-# NEED TO USE VALIDATORS
+# TODO: Integrate validators into the attribute editor
 
 class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent):
@@ -34,9 +34,8 @@ class AttributeEditor(QtGui.QWidget):
         self._unsaved_edits = False
         self._layout = None
 
-        # Should probably use ManualSubmit as an option
-        # since we have the cancel option to allow
-        # the edits to be canceled
+        # TODO: Convert attribute editor dataMapper to ManualSubmit to allow cancelling edits
+        #       Make sure that changing it here doesn't affect the EditorItem's interaction
         self.dataMapper = QtGui.QDataWidgetMapper()
 
     def init_layout(self):
@@ -59,13 +58,13 @@ class AttributeEditor(QtGui.QWidget):
         self.updateGeo()
 
     def init_attributes(self, attr):
-        i = 0
+        i = 0 # index into attributes (if it were a list)
         for key,attr in attr.iteritems():
             if attr.editable:
                 obj = self.add_attribute(key, attr)
                 if obj:
                     self.dataMapper.addMapping(obj, i)
-            i += 1 # the index into attributes
+            i += 1
 
     def update(self, dataMapper):
         self.dataMapper = dataMapper
@@ -114,10 +113,11 @@ class AttributeEditor(QtGui.QWidget):
             obj = CodeEditor(self)
             self.highlight = syntax.CodeHighlighter(obj.document())
             obj.setText(attr.value)
-        elif attr.kind in ['list'] and attr.value in attr.options:
+        elif attr.kind in ['list'] and attr.value in attr.get_options():
+            options = attr.get_options()
             obj = QtGui.QComboBox()
-            obj.addItems(attr.options)
-            obj.setCurrentIndex(attr.options.index(attr.value))
+            obj.addItems(options)
+            obj.setCurrentIndex(options.index(attr.value))
         elif 'file' in attr.kind:
             obj = PushButton()
             obj.setText(attr.value)
@@ -126,6 +126,7 @@ class AttributeEditor(QtGui.QWidget):
                 lambda : self.open_file(name, obj, attr.kind.split('_')[1])
             )
         elif 'dictionary' in attr.kind:
+            # TODO: Create an object here which fully encapsulates dictionary editing
             label = None
             _type = attr.kind.split('_')[1]
             obj = QtGui.QGroupBox(name)

@@ -49,6 +49,9 @@ class Attribute(object):
         self.kind = kind
         self.value = value
 
+    def get_options(self):
+        return self.options
+
     def fromQVariant(self, variant):
         if self.kind in ['string','code','list']:
             self.value = str(variant.toString())
@@ -160,6 +163,8 @@ class Model_Attribute(Model):
         
 class Pointer(Model):
     # TODO: Figure out how pointers will actually be used; how they are displayed, edited, etc.
+    #       Perhaps Pointers get serialized into attributes whose options are objects of that type?
+    #       Need support for getting all objects of a type within a scope of a model at run-time
     # TODO: Figure out how to properly create pointers in the meta-model
     # TODO: Integrate scoping ideas into pointers (for their options when editing src/dst)
     '''
