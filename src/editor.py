@@ -150,8 +150,8 @@ class Editor(QtGui.QMainWindow):
         self.init_ui()
         self.clearModels()
         #self.open_model('test_model.meta')
-        from test_model import TestModel
-        self.load_model(TestModel)
+        #from test_model import TestModel
+        #self.load_model(TestModel)
 
         self.setWindowIcon(QtGui.QIcon('icons/editor.png'))
 
@@ -336,21 +336,13 @@ class Editor(QtGui.QMainWindow):
             if fname:
                 meta_root = self.open_model(fname)
                 base = convertModelToMeta(meta_root)
-                print base
-                root = Model()
-                root.children._allowed = [base]
-                root.children._cardinality = { base : '1' }
-                root.add_child(base())
+                root = base()
         elif self.editor_mode == 'Meta Model':
             root = Model()
-            root.add_child(Model())
+            root['Name'] = 'New_Model'
         elif self.editor_mode == 'View Model':
-            root = Model()
-            root.children._allowed = [ViewModel]
-            root.children._cardinality = { ViewModel : '1' }
-            m = ViewModel()
-            m['Name'] = 'New_View_Model'
-            root.add_child(m)
+            root = ViewModel()
+            root['Name'] = 'New_View_Model'
         if root:
             self.load_model(root)
 
@@ -381,6 +373,13 @@ class Editor(QtGui.QMainWindow):
         '''
         :param in model: the root object of a model, which is loaded into the tree-viewer and proxy models
         '''
+
+        # Set up the hidden Root model, with the 'model' object as its only child
+        root = Model()
+        root.children._allowed = [model.__class__]
+        root.children._cardinality = { model.__class__ : '1' }
+        root.add_child(model)
+
         # Set up the proxy model for sorting/filtering
         self.proxy_model = SortFilterProxyModel(self)
         self.proxy_model.setDynamicSortFilter(True)
@@ -392,7 +391,7 @@ class Editor(QtGui.QMainWindow):
         # being edited/viewed; this can be a regular model, a view model,
         # or even a meta-model.  All these models inherit from the meta-metamodel
         # so have the same interfaces and can be interacted with in the same way
-        self.model = ItemModel(model)
+        self.model = ItemModel(root)
         self.model.set_filter_type(self.filter_mode)
         # Link the actual model and the proxy model
         self.proxy_model.setSourceModel(self.model)
@@ -415,6 +414,7 @@ class Editor(QtGui.QMainWindow):
             if fname[-len(ftype):] != ftype: fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
             root = root.children[0] # the actual root is not displayed and is always a Model()
+            print root['Name']
             # TODO: Test with meta, view, and model
             with open(fname, 'w') as f:
                 dill.dump(root, f)
