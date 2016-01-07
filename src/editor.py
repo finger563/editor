@@ -338,7 +338,7 @@ class Editor(QtGui.QMainWindow):
         creates a new EditorView for it if one does not exist.
 
         :param in modelIndex: index into the AbstractItemModel which
-        has been selected for viewing.
+            has been selected for viewing.
 
         '''
         mi = self.proxy_model.mapToSource(modelIndex)
@@ -410,8 +410,9 @@ class Editor(QtGui.QMainWindow):
             return m
 
     def load_model(self, model):
-        ''':param in model: the root object of a model, which is loaded into
-        the tree-viewer and proxy models
+        '''
+        :param in model: the root object of a model, which is loaded into
+            the tree-viewer and proxy models
         '''
 
         # Set up the hidden Root model, with the 'model' object as its
