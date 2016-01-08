@@ -92,6 +92,10 @@ from output import TabbedOutputWidget
 # TODO: Models can have same names depending on scope; make sure we
 #       use uniqueness here! (Editor.openEditorTabs)
 
+# TODO: Pointers aren't complete yet, and saving them into a .model
+#       file has issues (read: doesn't work).  The code for handling
+#       pointers both in convertModelToMeta and in their base classes
+#       needs to be thought through some more and refactored.
 
 def convertModelToMeta(model):
     '''This function is used to create classes based on the editor's
