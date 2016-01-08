@@ -110,7 +110,6 @@ def convertModelToMeta(model):
     attr_dict = OrderedDict()
     ptrs = OrderedDict()
     for obj in model.children:
-        print obj
         # These will be the available children_types of the class
         if type(obj) == Model:
             allowed_kids[convertModelToMeta(obj)] = obj['Cardinality']
@@ -120,11 +119,17 @@ def convertModelToMeta(model):
                 Pointer.__init__(self,
                                  src_type=type(obj),
                                  dst_type=obj['Destination Type'])
+                self['Name'] = obj['Name']
+                self.get_attribute('Name').editable = False
+                self.get_attribute(
+                    'Destination').tooltip = obj['Tooltip']
+                self.get_attribute(
+                    'Destination').display = obj['Display']
             new_ptr = type(
                 obj['Name'],
                 (Pointer, object, ),
                 {
-                    '__init__': ptrInit
+                    '__init__': ptrInit,
                 }
             )
             ptrs[obj['Name']] = new_ptr()
@@ -162,8 +167,6 @@ def convertModelToMeta(model):
         self.children._allowed.extend(ptr_types)
         for t in ptr_types:
             self.children._cardinality[t] = '1'
-        print self.children._allowed
-        print self.children._cardinality
         for name, ptr in ptrs.iteritems():
             self.add_child(ptr)
         # Handle attributes

@@ -190,13 +190,14 @@ class Model(object):
 class Pointer_Attribute(Attribute):
     '''
     '''
-    def __init__(self, base=None):
+    def __init__(self, base, _type):
         super(Pointer_Attribute, self).__init__('list', '')
         self.base = base
+        self.dst_type = _type
 
     def getNames(self, m):
         retlist = []
-        if type(m) == Model:
+        if m.__class__.__name__ == self.dst_type:
             retlist.append(m['Name'])
         for c in m.children:
             retlist.extend(self.getNames(c))
@@ -223,7 +224,8 @@ class Model_Pointer(Model):
         self.children = Children(allowed=[], cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', name)
-        self.set_attribute('Destination Type', Pointer_Attribute(self))
+        self.set_attribute('Destination Type',
+                           Pointer_Attribute(self, 'Model'))
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
 
@@ -238,13 +240,11 @@ class Pointer(Model):
                  src_type='Model',
                  dst_type='Model'):
         super(Pointer, self).__init__(parent)
-        self.src = src
-        self.dst = dst
-        self.src_type = src_type
-        self.dst_type = dst_type
         self.children = Children(allowed=[], cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', 'Pointer')
+        print dst_type
+        self.set_attribute('Destination', Pointer_Attribute(self, dst_type))
 
 
 class Model_Attribute(Model):
