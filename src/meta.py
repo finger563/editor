@@ -27,6 +27,10 @@ from collections import OrderedDict, MutableSequence
 # TODO: Figure out how to properly handle dependencies between objects
 #       (esp. attributes)
 
+# TODO: Refactor children implementation to provide methods for
+#       checking cardinality, allowed, etc.  Also don't really need
+#       both allowed and cardinality
+
 # TODO: Add scoping to some dependent attributes (e.g. for pointers etc.)
 
 # TODO: Figure out how to handle options for attributes, i.e. they

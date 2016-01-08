@@ -277,9 +277,11 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         item = self.modelindex.model().getModel(self.modelindex)
 
-        delSelf = QtGui.QAction('Delete', self)
-        delSelf.triggered.connect(self.delete)
-        menu.addAction(delSelf)
+        if item.parent and \
+           '0' in item.parent.children._cardinality[type(item)]:
+            delSelf = QtGui.QAction('Delete', self)
+            delSelf.triggered.connect(self.delete)
+            menu.addAction(delSelf)
 
         for a in item.children._allowed:
             addAction = QtGui.QAction('Add new {}'.format(a.__name__), self)
