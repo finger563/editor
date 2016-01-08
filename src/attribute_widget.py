@@ -27,6 +27,10 @@ from code_editor import CodeEditor
 
 # TODO: Figure out how to handle dependent attribute editing
 #       e.g. options/options_type & scope depending on on the kind of attribute
+#
+#       Need to figure out how to add/remove attribute widgets dynamically
+#       and when/how to trigger the add/remove & update events basd on certain
+#       values of other attributes
 
 # TODO: Convert attribute editor dataMapper to ManualSubmit to allow
 #       cancelling edits Make sure that changing it here doesn't
