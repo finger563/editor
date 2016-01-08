@@ -92,10 +92,22 @@ from output import TabbedOutputWidget
 # TODO: Models can have same names depending on scope; make sure we
 #       use uniqueness here! (Editor.openEditorTabs)
 
+# TODO: Need to look further into monkeypatching (adding or
+#       overwriting instance methods) and how it relates to pickling.
+#       Need to make sure these objects maintain consistency when
+#       being (de-)serialized.  This is especially important for
+#       pointers, their attributes, their constraints, and their
+#       options.
+
+# TODO: Editing of attributes needs to be worked out some more,
+#       w.r.t. the editable tag and what can/should be editable from
+#       where.
+
 # TODO: Pointers aren't complete yet, and saving them into a .model
 #       file has issues (read: doesn't work).  The code for handling
 #       pointers both in convertModelToMeta and in their base classes
 #       needs to be thought through some more and refactored.
+
 
 def convertModelToMeta(model):
     '''This function is used to create classes based on the editor's
