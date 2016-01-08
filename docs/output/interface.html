@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Editor Documentation &mdash; Editor 0.1.0 documentation</title>
+  <title>Interface API &mdash; Editor 0.1.0 documentation</title>
   
 
   
@@ -32,8 +32,10 @@
   
 
   
-    <link rel="top" title="Editor 0.1.0 documentation" href="#"/>
-        <link rel="next" title="Getting Started" href="getting-started.html"/> 
+    <link rel="top" title="Editor 0.1.0 documentation" href="index.html"/>
+        <link rel="up" title="Editor API" href="editor-api.html"/>
+        <link rel="next" title="Context Menu" href="python-api/editor/context-menu.html"/>
+        <link rel="prev" title="View Model" href="python-api/editor/view-model.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -51,7 +53,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Editor
+            <a href="index.html" class="icon icon-home"> Editor
           
 
           
@@ -82,9 +84,22 @@
           
             
             
-                <ul>
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="editor-api.html">Editor API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="editor-api.html">Editor API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meta.html">Meta Model</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Interface API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/context-menu.html">Context Menu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/output.html">Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/syntax.html">Syntax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/menubar.html">Menubar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/action.html">Action</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/toolbar.html">Toolbar</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
             
@@ -98,7 +113,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">Editor</a>
+        <a href="index.html">Editor</a>
       </nav>
 
 
@@ -113,13 +128,15 @@
 
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="#">Docs</a> &raquo;</li>
+    <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Editor Documentation</li>
+          <li><a href="editor-api.html">Editor API</a> &raquo;</li>
+      
+    <li>Interface API</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/interface.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -129,26 +146,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="editor-documentation">
-<h1>Editor Documentation<a class="headerlink" href="#editor-documentation" title="Permalink to this headline">¶</a></h1>
-<p>The Editor is a GUI for model editing and operations.
-It has a library which allows it to be used with <a class="reference external" href="http://github.com/rosmod/rosmod-pkg.git">ROSMOD</a>.</p>
+  <div class="section" id="interface-api">
+<h1>Interface API<a class="headerlink" href="#interface-api" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html#using-the-editor">Using the Editor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html#developing-a-module">Developing a Module</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="editor-api.html">Editor API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="meta.html">Meta Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="interface.html">Interface API</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/context-menu.html">Context Menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/output.html">Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/syntax.html">Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/action.html">Action</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/toolbar.html">Toolbar</a></li>
 </ul>
 </div>
-<p><a class="reference internal" href="genindex.html"><span>Index</span></a></p>
 </div>
 
 
@@ -158,8 +167,10 @@ It has a library which allows it to be used with <a class="reference external" h
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="getting-started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="python-api/editor/context-menu.html" class="btn btn-neutral float-right" title="Context Menu" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="python-api/editor/view-model.html" class="btn btn-neutral" title="View Model" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

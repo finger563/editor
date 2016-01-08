@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Context Menu &mdash; Editor 0.1.0 documentation</title>
+  <title>Meta Model &mdash; Editor 0.1.0 documentation</title>
   
 
   
@@ -24,21 +24,21 @@
 
   
   
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   
 
   
-    <link rel="stylesheet" href="../.././_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="./_static/custom.css" type="text/css" />
   
 
   
-    <link rel="top" title="Editor 0.1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Interface API" href="../../interface.html"/>
-        <link rel="next" title="Output" href="output.html"/>
-        <link rel="prev" title="Interface API" href="../../interface.html"/> 
+    <link rel="top" title="Editor 0.1.0 documentation" href="index.html"/>
+        <link rel="up" title="Editor API" href="editor-api.html"/>
+        <link rel="next" title="Meta" href="python-api/editor/meta.html"/>
+        <link rel="prev" title="Tree View" href="python-api/editor/tree-view.html"/> 
 
   
-  <script src="../../_static/js/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -53,7 +53,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> Editor
+            <a href="index.html" class="icon icon-home"> Editor
           
 
           
@@ -70,7 +70,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -85,19 +85,16 @@
             
             
                 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../editor-api.html">Editor API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../../editor.html">Editor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../meta.html">Meta Model</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../../interface.html">Interface API</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="">Context Menu</a></li>
-<li class="toctree-l3"><a class="reference internal" href="output.html">Output</a></li>
-<li class="toctree-l3"><a class="reference internal" href="syntax.html">Syntax</a></li>
-<li class="toctree-l3"><a class="reference internal" href="menubar.html">Menubar</a></li>
-<li class="toctree-l3"><a class="reference internal" href="action.html">Action</a></li>
-<li class="toctree-l3"><a class="reference internal" href="toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="editor-api.html">Editor API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="editor.html">Editor</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Meta Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/meta.html">Meta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/view-attributes.html">View Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/editor/view-model.html">View Model</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html">Interface API</a></li>
 </ul>
 </li>
 </ul>
@@ -113,7 +110,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">Editor</a>
+        <a href="index.html">Editor</a>
       </nav>
 
 
@@ -128,17 +125,15 @@
 
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    <li><a href="index.html">Docs</a> &raquo;</li>
       
-          <li><a href="../../editor-api.html">Editor API</a> &raquo;</li>
+          <li><a href="editor-api.html">Editor API</a> &raquo;</li>
       
-          <li><a href="../../interface.html">Interface API</a> &raquo;</li>
-      
-    <li>Context Menu</li>
+    <li>Meta Model</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/python-api/editor/context-menu.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/meta.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -148,12 +143,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-context_menu">
-<span id="context-menu"></span><h1>Context Menu<a class="headerlink" href="#module-context_menu" title="Permalink to this headline">¶</a></h1>
-<p>Context Menu for the Editor</p>
-<p>This program provides an API for
-library code to add context menus
-to objects of certain types in the model</p>
+  <div class="section" id="meta-model">
+<h1>Meta Model<a class="headerlink" href="#meta-model" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/meta.html">Meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/view-attributes.html">View Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/editor/view-model.html">View Model</a></li>
+</ul>
+</div>
 </div>
 
 
@@ -163,10 +161,10 @@ to objects of certain types in the model</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="output.html" class="btn btn-neutral float-right" title="Output" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="python-api/editor/meta.html" class="btn btn-neutral float-right" title="Meta" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../../interface.html" class="btn btn-neutral" title="Interface API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="python-api/editor/tree-view.html" class="btn btn-neutral" title="Tree View" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -196,22 +194,22 @@ to objects of certain types in the model</p>
 
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
+            URL_ROOT:'./',
             VERSION:'0.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
         };
     </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
 
   
 
   
   
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="_static/js/theme.js"></script>
   
 
   

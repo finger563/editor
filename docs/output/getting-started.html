@@ -144,19 +144,51 @@
 <span id="id1"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="using-the-editor">
 <span id="id2"></span><h2>Using the Editor<a class="headerlink" href="#using-the-editor" title="Permalink to this headline">¶</a></h2>
-<p>Describe how to use the editor here.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This editor is under development.</p>
 </div>
+<p>The editor is designed to allow for graphical modeling of meta-models,
+view-models, and models.  Meta-models and view-models are designed
+based on a hardcoded meta-meta-model.  Models are designed based on
+user-created meta-models which are loaded at run-time.  These
+different types of models are all able to be created, loaded, edited,
+and saved by the editor.  There is a mode selector in the editor which
+allows the user to specify which kind of modeling they will be doing
+(meta, view, model).</p>
 <div class="section" id="metamodling">
 <h3>MetaModling<a class="headerlink" href="#metamodling" title="Permalink to this headline">¶</a></h3>
-<p>Describe what metamodeling is here.</p>
+<p>Meta-models define objects and their attributes.  For each meta-model,
+there is always a single root, which may have any number of children
+objects.  These children can have children of their own, and so on.
+Furthermore, each object is specified with at least a <strong>Name</strong>
+attribute which governs the name of the class definition that will be
+created for that object.  The user can add other attributes which may
+have specific types, such as <strong>int</strong>, <strong>bool</strong>, <strong>string</strong>, etc.
+Finally, objects may contain pointers to other objects in the
+meta-model.  These pointers specify that <em>model objects</em> which are
+instances of that <em>meta object type</em> can have a pointer with the
+specified name that points to objects of the <em>pointer object type</em>.</p>
+<p>View-models are coupled with meta-models and models, and are similar
+to meta-models.  They have a single <em>root view object</em> which may have
+any number of children <em>view objects</em>.  Each <em>view object</em> contains a
+<em>kind</em> attribute which specifies the <em>kind</em> of <em>meta object</em> they
+display.  In addition, each <em>view object</em> has other attributes
+governing its layout, text placement, draw style, etc.  When a <em>model
+object</em> is loaded into the viewer, the editor automatically loads the
+<strong>view model</strong> associated with that object&#8217;s <em>meta type</em>.  If none can
+be found, it will default to a predefined view model.</p>
 </div>
 </div>
 <div class="section" id="developing-a-module">
 <h2>Developing a Module<a class="headerlink" href="#developing-a-module" title="Permalink to this headline">¶</a></h2>
-<p>Describe here how to make a module for the editor.</p>
+<p>Modules consist of a meta-model file and a set of python files.  These
+python files interact with models created using the meta-model and may
+perform various functions operating on the model or on artifacts
+generated from the model.  The editor provides a set of interfaces
+allowing the module to create toolbar, menubar, context menu, and
+other callback functions and associated shortcuts and buttons for
+letting the user operate on the model.</p>
 <div class="section" id="installation">
 <h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
@@ -168,8 +200,8 @@
 </ul>
 </div></blockquote>
 <ol class="arabic simple" start="2">
-<li>To build and install the editor, from a terminal:
-<code class="docutils literal"><span class="pre">make</span></code></li>
+<li>Install the dependencies of the editor:
+<code class="docutils literal"><span class="pre">sudo</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">dill</span></code></li>
 </ol>
 <p>Congratulations!  The set-up of the editor is complete!</p>
 </div>
