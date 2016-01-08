@@ -183,6 +183,29 @@ class Model(object):
         self.set_attribute(name, Attribute(kind, value))
 
 
+class Pointer_Attribute(Attribute):
+    '''
+    '''
+    def __init__(self, base=None):
+        super(Pointer_Attribute, self).__init__('list', '')
+        self.base = base
+
+    def getNames(self, m):
+        retlist = []
+        if type(m) == Model:
+            retlist.append(m['Name'])
+        for c in m.children:
+            retlist.extend(self.getNames(c))
+        return retlist
+
+    def get_options(self):
+        r = self.base
+        while r.parent is not None:
+            r = r.parent
+        r = r.children[0]
+        return self.getNames(r)
+
+
 class Model_Pointer(Model):
     '''
     '''
@@ -196,37 +219,28 @@ class Model_Pointer(Model):
         self.children = Children(allowed=[], cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', name)
-
-        def getNames(m):
-            retList = []
-            if type(m) == Model:
-                retList.append(m['Name'])
-            for c in m.children:
-                retList.extend(getNames(c))
-            return retList
-
-        def new_get_options(s, m):
-            r = m
-            while r.parent is not None:
-                r = r.parent
-            r = r.children[0]
-            return getNames(r)
-
-        def attrInit(s):
-            Attribute.__init__(s, 'list', dst_type)
-
-        a = type('Pointer',
-                 (Attribute, object, ),
-                 {
-                     '__init__': attrInit,
-                 }
-             )
-
-        a.get_options = lambda s: new_get_options(s, self)
-        self.set_attribute('Destination Type', a())
-
+        self.set_attribute('Destination Type', Pointer_Attribute(self))
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
+
+
+class Pointer(Model):
+    '''
+    '''
+    def __init__(self,
+                 parent=None,
+                 src=None,
+                 dst=None,
+                 src_type='Model',
+                 dst_type='Model'):
+        super(Pointer, self).__init__(parent)
+        self.src = src
+        self.dst = dst
+        self.src_type = src_type
+        self.dst_type = dst_type
+        self.children = Children(allowed=[], cardinality={})
+        self.attributes = OrderedDict()
+        self.add_attribute('Name', 'string', 'Pointer')
 
 
 class Model_Attribute(Model):
@@ -249,24 +263,6 @@ class Model_Attribute(Model):
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
         self.set_attribute('Editable', Attribute('bool', editable))
-
-
-class Pointer(Model):
-    '''
-    '''
-    def __init__(self,
-                 parent=None,
-                 src=None,
-                 dst=None,
-                 src_type='Model',
-                 dst_type='Model'):
-        super(Pointer, self).__init__(parent)
-        self.src = src
-        self.dst = dst
-        self.src_type = src_type
-        self.dst_type = dst_type
-        self.children = Children(allowed=[], cardinality={})
-        self.add_attribute('Name', 'string', 'Pointer')
 
 
 class Children(MutableSequence):

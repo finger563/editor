@@ -28,7 +28,14 @@ from editor_widget import TabbedEditor, EditorView
 
 from item_model import ItemModel, SortFilterProxyModel
 
-from meta import Model, Pointer, Model_Attribute, Attribute, Children
+from meta import\
+    Model,\
+    Model_Pointer,\
+    Model_Attribute,\
+    Attribute,\
+    Pointer,\
+    Children
+
 from view_model import ViewModel
 
 from tree_view import TreeView
@@ -101,13 +108,26 @@ def convertModelToMeta(model):
 
     allowed_kids = OrderedDict()
     attr_dict = OrderedDict()
+    ptrs = OrderedDict()
     for obj in model.children:
+        print obj
         # These will be the available children_types of the class
         if type(obj) == Model:
             allowed_kids[convertModelToMeta(obj)] = obj['Cardinality']
         # These will be pointers to other classes
-        elif type(obj) == Pointer:
-            pass
+        elif type(obj) == Model_Pointer:
+            def ptrInit(self):
+                Pointer.__init__(self,
+                                 src_type=type(obj),
+                                 dst_type=obj['Destination Type'])
+            new_ptr = type(
+                obj['Name'],
+                (Pointer, object, ),
+                {
+                    '__init__': ptrInit
+                }
+            )
+            ptrs[obj['Name']] = new_ptr()
         # These will be the attributes of the new class
         elif type(obj) == Model_Attribute:
             def attrInit(self):
@@ -134,8 +154,19 @@ def convertModelToMeta(model):
         self.add_attribute('Name',
                            'string',
                            '{}'.format(self.__class__.__name__))
+        # Handle children
         self.children = Children(allowed=allowed_kids.keys(),
                                  cardinality=allowed_kids)
+        # Handle pointers
+        ptr_types = [type(t) for t in ptrs.values()]
+        self.children._allowed.extend(ptr_types)
+        for t in ptr_types:
+            self.children._cardinality[t] = '1'
+        print self.children._allowed
+        print self.children._cardinality
+        for name, ptr in ptrs.iteritems():
+            self.add_child(ptr)
+        # Handle attributes
         for name, attr in attr_dict.iteritems():
             self.set_attribute(name, attr)
 
