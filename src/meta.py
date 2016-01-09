@@ -26,6 +26,9 @@ from collections import OrderedDict, MutableSequence
 
 # TODO: Figure out how to properly handle dependencies between objects
 #       (esp. attributes)
+#       
+#       How to handle even more complex dependencies such as between
+#       host_ref selection and the parent's hardware_ref?
 
 # TODO: Add scoping to some dependent attributes (e.g. for pointers
 #       etc.)
