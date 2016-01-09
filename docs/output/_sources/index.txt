@@ -10,6 +10,7 @@ It has a library which allows it to be used with `ROSMOD
    :maxdepth: 2
 
    getting-started
+   tutorial
    editor-api
 
 :ref:`genindex`
