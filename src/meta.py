@@ -185,14 +185,16 @@ class Model(object):
 class Pointer_Attribute(Attribute):
     '''
     '''
-    def __init__(self, base, _type):
+    def __init__(self, base, _type, scope):
         super(Pointer_Attribute, self).__init__('list', '')
+        # Base is the pointer
         self.base = base
         self.dst_type = _type
+        self.scope = scope
 
     def getNames(self, m):
         retlist = []
-        if m.__class__.__name__ == self.dst_type:
+        if m.kind() == self.dst_type:
             retlist.append(m['Name'])
         for c in m.children:
             retlist.extend(self.getNames(c))
@@ -200,15 +202,26 @@ class Pointer_Attribute(Attribute):
 
     def get_options(self):
         r = self.base
-        while r.parent is not None:
-            r = r.parent
-        r = r.children[0]
+        print self.scope
+        if self.scope == 'Root':
+            while r.parent is not None:
+                r = r.parent
+            r = r.children[0]
+        elif self.scope == 'Parent':
+            r = r.parent.parent
+        else:
+            while r.kind() != self.scope and\
+                  r.parent is not None:
+                r = r.parent
         return self.getNames(r)
 
 
 class Model_Pointer(Model):
     '''
     '''
+
+    valid_scopes = ['Root', 'Parent']
+
     def __init__(self,
                  parent=None,
                  name='Pointer',
@@ -220,7 +233,9 @@ class Model_Pointer(Model):
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', name)
         self.set_attribute('Destination Type',
-                           Pointer_Attribute(self, 'Model'))
+                           Pointer_Attribute(self, 'Model', 'Root'))
+        self.set_attribute('Scope', Attribute('list', 'Root'))
+        self.get_attribute('Scope').options = self.valid_scopes
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
 
@@ -230,16 +245,14 @@ class Pointer(Model):
     '''
     def __init__(self,
                  parent=None,
-                 src=None,
+                 scope='Root',
                  dst=None,
-                 src_type='Model',
                  dst_type='Model'):
         super(Pointer, self).__init__(parent)
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', 'Pointer')
-        print dst_type
-        self.set_attribute('Destination', Pointer_Attribute(self, dst_type))
+        self.set_attribute('Destination', Pointer_Attribute(self, dst_type, scope))
 
 
 class Model_Attribute(Model):
@@ -360,7 +373,6 @@ class Children(MutableSequence):
         test, err = self.can_insert(item)
         if test:
             self._inner.insert(index, item)
-            return True
         else:
             print 'ERROR::Cannot add child: {}'.format(err)
-            return False
+        return test
