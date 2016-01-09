@@ -22,13 +22,13 @@ class CodeEditor(QtGui.QTextEdit):
 
         self.model = QtGui.QStringListModel()
         self.completer.setModel(self.model)
-        self.model.setStringList(
-            ['string', 'float32', 'float64', 'bool', 'time', 'duration',
-             'int8', 'int16', 'int32', 'int64',
-             'uint8', 'uint16', 'uint32', 'uint64']
-        )
 
     def setHighlighterType(self, highlighter_type):
+        compl_list = []
+        compl_list.extend(highlighter_type.keywords)
+        compl_list.extend(highlighter_type.keywords2)
+        compl_list.extend(highlighter_type.datatypes)
+        self.model.setStringList(compl_list)
         self.highlighter = highlighter_type(self.document())
 
     def insertCompletion(self, completion):

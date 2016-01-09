@@ -24,6 +24,9 @@ from graphics_items import PushButton
 from code_editor import CodeEditor
 from syntax import ROSHighlighter, PythonHighlighter
 
+# TODO: Perhaps find a way to import other highlighters and allow the
+#       user to select which highlighter to use as another attribute?
+
 # TODO: Integrate validators into the attribute editor
 
 # TODO: Figure out how to handle dependent attribute editing

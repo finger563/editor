@@ -49,6 +49,9 @@ class PythonHighlighter (QSyntaxHighlighter):
         'None', 'True', 'False',
     ]
 
+    keywords2 = []
+    datatypes = []
+
     # Python operators
     operators = [
         '=',
@@ -187,7 +190,6 @@ class ROSHighlighter (QSyntaxHighlighter):
 
     # Code Message Type Keywords
     keywords2 = [
-        'table', 'critical', 'command', 'housekeeping', 'global'
     ]
 
     # Code Datatypes
@@ -324,19 +326,16 @@ class OutputHighlighter (QSyntaxHighlighter):
     """
     # Code Mission keywords
     keywords = [
-        'None', 'True', 'False',
+        'WARNING', 'True', 'False',
     ]
 
     # Code Message Type Keywords
     keywords2 = [
-        'table', 'critical', 'command', 'housekeeping', 'global'
+        'ERROR'
     ]
 
     # Code Datatypes
     datatypes = [
-        'string', 'float32', 'float64', 'bool', 'time', 'duration',
-        'int8', 'int16', 'int32', 'int64',
-        'uint8', 'uint16', 'uint32', 'uint64',
     ]
 
     # Braces
