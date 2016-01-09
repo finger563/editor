@@ -13,6 +13,10 @@ __status__ = 'Production'
 
 from collections import OrderedDict, MutableSequence
 
+# TODO: Add constraints as python functions stored as text and exec'd
+
+# TODO: Add get_options for list attributes as stored python text 
+
 # TODO: Figure out how exactly to create pointers in meta-models
 
 # TODO: Figure out how to convert pointer meta-models into pointers in
