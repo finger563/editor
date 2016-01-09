@@ -176,13 +176,11 @@ def convertModelToMeta(model):
                            'string',
                            '{}'.format(self.__class__.__name__))
         # Handle children
-        self.children = Children(allowed=allowed_kids.keys(),
-                                 cardinality=allowed_kids)
+        self.children = Children(cardinality=allowed_kids)
         # Handle pointers
         ptr_types = [type(t) for t in ptrs.values()]
-        self.children._allowed.extend(ptr_types)
         for t in ptr_types:
-            self.children._cardinality[t] = '1'
+            self.children.set_cardinality_of(t, '1')
         for name, ptr in ptrs.iteritems():
             self.add_child(ptr)
         # Handle attributes
@@ -472,8 +470,7 @@ class Editor(QtGui.QMainWindow):
         # Set up the hidden Root model, with the 'model' object as its
         # only child
         root = Model()
-        root.children._allowed = [model.__class__]
-        root.children._cardinality = {model.__class__: '1'}
+        root.children.set_cardinality({model.__class__: '1'})
         root.add_child(model)
 
         # Set up the proxy model for sorting/filtering

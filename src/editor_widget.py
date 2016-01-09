@@ -76,7 +76,7 @@ class EditorScene(QtGui.QGraphicsScene):
             item.contextMenuEvent(event)
         else:
             menu = QtGui.QMenu()
-            for a in self.model().children._allowed:
+            for a in self.model().children.allowed():
                 addNewItem = QtGui.QAction('New {}'.format(a.__name__), self)
                 addNewItem.triggered.connect(
                     self.addViewItem(QtCore.QModelIndex(), a))

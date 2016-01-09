@@ -44,8 +44,7 @@ class ViewModel(Model):
                  height=50.0,
                  layout='horizontal'):
         super(ViewModel, self).__init__()
-        self.children = Children(allowed=[ViewModel],
-                                 cardinality={ViewModel: '0..*'})
+        self.children = Children(cardinality={ViewModel: '0..*'})
 
         # describe the model
         self.set_attribute('Kind', view_attr.Object(kind))
