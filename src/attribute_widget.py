@@ -22,6 +22,7 @@ from PyQt4 import QtGui
 from graphics_items import PushButton
 
 from code_editor import CodeEditor
+from syntax import ROSHighlighter, PythonHighlighter
 
 # TODO: Integrate validators into the attribute editor
 
@@ -111,9 +112,11 @@ class AttributeEditor(QtGui.QWidget):
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
         pix = QtGui.QLabel()
-        pix.setPixmap(
-            QtGui.QPixmap('icons/model/' + item.kind() + '.png').scaled(30, 30)
-        )
+        pm = QtGui.QPixmap('icons/model/' + item.kind() + '.png')
+        if not pm.isNull():
+            pix.setPixmap(
+                pm.scaled(30,30)
+            )
         qw = QtGui.QWidget()
         hbox = QtGui.QHBoxLayout()
         hbox.setAlignment(QtCore.Qt.AlignLeft)
@@ -137,6 +140,11 @@ class AttributeEditor(QtGui.QWidget):
             obj.setChecked(attr.value)
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
+            obj.setHighlighterType(ROSHighlighter)
+            obj.setText(attr.value)
+        elif attr.kind in ['python']:
+            obj = CodeEditor(self)
+            obj.setHighlighterType(PythonHighlighter)
             obj.setText(attr.value)
         elif attr.kind in ['list']:
             options = attr.get_options()
