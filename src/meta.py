@@ -326,25 +326,26 @@ class Children(MutableSequence):
                 children_types = [type(val) for val in self._inner]
                 if item_cardinality == '1':
                     if type(item) not in children_types:
-                        return True
+                        return True, ''
                     else:
-                        return False
+                        return False, 'Only allowed to have one {}'.format(type(item))
                 # Need to handle cardinalities of the form 'X..Y'
                 else:
                     num_allowed = item_cardinality.split('..')[1]
                     if num_allowed and num_allowed != '*':
                         num_existing = children_types.count(type(item))
                         if num_existing >= int(num_allowed):
-                            return False
-                    return True
+                            return False, 'Max number of {} is {}'.format(type(item), num_allowed)
+                    return True, ''
         # item is not allowed as a child
         else:
-            return False
+            return False, '{} is not allowed!'.format(type(item))
 
     def insert(self, index, item):
-        if self.can_insert(item):
+        test, err = self.can_insert(item)
+        if test:
             self._inner.insert(index, item)
             return True
         else:
-            print 'ERROR::Cannot add child {}'.format(item)
+            print 'ERROR::Cannot add child: {}'.format(err)
             return False

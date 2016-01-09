@@ -177,6 +177,12 @@ def convertModelToMeta(model):
                            '{}'.format(self.__class__.__name__))
         # Handle children
         self.children = Children(cardinality=allowed_kids)
+        for t, c in self.children.get_cardinality().iteritems():
+            min_number = int(c.split('..')[0])
+            for i in range(0, min_number):
+                new_child = t()
+                new_child['Name'] = '{}_{}'.format(t.__name__, i)
+                self.add_child(new_child)
         # Handle pointers
         ptr_types = [type(t) for t in ptrs.values()]
         for t in ptr_types:
