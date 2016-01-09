@@ -27,12 +27,16 @@ from collections import OrderedDict, MutableSequence
 # TODO: Figure out how to properly handle dependencies between objects
 #       (esp. attributes)
 
-# TODO: Add scoping to some dependent attributes (e.g. for pointers etc.)
+# TODO: Add scoping to some dependent attributes (e.g. for pointers
+#       etc.)
 
 # TODO: Figure out how to handle options for attributes, i.e. they
 #       could be a simple list of strings or they may be references to
 #       other types of objects e.g. pointer src_kind options is
 #       dynamic based on the FCO names
+
+# TODO: Might need to extend the cardinality code in children to
+#       handle more types of cardinality, e.g. '5'
 
 
 def get_children(model, kind):
@@ -328,14 +332,25 @@ class Children(MutableSequence):
                     if type(item) not in children_types:
                         return True, ''
                     else:
-                        return False, 'Only allowed to have one {}'.format(type(item))
+                        return [
+                            False,
+                            'Only allowed to have one {}'.format(
+                                type(item)
+                            )
+                        ]
                 # Need to handle cardinalities of the form 'X..Y'
                 else:
                     num_allowed = item_cardinality.split('..')[1]
                     if num_allowed and num_allowed != '*':
                         num_existing = children_types.count(type(item))
                         if num_existing >= int(num_allowed):
-                            return False, 'Max number of {} is {}'.format(type(item), num_allowed)
+                            return [
+                                False,
+                                'Max number of {} is {}'.format(
+                                    type(item),
+                                    num_allowed
+                                )
+                            ]
                     return True, ''
         # item is not allowed as a child
         else:
