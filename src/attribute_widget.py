@@ -19,10 +19,14 @@ __status__ = 'Production'
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from attribute_editors import FileEditor
+from attribute_editors import\
+    FileEditor,\
+    ReferenceEditor,\
+    CodeEditor
 
-from code_editor import CodeEditor
-from syntax import ROSHighlighter, PythonHighlighter
+from syntax import\
+    ROSHighlighter,\
+    PythonHighlighter
 
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
@@ -150,6 +154,8 @@ class AttributeEditor(QtGui.QWidget):
             if attr.value in options:
                 i = options.index(attr.value)
             obj.setCurrentIndex(i)
+        elif attr.kind in ['reference']:
+            obj = ReferenceEditor()
         elif 'file' in attr.kind:
             obj = FileEditor(name=name,
                              fname=attr.value,
