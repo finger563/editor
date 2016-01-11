@@ -23,6 +23,12 @@ from PyQt4 import QtCore
 #       editing/choosing, but which actually map to objects underneath
 #       (e.g. pointer selection).  Need some sort of mapper/delegate
 #       for these editors which perform the mapping
+#
+#       Probably need to create a model/delegate which is a proxy
+#       model for the real model and is used with the combobox so that
+#       the strings map to real objects and so that the strings get
+#       updated in the selector if they are updated somewhere else in
+#       the model
 
 # TODO: Figure out why tabbing doesn't work in the CodeEditor; all it
 #        does is take the cursor back to the first character.  The
@@ -69,6 +75,7 @@ class FileEditor(QtGui.QPushButton):
 
 class ReferenceEditor(QtGui.QComboBox):
     '''
+    Subclasses
     '''
 
     def __init__(self):
