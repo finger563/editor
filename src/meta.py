@@ -250,8 +250,6 @@ class Model_Pointer(Model):
             Attribute(
                 'python',
                 '''def get_references(self):
-    print self
-    print self.parent()
     p = self.parent()
     _type = self.dst_type
     retTypes = get_children(p.parent(), _type)
