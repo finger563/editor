@@ -153,11 +153,9 @@
             
   <div class="section" id="module-attribute_editors">
 <span id="attribute-editors"></span><h1>Attribute Editors<a class="headerlink" href="#module-attribute_editors" title="Permalink to this headline">¶</a></h1>
-<p>These classes allow for an object in the
-editor&#8217;s attributes to be edited in a widget
-that slides in from the right of the screen.</p>
-<p>Each EditorView (i.e. tab in the editor widget)
-has its own AttributeEditor.</p>
+<p>These classes allow for special datatypes to be edited and updated
+by the MVC paradigm interface with through a <code class="xref py py-class docutils literal"><span class="pre">QItemDelegate</span></code>
+subclass.</p>
 <dl class="class">
 <dt id="attribute_editors.FileEditor">
 <em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">FileEditor</code><span class="sig-paren">(</span><em>name</em>, <em>fname</em>, <em>file_type</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.FileEditor" title="Permalink to this definition">¶</a></dt>
@@ -165,6 +163,20 @@ has its own AttributeEditor.</p>
 ItemDelegate to set and query the filename.  When the button is
 clicked it spawns a <code class="xref py py-class docutils literal"><span class="pre">QFileDialog</span></code> for selecting the file
 based on the file_type specified.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="attribute_editors.ReferenceEditor">
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ReferenceEditor</code><a class="headerlink" href="#attribute_editors.ReferenceEditor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="attribute_editors.CodeEditor">
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">CodeEditor</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.CodeEditor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multi-line text editor subclassing <code class="xref py py-class docutils literal"><span class="pre">QtGui.QTextEdit</span></code> to
+allow for the editing of &#8216;code&#8217; objects, such as ROS Message
+definitions, python code, etc.  Supports code completion and
+syntax highlighting.</p>
 </dd></dl>
 
 </div>
