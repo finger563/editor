@@ -19,7 +19,7 @@ __status__ = 'Production'
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from graphics_items import PushButton
+from attribute_editors import FileEditor
 
 from code_editor import CodeEditor
 from syntax import ROSHighlighter, PythonHighlighter
@@ -158,12 +158,10 @@ class AttributeEditor(QtGui.QWidget):
                 i = options.index(attr.value)
             obj.setCurrentIndex(i)
         elif 'file' in attr.kind:
-            obj = PushButton()
-            obj.setText(attr.value)
-            obj.setMaximumWidth(self.maximumWidth() * 0.8)
-            obj.clicked.connect(
-                lambda: self.open_file(name, obj, attr.kind.split('_')[1])
-            )
+            obj = FileEditor(name=name,
+                             fname=attr.value,
+                             file_type=attr.kind.split('_')[1],
+                             parent=self)
         elif 'dictionary' in attr.kind:
             label = None
             _type = attr.kind.split('_')[1]
@@ -202,20 +200,6 @@ class AttributeEditor(QtGui.QWidget):
 
         ok_cancel_widget.setLayout(ok_cancel_layout)
         self._layout.addWidget(ok_cancel_widget)
-
-    def open_file(self, name, obj, file_type):
-        fileName = QtGui.QFileDialog.getOpenFileName(
-            self,
-            "Select {} file".format(name),
-            obj.text(),
-            "All Files (*);;{} Files (*.{})".format(name, file_type),
-            options=QtGui.QFileDialog.Options()
-        )
-        if fileName:
-            obj.setText(fileName)
-
-    def open_dir(self, name, obj):
-        pass
 
     def updateEdits(self, event=None):
         self._unsaved_edits = True

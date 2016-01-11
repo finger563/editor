@@ -106,6 +106,8 @@ class Attribute(object):
             self.value, tmp = variant.toDouble()
         elif self.kind in ['bool']:
             self.value = variant.toBool()
+        elif 'file' in self.kind:
+            self.value = variant
 
 
 class Model(object):

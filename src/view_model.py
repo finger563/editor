@@ -34,7 +34,6 @@ class ViewModel(Model):
                  text_loc='top',
                  text_ha='left',
                  text_va='top',
-                 scope='parent',
                  draw_style='round rect',
                  icon_file='',
                  src='',
@@ -48,7 +47,6 @@ class ViewModel(Model):
 
         # describe the model
         self.set_attribute('Kind', view_attr.Object(kind))
-        self.set_attribute('Scope', view_attr.Scope(scope))
 
         # describe the drawing of the object
         self.set_attribute('layout style', view_attr.Layout_Style(layout))
