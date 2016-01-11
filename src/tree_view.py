@@ -40,10 +40,13 @@ class TreeView(QtGui.QTreeView):
                 return
             item = m.getModel(mi)
 
-            delAction = QtGui.QAction('Delete {}'.format(item['Name']), self)
-            delAction.triggered.connect(self.delTreeItem(mi))
-            menu.addAction(delAction)
-            for a in item.children._allowed:
+            if item.parent and \
+               '0' in item.parent.children.get_cardinality_of(type(item)):
+                delAction = QtGui.QAction(
+                    'Delete {}'.format(item['Name']), self)
+                delAction.triggered.connect(self.delTreeItem(mi))
+                menu.addAction(delAction)
+            for a in item.children.allowed():
                 addAction = QtGui.QAction(
                     'Add New {}'.format(a.__name__),
                     self

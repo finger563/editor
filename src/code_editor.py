@@ -1,10 +1,6 @@
-"""
+'''
 Code Editor Widget
-
-* author: William Emfinger
-* website: github.com/finger563/editor 
-* last edited: December 2015
-"""
+'''
 
 from PyQt4.QtCore import Qt
 from PyQt4 import QtCore
@@ -12,11 +8,9 @@ from PyQt4 import QtGui
 
 from collections import OrderedDict
 
-from syntax import CodeHighlighter
-
 class CodeEditor(QtGui.QTextEdit):
-    """
-    """
+    '''
+    '''
 
     def __init__(self, parent):
         super(CodeEditor, self).__init__(parent)
@@ -28,13 +22,14 @@ class CodeEditor(QtGui.QTextEdit):
 
         self.model = QtGui.QStringListModel()
         self.completer.setModel(self.model)
-        self.model.setStringList(
-            ['string', 'float32', 'float64', 'bool', 'time', 'duration',
-             'int8', 'int16', 'int32', 'int64',
-             'uint8', 'uint16', 'uint32', 'uint64']
-        )
 
-        self.highlighter = CodeHighlighter(self.document())
+    def setHighlighterType(self, highlighter_type):
+        compl_list = []
+        compl_list.extend(highlighter_type.keywords)
+        compl_list.extend(highlighter_type.keywords2)
+        compl_list.extend(highlighter_type.datatypes)
+        self.model.setStringList(compl_list)
+        self.highlighter = highlighter_type(self.document())
 
     def insertCompletion(self, completion):
         if (self.completer.widget() != self):
@@ -82,7 +77,7 @@ class CodeEditor(QtGui.QTextEdit):
         if (not self.completer or (not ctrlOrShift and event.text().isEmpty())):
             return
 
-        eow = QtCore.QString("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-=")
+        eow = QtCore.QString('~!@#$%^&*()_+{}|:"<>?,./;\'[]\\-=')
         hasModifier = ((event.modifiers() != Qt.NoModifier) and not ctrlOrShift)
         completionPrefix = self.textUnderCursor()
         

@@ -1,5 +1,5 @@
 '''
-These classes allow for an object in the 
+These classes allow for an object in the
 editor's attributes to be edited in a widget
 that slides in from the right of the screen.
 
@@ -19,9 +19,13 @@ __status__ = 'Production'
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from graphics_items import PushButton
+from attribute_editors import FileEditor
 
 from code_editor import CodeEditor
+from syntax import ROSHighlighter, PythonHighlighter
+
+# TODO: Perhaps find a way to import other highlighters and allow the
+#       user to select which highlighter to use as another attribute?
 
 # TODO: Integrate validators into the attribute editor
 
@@ -35,13 +39,6 @@ from code_editor import CodeEditor
 # TODO: Convert attribute editor dataMapper to ManualSubmit to allow
 #       cancelling edits Make sure that changing it here doesn't
 #       affect the EditorItem's interaction
-
-# TODO: Create an object here which fully encapsulates dictionary editing
-
-# TODO: Probably need objects which display strings for
-#       editing/choosing, but which actually map to objects underneath
-#       (e.g. pointer selection).  Need some sort of mapper/delegate
-#       for these editors which perofrm the mapping
 
 
 class AttributeEditor(QtGui.QWidget):
@@ -111,9 +108,11 @@ class AttributeEditor(QtGui.QWidget):
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
         pix = QtGui.QLabel()
-        pix.setPixmap(
-            QtGui.QPixmap('icons/model/' + item.kind() + '.png').scaled(30, 30)
-        )
+        pm = QtGui.QPixmap('icons/model/' + item.kind() + '.png')
+        if not pm.isNull():
+            pix.setPixmap(
+                pm.scaled(30, 30)
+            )
         qw = QtGui.QWidget()
         hbox = QtGui.QHBoxLayout()
         hbox.setAlignment(QtCore.Qt.AlignLeft)
@@ -137,6 +136,11 @@ class AttributeEditor(QtGui.QWidget):
             obj.setChecked(attr.value)
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
+            obj.setHighlighterType(ROSHighlighter)
+            obj.setText(attr.value)
+        elif attr.kind in ['python']:
+            obj = CodeEditor(self)
+            obj.setHighlighterType(PythonHighlighter)
             obj.setText(attr.value)
         elif attr.kind in ['list']:
             options = attr.get_options()
@@ -147,12 +151,10 @@ class AttributeEditor(QtGui.QWidget):
                 i = options.index(attr.value)
             obj.setCurrentIndex(i)
         elif 'file' in attr.kind:
-            obj = PushButton()
-            obj.setText(attr.value)
-            obj.setMaximumWidth(self.maximumWidth() * 0.8)
-            obj.clicked.connect(
-                lambda: self.open_file(name, obj, attr.kind.split('_')[1])
-            )
+            obj = FileEditor(name=name,
+                             fname=attr.value,
+                             file_type=attr.kind.split('_')[1],
+                             parent=self)
         elif 'dictionary' in attr.kind:
             label = None
             _type = attr.kind.split('_')[1]
@@ -191,20 +193,6 @@ class AttributeEditor(QtGui.QWidget):
 
         ok_cancel_widget.setLayout(ok_cancel_layout)
         self._layout.addWidget(ok_cancel_widget)
-
-    def open_file(self, name, obj, file_type):
-        fileName = QtGui.QFileDialog.getOpenFileName(
-            self,
-            "Select {} file".format(name),
-            obj.text(),
-            "All Files (*);;{} Files (*.{})".format(name, file_type),
-            options=QtGui.QFileDialog.Options()
-        )
-        if fileName:
-            obj.setText(fileName)
-
-    def open_dir(self, name, obj):
-        pass
 
     def updateEdits(self, event=None):
         self._unsaved_edits = True

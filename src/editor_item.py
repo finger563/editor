@@ -20,7 +20,9 @@ from PyQt4 import QtGui
 
 import view_attributes as view_attr
 from layout import layout_create, valid_layouts
-from graphics_items import RoundRectItem, TextItem, PushButton
+from graphics_items import RoundRectItem, TextItem
+
+from attribute_editors import FileEditor
 
 # TODO: Make ItemDelegate work for dictionary editor created in
 #       attribute editor
@@ -58,13 +60,17 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             editor.item._label.setPlainText(text)
             editor.item.updateGraphicsItem()
             return
+        elif type(editor) == FileEditor:
+            text = str(index.data().toString())
+            editor.set_file_name(text)
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
     def setModelData(self, editor, model, index):
         if type(editor) == EditorItemWidget:
             return
-        elif type(editor) == PushButton:
-            model.setData(index, editor.text())
+        elif type(editor) == FileEditor:
+            text = str(editor.file_name())
+            model.setData(index, text)
             return
         return super(EditorItemDelegate,
                      self).setModelData(editor, model, index)
@@ -277,11 +283,13 @@ class EditorItem(QtGui.QGraphicsWidget):
 
         item = self.modelindex.model().getModel(self.modelindex)
 
-        delSelf = QtGui.QAction('Delete', self)
-        delSelf.triggered.connect(self.delete)
-        menu.addAction(delSelf)
+        if item.parent and \
+           '0' in item.parent.children.get_cardinality_of(type(item)):
+            delSelf = QtGui.QAction('Delete', self)
+            delSelf.triggered.connect(self.delete)
+            menu.addAction(delSelf)
 
-        for a in item.children._allowed:
+        for a in item.children.allowed():
             addAction = QtGui.QAction('Add new {}'.format(a.__name__), self)
             addAction.triggered.connect(self.addNewItem(a))
             menu.addAction(addAction)

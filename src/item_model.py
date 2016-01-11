@@ -81,9 +81,12 @@ class ItemModel(QtCore.QAbstractItemModel):
         if index.isValid():
             node = index.internalPointer()
             if role == QtCore.Qt.EditRole:
-                node.attributes.values()[index.column()].fromQVariant(value)
-                self.dataChanged.emit(index, index)
-                return True
+                attr = node.attributes.values()[index.column()]
+                if attr.editable:
+                    node.attributes.values()[
+                        index.column()].fromQVariant(value)
+                    self.dataChanged.emit(index, index)
+                    return True
         return False
 
     def headerData(self, section, orientation, role):

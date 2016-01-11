@@ -13,6 +13,10 @@ __status__ = 'Production'
 
 from collections import OrderedDict, MutableSequence
 
+# TODO: Add constraints as python functions stored as text and exec'd
+
+# TODO: Add get_options for list attributes as stored python text 
+
 # TODO: Figure out how exactly to create pointers in meta-models
 
 # TODO: Figure out how to convert pointer meta-models into pointers in
@@ -26,13 +30,20 @@ from collections import OrderedDict, MutableSequence
 
 # TODO: Figure out how to properly handle dependencies between objects
 #       (esp. attributes)
+#       
+#       How to handle even more complex dependencies such as between
+#       host_ref selection and the parent's hardware_ref?
 
-# TODO: Add scoping to some dependent attributes (e.g. for pointers etc.)
+# TODO: Add scoping to some dependent attributes (e.g. for pointers
+#       etc.)
 
 # TODO: Figure out how to handle options for attributes, i.e. they
 #       could be a simple list of strings or they may be references to
 #       other types of objects e.g. pointer src_kind options is
 #       dynamic based on the FCO names
+
+# TODO: Might need to extend the cardinality code in children to
+#       handle more types of cardinality, e.g. '5'
 
 
 def get_children(model, kind):
@@ -95,6 +106,8 @@ class Attribute(object):
             self.value, tmp = variant.toDouble()
         elif self.kind in ['bool']:
             self.value = variant.toBool()
+        elif 'file' in self.kind:
+            self.value = variant
 
 
 class Model(object):
@@ -110,10 +123,7 @@ class Model(object):
         super(Model, self).__init__()
         self.parent = parent
 
-        self.children = Children(allowed=[Model,
-                                          Model_Pointer,
-                                          Model_Attribute],
-                                 cardinality={Model:
+        self.children = Children(cardinality={Model:
                                               '0..*',
                                               Model_Pointer:
                                               '0..*',
@@ -168,12 +178,10 @@ class Model(object):
     def insert_child(self, position, child_model):
         if position < 0 or position > self.child_count():
             return False
-        try:
-            self.children.insert(position, child_model)
+        success = self.children.insert(position, child_model)
+        if success:
             child_model.parent = self
-            return True
-        except:
-            return False
+        return success
 
     def add_child(self, child_model):
         child_model.parent = self
@@ -183,9 +191,46 @@ class Model(object):
         self.set_attribute(name, Attribute(kind, value))
 
 
+class Pointer_Attribute(Attribute):
+    '''
+    '''
+    def __init__(self, base, _type, scope):
+        super(Pointer_Attribute, self).__init__('list', '')
+        # Base is the pointer
+        self.base = base
+        self.dst_type = _type
+        self.scope = scope
+
+    def getNames(self, m):
+        retlist = []
+        if m.kind() == self.dst_type:
+            retlist.append(m['Name'])
+        for c in m.children:
+            retlist.extend(self.getNames(c))
+        return retlist
+
+    def get_options(self):
+        r = self.base
+        print self.scope
+        if self.scope == 'Root':
+            while r.parent is not None:
+                r = r.parent
+            r = r.children[0]
+        elif self.scope == 'Parent':
+            r = r.parent.parent
+        else:
+            while r.kind() != self.scope and\
+                  r.parent is not None:
+                r = r.parent
+        return self.getNames(r)
+
+
 class Model_Pointer(Model):
     '''
     '''
+
+    valid_scopes = ['Root', 'Parent']
+
     def __init__(self,
                  parent=None,
                  name='Pointer',
@@ -193,40 +238,30 @@ class Model_Pointer(Model):
                  tooltip='',
                  display=''):
         super(Model_Pointer, self).__init__(parent)
-        self.children = Children(allowed=[], cardinality={})
+        self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', name)
-
-        def getNames(m):
-            retList = []
-            if type(m) == Model:
-                retList.append(m['Name'])
-            for c in m.children:
-                retList.extend(getNames(c))
-            return retList
-
-        def new_get_options(s, m):
-            r = m
-            while r.parent is not None:
-                r = r.parent
-            r = r.children[0]
-            return getNames(r)
-
-        def attrInit(s):
-            Attribute.__init__(s, 'list', dst_type)
-
-        a = type('Pointer',
-                 (Attribute, object, ),
-                 {
-                     '__init__': attrInit,
-                 }
-             )
-
-        a.get_options = lambda s: new_get_options(s, self)
-        self.set_attribute('Destination Type', a())
-
+        self.set_attribute('Destination Type',
+                           Pointer_Attribute(self, 'Model', 'Root'))
+        self.set_attribute('Scope', Attribute('list', 'Root'))
+        self.get_attribute('Scope').options = self.valid_scopes
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
+
+
+class Pointer(Model):
+    '''
+    '''
+    def __init__(self,
+                 parent=None,
+                 scope='Root',
+                 dst=None,
+                 dst_type='Model'):
+        super(Pointer, self).__init__(parent)
+        self.children = Children(cardinality={})
+        self.attributes = OrderedDict()
+        self.add_attribute('Name', 'string', 'Pointer')
+        self.set_attribute('Destination', Pointer_Attribute(self, dst_type, scope))
 
 
 class Model_Attribute(Model):
@@ -241,7 +276,7 @@ class Model_Attribute(Model):
                  options=[],
                  editable=True):
         super(Model_Attribute, self).__init__(parent)
-        self.children = Children(allowed=[], cardinality={})
+        self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', name)
         self.set_attribute('Kind', Attribute('list', kind))
@@ -251,47 +286,26 @@ class Model_Attribute(Model):
         self.set_attribute('Editable', Attribute('bool', editable))
 
 
-class Pointer(Model):
-    '''
-    '''
-    def __init__(self,
-                 parent=None,
-                 src=None,
-                 dst=None,
-                 src_type='Model',
-                 dst_type='Model'):
-        super(Pointer, self).__init__(parent)
-        self.src = src
-        self.dst = dst
-        self.src_type = src_type
-        self.dst_type = dst_type
-        self.children = Children(allowed=[], cardinality={})
-        self.add_attribute('Name', 'string', 'Pointer')
-
-
 class Children(MutableSequence):
     '''Children list which extends :class:`MutableSequence` and enforces
     item type and cardinality rules.
 
-    _inner -- Contents of the list
-    _allowed -- The list will accept only object types contained in _allowed
-    _cardinality -- Cardinality of each accepted type
+    **_inner** -- Contents of the list
+    **_cardinality** -- A dictionary providing the types of allowed
+    objects, and their cardinality
 
     '''
 
     valid_cardinalities = ['0..*', '1..*', '1']
 
-    def __init__(self, it=(), allowed=(), cardinality=()):
+    def __init__(self, it=(), cardinality=()):
         '''
-        :param in allowed: :class:`List` containing the allowed types of
-            children
         :param in cardinality: :class:`Dictionary` of key:value pairs
             mapping object type to its cardinality string, e.g.
             Model: '0..*'
 
         '''
         self._inner = list(it)
-        self._allowed = allowed
         self._cardinality = cardinality
 
     def __len__(self):
@@ -315,23 +329,59 @@ class Children(MutableSequence):
     def __repr__(self):
         return 'Children({})'.format(self._inner)
 
-    def insert(self, index, item):
-        if type(item) in self._allowed:
+    def get_cardinality(self):
+        return self._cardinality
+
+    def set_cardinality(self, new_cardinality):
+        self._cardinality = new_cardinality
+
+    def get_cardinality_of(self, key):
+        return self._cardinality[key]
+
+    def set_cardinality_of(self, key, value):
+        self._cardinality[key] = value
+
+    def allowed(self):
+        return self._cardinality.keys()
+
+    def can_insert(self, item):
+        # item is allowed as a child
+        if type(item) in self.allowed():
             if item not in self._inner:
                 item_cardinality = self._cardinality[type(item)]
                 children_types = [type(val) for val in self._inner]
                 if item_cardinality == '1':
                     if type(item) not in children_types:
-                        return self._inner.insert(index, item)
+                        return True, ''
                     else:
-                        print 'ERROR: Cardinality Insert Error:\n\t{}'.format(
-                            'An object of type \'{}\' already exists!'.format(
-                                item.__class__.__name__
+                        return [
+                            False,
+                            'Only allowed to have one {}'.format(
+                                type(item)
                             )
-                        )
-                        raise 'Cardinality Error'
+                        ]
+                # Need to handle cardinalities of the form 'X..Y'
                 else:
-                    return self._inner.insert(index, item)
+                    num_allowed = item_cardinality.split('..')[1]
+                    if num_allowed and num_allowed != '*':
+                        num_existing = children_types.count(type(item))
+                        if num_existing >= int(num_allowed):
+                            return [
+                                False,
+                                'Max number of {} is {}'.format(
+                                    type(item),
+                                    num_allowed
+                                )
+                            ]
+                    return True, ''
+        # item is not allowed as a child
         else:
-            print 'ERROR::Cannot add child: ' + str(item)
-            return self._inner
+            return False, '{} is not allowed!'.format(type(item))
+
+    def insert(self, index, item):
+        test, err = self.can_insert(item)
+        if test:
+            self._inner.insert(index, item)
+        else:
+            print 'ERROR::Cannot add child: {}'.format(err)
+        return test
