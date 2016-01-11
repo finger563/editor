@@ -1,10 +1,7 @@
 '''
-These classes allow for an object in the
-editor's attributes to be edited in a widget
-that slides in from the right of the screen.
-
-Each EditorView (i.e. tab in the editor widget)
-has its own AttributeEditor.
+These classes allow for special datatypes to be edited and updated
+by the MVC paradigm interface with through a :class:`QItemDelegate`
+subclass.
 '''
 
 __author__ = 'William Emfinger'

@@ -1,9 +1,7 @@
 '''
-Editor Item
-
-This class defines the widget
-which allows for viewing and editing
-of models.
+This class defines the graphical widget which allows for viewing
+and editing of models on a scrollable, zoomable canvas, with custom
+drawing styles available to each model.
 '''
 
 __author__ = 'William Emfinger'
