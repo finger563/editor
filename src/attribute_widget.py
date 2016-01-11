@@ -112,7 +112,7 @@ class AttributeEditor(QtGui.QWidget):
 
     def add_header(self, item):
         label = QtGui.QLabel()
-        label.setText("Properties:")
+        label.setText('Properties:')
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
         pix = QtGui.QLabel()
@@ -147,7 +147,7 @@ class AttributeEditor(QtGui.QWidget):
             obj.setHighlighterType(ROSHighlighter)
             obj.setPlainText(attr.value)
         elif attr.kind in ['python']:
-            obj = CodeEditor(self)
+            obj = CodeEditor()
             obj.setHighlighterType(PythonHighlighter)
             obj.setPlainText(attr.value)
         elif attr.kind in ['list']:
@@ -230,7 +230,7 @@ class AttributeEditor(QtGui.QWidget):
         return QtCore.QRectF(TL_x, TL_y, BR_x, BR_y)
 
     def animate(self, event, displayed):
-        self.hideAnimation = QtCore.QPropertyAnimation(self, "geometry")
+        self.hideAnimation = QtCore.QPropertyAnimation(self, 'geometry')
         self.hideAnimation.setDuration(300)
 
         startGeometry = QtCore.QRectF(self.geometry())
@@ -242,30 +242,9 @@ class AttributeEditor(QtGui.QWidget):
 
     def save(self, event):
         pass
-        '''
-        for name,obj in self._input_dict.iteritems():
-            kind = self._output_obj[name].kind
-            if kind in ['string']:
-                self._output_obj[name].value = str(obj.text())
-            elif kind in ['code']:
-                self._output_obj[name].value = str(obj.toPlainText())
-            elif kind in ['float','double']:
-                self._output_obj[name].value = float(obj.text())
-            elif kind in ['int']:
-                self._output_obj[name].value = int(obj.text())
-            elif kind in ['list']:
-                self._output_obj[name].value = self._output_obj[name].options[obj.currentIndex()]
-            elif 'file' in kind:
-                self._output_obj[name].value = str(obj.text())
-            elif 'dictionary' in kind:
-                _type = kind.split('_')[1]
-                if 'bool' in _type:
-                    for key_name in self._output_obj[name].options:
-                        self._output_obj[name][key_name] = bool(obj[key_name].checkState() & QtCore.Qt.Checked)
-        #self.hide(event)
-        if self._output_func: self._output_func(self._output_obj)
-        self._unsaved_edits = False
-        '''
+
+    def keyPressEvent(self, event):
+        QtGui.QWidget.keyPressEvent(self, event)
 
     def cancel(self, event):
         self.hide(event)

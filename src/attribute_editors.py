@@ -24,6 +24,13 @@ from PyQt4 import QtCore
 #       (e.g. pointer selection).  Need some sort of mapper/delegate
 #       for these editors which perform the mapping
 
+# TODO: Figure out why tabbing doesn't work in the CodeEditor; all it
+#        does is take the cursor back to the first character.  The
+#        event doesn't even get called in the code editor so it seems
+#        like it is probably an issue with keypressevents or focus
+#        policies in one of its parent widgets.  possibly also the
+#        completer.
+
 
 class FileEditor(QtGui.QPushButton):
     '''
@@ -76,8 +83,12 @@ class CodeEditor(QtGui.QTextEdit):
     syntax highlighting.
     '''
 
-    def __init__(self, parent):
-        super(CodeEditor, self).__init__(parent)
+    def __init__(self, *args):
+        super(CodeEditor, self).__init__(*args)
+
+        self.setLineWrapMode(self.NoWrap)
+        self.setTabChangesFocus(False)
+
         self.completer = QtGui.QCompleter()
         self.completer.setWidget(self)
         self.completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
@@ -136,7 +147,7 @@ class CodeEditor(QtGui.QTextEdit):
         isShortcut = (event.modifiers() and
                       Qt.ControlModifier and event.key() == Qt.Key_E)
         if (not self.completer or not isShortcut):
-            QtGui.QTextEdit.keyPressEvent(self, event)
+            super(CodeEditor, self).keyPressEvent(event)
 
         ctrlOrShift = (event.modifiers() and
                        (Qt.ControlModifier or Qt.ShiftModifier))
