@@ -173,8 +173,18 @@
 </dd></dl>
 
 <dl class="class">
+<dt id="meta.Pointer_Attribute">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Pointer_Attribute</code><span class="sig-paren">(</span><em>base</em>, <em>_type</em>, <em>scope</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Pointer_Attribute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
 <dt id="meta.Model_Pointer">
 <em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Model_Pointer</code><span class="sig-paren">(</span><em>parent=None</em>, <em>name='Pointer'</em>, <em>dst_type='Model'</em>, <em>tooltip=''</em>, <em>display=''</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Model_Pointer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="meta.Pointer">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Pointer</code><span class="sig-paren">(</span><em>parent=None</em>, <em>scope='Root'</em>, <em>dst=None</em>, <em>dst_type='Model'</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Pointer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="class">
@@ -183,30 +193,20 @@
 <dd></dd></dl>
 
 <dl class="class">
-<dt id="meta.Pointer">
-<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Pointer</code><span class="sig-paren">(</span><em>parent=None</em>, <em>src=None</em>, <em>dst=None</em>, <em>src_type='Model'</em>, <em>dst_type='Model'</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Pointer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
 <dt id="meta.Children">
-<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Children</code><span class="sig-paren">(</span><em>it=()</em>, <em>allowed=()</em>, <em>cardinality=()</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Children" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Children</code><span class="sig-paren">(</span><em>it=()</em>, <em>cardinality=()</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Children" title="Permalink to this definition">¶</a></dt>
 <dd><p>Children list which extends <code class="xref py py-class docutils literal"><span class="pre">MutableSequence</span></code> and enforces
 item type and cardinality rules.</p>
-<p>_inner &#8211; Contents of the list
-_allowed &#8211; The list will accept only object types contained in _allowed
-_cardinality &#8211; Cardinality of each accepted type</p>
+<p><strong>_inner</strong> &#8211; Contents of the list
+<strong>_cardinality</strong> &#8211; A dictionary providing the types of allowed
+objects, and their cardinality</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>allowed</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">List</span></code> containing the allowed types of
-children</li>
-<li><strong>cardinality</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">Dictionary</span></code> of key:value pairs
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cardinality</strong> (<em>in</em>) &#8211; <code class="xref py py-class docutils literal"><span class="pre">Dictionary</span></code> of key:value pairs
 mapping object type to its cardinality string, e.g.
-Model: &#8216;0..*&#8217;</li>
-</ul>
-</td>
+Model: &#8216;0..*&#8217;</td>
 </tr>
 </tbody>
 </table>

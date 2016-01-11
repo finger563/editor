@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Graphics-Items &mdash; Editor 0.1.0 documentation</title>
+  <title>Attribute Editors &mdash; Editor 0.1.0 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   
     <link rel="top" title="Editor 0.1.0 documentation" href="../../index.html"/>
         <link rel="up" title="Editor" href="../../editor.html"/>
-        <link rel="next" title="Tree View" href="tree-view.html"/>
-        <link rel="prev" title="Attribute Editors" href="attribute-editors.html"/> 
+        <link rel="next" title="Graphics-Items" href="graphics-items.html"/>
+        <link rel="prev" title="Attribute Widget" href="attribute-widget.html"/> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -94,8 +94,8 @@
 <li class="toctree-l3"><a class="reference internal" href="editor-widget.html">Editor-Widget</a></li>
 <li class="toctree-l3"><a class="reference internal" href="editor-item.html">Editor-Item</a></li>
 <li class="toctree-l3"><a class="reference internal" href="attribute-widget.html">Attribute Widget</a></li>
-<li class="toctree-l3"><a class="reference internal" href="attribute-editors.html">Attribute Editors</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="">Graphics-Items</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Attribute Editors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphics-items.html">Graphics-Items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tree-view.html">Tree View</a></li>
 </ul>
 </li>
@@ -137,11 +137,11 @@
       
           <li><a href="../../editor.html">Editor</a> &raquo;</li>
       
-    <li>Graphics-Items</li>
+    <li>Attribute Editors</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/python-api/editor/graphics-items.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/python-api/editor/attribute-editors.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -151,24 +151,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-graphics_items">
-<span id="graphics-items"></span><h1>Graphics-Items<a class="headerlink" href="#module-graphics_items" title="Permalink to this headline">¶</a></h1>
-<p>These classes are custom items implementing
-draw styles not natively found in qgraphics*items</p>
+  <div class="section" id="module-attribute_editors">
+<span id="attribute-editors"></span><h1>Attribute Editors<a class="headerlink" href="#module-attribute_editors" title="Permalink to this headline">¶</a></h1>
+<p>These classes allow for an object in the
+editor&#8217;s attributes to be edited in a widget
+that slides in from the right of the screen.</p>
+<p>Each EditorView (i.e. tab in the editor widget)
+has its own AttributeEditor.</p>
 <dl class="class">
-<dt id="graphics_items.TextItem">
-<em class="property">class </em><code class="descclassname">graphics_items.</code><code class="descname">TextItem</code><span class="sig-paren">(</span><em>text=''</em>, <em>parent=None</em>, <em>scene=None</em>, <em>ha=1</em>, <em>va=32</em><span class="sig-paren">)</span><a class="headerlink" href="#graphics_items.TextItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Acts as a label for a <code class="xref py py-class docutils literal"><span class="pre">EditorItem</span></code>.  Extends
-<code class="xref py py-class docutils literal"><span class="pre">QGraphicsTextItem</span></code> with more functionality for setting the
-alignment and position of the text relative to its parent
-<code class="xref py py-class docutils literal"><span class="pre">EditorItem</span></code>.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="graphics_items.RoundRectItem">
-<em class="property">class </em><code class="descclassname">graphics_items.</code><code class="descname">RoundRectItem</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>w</em>, <em>h</em>, <em>xr=0.1</em>, <em>yr=0.1</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#graphics_items.RoundRectItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extends <code class="xref py py-class docutils literal"><span class="pre">QGraphicsRectItem</span></code> to support drawing a rectangle with
-rounded edges.</p>
+<dt id="attribute_editors.FileEditor">
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">FileEditor</code><span class="sig-paren">(</span><em>name</em>, <em>fname</em>, <em>file_type</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.FileEditor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass of <code class="xref py py-class docutils literal"><span class="pre">QtGui.QPushButton</span></code> that enables MVC
+ItemDelegate to set and query the filename.  When the button is
+clicked it spawns a <code class="xref py py-class docutils literal"><span class="pre">QFileDialog</span></code> for selecting the file
+based on the file_type specified.</p>
 </dd></dl>
 
 </div>
@@ -180,10 +176,10 @@ rounded edges.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="tree-view.html" class="btn btn-neutral float-right" title="Tree View" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="graphics-items.html" class="btn btn-neutral float-right" title="Graphics-Items" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="attribute-editors.html" class="btn btn-neutral" title="Attribute Editors" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="attribute-widget.html" class="btn btn-neutral" title="Attribute Widget" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
