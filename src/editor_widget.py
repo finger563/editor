@@ -115,6 +115,7 @@ class EditorView(QtGui.QGraphicsView):
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
         self.aw = AttributeEditor(self)
+        self.aw.setMaximumWidth(self.geometry().width() / 3.0)
         self._command_key_pressed = False
 
         self._proxyModel = None
@@ -210,6 +211,7 @@ class EditorView(QtGui.QGraphicsView):
 
     def resizeEvent(self, event):
         QtGui.QGraphicsView.resizeEvent(self, event)
+        self.aw.setMaximumWidth(self.geometry().width() / 3.0)
         self.aw.updateGeo()
 
     def wheelEvent(self, event):

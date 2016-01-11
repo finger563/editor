@@ -20,7 +20,7 @@ import view_attributes as view_attr
 from layout import layout_create, valid_layouts
 from graphics_items import RoundRectItem, TextItem
 
-from attribute_editors import FileEditor
+from attribute_editors import FileEditor, CodeEditor, ReferenceEditor
 
 # TODO: Make ItemDelegate work for dictionary editor created in
 #       attribute editor
@@ -61,6 +61,12 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         elif type(editor) == FileEditor:
             text = str(index.data().toString())
             editor.set_file_name(text)
+        elif type(editor) == CodeEditor:
+            text = str(index.data().toString())
+            editor.setPlainText(text)
+            return
+        elif type(editor) == ReferenceEditor:
+            return
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
     def setModelData(self, editor, model, index):
@@ -69,6 +75,12 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         elif type(editor) == FileEditor:
             text = str(editor.file_name())
             model.setData(index, text)
+            return
+        elif type(editor) == CodeEditor:
+            text = editor.toPlainText()
+            model.setData(index, text)
+            return
+        elif type(editor) == ReferenceEditor:
             return
         return super(EditorItemDelegate,
                      self).setModelData(editor, model, index)

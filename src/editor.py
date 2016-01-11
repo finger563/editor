@@ -133,7 +133,6 @@ def convertModelToMeta(model):
         elif type(obj) == Model_Pointer:
             def ptrInit(self):
                 Pointer.__init__(self,
-                                 scope=obj['Scope'],
                                  dst_type=obj['Destination Type'])
                 self['Name'] = obj['Name']
                 self.get_attribute('Name').editable = False

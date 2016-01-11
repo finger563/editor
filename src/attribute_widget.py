@@ -54,7 +54,6 @@ class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent):
         super(AttributeEditor, self).__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
-        self.setMaximumWidth(300)
 
         self.vbox = QtGui.QVBoxLayout()
         self.setLayout(self.vbox)
@@ -76,7 +75,12 @@ class AttributeEditor(QtGui.QWidget):
 
         self.scrollArea.setWidget(self.viewWidget)
         self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.scrollArea.setVerticalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAsNeeded
+        )
+        self.scrollArea.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAsNeeded
+        )
 
         self.vbox.addWidget(self.scrollArea)
         self._layout.setContentsMargins(20, 20, 20, 20)
@@ -141,11 +145,11 @@ class AttributeEditor(QtGui.QWidget):
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
             obj.setHighlighterType(ROSHighlighter)
-            obj.setText(attr.value)
+            obj.setPlainText(attr.value)
         elif attr.kind in ['python']:
             obj = CodeEditor(self)
             obj.setHighlighterType(PythonHighlighter)
-            obj.setText(attr.value)
+            obj.setPlainText(attr.value)
         elif attr.kind in ['list']:
             options = attr.get_options()
             obj = QtGui.QComboBox()
@@ -207,6 +211,7 @@ class AttributeEditor(QtGui.QWidget):
         rect = self.getNewRect(self._displayed)
         self.setGeometry(rect.x(), rect.y(), rect.x() + rect.width(),
                          rect.y() + rect.height())
+        self.animate(None, self._displayed)
 
     def getNewRect(self, displayed):
         _myw = self.parent().geometry().width()
@@ -228,11 +233,11 @@ class AttributeEditor(QtGui.QWidget):
         self.hideAnimation = QtCore.QPropertyAnimation(self, "geometry")
         self.hideAnimation.setDuration(300)
 
-        self.startGeometry = QtCore.QRectF(self.geometry())
-        self.endGeometry = self.getNewRect(displayed)
+        startGeometry = QtCore.QRectF(self.geometry())
+        endGeometry = self.getNewRect(displayed)
 
-        self.hideAnimation.setStartValue(self.startGeometry)
-        self.hideAnimation.setEndValue(self.endGeometry)
+        self.hideAnimation.setStartValue(startGeometry)
+        self.hideAnimation.setEndValue(endGeometry)
         self.hideAnimation.start()
 
     def save(self, event):

@@ -96,8 +96,10 @@ class Attribute(object):
         return self.options
 
     def fromQVariant(self, variant):
-        if self.kind in ['string', 'code', 'list']:
+        if self.kind in ['string', 'list']:
             self.value = str(variant.toString())
+        elif self.kind in ['code', 'python']:
+            self.value = str(variant)
         elif self.kind in ['int', 'integer']:
             self.value, tmp = variant.toInt()
         elif self.kind in ['float']:
@@ -107,7 +109,7 @@ class Attribute(object):
         elif self.kind in ['bool']:
             self.value = variant.toBool()
         elif 'file' in self.kind:
-            self.value = variant
+            self.value = str(variant)
 
 
 class Model(object):
@@ -211,7 +213,6 @@ class Pointer_Attribute(Attribute):
 
     def get_options(self):
         r = self.base
-        print self.scope
         if self.scope == 'Root':
             while r.parent is not None:
                 r = r.parent
@@ -219,8 +220,9 @@ class Pointer_Attribute(Attribute):
         elif self.scope == 'Parent':
             r = r.parent.parent
         else:
-            while r.kind() != self.scope and\
-                  r.parent is not None:
+            while (r.kind() != self.scope
+                   and
+                   r.parent is not None):
                 r = r.parent
         return self.getNames(r)
 
@@ -243,8 +245,17 @@ class Model_Pointer(Model):
         self.add_attribute('Name', 'string', name)
         self.set_attribute('Destination Type',
                            Pointer_Attribute(self, 'Model', 'Root'))
-        self.set_attribute('Scope', Attribute('list', 'Root'))
-        self.get_attribute('Scope').options = self.valid_scopes
+        self.set_attribute(
+            'Valid Objects',
+            Attribute(
+                'python',
+                '''def get_references(self):
+    p = self.parent()
+    _type = self.dst_type
+    retTypes = get_children(p.parent(), _type)
+    return retTypes'''
+            )
+        )
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
 
