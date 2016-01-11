@@ -15,7 +15,7 @@ from collections import OrderedDict, MutableSequence
 
 # TODO: Add constraints as python functions stored as text and exec'd
 
-# TODO: Add get_options for list attributes as stored python text 
+# TODO: Add get_options for list attributes as stored python text
 
 # TODO: Figure out how exactly to create pointers in meta-models
 
@@ -30,7 +30,7 @@ from collections import OrderedDict, MutableSequence
 
 # TODO: Figure out how to properly handle dependencies between objects
 #       (esp. attributes)
-#       
+#
 #       How to handle even more complex dependencies such as between
 #       host_ref selection and the parent's hardware_ref?
 
@@ -250,6 +250,8 @@ class Model_Pointer(Model):
             Attribute(
                 'python',
                 '''def get_references(self):
+    print self
+    print self.parent()
     p = self.parent()
     _type = self.dst_type
     retTypes = get_children(p.parent(), _type)
@@ -272,7 +274,8 @@ class Pointer(Model):
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', 'Pointer')
-        self.set_attribute('Destination', Pointer_Attribute(self, dst_type, scope))
+        self.set_attribute('Destination',
+                           Pointer_Attribute(self, dst_type, scope))
 
 
 class Model_Attribute(Model):
