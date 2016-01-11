@@ -40,13 +40,6 @@ from syntax import ROSHighlighter, PythonHighlighter
 #       cancelling edits Make sure that changing it here doesn't
 #       affect the EditorItem's interaction
 
-# TODO: Create an object here which fully encapsulates dictionary editing
-
-# TODO: Probably need objects which display strings for
-#       editing/choosing, but which actually map to objects underneath
-#       (e.g. pointer selection).  Need some sort of mapper/delegate
-#       for these editors which perofrm the mapping
-
 
 class AttributeEditor(QtGui.QWidget):
     '''Enables editing of the attributes of a model object.  Interfaces
@@ -118,7 +111,7 @@ class AttributeEditor(QtGui.QWidget):
         pm = QtGui.QPixmap('icons/model/' + item.kind() + '.png')
         if not pm.isNull():
             pix.setPixmap(
-                pm.scaled(30,30)
+                pm.scaled(30, 30)
             )
         qw = QtGui.QWidget()
         hbox = QtGui.QHBoxLayout()

@@ -18,6 +18,13 @@ __status__ = 'Production'
 
 from PyQt4 import QtGui
 
+# TODO: Create an object here which fully encapsulates dictionary editing
+
+# TODO: Probably need objects which display strings for
+#       editing/choosing, but which actually map to objects underneath
+#       (e.g. pointer selection).  Need some sort of mapper/delegate
+#       for these editors which perofrm the mapping
+
 
 class FileEditor(QtGui.QPushButton):
     '''
