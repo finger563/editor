@@ -19,10 +19,14 @@ __status__ = 'Production'
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from attribute_editors import FileEditor
+from attribute_editors import\
+    FileEditor,\
+    ReferenceEditor,\
+    CodeEditor
 
-from code_editor import CodeEditor
-from syntax import ROSHighlighter, PythonHighlighter
+from syntax import\
+    ROSHighlighter,\
+    PythonHighlighter
 
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
@@ -50,7 +54,6 @@ class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent):
         super(AttributeEditor, self).__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
-        self.setMaximumWidth(300)
 
         self.vbox = QtGui.QVBoxLayout()
         self.setLayout(self.vbox)
@@ -72,7 +75,12 @@ class AttributeEditor(QtGui.QWidget):
 
         self.scrollArea.setWidget(self.viewWidget)
         self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.scrollArea.setVerticalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAsNeeded
+        )
+        self.scrollArea.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAsNeeded
+        )
 
         self.vbox.addWidget(self.scrollArea)
         self._layout.setContentsMargins(20, 20, 20, 20)
@@ -104,7 +112,7 @@ class AttributeEditor(QtGui.QWidget):
 
     def add_header(self, item):
         label = QtGui.QLabel()
-        label.setText("Properties:")
+        label.setText('Properties:')
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setWordWrap(True)
         pix = QtGui.QLabel()
@@ -137,11 +145,11 @@ class AttributeEditor(QtGui.QWidget):
         elif attr.kind in ['code']:
             obj = CodeEditor(self)
             obj.setHighlighterType(ROSHighlighter)
-            obj.setText(attr.value)
+            obj.setPlainText(attr.value)
         elif attr.kind in ['python']:
-            obj = CodeEditor(self)
+            obj = CodeEditor()
             obj.setHighlighterType(PythonHighlighter)
-            obj.setText(attr.value)
+            obj.setPlainText(attr.value)
         elif attr.kind in ['list']:
             options = attr.get_options()
             obj = QtGui.QComboBox()
@@ -150,6 +158,8 @@ class AttributeEditor(QtGui.QWidget):
             if attr.value in options:
                 i = options.index(attr.value)
             obj.setCurrentIndex(i)
+        elif attr.kind in ['reference']:
+            obj = ReferenceEditor()
         elif 'file' in attr.kind:
             obj = FileEditor(name=name,
                              fname=attr.value,
@@ -201,6 +211,7 @@ class AttributeEditor(QtGui.QWidget):
         rect = self.getNewRect(self._displayed)
         self.setGeometry(rect.x(), rect.y(), rect.x() + rect.width(),
                          rect.y() + rect.height())
+        self.animate(None, self._displayed)
 
     def getNewRect(self, displayed):
         _myw = self.parent().geometry().width()
@@ -219,42 +230,21 @@ class AttributeEditor(QtGui.QWidget):
         return QtCore.QRectF(TL_x, TL_y, BR_x, BR_y)
 
     def animate(self, event, displayed):
-        self.hideAnimation = QtCore.QPropertyAnimation(self, "geometry")
+        self.hideAnimation = QtCore.QPropertyAnimation(self, 'geometry')
         self.hideAnimation.setDuration(300)
 
-        self.startGeometry = QtCore.QRectF(self.geometry())
-        self.endGeometry = self.getNewRect(displayed)
+        startGeometry = QtCore.QRectF(self.geometry())
+        endGeometry = self.getNewRect(displayed)
 
-        self.hideAnimation.setStartValue(self.startGeometry)
-        self.hideAnimation.setEndValue(self.endGeometry)
+        self.hideAnimation.setStartValue(startGeometry)
+        self.hideAnimation.setEndValue(endGeometry)
         self.hideAnimation.start()
 
     def save(self, event):
         pass
-        '''
-        for name,obj in self._input_dict.iteritems():
-            kind = self._output_obj[name].kind
-            if kind in ['string']:
-                self._output_obj[name].value = str(obj.text())
-            elif kind in ['code']:
-                self._output_obj[name].value = str(obj.toPlainText())
-            elif kind in ['float','double']:
-                self._output_obj[name].value = float(obj.text())
-            elif kind in ['int']:
-                self._output_obj[name].value = int(obj.text())
-            elif kind in ['list']:
-                self._output_obj[name].value = self._output_obj[name].options[obj.currentIndex()]
-            elif 'file' in kind:
-                self._output_obj[name].value = str(obj.text())
-            elif 'dictionary' in kind:
-                _type = kind.split('_')[1]
-                if 'bool' in _type:
-                    for key_name in self._output_obj[name].options:
-                        self._output_obj[name][key_name] = bool(obj[key_name].checkState() & QtCore.Qt.Checked)
-        #self.hide(event)
-        if self._output_func: self._output_func(self._output_obj)
-        self._unsaved_edits = False
-        '''
+
+    def keyPressEvent(self, event):
+        QtGui.QWidget.keyPressEvent(self, event)
 
     def cancel(self, event):
         self.hide(event)

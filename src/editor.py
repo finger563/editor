@@ -34,7 +34,9 @@ from meta import\
     Model_Attribute,\
     Attribute,\
     Pointer,\
-    Children
+    Children,\
+    Pointer_Attribute,\
+    get_children
 
 from view_model import ViewModel
 
@@ -131,9 +133,12 @@ def convertModelToMeta(model):
             allowed_kids[convertModelToMeta(obj)] = obj['Cardinality']
         # These will be pointers to other classes
         elif type(obj) == Model_Pointer:
+            import types
+            # should fill out get_references
+            exec obj['Valid Objects'] in globals()
+
             def ptrInit(self):
                 Pointer.__init__(self,
-                                 scope=obj['Scope'],
                                  dst_type=obj['Destination Type'])
                 self['Name'] = obj['Name']
                 self.get_attribute('Name').editable = False
@@ -141,11 +146,18 @@ def convertModelToMeta(model):
                     'Destination').tooltip = obj['Tooltip']
                 self.get_attribute(
                     'Destination').display = obj['Display']
+                self.get_attribute(
+                    'Destination').get_options = types.MethodType(
+                        get_references,
+                        self.get_attribute('Destination'),
+                        Pointer_Attribute)
             new_ptr = type(
                 obj['Name'],
                 (Pointer, object, ),
                 {
                     '__init__': ptrInit,
+                    # from obj['Valid Objects']
+                    'get_references': get_references,
                 }
             )
             ptrs[obj['Name']] = new_ptr()

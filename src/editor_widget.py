@@ -115,6 +115,7 @@ class EditorView(QtGui.QGraphicsView):
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
         self.aw = AttributeEditor(self)
+        self.aw.setMaximumWidth(self.geometry().width() / 3.0)
         self._command_key_pressed = False
 
         self._proxyModel = None
@@ -195,21 +196,24 @@ class EditorView(QtGui.QGraphicsView):
         QtGui.QGraphicsView.mouseDoubleClickEvent(self, event)
         
     def keyPressEvent(self, event):
-        QtGui.QGraphicsView.keyPressEvent(self, event)
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
             self._command_key_pressed = True
+        else:
+            QtGui.QGraphicsView.keyPressEvent(self, event)
 
     def keyReleaseEvent(self, event):
-        QtGui.QGraphicsView.keyReleaseEvent(self, event)
         if event.key() == self.drag_mode_key:
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
             self._command_key_pressed = False
         elif event.key() == self.close_aw_key:
             self.aw.cancel(None)
+        else:
+            QtGui.QGraphicsView.keyReleaseEvent(self, event)
 
     def resizeEvent(self, event):
         QtGui.QGraphicsView.resizeEvent(self, event)
+        self.aw.setMaximumWidth(self.geometry().width() / 3.0)
         self.aw.updateGeo()
 
     def wheelEvent(self, event):
