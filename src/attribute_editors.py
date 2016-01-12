@@ -92,13 +92,19 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def __init__(self, *args):
         super(ComboSortFilterProxyModel, self).__init__(*args)
 
+    def set_filter_type(self, _type):
+        self.filter_type = _type
+
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
+        inChildren = False
         for r in range(index0.internalPointer().child_count()):
-            self.filterAcceptsRow(r, index0)
-        # by default self.filterRole() is QAbstractItemModel.DisplayRole
-        text = self.sourceModel().data(index0, self.filterRole())
-        return QtCore.QString(text).contains(self.filterRegExp())
+            if self.filterAcceptsRow(r, index0):
+                inChildren = True
+        item = self.sourceModel().getModel(index0)
+        test = item.kind() == self.filter_type
+        print item.kind(), test
+        return test or inChildren
 
 
 class ReferenceEditor(QtGui.QComboBox):

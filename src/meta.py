@@ -110,8 +110,10 @@ def convertModelToMeta(model, meta_dict):
                                  dst_type=obj['Destination Type'])
                 self['Name'] = obj['Name']
                 self.get_attribute('Name').editable = False
-                self.add_attribute('Destination', 'list', '')
+                self.add_attribute('Destination', 'reference', '')
                 destAttr = self.get_attribute('Destination')
+                destAttr.dst_type = obj['Destination Type']
+                '''
                 destAttr.tooltip = obj['Tooltip']
                 destAttr.display = obj['Display']
                 destAttr.get_options = types.MethodType(
@@ -119,6 +121,7 @@ def convertModelToMeta(model, meta_dict):
                     destAttr,
                     Attribute
                 )
+                '''
             new_ptr = type(
                 obj['Name'],
                 (Pointer, object, ),
