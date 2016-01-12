@@ -23,7 +23,8 @@ from attribute_editors import\
     FileEditor,\
     ReferenceEditor,\
     CodeEditor,\
-    ComboSortFilterProxyModel
+    ComboSortFilterProxyModel,\
+    FlatProxyModel
 
 from syntax import\
     ROSHighlighter,\
@@ -160,15 +161,20 @@ class AttributeEditor(QtGui.QWidget):
                 i = options.index(attr.value)
             obj.setCurrentIndex(i)
         elif attr.kind in ['reference']:
-            obj = QtGui.QComboBox()
+            obj = ReferenceEditor()
+            flatModel = FlatProxyModel()
+            flatModel.setSourceModel(self.dataMapper.model())
             CSFPM = ComboSortFilterProxyModel()
             CSFPM.set_filter_type(attr.dst_type)
             CSFPM.setDynamicSortFilter(True)
-            CSFPM.setSourceModel(self.dataMapper.model())
+            CSFPM.setSourceModel(flatModel)
             obj.setModel(CSFPM)
             #obj.setModelColumn(0)
-            #obj.setCurrentIndex(0)
-            r = CSFPM.mapFromSource(self.dataMapper.rootIndex())
+            print attr.value
+            if attr.value:
+                obj.setCurrentIndex(attr.value)
+            r = flatModel.mapFromSource(self.dataMapper.rootIndex())
+            r = CSFPM.mapFromSource(r)
             i = r.parent().parent()
             obj.setRootModelIndex(i)
         elif 'file' in attr.kind:

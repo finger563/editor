@@ -81,6 +81,65 @@ class ListEditor(QtGui.QComboBox):
         super(ListEditor, self).__init__(*args)
 
 
+class FlatProxyModel(QtGui.QAbstractProxyModel):
+
+    def __init__(self, parent=None):
+        super(FlatProxyModel, self).__init__(parent)
+
+    def sourceDataChanged(self, topLeft, bottomRight):
+        self.dataChanged.emit(self.mapFromSource(topLeft),
+                              self.mapFromSource(bottomRight))
+
+    def buildMap(self, model, parent=QtCore.QModelIndex(), row=0):
+        if row == 0:
+            self.m_rowMap = {}
+            self.m_indexMap = {}
+        rows = model.rowCount(parent)
+        for r in range(rows):
+            index = model.index(r, 0, parent)
+            # print('row', row, 'item', model.data(index))
+            self.m_rowMap[index] = row
+            self.m_indexMap[row] = index
+            row = row + 1
+            if model.hasChildren(index):
+                row = self.buildMap(model, index, row)
+        return row
+
+    def setSourceModel(self, model):
+        QtGui.QAbstractProxyModel.setSourceModel(self, model)
+        self.buildMap(model)
+        model.dataChanged.connect(self.sourceDataChanged)
+
+    def mapFromSource(self, index):
+        if index not in self.m_rowMap:
+            return QtCore.QModelIndex()
+        # print('mapping to row', self.m_rowMap[index], flush = True)
+        return self.createIndex(self.m_rowMap[index], index.column())
+
+    def mapToSource(self, index):
+        if not index.isValid() or index.row() not in self.m_indexMap:
+            return QtCore.QModelIndex()
+        # print('mapping from row', index.row(), flush = True)
+        return self.m_indexMap[index.row()]
+
+    def columnCount(self, parent):
+        return QtGui.QAbstractProxyModel.sourceModel(self)\
+                                        .columnCount(self.mapToSource(parent))
+
+    def rowCount(self, parent):
+        # print('rows:', len(self.m_rowMap), flush=True)
+        return len(self.m_rowMap) if not parent.isValid() else 0
+
+    def index(self, row, column, parent):
+        # print('index for:', row, column, flush=True)
+        if parent.isValid():
+            return QtCore.QModelIndex()
+        return self.createIndex(row, column)
+
+    def parent(self, index):
+        return QtCore.QModelIndex()
+
+
 class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     '''
     Subclasses :class:`QtGui.QSortFilterProxyModel` to provide a proxy
@@ -97,23 +156,37 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
 
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
-        inChildren = False
-        for r in range(index0.internalPointer().child_count()):
-            if self.filterAcceptsRow(r, index0):
-                inChildren = True
-        item = self.sourceModel().getModel(index0)
+        p = self.sourceModel()
+        i = p.mapToSource(index0)
+        m = self.sourceModel().sourceModel()
+        item = m.getModel(i)
         test = item.kind() == self.filter_type
-        print item.kind(), test
-        return test or inChildren
+        return test
+
+
+class ReferenceView(QtGui.QTreeView):
+    '''
+    Required for :class:`ReferenceEditor`, handles the view of tree models.
+    '''
+    def __init__(self, parent=None):
+        super(ReferenceView, self).__init__(parent)
 
 
 class ReferenceEditor(QtGui.QComboBox):
     '''
-    Do we need this class?
+    Required so that we can change how comboboxes show trees.
     '''
 
-    def __init__(self):
-        super(ReferenceEditor, self).__init__()
+    def __init__(self, parent=None):
+        super(ReferenceEditor, self).__init__(parent)
+        self.internalView = QtGui.QTreeView(parent)
+        self.setView(self.internalView)
+
+    def setModel(self, model):
+        super(ReferenceEditor, self).setModel(model)
+        self.internalView.expandAll()
+        self.internalView.setIndentation(0)
+        self.internalView.header().hide()
 
 
 class CodeEditor(QtGui.QTextEdit):
