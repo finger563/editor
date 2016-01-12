@@ -152,7 +152,6 @@ class AttributeEditor(QtGui.QWidget):
             obj.setPlainText(attr.value)
         elif attr.kind in ['list']:
             options = attr.get_options()
-            print attr,options
             obj = QtGui.QComboBox()
             obj.addItems(options)
             i = 0

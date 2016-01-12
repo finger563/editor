@@ -101,6 +101,9 @@ def convertModelToMeta(model, meta_dict):
             import types
             # should fill out get_references
             exec obj['Valid Objects'] in globals()
+            
+            def ref_wrapper(s1, s2):
+                return s1.get_references()
 
             def ptrInit(self):
                 Pointer.__init__(self,
@@ -112,7 +115,7 @@ def convertModelToMeta(model, meta_dict):
                 destAttr.tooltip = obj['Tooltip']
                 destAttr.display = obj['Display']
                 destAttr.get_options = types.MethodType(
-                    get_references,
+                    lambda s: ref_wrapper(self, s),
                     destAttr,
                     Attribute
                 )
@@ -121,7 +124,7 @@ def convertModelToMeta(model, meta_dict):
                 (Pointer, object, ),
                 {
                     '__init__': ptrInit,
-                    # from obj['Valid Objects']
+                    # from obj['Valid Objects'] as exec'd text
                     'get_references': get_references,
                 }
             )
@@ -456,9 +459,8 @@ class MetaPointer(Model):
             Attribute(
                 'python',
                 '''def get_references(self):
-    p = self.base
     _type = self.dst_type
-    retTypes = [x['Name'] for x in get_children(p.parent, _type)]
+    retTypes = [x['Name'] for x in get_children(self.parent, _type)]
     return retTypes'''
             )
         )
