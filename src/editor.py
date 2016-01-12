@@ -29,7 +29,7 @@ from editor_widget import TabbedEditor, EditorView
 from item_model import ItemModel, SortFilterProxyModel
 
 from meta import\
-    Model,\
+    MetaModel,\
     convertModelToMeta
 
 from view_model import ViewModel
@@ -235,6 +235,7 @@ class Editor(QtGui.QMainWindow):
 
     def clearModels(self):
         '''Clears all model data from the editor.'''
+        self.META = None
         self.model = None
         self.proxy_model = None
         self.tree_view.reset()
@@ -302,10 +303,13 @@ class Editor(QtGui.QMainWindow):
             )
             if fname:
                 meta_root = self.open_model(fname)
-                base = convertModelToMeta(meta_root)
+                meta_dict = OrderedDict()
+                base = convertModelToMeta(meta_root, meta_dict)
+                meta_dict['__root__'] = base
+                self.META = meta_dict
                 root = base()
         elif self.editor_mode == 'Meta Model':
-            root = Model()
+            root = MetaModel()
             root['Name'] = 'New_Model'
         elif self.editor_mode == 'View Model':
             root = ViewModel()
@@ -348,7 +352,7 @@ class Editor(QtGui.QMainWindow):
 
         # Set up the hidden Root model, with the 'model' object as its
         # only child
-        root = Model()
+        root = MetaModel()
         root.children.set_cardinality({model.__class__: '1'})
         root.add_child(model)
 

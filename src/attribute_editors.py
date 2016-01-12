@@ -73,6 +73,14 @@ class FileEditor(QtGui.QPushButton):
             self.set_file_name(fileName)
 
 
+class ListEditor(QtGui.QComboBox):
+    '''
+    '''
+    
+    def __init__(self, *args):
+        super(ListEditor, self).__init__(*args)
+
+
 class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     '''
     Subclasses :class:`QtGui.QSortFilterProxyModel` to provide a proxy
