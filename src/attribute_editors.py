@@ -17,6 +17,8 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from PyQt4 import QtCore
 
+from model_variant import ModelVariant
+
 # TODO: Create an object here which fully encapsulates dictionary editing
 
 # TODO: Probably need objects which display strings for
@@ -86,7 +88,9 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
     def __init__(self, parent=None):
         super(FlatProxyModel, self).__init__(parent)
 
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
+        print "{} data changed".format(self.__class__.__name__)
         self.dataChanged.emit(self.mapFromSource(topLeft),
                               self.mapFromSource(bottomRight))
 
@@ -97,7 +101,6 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         rows = model.rowCount(parent)
         for r in range(rows):
             index = model.index(r, 0, parent)
-            # print('row', row, 'item', model.data(index))
             self.m_rowMap[index] = row
             self.m_indexMap[row] = index
             row = row + 1
@@ -113,13 +116,11 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
     def mapFromSource(self, index):
         if index not in self.m_rowMap:
             return QtCore.QModelIndex()
-        # print('mapping to row', self.m_rowMap[index], flush = True)
         return self.createIndex(self.m_rowMap[index], index.column())
 
     def mapToSource(self, index):
         if not index.isValid() or index.row() not in self.m_indexMap:
             return QtCore.QModelIndex()
-        # print('mapping from row', index.row(), flush = True)
         return self.m_indexMap[index.row()]
 
     def columnCount(self, parent):
@@ -127,11 +128,9 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
                                         .columnCount(self.mapToSource(parent))
 
     def rowCount(self, parent):
-        # print('rows:', len(self.m_rowMap), flush=True)
         return len(self.m_rowMap) if not parent.isValid() else 0
 
     def index(self, row, column, parent):
-        # print('index for:', row, column, flush=True)
         if parent.isValid():
             return QtCore.QModelIndex()
         return self.createIndex(row, column)
@@ -150,6 +149,12 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     '''
     def __init__(self, *args):
         super(ComboSortFilterProxyModel, self).__init__(*args)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
+    def sourceDataChanged(self, topLeft, bottomRight):
+        print "{} data changed".format(self.__class__.__name__)
+        self.dataChanged.emit(self.mapFromSource(topLeft),
+                              self.mapFromSource(bottomRight))
 
     def set_filter_type(self, _type):
         self.filter_type = _type
@@ -172,19 +177,37 @@ class ReferenceEditor(QtGui.QComboBox):
     def __init__(self, parent=None):
         super(ReferenceEditor, self).__init__(parent)
 
-    def getCurrentModelIndex(self):
-        i = self.model().index(
+    def setCurrentModelIndex(self, mi):
+
+        item = mi.data().toPyObject()
+        print mi.data(), item
+
+        data = mi.data().toPyObject()
+
+        print data.toPyObject()
+
+        selected = self.itemData(
             self.currentIndex(),
-            0,
-            self.rootModelIndex()
+            self.getRootItemModel().reference_role
         )
-        m = self.model().sourceModel()
-        i = m.mapToSource(i)
-        m = m.sourceModel()
-        return i
+
+        print selected, selected.toPyObject()
+
+        print data == ModelVariant(selected.toPyObject())
+
+        print self.findData(
+            data,
+            self.getRootItemModel().reference_role
+        )
+        return
+
+        i = self.model().mapFromSource(mi)
+        print i
+        row = 0
+        self.setCurrentIndex(row)
 
     def getRootItemModel(self):
-        return self.model.sourceModel().sourceModel()
+        return self.model().sourceModel().sourceModel()
 
 
 class CodeEditor(QtGui.QTextEdit):

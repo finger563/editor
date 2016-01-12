@@ -43,6 +43,10 @@ from output import TabbedOutputWidget
 #       editor, e.g. meta-meta-root = Model(), meta-view-root =
 #       ViewModel(), etc.
 
+# TODO: Refactor ContextMenus and such so that they query on the
+#       meta-model instead of directly querying the children data
+#       structure.
+
 # TODO: Need to be able to load multiple models and compose them
 #       together; e.g if two people are working on a large model and
 #       want to separately make packages or components or hardwares.
@@ -199,7 +203,7 @@ class Editor(QtGui.QMainWindow):
         self.navigator_vbox.addWidget(self.filter_edit)
         self.navigator_vbox.addWidget(self.tree_view)
         self.navigator.setLayout(self.navigator_vbox)
-        
+
         # Create the Visualizer
         self.tabbedEditorWidget = TabbedEditor(self)
         self.openEditorTabs = {}
@@ -208,8 +212,8 @@ class Editor(QtGui.QMainWindow):
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.navigator)
         self.splitter1.addWidget(self.tabbedEditorWidget)
-        self.splitter1.setSizes([self.geometry().x()/4.0, 3.0 *
-                                 self.geometry().x()/4.0])
+        self.splitter1.setSizes([self.geometry().x()/5.0, 4.0 *
+                                 self.geometry().x()/5.0])
 
         # Set up the tabbed output viewer
         self.tabbedOutput = TabbedOutputWidget(self)
@@ -218,8 +222,8 @@ class Editor(QtGui.QMainWindow):
         self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
         self.splitter2.addWidget(self.tabbedOutput)
-        self.splitter2.setSizes([3.0 * self.geometry().y()/4.0,
-                                 self.geometry().y()/4.0])
+        self.splitter2.setSizes([4.0 * self.geometry().y()/5.0,
+                                 self.geometry().y()/5.0])
 
         # Set the central widget of the application
         self.setCentralWidget(self.splitter2)

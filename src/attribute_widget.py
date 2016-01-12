@@ -72,7 +72,7 @@ class AttributeEditor(QtGui.QWidget):
         self.vbox.removeItem(self.vbox.itemAt(0))
         self.scrollArea = QtGui.QScrollArea()
 
-        self.viewWidget = QtGui.QWidget()
+        self.viewWidget = QtGui.QWidget(self)
         self._layout = QtGui.QVBoxLayout(self.viewWidget)
 
         self.scrollArea.setWidget(self.viewWidget)
@@ -124,7 +124,7 @@ class AttributeEditor(QtGui.QWidget):
                 pm.scaled(30, 30)
             )
         qw = QtGui.QWidget()
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtGui.QHBoxLayout(qw)
         hbox.setAlignment(QtCore.Qt.AlignLeft)
         qw.setLayout(hbox)
         hbox.addWidget(pix)
@@ -169,12 +169,13 @@ class AttributeEditor(QtGui.QWidget):
             CSFPM.setDynamicSortFilter(True)
             CSFPM.setSourceModel(flatModel)
             obj.setModel(CSFPM)
-            # need to figure out setting the reference
-            # obj.setCurrentIndex(attr.value)
             r = flatModel.mapFromSource(self.dataMapper.rootIndex())
             r = CSFPM.mapFromSource(r)
             i = r.parent().parent()
             obj.setRootModelIndex(i)
+            # need to figure out setting the reference
+            if attr.value: # and not attr.value.isNull():
+                obj.setCurrentModelIndex(attr.value)
         elif 'file' in attr.kind:
             obj = FileEditor(name=name,
                              fname=attr.value,
@@ -198,7 +199,6 @@ class AttributeEditor(QtGui.QWidget):
             if label:
                 self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
-            self.obj = obj
             self._layout.addWidget(obj)
         return obj
 
@@ -257,9 +257,6 @@ class AttributeEditor(QtGui.QWidget):
 
     def save(self, event):
         pass
-
-    def keyPressEvent(self, event):
-        QtGui.QWidget.keyPressEvent(self, event)
 
     def cancel(self, event):
         self.hide(event)

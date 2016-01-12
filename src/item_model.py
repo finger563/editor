@@ -19,6 +19,8 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
+from model_variant import ModelVariant
+
 
 class ItemModel(QtCore.QAbstractItemModel):
     '''Implements the :class:`QAbstractItemModel` to interact with the
@@ -27,6 +29,7 @@ class ItemModel(QtCore.QAbstractItemModel):
     '''
     sort_role = QtCore.Qt.UserRole
     filter_role = QtCore.Qt.UserRole + 1
+    reference_role = QtCore.Qt.UserRole + 2
 
     def __init__(self, root, parent=None):
         super(ItemModel, self).__init__(parent)
@@ -68,6 +71,8 @@ class ItemModel(QtCore.QAbstractItemModel):
                 )
         if role == ItemModel.sort_role:
             return node.kind()
+        if role == ItemModel.reference_role:
+            return ModelVariant(node)
         if role == ItemModel.filter_role:
             f = None
             if self.filter_type == 'Meta':
@@ -148,6 +153,7 @@ class ItemModel(QtCore.QAbstractItemModel):
                 self.beginResetModel()
                 self.endResetModel()
         self.endInsertRows()
+        self.dataChanged.emit(parent, parent)
         return success
 
     def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
@@ -164,6 +170,7 @@ class ItemModel(QtCore.QAbstractItemModel):
             success = parentNode.remove_child(position)
 
         self.endRemoveRows()
+        self.dataChanged.emit(parent, parent)
         return success
 
 
@@ -173,6 +180,12 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
     '''
     def __init__(self, parent):
         super(SortFilterProxyModel, self).__init__(parent)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
+    def sourceDataChanged(self, topLeft, bottomRight):
+        print "{} data changed".format(self.__class__.__name__)
+        self.dataChanged.emit(self.mapFromSource(topLeft),
+                              self.mapFromSource(bottomRight))
 
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)

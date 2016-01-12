@@ -353,7 +353,7 @@ class Attribute(Model):
         elif self.kind in ['bool']:
             self.value = variant.toBool()
         elif self.kind in ['reference']:
-            self.value = variant
+            self.value = variant.toPyObject()
         elif 'file' in self.kind:
             self.value = str(variant)
 
