@@ -73,9 +73,28 @@ class FileEditor(QtGui.QPushButton):
             self.set_file_name(fileName)
 
 
+class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
+    '''
+    Subclasses :class:`QtGui.QSortFilterProxyModel` to provide a proxy
+    model to a :class:`QtGui.QComboBox` for selecting references to
+    other objects.  By setting the rootIndex of the model and
+    customizing the :func:`filterAcceptsRow` function, the reference
+    scope and data-type can be enforced.
+    '''
+    def __init__(self, *args):
+        super(ComboSortFilterProxyModel, self).__init__(*args)
+
+    def filterAcceptsRow(self, row, parent):
+        index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
+        for r in range(index0.internalPointer().child_count()):
+            self.filterAcceptsRow(r, index0)
+        text = self.sourceModel().data(index0, self.filterRole())
+        return QtCore.QString(text).contains(self.filterRegExp())
+
+
 class ReferenceEditor(QtGui.QComboBox):
     '''
-    Subclasses
+    Do we need this class?
     '''
 
     def __init__(self):
