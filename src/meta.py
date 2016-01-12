@@ -352,6 +352,8 @@ class Attribute(Model):
             self.value, tmp = variant.toDouble()
         elif self.kind in ['bool']:
             self.value = variant.toBool()
+        elif self.kind in ['reference']:
+            self.value = variant
         elif 'file' in self.kind:
             self.value = str(variant)
 

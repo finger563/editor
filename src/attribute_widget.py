@@ -169,10 +169,8 @@ class AttributeEditor(QtGui.QWidget):
             CSFPM.setDynamicSortFilter(True)
             CSFPM.setSourceModel(flatModel)
             obj.setModel(CSFPM)
-            #obj.setModelColumn(0)
-            print attr.value
-            if attr.value:
-                obj.setCurrentIndex(attr.value)
+            # need to figure out setting the reference
+            # obj.setCurrentIndex(attr.value)
             r = flatModel.mapFromSource(self.dataMapper.rootIndex())
             r = CSFPM.mapFromSource(r)
             i = r.parent().parent()

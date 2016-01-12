@@ -164,14 +164,6 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
         return test
 
 
-class ReferenceView(QtGui.QTreeView):
-    '''
-    Required for :class:`ReferenceEditor`, handles the view of tree models.
-    '''
-    def __init__(self, parent=None):
-        super(ReferenceView, self).__init__(parent)
-
-
 class ReferenceEditor(QtGui.QComboBox):
     '''
     Required so that we can change how comboboxes show trees.
@@ -179,14 +171,20 @@ class ReferenceEditor(QtGui.QComboBox):
 
     def __init__(self, parent=None):
         super(ReferenceEditor, self).__init__(parent)
-        self.internalView = QtGui.QTreeView(parent)
-        self.setView(self.internalView)
 
-    def setModel(self, model):
-        super(ReferenceEditor, self).setModel(model)
-        self.internalView.expandAll()
-        self.internalView.setIndentation(0)
-        self.internalView.header().hide()
+    def getCurrentModelIndex(self):
+        i = self.model().index(
+            self.currentIndex(),
+            0,
+            self.rootModelIndex()
+        )
+        m = self.model().sourceModel()
+        i = m.mapToSource(i)
+        m = m.sourceModel()
+        return i
+
+    def getRootItemModel(self):
+        return self.model.sourceModel().sourceModel()
 
 
 class CodeEditor(QtGui.QTextEdit):
