@@ -149,15 +149,17 @@
   <div class="section" id="module-meta">
 <span id="meta"></span><h1>Meta<a class="headerlink" href="#module-meta" title="Permalink to this headline">¶</a></h1>
 <p>This file defines Meta-Meta-Model.</p>
-<dl class="class">
-<dt id="meta.Attribute">
-<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Attribute</code><span class="sig-paren">(</span><em>kind</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Attribute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generic Attributes class</p>
-<p>Each Attribute has the following:</p>
-<ul class="simple">
-<li>kind &#8211; The datatype of the attribute e.g. pointer, float, bool etc.</li>
-<li>value &#8211; The value of the attributes e.g. &#8216;my_component&#8217;, 1.642 etc.</li>
-</ul>
+<dl class="function">
+<dt id="meta.convertModelToMeta">
+<code class="descclassname">meta.</code><code class="descname">convertModelToMeta</code><span class="sig-paren">(</span><em>model</em>, <em>meta_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.convertModelToMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to create classes based on the editor&#8217;s
+current model.  It works on Model instances, which can have
+pointers, models, and model_attributes as children.  By converting
+the models in to named classes subclassing Model and adding named
+attributes subclassing Attribute it forms a new class structure
+which describes the meta model and which can be used to
+instantiate models.</p>
+<p>Returns the class of the root type of the meta model</p>
 </dd></dl>
 
 <dl class="class">
@@ -173,23 +175,34 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="meta.Pointer_Attribute">
-<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Pointer_Attribute</code><span class="sig-paren">(</span><em>base</em>, <em>_type</em>, <em>scope</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Pointer_Attribute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="meta.Model_Pointer">
-<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Model_Pointer</code><span class="sig-paren">(</span><em>parent=None</em>, <em>name='Pointer'</em>, <em>dst_type='Model'</em>, <em>tooltip=''</em>, <em>display=''</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Model_Pointer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="meta.Attribute">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Attribute</code><span class="sig-paren">(</span><em>kind</em>, <em>value</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic Attributes class</p>
+<p>Each Attribute has the following:</p>
+<ul class="simple">
+<li>kind &#8211; The datatype of the attribute e.g. pointer, float, bool etc.</li>
+<li>value &#8211; The value of the attributes e.g. &#8216;my_component&#8217;, 1.642 etc.</li>
+</ul>
+</dd></dl>
 
 <dl class="class">
 <dt id="meta.Pointer">
-<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Pointer</code><span class="sig-paren">(</span><em>parent=None</em>, <em>scope='Root'</em>, <em>dst=None</em>, <em>dst_type='Model'</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Pointer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Pointer</code><span class="sig-paren">(</span><em>parent=None</em>, <em>dst=None</em>, <em>dst_type='Model'</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Pointer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="class">
-<dt id="meta.Model_Attribute">
-<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">Model_Attribute</code><span class="sig-paren">(</span><em>parent=None</em>, <em>name='Attribute'</em>, <em>kind='string'</em>, <em>tooltip=''</em>, <em>display=''</em>, <em>options=[]</em>, <em>editable=True</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.Model_Attribute" title="Permalink to this definition">¶</a></dt>
+<dt id="meta.MetaModel">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">MetaModel</code><a class="headerlink" href="#meta.MetaModel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="meta.MetaAttribute">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">MetaAttribute</code><span class="sig-paren">(</span><em>parent=None</em>, <em>name='Attribute'</em>, <em>kind='string'</em>, <em>tooltip=''</em>, <em>display=''</em>, <em>options=[]</em>, <em>editable=True</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.MetaAttribute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="meta.MetaPointer">
+<em class="property">class </em><code class="descclassname">meta.</code><code class="descname">MetaPointer</code><span class="sig-paren">(</span><em>parent=None</em>, <em>name='Pointer'</em>, <em>dst_type='Model'</em>, <em>tooltip=''</em>, <em>display=''</em><span class="sig-paren">)</span><a class="headerlink" href="#meta.MetaPointer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="class">

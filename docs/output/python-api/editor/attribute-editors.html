@@ -166,9 +166,31 @@ based on the file_type specified.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="attribute_editors.ReferenceEditor">
-<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ReferenceEditor</code><a class="headerlink" href="#attribute_editors.ReferenceEditor" title="Permalink to this definition">¶</a></dt>
+<dt id="attribute_editors.ListEditor">
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ListEditor</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.ListEditor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="class">
+<dt id="attribute_editors.ComboSortFilterProxyModel">
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ComboSortFilterProxyModel</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.ComboSortFilterProxyModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclasses <code class="xref py py-class docutils literal"><span class="pre">QtGui.QSortFilterProxyModel</span></code> to provide a proxy
+model to a <code class="xref py py-class docutils literal"><span class="pre">QtGui.QComboBox</span></code> for selecting references to
+other objects.  By setting the rootIndex of the model and
+customizing the <code class="xref py py-func docutils literal"><span class="pre">filterAcceptsRow()</span></code> function, the reference
+scope and data-type can be enforced.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="attribute_editors.ReferenceView">
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ReferenceView</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.ReferenceView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required for <a class="reference internal" href="#attribute_editors.ReferenceEditor" title="attribute_editors.ReferenceEditor"><code class="xref py py-class docutils literal"><span class="pre">ReferenceEditor</span></code></a>, handles the view of tree models.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="attribute_editors.ReferenceEditor">
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ReferenceEditor</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.ReferenceEditor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required so that we can change how comboboxes show trees.</p>
+</dd></dl>
 
 <dl class="class">
 <dt id="attribute_editors.CodeEditor">
