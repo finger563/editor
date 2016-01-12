@@ -23,6 +23,12 @@ from PyQt4 import QtCore
 #       editing/choosing, but which actually map to objects underneath
 #       (e.g. pointer selection).  Need some sort of mapper/delegate
 #       for these editors which perform the mapping
+#
+#       Probably need to create a model/delegate which is a proxy
+#       model for the real model and is used with the combobox so that
+#       the strings map to real objects and so that the strings get
+#       updated in the selector if they are updated somewhere else in
+#       the model
 
 # TODO: Figure out why tabbing doesn't work in the CodeEditor; all it
 #        does is take the cursor back to the first character.  The
@@ -67,12 +73,120 @@ class FileEditor(QtGui.QPushButton):
             self.set_file_name(fileName)
 
 
+class ListEditor(QtGui.QComboBox):
+    '''
+    '''
+    
+    def __init__(self, *args):
+        super(ListEditor, self).__init__(*args)
+
+
+class FlatProxyModel(QtGui.QAbstractProxyModel):
+
+    def __init__(self, parent=None):
+        super(FlatProxyModel, self).__init__(parent)
+
+    def sourceDataChanged(self, topLeft, bottomRight):
+        self.dataChanged.emit(self.mapFromSource(topLeft),
+                              self.mapFromSource(bottomRight))
+
+    def buildMap(self, model, parent=QtCore.QModelIndex(), row=0):
+        if row == 0:
+            self.m_rowMap = {}
+            self.m_indexMap = {}
+        rows = model.rowCount(parent)
+        for r in range(rows):
+            index = model.index(r, 0, parent)
+            # print('row', row, 'item', model.data(index))
+            self.m_rowMap[index] = row
+            self.m_indexMap[row] = index
+            row = row + 1
+            if model.hasChildren(index):
+                row = self.buildMap(model, index, row)
+        return row
+
+    def setSourceModel(self, model):
+        QtGui.QAbstractProxyModel.setSourceModel(self, model)
+        self.buildMap(model)
+        model.dataChanged.connect(self.sourceDataChanged)
+
+    def mapFromSource(self, index):
+        if index not in self.m_rowMap:
+            return QtCore.QModelIndex()
+        # print('mapping to row', self.m_rowMap[index], flush = True)
+        return self.createIndex(self.m_rowMap[index], index.column())
+
+    def mapToSource(self, index):
+        if not index.isValid() or index.row() not in self.m_indexMap:
+            return QtCore.QModelIndex()
+        # print('mapping from row', index.row(), flush = True)
+        return self.m_indexMap[index.row()]
+
+    def columnCount(self, parent):
+        return QtGui.QAbstractProxyModel.sourceModel(self)\
+                                        .columnCount(self.mapToSource(parent))
+
+    def rowCount(self, parent):
+        # print('rows:', len(self.m_rowMap), flush=True)
+        return len(self.m_rowMap) if not parent.isValid() else 0
+
+    def index(self, row, column, parent):
+        # print('index for:', row, column, flush=True)
+        if parent.isValid():
+            return QtCore.QModelIndex()
+        return self.createIndex(row, column)
+
+    def parent(self, index):
+        return QtCore.QModelIndex()
+
+
+class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
+    '''
+    Subclasses :class:`QtGui.QSortFilterProxyModel` to provide a proxy
+    model to a :class:`QtGui.QComboBox` for selecting references to
+    other objects.  By setting the rootIndex of the model and
+    customizing the :func:`filterAcceptsRow` function, the reference
+    scope and data-type can be enforced.
+    '''
+    def __init__(self, *args):
+        super(ComboSortFilterProxyModel, self).__init__(*args)
+
+    def set_filter_type(self, _type):
+        self.filter_type = _type
+
+    def filterAcceptsRow(self, row, parent):
+        index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
+        p = self.sourceModel()
+        i = p.mapToSource(index0)
+        m = self.sourceModel().sourceModel()
+        item = m.getModel(i)
+        test = item.kind() == self.filter_type
+        return test
+
+
+class ReferenceView(QtGui.QTreeView):
+    '''
+    Required for :class:`ReferenceEditor`, handles the view of tree models.
+    '''
+    def __init__(self, parent=None):
+        super(ReferenceView, self).__init__(parent)
+
+
 class ReferenceEditor(QtGui.QComboBox):
     '''
+    Required so that we can change how comboboxes show trees.
     '''
 
-    def __init__(self):
-        super(ReferenceEditor, self).__init__()
+    def __init__(self, parent=None):
+        super(ReferenceEditor, self).__init__(parent)
+        self.internalView = QtGui.QTreeView(parent)
+        self.setView(self.internalView)
+
+    def setModel(self, model):
+        super(ReferenceEditor, self).setModel(model)
+        self.internalView.expandAll()
+        self.internalView.setIndentation(0)
+        self.internalView.header().hide()
 
 
 class CodeEditor(QtGui.QTextEdit):

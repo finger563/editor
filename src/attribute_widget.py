@@ -22,7 +22,9 @@ from PyQt4 import QtGui
 from attribute_editors import\
     FileEditor,\
     ReferenceEditor,\
-    CodeEditor
+    CodeEditor,\
+    ComboSortFilterProxyModel,\
+    FlatProxyModel
 
 from syntax import\
     ROSHighlighter,\
@@ -160,6 +162,21 @@ class AttributeEditor(QtGui.QWidget):
             obj.setCurrentIndex(i)
         elif attr.kind in ['reference']:
             obj = ReferenceEditor()
+            flatModel = FlatProxyModel()
+            flatModel.setSourceModel(self.dataMapper.model())
+            CSFPM = ComboSortFilterProxyModel()
+            CSFPM.set_filter_type(attr.dst_type)
+            CSFPM.setDynamicSortFilter(True)
+            CSFPM.setSourceModel(flatModel)
+            obj.setModel(CSFPM)
+            #obj.setModelColumn(0)
+            print attr.value
+            if attr.value:
+                obj.setCurrentIndex(attr.value)
+            r = flatModel.mapFromSource(self.dataMapper.rootIndex())
+            r = CSFPM.mapFromSource(r)
+            i = r.parent().parent()
+            obj.setRootModelIndex(i)
         elif 'file' in attr.kind:
             obj = FileEditor(name=name,
                              fname=attr.value,

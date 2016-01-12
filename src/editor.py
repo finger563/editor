@@ -29,20 +29,19 @@ from editor_widget import TabbedEditor, EditorView
 from item_model import ItemModel, SortFilterProxyModel
 
 from meta import\
-    Model,\
-    Model_Pointer,\
-    Model_Attribute,\
-    Attribute,\
-    Pointer,\
-    Children,\
-    Pointer_Attribute,\
-    get_children
+    MetaModel,\
+    convertModelToMeta
 
 from view_model import ViewModel
 
 from tree_view import TreeView
 
 from output import TabbedOutputWidget
+
+# TODO: Refactor editor so that it the meta-model is contained
+#       separately and merely invoked to get the root object for the
+#       editor, e.g. meta-meta-root = Model(), meta-view-root =
+#       ViewModel(), etc.
 
 # TODO: Need to be able to load multiple models and compose them
 #       together; e.g if two people are working on a large model and
@@ -63,36 +62,11 @@ from output import TabbedOutputWidget
 #       deserialized data and storage of meta-data (e.g.  UUID for
 #       meta-model/version number: import uuid)
 
-# TODO: Allow for messages/services which are purely references to
-#       libarary/standard messages/services.  Perhaps just allow
-#       publishers/subscribers/clients/servers to point to
-#       messages/services which are not in the model and are specified
-#       as a string just as they would be in the code?
-#
-#       This could require objects which may allow multiple types, how
-#       would that integrate into our current editing paradigm?
-#
-#       Note: if they have the same definitions and name (and thus MD5
-#       hash) they will work out of the box
-
-# TODO: View-Models are incomplete and not usable; their attributes
-#       don't necessarily work and editing a view model should
-#       probably require knowledge of the meta-model, so the
-#       meta-model should be loaded as well
-
 # TODO: Figure out how to update the meta-model without completely
 #       losing the edits to existing models if possible.  Perhaps just
 #       allow loading simultaneously the model + meta-model; and
 #       attempting to resolve model changes when meta-model edits are
 #       performed.
-
-# TODO: Add pointer conversion operations to 'convertModelToMeta()'
-
-# TODO: Make names only unique within scopes; enforce that no two children
-#       of the same parent share the same name.
-
-# TODO: Models can have same names depending on scope; make sure we
-#       use uniqueness here! (Editor.openEditorTabs)
 
 # TODO: Need to look further into monkeypatching (adding or
 #       overwriting instance methods) and how it relates to pickling.
@@ -100,119 +74,6 @@ from output import TabbedOutputWidget
 #       being (de-)serialized.  This is especially important for
 #       pointers, their attributes, their constraints, and their
 #       options.
-
-# TODO: Editing of attributes needs to be worked out some more,
-#       w.r.t. the editable tag and what can/should be editable from
-#       where.
-
-# TODO: Pointers aren't complete yet, and saving them into a .model
-#       file has issues (read: doesn't work).  The code for handling
-#       pointers both in convertModelToMeta and in their base classes
-#       needs to be thought through some more and refactored.
-
-
-def convertModelToMeta(model):
-    '''This function is used to create classes based on the editor's
-    current model.  It works on Model instances, which can have
-    pointers, models, and model_attributes as children.  By converting
-    the models in to named classes subclassing Model and adding named
-    attributes subclassing Attribute it forms a new class structure
-    which describes the meta model and which can be used to
-    instantiate models.
-
-    Returns the class of the root type of the meta model
-
-    '''
-
-    allowed_kids = OrderedDict()
-    attr_dict = OrderedDict()
-    ptrs = OrderedDict()
-    for obj in model.children:
-        # These will be the available children_types of the class
-        if type(obj) == Model:
-            allowed_kids[convertModelToMeta(obj)] = obj['Cardinality']
-        # These will be pointers to other classes
-        elif type(obj) == Model_Pointer:
-            import types
-            # should fill out get_references
-            exec obj['Valid Objects'] in globals()
-
-            def ptrInit(self):
-                Pointer.__init__(self,
-                                 dst_type=obj['Destination Type'])
-                self['Name'] = obj['Name']
-                self.get_attribute('Name').editable = False
-                self.get_attribute(
-                    'Destination').tooltip = obj['Tooltip']
-                self.get_attribute(
-                    'Destination').display = obj['Display']
-                self.get_attribute(
-                    'Destination').get_options = types.MethodType(
-                        get_references,
-                        self.get_attribute('Destination'),
-                        Pointer_Attribute)
-            new_ptr = type(
-                obj['Name'],
-                (Pointer, object, ),
-                {
-                    '__init__': ptrInit,
-                    # from obj['Valid Objects']
-                    'get_references': get_references,
-                }
-            )
-            ptrs[obj['Name']] = new_ptr()
-        # These will be the attributes of the new class
-        elif type(obj) == Model_Attribute:
-            def attrInit(self):
-                Attribute.__init__(self, obj['Kind'],
-                                   Attribute.default_vals[obj['Kind']])
-            new_attr = type(
-                obj['Name'],
-                (Attribute, object, ),
-                {
-                    '__init__': attrInit,
-                    'tooltip': obj['Tooltip'],
-                    'display': obj['Display'],
-                    'editable': obj['Editable'],
-                }
-            )
-            attr_dict[obj['Name']] = new_attr()
-
-    # Define the init function inline here for the new class, make
-    # sure all attributes, pointers, children, etc. are set up
-    # properly
-    def modelInit(self, parent=None):
-        Model.__init__(self, parent)
-        self.attributes = OrderedDict()
-        self.add_attribute('Name',
-                           'string',
-                           '{}'.format(self.__class__.__name__))
-        # Handle children
-        self.children = Children(cardinality=allowed_kids)
-        for t, c in self.children.get_cardinality().iteritems():
-            min_number = int(c.split('..')[0])
-            for i in range(0, min_number):
-                new_child = t()
-                new_child['Name'] = '{}_{}'.format(t.__name__, i)
-                self.add_child(new_child)
-        # Handle pointers
-        ptr_types = [type(t) for t in ptrs.values()]
-        for t in ptr_types:
-            self.children.set_cardinality_of(t, '1')
-        for name, ptr in ptrs.iteritems():
-            self.add_child(ptr)
-        # Handle attributes
-        for name, attr in attr_dict.iteritems():
-            self.set_attribute(name, attr)
-
-    new_type = type(
-        model['Name'],
-        (Model, object, ),
-        {
-            '__init__': modelInit
-        }
-    )
-    return new_type
 
 
 class Editor(QtGui.QMainWindow):
@@ -374,6 +235,7 @@ class Editor(QtGui.QMainWindow):
 
     def clearModels(self):
         '''Clears all model data from the editor.'''
+        self.META = None
         self.model = None
         self.proxy_model = None
         self.tree_view.reset()
@@ -441,10 +303,13 @@ class Editor(QtGui.QMainWindow):
             )
             if fname:
                 meta_root = self.open_model(fname)
-                base = convertModelToMeta(meta_root)
+                meta_dict = OrderedDict()
+                base = convertModelToMeta(meta_root, meta_dict)
+                meta_dict['__root__'] = base
+                self.META = meta_dict
                 root = base()
         elif self.editor_mode == 'Meta Model':
-            root = Model()
+            root = MetaModel()
             root['Name'] = 'New_Model'
         elif self.editor_mode == 'View Model':
             root = ViewModel()
@@ -487,7 +352,7 @@ class Editor(QtGui.QMainWindow):
 
         # Set up the hidden Root model, with the 'model' object as its
         # only child
-        root = Model()
+        root = MetaModel()
         root.children.set_cardinality({model.__class__: '1'})
         root.add_child(model)
 
