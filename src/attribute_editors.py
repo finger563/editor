@@ -88,6 +88,7 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
         for r in range(index0.internalPointer().child_count()):
             self.filterAcceptsRow(r, index0)
+        # by default self.filterRole() is QAbstractItemModel.DisplayRole
         text = self.sourceModel().data(index0, self.filterRole())
         return QtCore.QString(text).contains(self.filterRegExp())
 
