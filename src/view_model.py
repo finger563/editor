@@ -20,6 +20,11 @@ import view_attributes as view_attr
 # TODO: Figure out the structure of the view model and how
 #       to access the classes and attributes of the view-model
 
+# TODO: View-Models are incomplete and not usable; their attributes
+#       don't necessarily work and editing a view model should
+#       probably require knowledge of the meta-model, so the
+#       meta-model should be loaded as well
+
 
 class ViewModel(Model):
     '''

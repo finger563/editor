@@ -13,6 +13,9 @@ __status__ = 'Production'
 
 from collections import OrderedDict, MutableSequence
 
+# TODO: Refactor Attribute fromQVariant() method so that it is no
+#       longer needed; should be handled by delegate probably.
+
 # TODO: Add constraints as python functions stored as text and exec'd
 
 # TODO: Add get_options for list attributes as stored python text
@@ -44,6 +47,137 @@ from collections import OrderedDict, MutableSequence
 
 # TODO: Might need to extend the cardinality code in children to
 #       handle more types of cardinality, e.g. '5'
+
+# TODO: Allow for messages/services which are purely references to
+#       libarary/standard messages/services.  Perhaps just allow
+#       publishers/subscribers/clients/servers to point to
+#       messages/services which are not in the model and are specified
+#       as a string just as they would be in the code?
+#
+#       This could require objects which may allow multiple types, how
+#       would that integrate into our current editing paradigm?
+#
+#       Note: if they have the same definitions and name (and thus MD5
+#       hash) they will work out of the box
+
+# TODO: Add pointer conversion operations to 'convertModelToMeta()'
+
+# TODO: Make names only unique within scopes; enforce that no two children
+#       of the same parent share the same name.
+
+# TODO: Models can have same names depending on scope; make sure we
+#       use uniqueness here! (Editor.openEditorTabs)
+
+# TODO: Editing of attributes needs to be worked out some more,
+#       w.r.t. the editable tag and what can/should be editable from
+#       where.
+
+# TODO: Refactor convertModelToMeta so that each meta-type performs
+#       its own conversion
+
+
+def convertModelToMeta(model):
+    '''This function is used to create classes based on the editor's
+    current model.  It works on Model instances, which can have
+    pointers, models, and model_attributes as children.  By converting
+    the models in to named classes subclassing Model and adding named
+    attributes subclassing Attribute it forms a new class structure
+    which describes the meta model and which can be used to
+    instantiate models.
+
+    Returns the class of the root type of the meta model
+
+    '''
+
+    allowed_kids = OrderedDict()
+    attr_dict = OrderedDict()
+    ptrs = OrderedDict()
+    for obj in model.children:
+        # These will be the available children_types of the class
+        if type(obj) == Model:
+            allowed_kids[convertModelToMeta(obj)] = obj['Cardinality']
+        # These will be pointers to other classes
+        elif type(obj) == PointerModel:
+            import types
+            # should fill out get_references
+            exec obj['Valid Objects'] in globals()
+
+            def ptrInit(self):
+                Pointer.__init__(self,
+                                 dst_type=obj['Destination Type'])
+                self['Name'] = obj['Name']
+                self.get_attribute('Name').editable = False
+                self.get_attribute(
+                    'Destination').tooltip = obj['Tooltip']
+                self.get_attribute(
+                    'Destination').display = obj['Display']
+                self.get_attribute(
+                    'Destination').get_options = types.MethodType(
+                        get_references,
+                        self.get_attribute('Destination'),
+                        Pointer_Attribute)
+            new_ptr = type(
+                obj['Name'],
+                (Pointer, object, ),
+                {
+                    '__init__': ptrInit,
+                    # from obj['Valid Objects']
+                    'get_references': get_references,
+                }
+            )
+            ptrs[obj['Name']] = new_ptr()
+        # These will be the attributes of the new class
+        elif type(obj) == AttributeModel:
+            def attrInit(self):
+                Attribute.__init__(self, obj['Kind'],
+                                   Attribute.default_vals[obj['Kind']])
+            new_attr = type(
+                obj['Name'],
+                (Attribute, object, ),
+                {
+                    '__init__': attrInit,
+                    'tooltip': obj['Tooltip'],
+                    'display': obj['Display'],
+                    'editable': obj['Editable'],
+                }
+            )
+            attr_dict[obj['Name']] = new_attr()
+
+    # Define the init function inline here for the new class, make
+    # sure all attributes, pointers, children, etc. are set up
+    # properly
+    def modelInit(self, parent=None):
+        Model.__init__(self, parent)
+        self.attributes = OrderedDict()
+        self.add_attribute('Name',
+                           'string',
+                           '{}'.format(self.__class__.__name__))
+        # Handle children
+        self.children = Children(cardinality=allowed_kids)
+        for t, c in self.children.get_cardinality().iteritems():
+            min_number = int(c.split('..')[0])
+            for i in range(0, min_number):
+                new_child = t()
+                new_child['Name'] = '{}_{}'.format(t.__name__, i)
+                self.add_child(new_child)
+        # Handle pointers
+        ptr_types = [type(t) for t in ptrs.values()]
+        for t in ptr_types:
+            self.children.set_cardinality_of(t, '1')
+        for name, ptr in ptrs.iteritems():
+            self.add_child(ptr)
+        # Handle attributes
+        for name, attr in attr_dict.iteritems():
+            self.set_attribute(name, attr)
+
+    new_type = type(
+        model['Name'],
+        (Model, object, ),
+        {
+            '__init__': modelInit
+        }
+    )
+    return new_type
 
 
 def get_children(model, kind):
@@ -127,9 +261,9 @@ class Model(object):
 
         self.children = Children(cardinality={Model:
                                               '0..*',
-                                              Model_Pointer:
+                                              PointerModel:
                                               '0..*',
-                                              Model_Attribute:
+                                              AttributeModel:
                                               '0..*'})
 
         self.attributes = OrderedDict()
@@ -227,7 +361,7 @@ class Pointer_Attribute(Attribute):
         return self.getNames(r)
 
 
-class Model_Pointer(Model):
+class PointerModel(Model):
     '''
     '''
 
@@ -239,7 +373,7 @@ class Model_Pointer(Model):
                  dst_type='Model',
                  tooltip='',
                  display=''):
-        super(Model_Pointer, self).__init__(parent)
+        super(PointerModel, self).__init__(parent)
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', name)
@@ -276,7 +410,7 @@ class Pointer(Model):
                            Pointer_Attribute(self, dst_type, scope))
 
 
-class Model_Attribute(Model):
+class AttributeModel(Model):
     '''
     '''
     def __init__(self,
@@ -287,7 +421,7 @@ class Model_Attribute(Model):
                  display='',
                  options=[],
                  editable=True):
-        super(Model_Attribute, self).__init__(parent)
+        super(ModelAttribute, self).__init__(parent)
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.add_attribute('Name', 'string', name)
