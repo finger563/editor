@@ -162,25 +162,19 @@ class ReferenceEditor(QtGui.QComboBox):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def updateList(self, topLeft, bottomRight):
-        print "ref: ", self.current_ref
-        if self.current_ref:
-            self.setCurrentReference(self.current_ref)
-
-    def currentIndexChanged(self, index):
-        self.current_ref = self.itemData(
+        print self.currentIndex()
+        data = self.itemData(
             self.currentIndex(),
             self.getRootItemModel().reference_role
         )
-        super(ReferenceEditor, self).currentIndexChanged(index)
+        self.setCurrentReference(data)
 
     def setCurrentReference(self, ref):
         index = self.findData(
             ref,
             self.getRootItemModel().reference_role
         )
-        print index
         self.setCurrentIndex(index)
-        self.current_ref = ref
 
     def setCurrentModelIndex(self, mi):
         ref = mi.data().toPyObject()
