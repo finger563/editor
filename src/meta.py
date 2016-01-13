@@ -11,6 +11,8 @@ __maintainer__ = 'William Emfinger'
 __email__ = 'emfinger@isis.vanderbilt.edu'
 __status__ = 'Production'
 
+from PyQt4 import QtCore
+
 from collections import OrderedDict, MutableSequence
 
 # TODO: Refactor Attribute fromQVariant() method so that it is no
@@ -178,7 +180,7 @@ def convertModelToMeta(model, meta_dict):
 
     new_type = type(
         model['Name'],
-        (Model, object, ),
+        (Model, QtCore.QObject, object, ),
         {
             '__init__': modelInit
         }
@@ -353,7 +355,7 @@ class Attribute(Model):
         elif self.kind in ['bool']:
             self.value = variant.toBool()
         elif self.kind in ['reference']:
-            self.value = variant.toPyObject()
+            self.value = variant  # .toPyObject()
         elif 'file' in self.kind:
             self.value = str(variant)
 

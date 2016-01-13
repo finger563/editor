@@ -173,9 +173,8 @@ class AttributeEditor(QtGui.QWidget):
             r = CSFPM.mapFromSource(r)
             i = r.parent().parent()
             obj.setRootModelIndex(i)
-            # need to figure out setting the reference
-            if attr.value: # and not attr.value.isNull():
-                obj.setCurrentModelIndex(attr.value)
+            if attr.value:
+                obj.setCurrentReference(attr.value)
         elif 'file' in attr.kind:
             obj = FileEditor(name=name,
                              fname=attr.value,

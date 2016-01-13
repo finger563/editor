@@ -53,7 +53,9 @@ class EditorItemDelegate(QtGui.QItemDelegate):
     '''
 
     def eventFilter(self, editor, event):
-        '''Required to allow tabbing in a :class:`attribute_editors.CodeEditor`.'''
+        '''Required to allow tabbing in a
+        :class:`attribute_editors.CodeEditor`.
+        '''
         if type(editor) == CodeEditor:
             return False
         else:
@@ -90,12 +92,13 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             model.setData(index, text)
             return
         elif type(editor) == ReferenceEditor:
+            data = editor.itemData(
+                editor.currentIndex(),
+                editor.getRootItemModel().reference_role
+            )
             model.setData(
                 index,
-                editor.itemData(
-                    editor.currentIndex(),
-                    editor.getRootItemModel().reference_role
-                )
+                data
             )
             return
         return super(EditorItemDelegate,

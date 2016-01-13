@@ -19,8 +19,6 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
-from model_variant import ModelVariant
-
 
 class ItemModel(QtCore.QAbstractItemModel):
     '''Implements the :class:`QAbstractItemModel` to interact with the
@@ -72,7 +70,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == ItemModel.sort_role:
             return node.kind()
         if role == ItemModel.reference_role:
-            return ModelVariant(node)
+            return node
         if role == ItemModel.filter_role:
             f = None
             if self.filter_type == 'Meta':

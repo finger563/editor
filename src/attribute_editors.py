@@ -77,6 +77,9 @@ class ListEditor(QtGui.QComboBox):
 
 
 class FlatProxyModel(QtGui.QAbstractProxyModel):
+    '''
+    Subclass of :class:`QtGui.QAbstract
+    '''
 
     def __init__(self, parent=None):
         super(FlatProxyModel, self).__init__(parent)
@@ -170,34 +173,16 @@ class ReferenceEditor(QtGui.QComboBox):
     def __init__(self, parent=None):
         super(ReferenceEditor, self).__init__(parent)
 
+    def setCurrentReference(self, ref):
+        index = self.findData(
+            ref,
+            self.getRootItemModel().reference_role
+        )
+        self.setCurrentIndex(index)
+
     def setCurrentModelIndex(self, mi):
-
-        item = mi.data().toPyObject()
-        print mi.data(), item
-
-        data = mi.data().toPyObject()
-
-        print data.toPyObject()
-
-        selected = self.itemData(
-            self.currentIndex(),
-            self.getRootItemModel().reference_role
-        )
-
-        print selected, selected.toPyObject()
-
-        print data == ModelVariant(selected.toPyObject())
-
-        print self.findData(
-            data,
-            self.getRootItemModel().reference_role
-        )
-        return
-
-        i = self.model().mapFromSource(mi)
-        print i
-        row = 0
-        self.setCurrentIndex(row)
+        ref = mi.data().toPyObject()
+        self.setCurrentReference(ref)
 
     def getRootItemModel(self):
         return self.model().sourceModel().sourceModel()
