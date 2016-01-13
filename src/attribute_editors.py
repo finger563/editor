@@ -32,13 +32,6 @@ from model_variant import ModelVariant
 #       updated in the selector if they are updated somewhere else in
 #       the model
 
-# TODO: Figure out why tabbing doesn't work in the CodeEditor; all it
-#        does is take the cursor back to the first character.  The
-#        event doesn't even get called in the code editor so it seems
-#        like it is probably an issue with keypressevents or focus
-#        policies in one of its parent widgets.  possibly also the
-#        completer.
-
 
 class FileEditor(QtGui.QPushButton):
     '''
