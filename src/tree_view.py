@@ -19,6 +19,9 @@ __status__ = 'Production'
 
 from PyQt4 import QtGui
 
+# TODO: Refactor contextMenu to not use children, but instead use the
+#       current meta-model to determine available actions.
+
 
 class TreeView(QtGui.QTreeView):
 

@@ -179,7 +179,7 @@ class Editor(QtGui.QMainWindow):
         # Set up the Tree View Widget
         self.tree_view = TreeView()
         self.tree_view.setSortingEnabled(False)
-        self.tree_view.doubleClicked.connect(self.openModelView)
+        self.tree_view.activated.connect(self.openModelView)
         # don't want the tree collapsing when we open views
         self.tree_view.setExpandsOnDoubleClick(False)
 
