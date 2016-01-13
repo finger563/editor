@@ -72,12 +72,9 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
     Subclass of :class:`QtGui.QAbstract
     '''
 
-    def __init__(self, parent=None):
-        super(FlatProxyModel, self).__init__(parent)
-
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
-        print "{} data changed".format(self.__class__.__name__)
+        self.buildMap(self.sourceModel())
         self.dataChanged.emit(self.mapFromSource(topLeft),
                               self.mapFromSource(bottomRight))
 
@@ -134,14 +131,16 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     customizing the :func:`filterAcceptsRow` function, the reference
     scope and data-type can be enforced.
     '''
-    def __init__(self, *args):
-        super(ComboSortFilterProxyModel, self).__init__(*args)
+
+    def setSourceModel(self, model):
+        QtGui.QSortFilterProxyModel.setSourceModel(self, model)
+        model.dataChanged.connect(self.sourceDataChanged)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
-        print "{} data changed".format(self.__class__.__name__)
         self.dataChanged.emit(self.mapFromSource(topLeft),
                               self.mapFromSource(bottomRight))
+        self.invalidate()
 
     def set_filter_type(self, _type):
         self.filter_type = _type
@@ -158,18 +157,30 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
 
 class ReferenceEditor(QtGui.QComboBox):
     '''
-    Required so that we can change how comboboxes show trees.
+    Required for mapping model items into a :class:`QtGui.QComboBox`.
     '''
 
-    def __init__(self, parent=None):
-        super(ReferenceEditor, self).__init__(parent)
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
+    def updateList(self, topLeft, bottomRight):
+        print "ref: ", self.current_ref
+        if self.current_ref:
+            self.setCurrentReference(self.current_ref)
+
+    def currentIndexChanged(self, index):
+        self.current_ref = self.itemData(
+            self.currentIndex(),
+            self.getRootItemModel().reference_role
+        )
+        super(ReferenceEditor, self).currentIndexChanged(index)
 
     def setCurrentReference(self, ref):
         index = self.findData(
             ref,
             self.getRootItemModel().reference_role
         )
+        print index
         self.setCurrentIndex(index)
+        self.current_ref = ref
 
     def setCurrentModelIndex(self, mi):
         ref = mi.data().toPyObject()
