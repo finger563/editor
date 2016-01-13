@@ -17,20 +17,11 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from PyQt4 import QtCore
 
-from model_variant import ModelVariant
-
 # TODO: Create an object here which fully encapsulates dictionary editing
 
-# TODO: Probably need objects which display strings for
-#       editing/choosing, but which actually map to objects underneath
-#       (e.g. pointer selection).  Need some sort of mapper/delegate
-#       for these editors which perform the mapping
-#
-#       Probably need to create a model/delegate which is a proxy
-#       model for the real model and is used with the combobox so that
-#       the strings map to real objects and so that the strings get
-#       updated in the selector if they are updated somewhere else in
-#       the model
+# TODO: Complete the dataChanged propagation so that adding/removing
+#       children to the model updates the entries in the
+#       ReferenceEditor
 
 
 class FileEditor(QtGui.QPushButton):
