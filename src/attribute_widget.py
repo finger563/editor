@@ -172,7 +172,6 @@ class AttributeEditor(QtGui.QWidget):
             r = flatModel.mapFromSource(self.dataMapper.rootIndex())
             r = CSFPM.mapFromSource(r)
             i = r.parent().parent()
-            CSFPM.dataChanged.connect(obj.updateList)
             obj.setRootModelIndex(i)
             if attr.value:
                 obj.setCurrentReference(attr.value)

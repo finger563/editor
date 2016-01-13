@@ -72,6 +72,18 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
     Subclass of :class:`QtGui.QAbstract
     '''
 
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsAboutToBeInserted(self, parent, start, end):
+        print "rabi: ", self.__class__.__name__
+        self.rowsAboutToBeInserted.emit(self.mapFromSource(parent),
+                                        start, end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsAboutToBeRemoved(self, parent, start, end):
+        print "rabr: ", self.__class__.__name__
+        self.rowsAboutToBeRemoved.emit(self.mapFromSource(parent),
+                                       start, end)
+
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
         self.buildMap(self.sourceModel())
@@ -96,6 +108,8 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         QtGui.QAbstractProxyModel.setSourceModel(self, model)
         self.buildMap(model)
         model.dataChanged.connect(self.sourceDataChanged)
+        model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
+        model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
 
     def mapFromSource(self, index):
         if index not in self.m_rowMap:
@@ -135,6 +149,20 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def setSourceModel(self, model):
         QtGui.QSortFilterProxyModel.setSourceModel(self, model)
         model.dataChanged.connect(self.sourceDataChanged)
+        model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
+        model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsAboutToBeInserted(self, parent, start, end):
+        print "rabi: ", self.__class__.__name__
+        self.rowsAboutToBeInserted.emit(self.mapFromSource(parent),
+                                        start, end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsAboutToBeRemoved(self, parent, start, end):
+        print "rabr: ", self.__class__.__name__
+        self.rowsAboutToBeRemoved.emit(self.mapFromSource(parent),
+                                       start, end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
@@ -160,21 +188,46 @@ class ReferenceEditor(QtGui.QComboBox):
     Required for mapping model items into a :class:`QtGui.QComboBox`.
     '''
 
+    def __init__(self, *args):
+        super(ReferenceEditor, self).__init__(*args)
+        self._ref = None
+
+    def setModel(self, model):
+        QtGui.QComboBox.setModel(self, model)
+        model.dataChanged.connect(self.updateList)
+        model.rowsAboutToBeInserted.connect(self.rowsAboutToBeChanged)
+        model.rowsAboutToBeRemoved.connect(self.rowsAboutToBeChanged)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def rowsAboutToBeChanged(self, parent, start, end):
+        print "rows about to be changed"
+        i = self.currentIndex()
+        self._old_ref = self.itemData(
+            i,
+            self.getRootItemModel().reference_role
+        ).toPyObject()
+        print "old index: ", i, self._old_ref
+
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def updateList(self, topLeft, bottomRight):
-        print self.currentIndex()
-        data = self.itemData(
-            self.currentIndex(),
-            self.getRootItemModel().reference_role
-        )
-        self.setCurrentReference(data)
+        print "update list"
+        if self._old_ref:
+            self.setCurrentReference(self._old_ref)
 
     def setCurrentReference(self, ref):
         index = self.findData(
             ref,
             self.getRootItemModel().reference_role
         )
+        if index < 0:
+            index = 0
+            ref = self.itemData(
+                index,
+                self.getRootItemModel().reference_role
+            )
+        print "new index: ", index, ref
         self.setCurrentIndex(index)
+        self._old_ref = ref
 
     def setCurrentModelIndex(self, mi):
         ref = mi.data().toPyObject()
