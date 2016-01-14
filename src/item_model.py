@@ -144,9 +144,15 @@ class ItemModel(QtCore.QAbstractItemModel):
 
         for row in range(rows):
             childCount = parentNode.child_count()
+            names = [c['Name'] for c in parentNode.children]
             childNode = _type()
-            childNode['Name'] = 'New_{}_{}'.format(_type.__name__,
-                                                   childCount)
+            newName = 'New_{}_{}'.format(_type.__name__,
+                                         childCount)
+            while newName in names:
+                childCount += 1
+                newName = 'New_{}_{}'.format(_type.__name__,
+                                             childCount)
+            childNode['Name'] = newName
             self.beginInsertRows(parent, row, row)
             success = parentNode.insert_child(position, childNode)
             self.endInsertRows()
