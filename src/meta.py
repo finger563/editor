@@ -103,13 +103,15 @@ def convertModelToMeta(model, meta_dict):
     for obj in model.children:
         # These will be the available children_types of the class
         if type(obj) == MetaModel:
-            allowed_kids[convertModelToMeta(obj, meta_dict)] = obj['Cardinality']
+            allowed_kids[
+                convertModelToMeta(obj, meta_dict)
+            ] = obj['Cardinality']
         # These will be pointers to other classes
         elif type(obj) == MetaPointer:
-            import types
+
             # should fill out get_references
             exec obj['Valid Objects'] in globals()
-            
+
             def ref_wrapper(s1, s2):
                 return s1.get_references()
 
@@ -163,9 +165,7 @@ def convertModelToMeta(model, meta_dict):
     def modelInit(self, parent=None):
         super(self.__class__, self).__init__(parent)
         self.attributes = OrderedDict()
-        self.add_attribute('Name',
-                           'string',
-                           '{}'.format(self.__class__.__name__))
+        self.set_attribute('Name', NameAttribute(self.__class__.__name__))
         # Handle children
         self.children = Children(cardinality=allowed_kids)
         for t, c in self.children.get_cardinality().iteritems():
@@ -226,12 +226,6 @@ class Model(object):
                                               '0..*'})
 
         self.attributes = OrderedDict()
-        # self.add_attribute('Name', 'string', 'Root')
-        # self.add_attribute('Cardinality',
-        #                   'list', 
-        #                   Children.valid_cardinalities[0])
-        # self.get_attribute(
-        #    'Cardinality').options = Children.valid_cardinalities
         self.kwargs = {}
 
     def __getitem__(self, key):
@@ -245,6 +239,7 @@ class Model(object):
 
     def set_attribute(self, key, attr):
         self.attributes[key] = attr
+        attr.parent = self
 
     def child_count(self):
         return len(self.children)
@@ -283,7 +278,8 @@ class Model(object):
         self.children.append(child_model)
 
     def add_attribute(self, name, kind, value):
-        self.set_attribute(name, Attribute(kind, value))
+        attr = Attribute(kind, value, self)
+        self.set_attribute(name, attr)
 
 
 class Attribute(Model):
@@ -318,10 +314,9 @@ class Attribute(Model):
     editable = True
 
     def __init__(self, kind, value, parent=None):
-        super(Attribute, self).__init__()
+        super(Attribute, self).__init__(parent)
         self.kind = kind
         self.value = value
-        self.parent = parent
 
         # Maps value to list of dependent children
         # Perhaps have this editable instead of using Children?
@@ -329,6 +324,9 @@ class Attribute(Model):
 
         self.children = Children(cardinality={Attribute:
                                               '0..*'})
+
+    def validator(self, newValue):
+        return True
 
     def setValue(self, value):
         self.update_dependents(self.value, value)
@@ -366,6 +364,18 @@ class Attribute(Model):
             self.value = str(variant)
 
 
+class NameAttribute(Attribute):
+    '''
+    '''
+    def __init__(self, name, parent=None):
+        super(NameAttribute, self).__init__('string', name, parent)
+
+    def validator(self, newName):
+        sibling_names = [c['Name'] for c in self.parent.parent.children
+                         if c != self.parent]
+        return newName not in sibling_names
+
+
 class Pointer(Model):
     '''
     '''
@@ -376,14 +386,14 @@ class Pointer(Model):
         super(Pointer, self).__init__(parent)
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
-        self.add_attribute('Name', 'string', 'Pointer')
+        self.set_attribute('Name', NameAttribute('Pointer'))
         self.dst_type = dst_type
 
 
 class MetaModel(Model):
     '''
     '''
-    
+
     def __init__(self):
         super(MetaModel, self).__init__()
 
@@ -394,12 +404,12 @@ class MetaModel(Model):
                                               MetaAttribute:
                                               '0..*'})
 
-        self.add_attribute('Name', 'string', 'Root')
+        self.set_attribute('Name', NameAttribute('Root'))
         self.add_attribute('Cardinality',
-                           'list', 
+                           'list',
                            Children.valid_cardinalities[0])
         self.get_attribute(
-            'Cardinality').options = Children.valid_cardinalities        
+            'Cardinality').options = Children.valid_cardinalities
 
 
 class MetaAttribute(Model):
@@ -409,6 +419,9 @@ class MetaAttribute(Model):
                  parent=None,
                  name='Attribute',
                  kind=Attribute.allowed_types[0],
+                 validator='''def validator(self, newValue):
+    return True
+                 ''',
                  tooltip='',
                  display='',
                  options=[],
@@ -417,9 +430,10 @@ class MetaAttribute(Model):
         self.children = Children(cardinality={MetaAttribute:
                                               '0..*'})
         self.attributes = OrderedDict()
-        self.add_attribute('Name', 'string', name)
+        self.set_attribute('Name', NameAttribute(name))
         self.set_attribute('Kind', Attribute('list', kind))
         self.get_attribute('Kind').options = Attribute.allowed_types
+        self.set_attribute('Validator', Attribute('python', validator))
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
         self.set_attribute('Editable', Attribute('bool', editable))
@@ -440,7 +454,7 @@ class MetaPointer(Model):
         super(MetaPointer, self).__init__(parent)
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
-        self.add_attribute('Name', 'string', name)
+        self.set_attribute('Name', NameAttribute(name))
 
         def get_options(base):
             def genericFunc(s):

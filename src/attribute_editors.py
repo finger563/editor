@@ -287,6 +287,12 @@ class CodeEditor(QtGui.QTextEdit):
         self.setLineWrapMode(self.NoWrap)
         self.setTabChangesFocus(False)
 
+        font = QtGui.QFont("Monospace", 10, QtGui.QFont.Normal)
+        self.setCurrentFont(font)
+        tabStop = 4
+        metrics = QtGui.QFontMetrics(font)
+        self.setTabStopWidth(tabStop * metrics.width(' '))
+
         self.completer = QtGui.QCompleter()
         self.completer.setWidget(self)
         self.completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
