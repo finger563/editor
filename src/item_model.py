@@ -138,7 +138,6 @@ class ItemModel(QtCore.QAbstractItemModel):
         :param in rows: number of new children to insert
         :param in parent: :class:`QModelIndex` of the parent of new children
         '''
-        self.beginInsertRows(parent, position, position + rows - 1)
         parentNode = self.getModel(parent)
 
         for row in range(rows):
@@ -146,12 +145,11 @@ class ItemModel(QtCore.QAbstractItemModel):
             childNode = _type()
             childNode['Name'] = 'New_{}_{}'.format(_type.__name__,
                                                    childCount)
+            self.beginInsertRows(parent, row, row)
             success = parentNode.insert_child(position, childNode)
-            if not success:
-                self.beginResetModel()
-                self.endResetModel()
-        self.endInsertRows()
-        self.dataChanged.emit(parent, parent)
+            self.endInsertRows()
+            self.dataChanged.emit(parent, self.index(row, 0, parent))
+
         return success
 
     def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
@@ -162,13 +160,15 @@ class ItemModel(QtCore.QAbstractItemModel):
         :param in parent: :class:`QModelIndex` of the parent of the children
         '''
         parentNode = self.getModel(parent)
-        self.beginRemoveRows(parent, position, position + rows - 1)
 
         for row in range(rows):
+            self.beginRemoveRows(parent, row, row)
             success = parentNode.remove_child(position)
+            self.endRemoveRows()
+            self.dataChanged.emit(parent, self.index(row, 0, parent))
 
-        self.endRemoveRows()
-        self.dataChanged.emit(parent, parent)
+        count = parentNode.child_count()
+        self.dataChanged.emit(parent, parent.child(count, 0))
         return success
 
 
