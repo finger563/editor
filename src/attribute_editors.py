@@ -23,6 +23,9 @@ from PyQt4 import QtCore
 #       children to the model updates the entries in the
 #       ReferenceEditor
 
+# TODO: Propagate the python get_references code to the
+#       ReferenceEditor
+
 
 class FileEditor(QtGui.QPushButton):
     '''
@@ -75,14 +78,26 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeInserted(self, parent, start, end):
         print "rabi: ", self.__class__.__name__
-        self.rowsAboutToBeInserted.emit(self.mapFromSource(parent),
+        self.rowsAboutToBeInserted.emit(parent,
                                         start, end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeRemoved(self, parent, start, end):
         print "rabr: ", self.__class__.__name__
-        self.rowsAboutToBeRemoved.emit(self.mapFromSource(parent),
+        self.rowsAboutToBeRemoved.emit(parent,
                                        start, end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsInserted(self, parent, start, end):
+        print "ri: ", self.__class__.__name__
+        self.rowsInserted.emit(parent,
+                               start, end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsRemoved(self, parent, start, end):
+        print "rr: ", self.__class__.__name__
+        self.rowsRemoved.emit(parent,
+                              start, end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
@@ -110,6 +125,8 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         model.dataChanged.connect(self.sourceDataChanged)
         model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
         model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
+        model.rowsInserted.connect(self.sourceRowsInserted)
+        model.rowsRemoved.connect(self.sourceRowsRemoved)
 
     def mapFromSource(self, index):
         if index not in self.m_rowMap:
@@ -151,18 +168,32 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
         model.dataChanged.connect(self.sourceDataChanged)
         model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
         model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
+        model.rowsInserted.connect(self.sourceRowsInserted)
+        model.rowsRemoved.connect(self.sourceRowsRemoved)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeInserted(self, parent, start, end):
         print "rabi: ", self.__class__.__name__
-        self.rowsAboutToBeInserted.emit(self.mapFromSource(parent),
+        self.rowsAboutToBeInserted.emit(parent,
                                         start, end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeRemoved(self, parent, start, end):
         print "rabr: ", self.__class__.__name__
-        self.rowsAboutToBeRemoved.emit(self.mapFromSource(parent),
+        self.rowsAboutToBeRemoved.emit(parent,
                                        start, end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsInserted(self, parent, start, end):
+        print "ri: ", self.__class__.__name__
+        self.rowsInserted.emit(parent,
+                               start, end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsRemoved(self, parent, start, end):
+        print "rr: ", self.__class__.__name__
+        self.rowsRemoved.emit(parent,
+                              start, end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
@@ -190,13 +221,49 @@ class ReferenceEditor(QtGui.QComboBox):
 
     def __init__(self, *args):
         super(ReferenceEditor, self).__init__(*args)
-        self._ref = None
+        
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        # self.setEditable(True)
+        
+        # Add the flatModel that we'll use
+        self.flatModel = FlatProxyModel(self)
+
+        # add filter model
+        self.pFilterModel = ComboSortFilterProxyModel(self)
+        self.pFilterModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.pFilterModel.setDynamicSortFilter(True)
+        self.pFilterModel.setSourceModel(self.flatModel)
+
+    def setReferenceType(self, _type):
+        print _type
+        self.pFilterModel.set_filter_type(_type)
+
+    def setRootModelIndex(self, index):
+        r = self.flatModel.mapFromSource(index)
+        rmi = self.pFilterModel.mapFromSource(r)
+        super(ReferenceEditor, self).setRootModelIndex(rmi)
 
     def setModel(self, model):
-        QtGui.QComboBox.setModel(self, model)
-        model.dataChanged.connect(self.updateList)
-        model.rowsAboutToBeInserted.connect(self.rowsAboutToBeChanged)
-        model.rowsAboutToBeRemoved.connect(self.rowsAboutToBeChanged)
+        self.flatModel.setSourceModel(model)
+        self.pFilterModel.setSourceModel(self.flatModel)
+        super(ReferenceEditor, self).setModel(self.pFilterModel)
+        # model.dataChanged.connect(self.updateList)
+        model.rowsAboutToBeInserted.connect(
+            self.rowsAboutToBeChanged
+        )
+        model.rowsAboutToBeRemoved.connect(
+            self.rowsAboutToBeChanged
+        )
+        model.rowsInserted.connect(
+            self.rowsChanged
+        )
+        model.rowsRemoved.connect(
+            self.rowsChanged
+        )
+
+    def setModelColumn(self, column):
+        self.pFilterModel.setFilterKeyColumn(column)
+        super(ReferenceEditor, self).setModelColumn(column)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def rowsAboutToBeChanged(self, parent, start, end):
@@ -208,11 +275,15 @@ class ReferenceEditor(QtGui.QComboBox):
         ).toPyObject()
         print "old index: ", i, self._old_ref
 
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def rowsChanged(self, parent, start, end):
+        print "rows changed", self._old_ref
+        self.setCurrentReference(self._old_ref)
+
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def updateList(self, topLeft, bottomRight):
         print "update list"
-        if self._old_ref:
-            self.setCurrentReference(self._old_ref)
+        # self.setCurrentReference(self._old_ref)
 
     def setCurrentReference(self, ref):
         index = self.findData(
@@ -224,10 +295,10 @@ class ReferenceEditor(QtGui.QComboBox):
             ref = self.itemData(
                 index,
                 self.getRootItemModel().reference_role
-            )
+            ).toPyObject()
         print "new index: ", index, ref
         self.setCurrentIndex(index)
-        self._old_ref = ref
+        self.activated[str].emit(self.itemText(index))
 
     def setCurrentModelIndex(self, mi):
         ref = mi.data().toPyObject()

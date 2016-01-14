@@ -95,7 +95,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             data = editor.itemData(
                 editor.currentIndex(),
                 editor.getRootItemModel().reference_role
-            )
+            ).toPyObject()
             print "setting model: ", editor.currentIndex(), data
             model.setData(
                 index,

@@ -162,19 +162,14 @@ class AttributeEditor(QtGui.QWidget):
             obj.setCurrentIndex(i)
         elif attr.kind in ['reference']:
             obj = ReferenceEditor()
-            flatModel = FlatProxyModel()
-            flatModel.setSourceModel(self.dataMapper.model())
-            CSFPM = ComboSortFilterProxyModel()
-            CSFPM.set_filter_type(attr.dst_type)
-            CSFPM.setDynamicSortFilter(True)
-            CSFPM.setSourceModel(flatModel)
-            obj.setModel(CSFPM)
-            r = flatModel.mapFromSource(self.dataMapper.rootIndex())
-            r = CSFPM.mapFromSource(r)
-            i = r.parent().parent()
-            obj.setRootModelIndex(i)
-            if attr.value:
-                obj.setCurrentReference(attr.value)
+            # Need to get filter function here
+            obj.setReferenceType(attr.dst_type)
+            obj.setModel(self.dataMapper.model())
+            # Do we need to get the root index based on the function?
+            obj.setRootModelIndex(
+                self.dataMapper.rootIndex().parent().parent()
+            )
+            obj.setCurrentReference(attr.value)
         elif 'file' in attr.kind:
             obj = FileEditor(name=name,
                              fname=attr.value,
