@@ -232,7 +232,13 @@ class Model(object):
         return self.attributes[key].value
 
     def __setitem__(self, key, value):
-        self.attributes[key].setValue(value)
+        valid, errMsg = self.attributes[key].setValue(value)
+        if not valid:
+            print 'ERROR: setting \'{}\' to \'{}\': {}'.format(
+                key,
+                value,
+                errMsg
+            )
 
     def get_attribute(self, key):
         return self.attributes[key]
@@ -325,6 +331,9 @@ class Attribute(Model):
         self.children = Children(cardinality={Attribute:
                                               '0..*'})
 
+    def valid_values(self):
+        return []
+
     def validator(self, newValue):
         valid = True
         errMsg = ''
@@ -335,10 +344,7 @@ class Attribute(Model):
         if valid:
             self.update_dependents(self.value, value)
             self.value = value
-            return True
-        else:
-            print 'ERROR: '.format(errMsg)
-            return False
+        return valid, errMsg
 
     def update_dependents(self, oldValue, newValue):
         if oldValue in self.dependents.keys():
@@ -372,7 +378,8 @@ class Attribute(Model):
         elif 'file' in self.kind:
             newVal = str(variant)
         if newVal:
-            self.setValue(newVal)
+            return self.setValue(newVal)
+        return False, 'Attribute has an illegal kind!'
 
 
 class NameAttribute(Attribute):

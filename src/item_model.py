@@ -88,8 +88,10 @@ class ItemModel(QtCore.QAbstractItemModel):
             if role == QtCore.Qt.EditRole:
                 attr = node.attributes.values()[index.column()]
                 if attr.editable:
-                    node.attributes.values()[
+                    valid, errMsg = node.attributes.values()[
                         index.column()].fromQVariant(value)
+                    if not valid:
+                        print 'ERROR: ', errMsg
                     self.dataChanged.emit(index, index)
                     return True
         return False
@@ -143,19 +145,24 @@ class ItemModel(QtCore.QAbstractItemModel):
         parentNode = self.getModel(parent)
 
         for row in range(rows):
-            childCount = parentNode.child_count()
-            names = [c['Name'] for c in parentNode.children]
             childNode = _type()
-            newName = 'New_{}_{}'.format(_type.__name__,
-                                         childCount)
-            while newName in names:
-                childCount += 1
-                newName = 'New_{}_{}'.format(_type.__name__,
-                                             childCount)
-            childNode['Name'] = newName
+
             self.beginInsertRows(parent, row, row)
             success = parentNode.insert_child(position, childNode)
             self.endInsertRows()
+
+            childCount = parentNode.child_count()
+            newName = 'New_{}_{}'.format(_type.__name__,
+                                         childCount)
+            validName = False
+            while not validName:
+                childCount += 1
+                newName = 'New_{}_{}'.format(_type.__name__,
+                                             childCount)
+                validName, errMsg = childNode.get_attribute(
+                    'Name'
+                ).setValue(newName)
+
             self.dataChanged.emit(parent, self.index(row, 0, parent))
 
         return success
