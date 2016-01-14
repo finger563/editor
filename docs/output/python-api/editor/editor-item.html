@@ -166,12 +166,19 @@ drawing styles available to each model.</p>
 
 <dl class="class">
 <dt id="editor_item.EditorItemDelegate">
-<em class="property">class </em><code class="descclassname">editor_item.</code><code class="descname">EditorItemDelegate</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_item.EditorItemDelegate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">editor_item.</code><code class="descname">EditorItemDelegate</code><a class="headerlink" href="#editor_item.EditorItemDelegate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the mapping between <a class="reference internal" href="#editor_item.EditorItem" title="editor_item.EditorItem"><code class="xref py py-class docutils literal"><span class="pre">EditorItem</span></code></a>&#8216;s data and the
 model&#8217;s data.  Ensures that whenever the item&#8217;s data are edited,
 the model&#8217;s data get updated and vise-versa.  This eables ensuring
 that the graphics object&#8217;s text label changes whenever its
 associated model changes, for instance.</p>
+<dl class="method">
+<dt id="editor_item.EditorItemDelegate.eventFilter">
+<code class="descname">eventFilter</code><span class="sig-paren">(</span><em>editor</em>, <em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#editor_item.EditorItemDelegate.eventFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required to allow tabbing in a
+<a class="reference internal" href="attribute-editors.html#attribute_editors.CodeEditor" title="attribute_editors.CodeEditor"><code class="xref py py-class docutils literal"><span class="pre">attribute_editors.CodeEditor</span></code></a>.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">

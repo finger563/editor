@@ -171,8 +171,17 @@ based on the file_type specified.</p>
 <dd></dd></dl>
 
 <dl class="class">
+<dt id="attribute_editors.FlatProxyModel">
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">FlatProxyModel</code><a class="headerlink" href="#attribute_editors.FlatProxyModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass of <code class="xref py py-class docutils literal"><span class="pre">QtGui.QAbstractProxyModel</span></code> which flattens a
+tree-structured (heirarchical) model into a list.  Flattening such
+a tree structure allows us to select items from the tree in a
+list-based widget, such as a <code class="xref py py-class docutils literal"><span class="pre">QtGui.QComboBox</span></code>.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="attribute_editors.ComboSortFilterProxyModel">
-<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ComboSortFilterProxyModel</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.ComboSortFilterProxyModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ComboSortFilterProxyModel</code><a class="headerlink" href="#attribute_editors.ComboSortFilterProxyModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subclasses <code class="xref py py-class docutils literal"><span class="pre">QtGui.QSortFilterProxyModel</span></code> to provide a proxy
 model to a <code class="xref py py-class docutils literal"><span class="pre">QtGui.QComboBox</span></code> for selecting references to
 other objects.  By setting the rootIndex of the model and
@@ -181,15 +190,18 @@ scope and data-type can be enforced.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="attribute_editors.ReferenceView">
-<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ReferenceView</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.ReferenceView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Required for <a class="reference internal" href="#attribute_editors.ReferenceEditor" title="attribute_editors.ReferenceEditor"><code class="xref py py-class docutils literal"><span class="pre">ReferenceEditor</span></code></a>, handles the view of tree models.</p>
-</dd></dl>
-
-<dl class="class">
 <dt id="attribute_editors.ReferenceEditor">
-<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ReferenceEditor</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.ReferenceEditor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Required so that we can change how comboboxes show trees.</p>
+<em class="property">class </em><code class="descclassname">attribute_editors.</code><code class="descname">ReferenceEditor</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#attribute_editors.ReferenceEditor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required for mapping model items into a <code class="xref py py-class docutils literal"><span class="pre">QtGui.QComboBox</span></code>.
+Internally it uses <a class="reference internal" href="#attribute_editors.ComboSortFilterProxyModel" title="attribute_editors.ComboSortFilterProxyModel"><code class="xref py py-class docutils literal"><span class="pre">ComboSortFilterProxyModel</span></code></a> for
+filtering the available objects from its flattened proxy model,
+which is a <a class="reference internal" href="#attribute_editors.FlatProxyModel" title="attribute_editors.FlatProxyModel"><code class="xref py py-class docutils literal"><span class="pre">FlatProxyModel</span></code></a>.  Connects to these models&#8217;
+signals so that it can properly update and maintain state when the
+underlying model changes, e.g. when referentiable objects are
+added or removed from the model.  This feature is necessary
+because the ReferenceEditor widget can be active
+(viewed/interacted with) at the same time the underlying
+<a class="reference internal" href="item-model.html#item_model.ItemModel" title="item_model.ItemModel"><code class="xref py py-class docutils literal"><span class="pre">item_model.ItemModel</span></code></a> is changing.</p>
 </dd></dl>
 
 <dl class="class">
