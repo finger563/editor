@@ -19,10 +19,6 @@ from PyQt4 import QtCore
 
 # TODO: Create an object here which fully encapsulates dictionary editing
 
-# TODO: Complete the dataChanged propagation so that adding/removing
-#       children to the model updates the entries in the
-#       ReferenceEditor
-
 # TODO: Propagate the python get_references code to the
 #       ReferenceEditor
 
@@ -65,14 +61,17 @@ class FileEditor(QtGui.QPushButton):
 class ListEditor(QtGui.QComboBox):
     '''
     '''
-    
+
     def __init__(self, *args):
         super(ListEditor, self).__init__(*args)
 
 
 class FlatProxyModel(QtGui.QAbstractProxyModel):
     '''
-    Subclass of :class:`QtGui.QAbstract
+    Subclass of :class:`QtGui.QAbstractProxyModel` which flattens a
+    tree-structured (heirarchical) model into a list.  Flattening such
+    a tree structure allows us to select items from the tree in a
+    list-based widget, such as a :class:`QtGui.QComboBox`.
     '''
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
@@ -189,6 +188,15 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
 class ReferenceEditor(QtGui.QComboBox):
     '''
     Required for mapping model items into a :class:`QtGui.QComboBox`.
+    Internally it uses :class:`ComboSortFilterProxyModel` for
+    filtering the available objects from its flattened proxy model,
+    which is a :class:`FlatProxyModel`.  Connects to these models'
+    signals so that it can properly update and maintain state when the
+    underlying model changes, e.g. when referentiable objects are
+    added or removed from the model.  This feature is necessary
+    because the ReferenceEditor widget can be active
+    (viewed/interacted with) at the same time the underlying
+    :class:`item_model.ItemModel` is changing.
     '''
 
     def __init__(self, *args):

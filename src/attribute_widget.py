@@ -22,13 +22,14 @@ from PyQt4 import QtGui
 from attribute_editors import\
     FileEditor,\
     ReferenceEditor,\
-    CodeEditor,\
-    ComboSortFilterProxyModel,\
-    FlatProxyModel
+    CodeEditor
 
 from syntax import\
     ROSHighlighter,\
     PythonHighlighter
+
+# TODO: Propagate reference scope and validation (function) to the
+#       ReferenceEditor and its proxy/filter models.
 
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
@@ -41,6 +42,9 @@ from syntax import\
 #       Need to figure out how to add/remove attribute widgets dynamically
 #       and when/how to trigger the add/remove & update events basd on certain
 #       values of other attributes
+#
+#       Build attribute_editor panes up heirarchically/recursively for
+#       each child of each attribute.
 
 # TODO: Convert attribute editor dataMapper to ManualSubmit to allow
 #       cancelling edits Make sure that changing it here doesn't

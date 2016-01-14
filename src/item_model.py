@@ -19,11 +19,13 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
+# TODO: Refactor filter_type to be new user_roles
+
 
 class ItemModel(QtCore.QAbstractItemModel):
-    '''Implements the :class:`QAbstractItemModel` to interact with the
-    underlying data-model, and create :class:`QModelIndex` objects for
-    retrieving and setting data.
+    '''Implements the :class:`QtCore.QAbstractItemModel` to interact with
+    the underlying data-model, and create :class:`QModelIndex` objects
+    for retrieving and setting data.
     '''
     sort_role = QtCore.Qt.UserRole
     filter_role = QtCore.Qt.UserRole + 1
@@ -173,8 +175,9 @@ class ItemModel(QtCore.QAbstractItemModel):
 
 
 class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
-    '''Extends :class:`QSortFilterProxyModel` to customize filtering on a
-    :class:`QAbstractItemModel`.
+    '''
+    Extends :class:`QtGui.QSortFilterProxyModel` to customize filtering
+    on a :class:`QtCoreQAbstractItemModel` or its subclass.
     '''
     def __init__(self, parent):
         super(SortFilterProxyModel, self).__init__(parent)
