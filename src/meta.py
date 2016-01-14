@@ -11,7 +11,15 @@ __maintainer__ = 'William Emfinger'
 __email__ = 'emfinger@isis.vanderbilt.edu'
 __status__ = 'Production'
 
+from PyQt4 import QtCore
+
 from collections import OrderedDict, MutableSequence
+
+# TODO: Fix bug with children insert that occurs when: a model has a
+#       child (pointer) with cardinality 1, and a sibling is added, a
+#       cardinality is thrown even though the sibling is not breaking
+#       cardinality rules.  Probably something is hosed in the class
+#       definition somewhere.
 
 # TODO: Refactor Attribute fromQVariant() method so that it is no
 #       longer needed; should be handled by delegate probably.
@@ -178,7 +186,7 @@ def convertModelToMeta(model, meta_dict):
 
     new_type = type(
         model['Name'],
-        (Model, object, ),
+        (Model, QtCore.QObject, object, ),
         {
             '__init__': modelInit
         }
@@ -352,6 +360,8 @@ class Attribute(Model):
             self.value, tmp = variant.toDouble()
         elif self.kind in ['bool']:
             self.value = variant.toBool()
+        elif self.kind in ['reference']:
+            self.value = variant  # .toPyObject()
         elif 'file' in self.kind:
             self.value = str(variant)
 

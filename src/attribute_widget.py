@@ -22,13 +22,14 @@ from PyQt4 import QtGui
 from attribute_editors import\
     FileEditor,\
     ReferenceEditor,\
-    CodeEditor,\
-    ComboSortFilterProxyModel,\
-    FlatProxyModel
+    CodeEditor
 
 from syntax import\
     ROSHighlighter,\
     PythonHighlighter
+
+# TODO: Propagate reference scope and validation (function) to the
+#       ReferenceEditor and its proxy/filter models.
 
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
@@ -41,6 +42,9 @@ from syntax import\
 #       Need to figure out how to add/remove attribute widgets dynamically
 #       and when/how to trigger the add/remove & update events basd on certain
 #       values of other attributes
+#
+#       Build attribute_editor panes up heirarchically/recursively for
+#       each child of each attribute.
 
 # TODO: Convert attribute editor dataMapper to ManualSubmit to allow
 #       cancelling edits Make sure that changing it here doesn't
@@ -72,7 +76,7 @@ class AttributeEditor(QtGui.QWidget):
         self.vbox.removeItem(self.vbox.itemAt(0))
         self.scrollArea = QtGui.QScrollArea()
 
-        self.viewWidget = QtGui.QWidget()
+        self.viewWidget = QtGui.QWidget(self)
         self._layout = QtGui.QVBoxLayout(self.viewWidget)
 
         self.scrollArea.setWidget(self.viewWidget)
@@ -124,7 +128,7 @@ class AttributeEditor(QtGui.QWidget):
                 pm.scaled(30, 30)
             )
         qw = QtGui.QWidget()
-        hbox = QtGui.QHBoxLayout()
+        hbox = QtGui.QHBoxLayout(qw)
         hbox.setAlignment(QtCore.Qt.AlignLeft)
         qw.setLayout(hbox)
         hbox.addWidget(pix)
@@ -162,21 +166,14 @@ class AttributeEditor(QtGui.QWidget):
             obj.setCurrentIndex(i)
         elif attr.kind in ['reference']:
             obj = ReferenceEditor()
-            flatModel = FlatProxyModel()
-            flatModel.setSourceModel(self.dataMapper.model())
-            CSFPM = ComboSortFilterProxyModel()
-            CSFPM.set_filter_type(attr.dst_type)
-            CSFPM.setDynamicSortFilter(True)
-            CSFPM.setSourceModel(flatModel)
-            obj.setModel(CSFPM)
-            #obj.setModelColumn(0)
-            print attr.value
-            if attr.value:
-                obj.setCurrentIndex(attr.value)
-            r = flatModel.mapFromSource(self.dataMapper.rootIndex())
-            r = CSFPM.mapFromSource(r)
-            i = r.parent().parent()
-            obj.setRootModelIndex(i)
+            # Need to get filter function here
+            obj.setReferenceType(attr.dst_type)
+            obj.setModel(self.dataMapper.model())
+            # Do we need to get the root index based on the function?
+            obj.setRootModelIndex(
+                self.dataMapper.rootIndex().parent().parent()
+            )
+            obj.setCurrentReference(attr.value)
         elif 'file' in attr.kind:
             obj = FileEditor(name=name,
                              fname=attr.value,
@@ -200,7 +197,6 @@ class AttributeEditor(QtGui.QWidget):
             if label:
                 self._layout.addWidget(label)
             obj.setToolTip(attr.tooltip)
-            self.obj = obj
             self._layout.addWidget(obj)
         return obj
 
@@ -259,9 +255,6 @@ class AttributeEditor(QtGui.QWidget):
 
     def save(self, event):
         pass
-
-    def keyPressEvent(self, event):
-        QtGui.QWidget.keyPressEvent(self, event)
 
     def cancel(self, event):
         self.hide(event)

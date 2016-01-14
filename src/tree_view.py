@@ -19,6 +19,9 @@ __status__ = 'Production'
 
 from PyQt4 import QtGui
 
+# TODO: Refactor contextMenu to not use children, but instead use the
+#       current meta-model to determine available actions.
+
 
 class TreeView(QtGui.QTreeView):
 
@@ -30,11 +33,12 @@ class TreeView(QtGui.QTreeView):
         return QtGui.QTreeView.edit(self, index, trigger, event)
 
     def contextMenuEvent(self, e):
-        menu = QtGui.QMenu()
-
         indexes = self.selectedIndexes()
         m = self.model().sourceModel()
         if indexes:
+            menu = QtGui.QMenu()
+            hasActions = False
+
             mi = self.model().mapToSource(indexes[0])
             if not mi.isValid():
                 return
@@ -42,18 +46,21 @@ class TreeView(QtGui.QTreeView):
 
             if item.parent and \
                '0' in item.parent.children.get_cardinality_of(type(item)):
+                hasActions = True
                 delAction = QtGui.QAction(
                     'Delete {}'.format(item['Name']), self)
                 delAction.triggered.connect(self.delTreeItem(mi))
                 menu.addAction(delAction)
             for a in item.children.allowed():
+                hasActions = True
                 addAction = QtGui.QAction(
                     'Add New {}'.format(a.__name__),
                     self
                 )
                 addAction.triggered.connect(self.addTreeItem(mi, a))
                 menu.addAction(addAction)
-            menu.exec_(e.globalPos())
+            if hasActions:
+                menu.exec_(e.globalPos())
 
     def addTreeItem(self, mi, _type):
         def genericItem(e):

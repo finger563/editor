@@ -19,23 +19,8 @@ from PyQt4 import QtCore
 
 # TODO: Create an object here which fully encapsulates dictionary editing
 
-# TODO: Probably need objects which display strings for
-#       editing/choosing, but which actually map to objects underneath
-#       (e.g. pointer selection).  Need some sort of mapper/delegate
-#       for these editors which perform the mapping
-#
-#       Probably need to create a model/delegate which is a proxy
-#       model for the real model and is used with the combobox so that
-#       the strings map to real objects and so that the strings get
-#       updated in the selector if they are updated somewhere else in
-#       the model
-
-# TODO: Figure out why tabbing doesn't work in the CodeEditor; all it
-#        does is take the cursor back to the first character.  The
-#        event doesn't even get called in the code editor so it seems
-#        like it is probably an issue with keypressevents or focus
-#        policies in one of its parent widgets.  possibly also the
-#        completer.
+# TODO: Propagate the python get_references code to the
+#       ReferenceEditor
 
 
 class FileEditor(QtGui.QPushButton):
@@ -76,17 +61,34 @@ class FileEditor(QtGui.QPushButton):
 class ListEditor(QtGui.QComboBox):
     '''
     '''
-    
+
     def __init__(self, *args):
         super(ListEditor, self).__init__(*args)
 
 
 class FlatProxyModel(QtGui.QAbstractProxyModel):
+    '''
+    Subclass of :class:`QtGui.QAbstractProxyModel` which flattens a
+    tree-structured (heirarchical) model into a list.  Flattening such
+    a tree structure allows us to select items from the tree in a
+    list-based widget, such as a :class:`QtGui.QComboBox`.
+    '''
 
-    def __init__(self, parent=None):
-        super(FlatProxyModel, self).__init__(parent)
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsAboutToBeInserted(self, parent, start, end):
+        self.buildMap(self.sourceModel())
+        self.rowsAboutToBeInserted.emit(parent,
+                                        start, end)
 
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsAboutToBeRemoved(self, parent, start, end):
+        self.buildMap(self.sourceModel())
+        self.rowsAboutToBeRemoved.emit(parent,
+                                       start, end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
+        self.buildMap(self.sourceModel())
         self.dataChanged.emit(self.mapFromSource(topLeft),
                               self.mapFromSource(bottomRight))
 
@@ -97,7 +99,6 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         rows = model.rowCount(parent)
         for r in range(rows):
             index = model.index(r, 0, parent)
-            # print('row', row, 'item', model.data(index))
             self.m_rowMap[index] = row
             self.m_indexMap[row] = index
             row = row + 1
@@ -109,17 +110,17 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         QtGui.QAbstractProxyModel.setSourceModel(self, model)
         self.buildMap(model)
         model.dataChanged.connect(self.sourceDataChanged)
+        model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
+        model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
 
     def mapFromSource(self, index):
         if index not in self.m_rowMap:
             return QtCore.QModelIndex()
-        # print('mapping to row', self.m_rowMap[index], flush = True)
         return self.createIndex(self.m_rowMap[index], index.column())
 
     def mapToSource(self, index):
         if not index.isValid() or index.row() not in self.m_indexMap:
             return QtCore.QModelIndex()
-        # print('mapping from row', index.row(), flush = True)
         return self.m_indexMap[index.row()]
 
     def columnCount(self, parent):
@@ -127,11 +128,9 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
                                         .columnCount(self.mapToSource(parent))
 
     def rowCount(self, parent):
-        # print('rows:', len(self.m_rowMap), flush=True)
         return len(self.m_rowMap) if not parent.isValid() else 0
 
     def index(self, row, column, parent):
-        # print('index for:', row, column, flush=True)
         if parent.isValid():
             return QtCore.QModelIndex()
         return self.createIndex(row, column)
@@ -148,8 +147,30 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     customizing the :func:`filterAcceptsRow` function, the reference
     scope and data-type can be enforced.
     '''
-    def __init__(self, *args):
-        super(ComboSortFilterProxyModel, self).__init__(*args)
+
+    def setSourceModel(self, model):
+        QtGui.QSortFilterProxyModel.setSourceModel(self, model)
+        model.dataChanged.connect(self.sourceDataChanged)
+        model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
+        model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsAboutToBeInserted(self, parent, start, end):
+        self.rowsAboutToBeInserted.emit(parent,
+                                        start, end)
+        self.invalidate()
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsAboutToBeRemoved(self, parent, start, end):
+        self.rowsAboutToBeRemoved.emit(parent,
+                                       start, end)
+        self.invalidate()
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
+    def sourceDataChanged(self, topLeft, bottomRight):
+        self.dataChanged.emit(self.mapFromSource(topLeft),
+                              self.mapFromSource(bottomRight))
+        self.invalidate()
 
     def set_filter_type(self, _type):
         self.filter_type = _type
@@ -164,29 +185,92 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
         return test
 
 
-class ReferenceView(QtGui.QTreeView):
-    '''
-    Required for :class:`ReferenceEditor`, handles the view of tree models.
-    '''
-    def __init__(self, parent=None):
-        super(ReferenceView, self).__init__(parent)
-
-
 class ReferenceEditor(QtGui.QComboBox):
     '''
-    Required so that we can change how comboboxes show trees.
+    Required for mapping model items into a :class:`QtGui.QComboBox`.
+    Internally it uses :class:`ComboSortFilterProxyModel` for
+    filtering the available objects from its flattened proxy model,
+    which is a :class:`FlatProxyModel`.  Connects to these models'
+    signals so that it can properly update and maintain state when the
+    underlying model changes, e.g. when referentiable objects are
+    added or removed from the model.  This feature is necessary
+    because the ReferenceEditor widget can be active
+    (viewed/interacted with) at the same time the underlying
+    :class:`item_model.ItemModel` is changing.
     '''
 
-    def __init__(self, parent=None):
-        super(ReferenceEditor, self).__init__(parent)
-        self.internalView = QtGui.QTreeView(parent)
-        self.setView(self.internalView)
+    def __init__(self, *args):
+        super(ReferenceEditor, self).__init__(*args)
+        
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        # self.setEditable(True)
+        
+        # Add the flatModel that we'll use
+        self.flatModel = FlatProxyModel(self)
+
+        # add filter model
+        self.pFilterModel = ComboSortFilterProxyModel(self)
+        self.pFilterModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.pFilterModel.setDynamicSortFilter(True)
+        self.pFilterModel.setSourceModel(self.flatModel)
+
+    def setReferenceType(self, _type):
+        self.pFilterModel.set_filter_type(_type)
+
+    def setRootModelIndex(self, index):
+        r = self.flatModel.mapFromSource(index)
+        rmi = self.pFilterModel.mapFromSource(r)
+        super(ReferenceEditor, self).setRootModelIndex(rmi)
 
     def setModel(self, model):
-        super(ReferenceEditor, self).setModel(model)
-        self.internalView.expandAll()
-        self.internalView.setIndentation(0)
-        self.internalView.header().hide()
+        self.flatModel.setSourceModel(model)
+        self.pFilterModel.setSourceModel(self.flatModel)
+        super(ReferenceEditor, self).setModel(self.pFilterModel)
+        self.model().dataChanged.connect(self.updateList)
+        model.rowsAboutToBeInserted.connect(
+            self.rowsAboutToBeChanged
+        )
+        model.rowsAboutToBeRemoved.connect(
+            self.rowsAboutToBeChanged
+        )
+
+    def setModelColumn(self, column):
+        self.pFilterModel.setFilterKeyColumn(column)
+        super(ReferenceEditor, self).setModelColumn(column)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def rowsAboutToBeChanged(self, parent, start, end):
+        i = self.currentIndex()
+        self._old_ref = self.itemData(
+            i,
+            self.getRootItemModel().reference_role
+        ).toPyObject()
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
+    def updateList(self, topLeft, bottomRight):
+        self.setCurrentReference(self._old_ref)
+
+    def setCurrentReference(self, ref):
+        index = self.findData(
+            ref,
+            self.getRootItemModel().reference_role
+        )
+        if index < 0:
+            index = 0
+            ref = self.itemData(
+                index,
+                self.getRootItemModel().reference_role
+            ).toPyObject()
+        self.setCurrentIndex(index)
+        self.activated[str].emit(self.itemText(index))
+        self._old_ref = ref
+
+    def setCurrentModelIndex(self, mi):
+        ref = mi.data().toPyObject()
+        self.setCurrentReference(ref)
+
+    def getRootItemModel(self):
+        return self.model().sourceModel().sourceModel()
 
 
 class CodeEditor(QtGui.QTextEdit):

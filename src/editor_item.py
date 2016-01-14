@@ -20,7 +20,10 @@ import view_attributes as view_attr
 from layout import layout_create, valid_layouts
 from graphics_items import RoundRectItem, TextItem
 
-from attribute_editors import FileEditor, CodeEditor, ReferenceEditor
+from attribute_editors import\
+    FileEditor,\
+    CodeEditor,\
+    ReferenceEditor
 
 # TODO: Make ItemDelegate work for dictionary editor created in
 #       attribute editor
@@ -48,8 +51,15 @@ class EditorItemDelegate(QtGui.QItemDelegate):
     that the graphics object's text label changes whenever its
     associated model changes, for instance.
     '''
-    def __init__(self, parent=None):
-        super(EditorItemDelegate, self).__init__(parent)
+
+    def eventFilter(self, editor, event):
+        '''Required to allow tabbing in a
+        :class:`attribute_editors.CodeEditor`.
+        '''
+        if type(editor) == CodeEditor:
+            return False
+        else:
+            return super(EditorItemDelegate, self).eventFilter(editor, event)
 
     def setEditorData(self, editor, index):
         if type(editor) == EditorItemWidget:
@@ -66,6 +76,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             editor.setPlainText(text)
             return
         elif type(editor) == ReferenceEditor:
+            editor.setCurrentModelIndex(index)
             return
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
@@ -81,6 +92,15 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             model.setData(index, text)
             return
         elif type(editor) == ReferenceEditor:
+            data = editor.itemData(
+                editor.currentIndex(),
+                editor.getRootItemModel().reference_role
+            ).toPyObject()
+            print "setting model: ", editor.currentIndex(), data
+            model.setData(
+                index,
+                data
+            )
             return
         return super(EditorItemDelegate,
                      self).setModelData(editor, model, index)

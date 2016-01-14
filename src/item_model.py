@@ -19,14 +19,17 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
+# TODO: Refactor filter_type to be new user_roles
+
 
 class ItemModel(QtCore.QAbstractItemModel):
-    '''Implements the :class:`QAbstractItemModel` to interact with the
-    underlying data-model, and create :class:`QModelIndex` objects for
-    retrieving and setting data.
+    '''Implements the :class:`QtCore.QAbstractItemModel` to interact with
+    the underlying data-model, and create :class:`QModelIndex` objects
+    for retrieving and setting data.
     '''
     sort_role = QtCore.Qt.UserRole
     filter_role = QtCore.Qt.UserRole + 1
+    reference_role = QtCore.Qt.UserRole + 2
 
     def __init__(self, root, parent=None):
         super(ItemModel, self).__init__(parent)
@@ -68,6 +71,8 @@ class ItemModel(QtCore.QAbstractItemModel):
                 )
         if role == ItemModel.sort_role:
             return node.kind()
+        if role == ItemModel.reference_role:
+            return node
         if role == ItemModel.filter_role:
             f = None
             if self.filter_type == 'Meta':
@@ -135,7 +140,6 @@ class ItemModel(QtCore.QAbstractItemModel):
         :param in rows: number of new children to insert
         :param in parent: :class:`QModelIndex` of the parent of new children
         '''
-        self.beginInsertRows(parent, position, position + rows - 1)
         parentNode = self.getModel(parent)
 
         for row in range(rows):
@@ -143,11 +147,11 @@ class ItemModel(QtCore.QAbstractItemModel):
             childNode = _type()
             childNode['Name'] = 'New_{}_{}'.format(_type.__name__,
                                                    childCount)
+            self.beginInsertRows(parent, row, row)
             success = parentNode.insert_child(position, childNode)
-            if not success:
-                self.beginResetModel()
-                self.endResetModel()
-        self.endInsertRows()
+            self.endInsertRows()
+            self.dataChanged.emit(parent, self.index(row, 0, parent))
+
         return success
 
     def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
@@ -158,21 +162,31 @@ class ItemModel(QtCore.QAbstractItemModel):
         :param in parent: :class:`QModelIndex` of the parent of the children
         '''
         parentNode = self.getModel(parent)
-        self.beginRemoveRows(parent, position, position + rows - 1)
 
         for row in range(rows):
+            self.beginRemoveRows(parent, row, row)
             success = parentNode.remove_child(position)
+            self.endRemoveRows()
+            self.dataChanged.emit(parent, self.index(row, 0, parent))
 
-        self.endRemoveRows()
+        count = parentNode.child_count()
+        self.dataChanged.emit(parent, parent.child(count, 0))
         return success
 
 
 class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
-    '''Extends :class:`QSortFilterProxyModel` to customize filtering on a
-    :class:`QAbstractItemModel`.
+    '''
+    Extends :class:`QtGui.QSortFilterProxyModel` to customize filtering
+    on a :class:`QtCoreQAbstractItemModel` or its subclass.
     '''
     def __init__(self, parent):
         super(SortFilterProxyModel, self).__init__(parent)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
+    def sourceDataChanged(self, topLeft, bottomRight):
+        print "{} data changed".format(self.__class__.__name__)
+        self.dataChanged.emit(self.mapFromSource(topLeft),
+                              self.mapFromSource(bottomRight))
 
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
