@@ -104,14 +104,17 @@ class Editor(QtGui.QMainWindow):
     editor_modes = ['Model', 'Meta Model', 'View Model']
 
     # Ways the tree view can filter the model (based on Meta-Type or Name)
-    filter_types = ['Meta', 'Name']
+    filter_roles = OrderedDict({
+        'Meta': ItemModel.filter_meta_role,
+        'Name': ItemModel.filter_data_role
+    })
 
     def __init__(self):
         super(Editor, self).__init__()
 
         # Set up the editor mode
         self.editor_mode = self.editor_modes[1]
-        self.filter_mode = self.filter_types[0]
+        self.filter_role = self.filter_roles['Meta']
 
         self.init_ui()
         self.clearModels()
@@ -188,7 +191,7 @@ class Editor(QtGui.QMainWindow):
         self.filter_hbox = QtGui.QHBoxLayout()
         self.filter_label = QtGui.QLabel('Filter:')
         self.filter_type = QtGui.QComboBox(self)
-        self.filter_type.addItems(self.filter_types)
+        self.filter_type.addItems(self.filter_roles.keys())
         self.filter_type.setCurrentIndex(0)
         self.filter_type.currentIndexChanged.connect(self.changeFilter)
         self.filter_hbox.addWidget(self.filter_label)
@@ -254,10 +257,10 @@ class Editor(QtGui.QMainWindow):
         '''Event callback for when the user changes the filter type for the
         navigator.
         '''
-        text = self.filter_type.currentText()
-        self.filter_mode = text
+        text = str(self.filter_type.currentText())
+        self.filter_role = self.filter_roles[text]
         if self.model and self.proxy_model:
-            self.model.set_filter_type(text)
+            self.proxy_model.setFilterRole(self.filter_role)
             self.proxy_model.invalidate()
 
     def changeMode(self, index):
@@ -365,7 +368,7 @@ class Editor(QtGui.QMainWindow):
         self.proxy_model.setDynamicSortFilter(True)
         self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.proxy_model.setSortRole(ItemModel.sort_role)
-        self.proxy_model.setFilterRole(ItemModel.filter_role)
+        self.proxy_model.setFilterRole(self.filter_role)
 
         # the model stores the reference to the model that is
         # currently being edited/viewed; this can be a regular model,
@@ -373,7 +376,6 @@ class Editor(QtGui.QMainWindow):
         # inherit from the meta-metamodel so have the same interfaces
         # and can be interacted with in the same way
         self.model = ItemModel(root)
-        self.model.set_filter_type(self.filter_mode)
         # Link the actual model and the proxy model
         self.proxy_model.setSourceModel(self.model)
         self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)

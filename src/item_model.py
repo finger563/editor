@@ -19,8 +19,6 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
-# TODO: Refactor filter_type to be new user_roles
-
 
 class ItemModel(QtCore.QAbstractItemModel):
     '''Implements the :class:`QtCore.QAbstractItemModel` to interact with
@@ -28,13 +26,14 @@ class ItemModel(QtCore.QAbstractItemModel):
     for retrieving and setting data.
     '''
     sort_role = QtCore.Qt.UserRole
-    filter_role = QtCore.Qt.UserRole + 1
-    reference_role = QtCore.Qt.UserRole + 2
+    # filter_role = QtCore.Qt.UserRole + 1
+    filter_meta_role = QtCore.Qt.UserRole + 1
+    filter_data_role = QtCore.Qt.UserRole + 2
+    reference_role = QtCore.Qt.UserRole + 3
 
     def __init__(self, root, parent=None):
         super(ItemModel, self).__init__(parent)
         self.rootNode = root
-        self.filter_type = 'Meta'
 
     def getModel(self, index):
         if index.isValid():
@@ -53,9 +52,6 @@ class ItemModel(QtCore.QAbstractItemModel):
     def columnCount(self, parent):
         return 1
 
-    def set_filter_type(self, _type):
-        self.filter_type = _type
-
     def data(self, index, role):
         if not index.isValid():
             return None
@@ -73,13 +69,10 @@ class ItemModel(QtCore.QAbstractItemModel):
             return node.kind()
         if role == ItemModel.reference_role:
             return node
-        if role == ItemModel.filter_role:
-            f = None
-            if self.filter_type == 'Meta':
-                f = node.kind()
-            elif self.filter_type == 'Name':
-                f = node['Name']
-            return f
+        if role == ItemModel.filter_meta_role:
+            return node.kind()
+        if role == ItemModel.filter_data_role:
+            return node.attributes.values()[index.column()].value
         return None
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
