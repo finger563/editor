@@ -76,15 +76,29 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeInserted(self, parent, start, end):
-        self.buildMap(self.sourceModel())
+        # self.buildMap(self.sourceModel())
         self.rowsAboutToBeInserted.emit(parent,
                                         start, end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeRemoved(self, parent, start, end):
-        self.buildMap(self.sourceModel())
+        # self.buildMap(self.sourceModel())
         self.rowsAboutToBeRemoved.emit(parent,
                                        start, end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsInserted(self, parent, start, end):
+        self.buildMap(self.sourceModel())
+        self.rowsInserted.emit(self.mapFromSource(parent),
+                               start,
+                               end)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsRemoved(self, parent, start, end):
+        self.buildMap(self.sourceModel())
+        self.rowsRemoved.emit(self.mapFromSource(parent),
+                              start,
+                              end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
@@ -112,6 +126,8 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         model.dataChanged.connect(self.sourceDataChanged)
         model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
         model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
+        model.rowsInserted.connect(self.sourceRowsInserted)
+        model.rowsRemoved.connect(self.sourceRowsRemoved)
 
     def mapFromSource(self, index):
         if index not in self.m_rowMap:
@@ -153,6 +169,8 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
         model.dataChanged.connect(self.sourceDataChanged)
         model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
         model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
+        model.rowsInserted.connect(self.sourceRowsInserted)
+        model.rowsRemoved.connect(self.sourceRowsRemoved)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeInserted(self, parent, start, end):
@@ -164,6 +182,20 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def sourceRowsAboutToBeRemoved(self, parent, start, end):
         self.rowsAboutToBeRemoved.emit(parent,
                                        start, end)
+        self.invalidate()
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsInserted(self, parent, start, end):
+        self.rowsInserted.emit(self.mapFromSource(parent),
+                               start,
+                               end)
+        self.invalidate()
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsRemoved(self, parent, start, end):
+        self.rowsRemoved.emit(self.mapFromSource(parent),
+                              start,
+                              end)
         self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
@@ -226,12 +258,18 @@ class ReferenceEditor(QtGui.QComboBox):
         self.flatModel.setSourceModel(model)
         self.pFilterModel.setSourceModel(self.flatModel)
         super(ReferenceEditor, self).setModel(self.pFilterModel)
-        self.model().dataChanged.connect(self.updateList)
+        model.dataChanged.connect(self.updateList)
         model.rowsAboutToBeInserted.connect(
             self.rowsAboutToBeChanged
         )
         model.rowsAboutToBeRemoved.connect(
             self.rowsAboutToBeChanged
+        )
+        model.rowsInserted.connect(
+            self.rowsChanged
+        )
+        model.rowsRemoved.connect(
+            self.rowsChanged
         )
 
     def setModelColumn(self, column):
@@ -245,6 +283,10 @@ class ReferenceEditor(QtGui.QComboBox):
             i,
             self.getRootItemModel().reference_role
         ).toPyObject()
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def rowsChanged(self, parent, start, end):
+        self.setCurrentReference(self._old_ref)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def updateList(self, topLeft, bottomRight):
