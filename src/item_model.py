@@ -195,9 +195,18 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def __init__(self, parent):
         super(SortFilterProxyModel, self).__init__(parent)
 
+    def setSourceModel(self, model):
+        super(SortFilterProxyModel, self).setSourceModel(model)
+        model.rowsInserted.connect(self.sourceRowsInserted)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsInserted(self, parent, start, end):
+        self.rowsInserted.emit(self.mapFromSource(parent),
+                               start,
+                               end)
+
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
-        print "{} data changed".format(self.__class__.__name__)
         self.dataChanged.emit(self.mapFromSource(topLeft),
                               self.mapFromSource(bottomRight))
 

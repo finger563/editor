@@ -17,7 +17,7 @@ __maintainer__ = 'William Emfinger'
 __email__ = 'emfinger@isis.vanderbilt.edu'
 __status__ = 'Production'
 
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
 # TODO: Refactor contextMenu to not use children, but instead use the
 #       current meta-model to determine available actions.
@@ -31,6 +31,11 @@ class TreeView(QtGui.QTreeView):
         if trigger == QtGui.QAbstractItemView.DoubleClicked:
             return False
         return QtGui.QTreeView.edit(self, index, trigger, event)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def rowsInserted(self, parent, start, end):
+        super(TreeView, self).rowsInserted(parent, start, end)
+        self.setExpanded(parent, True)
 
     def contextMenuEvent(self, e):
         indexes = self.selectedIndexes()
