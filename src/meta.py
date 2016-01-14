@@ -326,11 +326,19 @@ class Attribute(Model):
                                               '0..*'})
 
     def validator(self, newValue):
-        return True
+        valid = True
+        errMsg = ''
+        return valid, errMsg
 
     def setValue(self, value):
-        self.update_dependents(self.value, value)
-        self.value = value
+        valid, errMsg = self.validator(value)
+        if valid:
+            self.update_dependents(self.value, value)
+            self.value = value
+            return True
+        else:
+            print 'ERROR: '.format(errMsg)
+            return False
 
     def update_dependents(self, oldValue, newValue):
         if oldValue in self.dependents.keys():
@@ -346,22 +354,25 @@ class Attribute(Model):
         return self.options
 
     def fromQVariant(self, variant):
+        newVal = None
         if self.kind in ['string', 'list']:
-            self.value = str(variant.toString())
+            newVal = str(variant.toString())
         elif self.kind in ['code', 'python']:
-            self.value = str(variant)
+            newVal = str(variant)
         elif self.kind in ['int', 'integer']:
-            self.value, tmp = variant.toInt()
+            newVal, tmp = variant.toInt()
         elif self.kind in ['float']:
-            self.value, tmp = variant.toFloat()
+            newVal, tmp = variant.toFloat()
         elif self.kind in ['double']:
-            self.value, tmp = variant.toDouble()
+            newVal, tmp = variant.toDouble()
         elif self.kind in ['bool']:
-            self.value = variant.toBool()
+            newVal = variant.toBool()
         elif self.kind in ['reference']:
-            self.value = variant  # .toPyObject()
+            newVal = variant  # .toPyObject()
         elif 'file' in self.kind:
-            self.value = str(variant)
+            newVal = str(variant)
+        if newVal:
+            self.setValue(newVal)
 
 
 class NameAttribute(Attribute):
@@ -371,9 +382,17 @@ class NameAttribute(Attribute):
         super(NameAttribute, self).__init__('string', name, parent)
 
     def validator(self, newName):
+        if not self.parent.parent or not self.parent.parent.children:
+            return True, ''
         sibling_names = [c['Name'] for c in self.parent.parent.children
                          if c != self.parent]
-        return newName not in sibling_names
+        valid = newName not in sibling_names
+        errMsg = ''
+        if not valid:
+            errMsg = 'Name \'{}\' already exists in parent scope!'.format(
+                newName
+            )
+        return valid, errMsg
 
 
 class Pointer(Model):
@@ -420,7 +439,9 @@ class MetaAttribute(Model):
                  name='Attribute',
                  kind=Attribute.allowed_types[0],
                  validator='''def validator(self, newValue):
-    return True
+    valid = True
+    errMsg = ''
+    return valid, errMsg
                  ''',
                  tooltip='',
                  display='',
