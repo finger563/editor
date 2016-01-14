@@ -109,7 +109,7 @@ def convertModelToMeta(model, meta_dict):
         # These will be pointers to other classes
         elif type(obj) == MetaPointer:
 
-            # should fill out get_references
+            # should fill out get_references(self)
             exec obj['Valid Objects'] in globals()
 
             def ref_wrapper(s1, s2):
@@ -144,6 +144,10 @@ def convertModelToMeta(model, meta_dict):
             ptrs[obj['Name']] = new_ptr()
         # These will be the attributes of the new class
         elif type(obj) == MetaAttribute:
+
+            # should fill out validator(self, newValue)
+            exec obj['Validator'] in globals()
+
             def attrInit(self):
                 Attribute.__init__(self, obj['Kind'],
                                    Attribute.default_vals[obj['Kind']])
@@ -155,6 +159,7 @@ def convertModelToMeta(model, meta_dict):
                     'tooltip': obj['Tooltip'],
                     'display': obj['Display'],
                     'editable': obj['Editable'],
+                    'validator': validator,
                 }
             )
             attr_dict[obj['Name']] = new_attr()
@@ -328,8 +333,7 @@ class Attribute(Model):
         # Perhaps have this editable instead of using Children?
         self.dependents = OrderedDict()
 
-        self.children = Children(cardinality={Attribute:
-                                              '0..*'})
+        self.children = Children(cardinality={})
 
     def validator(self, newValue):
         valid = True
@@ -358,6 +362,7 @@ class Attribute(Model):
 
     def fromQVariant(self, variant):
         newVal = None
+        tmp = None
         if self.kind in ['string', 'list']:
             newVal = str(variant.toString())
         elif self.kind in ['code', 'python']:
@@ -374,7 +379,7 @@ class Attribute(Model):
             newVal = variant  # .toPyObject()
         elif 'file' in self.kind:
             newVal = str(variant)
-        if newVal:
+        if newVal or tmp:
             return self.setValue(newVal)
         return False, 'Attribute has an illegal kind!'
 

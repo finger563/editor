@@ -56,7 +56,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         '''Required to allow tabbing in a
         :class:`attribute_editors.CodeEditor`.
         '''
-        if type(editor) == CodeEditor:
+        if type(editor) == CodeEditor and type(event) is not QtGui.QFocusEvent:
             return False
         else:
             return super(EditorItemDelegate, self).eventFilter(editor, event)
@@ -96,7 +96,6 @@ class EditorItemDelegate(QtGui.QItemDelegate):
                 editor.currentIndex(),
                 editor.getRootItemModel().reference_role
             ).toPyObject()
-            print "setting model: ", editor.currentIndex(), data
             model.setData(
                 index,
                 data
