@@ -331,9 +331,6 @@ class Attribute(Model):
         self.children = Children(cardinality={Attribute:
                                               '0..*'})
 
-    def valid_values(self):
-        return []
-
     def validator(self, newValue):
         valid = True
         errMsg = ''

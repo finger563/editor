@@ -156,12 +156,12 @@ class ItemModel(QtCore.QAbstractItemModel):
                                          childCount)
             validName = False
             while not validName:
-                childCount += 1
                 newName = 'New_{}_{}'.format(_type.__name__,
                                              childCount)
                 validName, errMsg = childNode.get_attribute(
                     'Name'
                 ).setValue(newName)
+                childCount += 1
 
             self.dataChanged.emit(parent, self.index(row, 0, parent))
 
