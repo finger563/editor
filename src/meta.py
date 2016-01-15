@@ -253,22 +253,34 @@ class Model(object):
         attr.parent = self
 
     def child_count(self):
+        '''
+        A subclass should override this if it stores children differently.
+        '''
         return len(self.children)
 
     def kind(self):
         return self.__class__.__name__
 
     def child(self, position):
-        if position < self.child_count():
+        '''
+        A subclass should override this if it stores children differently.
+        '''
+        if position < self.child_count() and position >= 0:
             return self.children[position]
         else:
             return None
 
     def row(self):
+        '''
+        A subclass should override this if it stores children differently.
+        '''
         if self.parent:
             return self.parent.children.index(self)
 
     def remove_child(self, position):
+        '''
+        A subclass should override this if it stores children differently.
+        '''
         if position < 0 or position > self.child_count():
             return False
         child = self.children.pop(position)
@@ -277,6 +289,9 @@ class Model(object):
         return True
 
     def insert_child(self, position, child_model):
+        '''
+        A subclass should override this if it stores children differently.
+        '''
         if position < 0 or position > self.child_count():
             return False
         success = self.children.insert(position, child_model)
@@ -285,8 +300,7 @@ class Model(object):
         return success
 
     def add_child(self, child_model):
-        child_model.parent = self
-        self.children.append(child_model)
+        return self.insert_child(0, child_model)
 
     def add_attribute(self, name, kind, value):
         attr = Attribute(kind, value, self)
@@ -334,6 +348,31 @@ class Attribute(Model):
         self.dependents = OrderedDict()
 
         self.children = Children(cardinality={})
+
+    def remove_child(self, position):
+        '''
+        Reimplemented from :class:`Model` to update :`self.dependents`
+        '''
+        if position < 0 or position > self.child_count():
+            return False
+        child = self.children.pop(position)
+        child.parent = None
+        self.dependents = {key: [x for x in value if x != child]
+                           for key, value in self.dependents.iteritems()}
+        del child
+        return True
+
+    def insert_child(self, position, child_model, key):
+        '''
+        Reimplemented from :class:`Model` to update :`self.dependents`
+        '''
+        if position < 0 or position > self.child_count():
+            return False
+        success = self.children.insert(position, child_model)
+        if success:
+            child_model.parent = self
+            self.dependents.setdefault(key, []).append(child_model)
+        return success
 
     def validator(self, newValue):
         valid = True
