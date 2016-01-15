@@ -19,11 +19,53 @@ __status__ = 'Production'
 
 from PyQt4 import QtGui, QtCore
 
+from item_model import ItemModel
+
 # TODO: Refactor contextMenu to not use children, but instead use the
 #       current meta-model to determine available actions.
 
+# TODO: Add completer to show available filter text
+
+
+class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
+    '''
+    Extends :class:`QtGui.QSortFilterProxyModel` to customize filtering
+    on a :class:`QtCoreQAbstractItemModel` or its subclass.
+    '''
+
+    rowFiltered = QtCore.pyqtSignal(QtCore.QModelIndex, bool)
+
+    def __init__(self, parent):
+        super(SortFilterProxyModel, self).__init__(parent)
+
+    def setSourceModel(self, model):
+        super(SortFilterProxyModel, self).setSourceModel(model)
+        model.rowsInserted.connect(self.sourceRowsInserted)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def sourceRowsInserted(self, parent, start, end):
+        self.rowsInserted.emit(self.mapFromSource(parent),
+                               start,
+                               end)
+
+    def filterAcceptsRow(self, row, parent):
+        index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
+        text = self.sourceModel().data(index0, self.filterRole())
+        filtered = QtCore.QString(text).contains(self.filterRegExp())
+
+        inChildren = False
+        for r in range(index0.internalPointer().child_count()):
+            if self.filterAcceptsRow(r, index0):
+                inChildren = True
+                break
+
+        filtered = filtered or inChildren
+        return filtered
+
 
 class TreeView(QtGui.QTreeView):
+    '''
+    '''
 
     def edit(self, index, trigger, event):
         # don't want to enter renaming mode every time we
@@ -32,14 +74,10 @@ class TreeView(QtGui.QTreeView):
             return False
         return QtGui.QTreeView.edit(self, index, trigger, event)
 
-    @QtCore.pyqtSlot(QtCore.QModelIndex, bool)
-    def sourceRowFiltered(self, index, filtered):
-        self.setExpanded(index, filtered)
-
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def rowsInserted(self, parent, start, end):
         super(TreeView, self).rowsInserted(parent, start, end)
-        self.setExpanded(parent, True)
+        self.expandNode(parent, True)
 
     def contextMenuEvent(self, e):
         indexes = self.selectedIndexes()
@@ -70,6 +108,12 @@ class TreeView(QtGui.QTreeView):
                 menu.addAction(addAction)
             if hasActions:
                 menu.exec_(e.globalPos())
+
+    def expandNode(self, parent, expand):
+        self.setExpanded(parent, expand)
+        for row in range(self.model().rowCount(parent)):
+            child = self.model().index(row, 0, parent)
+            self.expandNode(child, expand)
 
     def addTreeItem(self, mi, _type):
         def genericItem(e):

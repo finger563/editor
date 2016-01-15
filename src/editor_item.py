@@ -25,6 +25,9 @@ from attribute_editors import\
     CodeEditor,\
     ReferenceEditor
 
+# TODO: Mouse click isn't working properly; the drawn area (of the
+#       rect/text) is not necessarily the clickable area
+
 # TODO: Make ItemDelegate work for dictionary editor created in
 #       attribute editor
 

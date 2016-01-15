@@ -176,27 +176,27 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def sourceRowsAboutToBeInserted(self, parent, start, end):
         self.rowsAboutToBeInserted.emit(parent,
                                         start, end)
-        self.invalidate()
+        # self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeRemoved(self, parent, start, end):
         self.rowsAboutToBeRemoved.emit(parent,
                                        start, end)
-        self.invalidate()
+        # self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsInserted(self, parent, start, end):
         self.rowsInserted.emit(self.mapFromSource(parent),
                                start,
                                end)
-        self.invalidate()
+        # self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsRemoved(self, parent, start, end):
         self.rowsRemoved.emit(self.mapFromSource(parent),
                               start,
                               end)
-        self.invalidate()
+        # self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):

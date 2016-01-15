@@ -26,7 +26,7 @@ from collections import OrderedDict
 from action import Action
 from editor_widget import TabbedEditor, EditorView
 
-from item_model import ItemModel, SortFilterProxyModel
+from item_model import ItemModel
 
 from meta import\
     MetaModel,\
@@ -34,9 +34,12 @@ from meta import\
 
 from view_model import ViewModel
 
-from tree_view import TreeView
+from tree_view import TreeView, SortFilterProxyModel
 
 from output import TabbedOutputWidget
+
+# TODO: Need to close all related widgets when an item is removed from
+#       the model
 
 # TODO: Refactor editor so that it the meta-model is contained
 #       separately and merely invoked to get the root object for the
@@ -261,7 +264,7 @@ class Editor(QtGui.QMainWindow):
         self.filter_role = self.filter_roles[text]
         if self.model and self.proxy_model:
             self.proxy_model.setFilterRole(self.filter_role)
-            self.proxy_model.invalidate()
+            # self.proxy_model.invalidate()
 
     def changeMode(self, index):
         '''Event callback for when the user changes the editor mode.'''
@@ -381,7 +384,6 @@ class Editor(QtGui.QMainWindow):
         self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
         self.tree_view.setModel(self.proxy_model)
         self.proxy_model.rowsInserted.connect(self.tree_view.rowsInserted)
-        self.proxy_model.rowFiltered.connect(self.tree_view.sourceRowFiltered)
         self.tree_view.expandAll()
         
     def saveModel(self, event):
