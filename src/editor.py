@@ -29,8 +29,7 @@ from editor_widget import TabbedEditor, EditorView
 from item_model import ItemModel
 
 from meta import\
-    MetaModel,\
-    convertModelToMeta
+    MetaModel
 
 from view_model import ViewModel
 
