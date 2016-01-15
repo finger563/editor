@@ -314,9 +314,10 @@ class Editor(QtGui.QMainWindow):
             if fname:
                 meta_root = self.open_model(fname)
                 meta_dict = OrderedDict()
-                base = convertModelToMeta(meta_root, meta_dict)
-                meta_dict['__root__'] = base
-                self.META = meta_dict
+                base = MetaModel.toMeta(meta_root)
+                #base = convertModelToMeta(meta_root, meta_dict)
+                #meta_dict['__root__'] = base
+                #self.META = meta_dict
                 root = base()
         elif self.editor_mode == 'Meta Model':
             root = MetaModel()
@@ -403,6 +404,7 @@ class Editor(QtGui.QMainWindow):
             root = self.model.getModel(QtCore.QModelIndex())
             # the actual root is not displayed and is always a Model()
             root = root.children[0]
+            print MetaModel.toMeta(root)
             with open(fname, 'w') as f:
                 dill.dump(root, f)
             return 0

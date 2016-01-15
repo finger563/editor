@@ -97,108 +97,6 @@ def convertModelToMeta(model, meta_dict):
 
     '''
 
-    allowed_kids = OrderedDict()
-    attr_dict = OrderedDict()
-    ptrs = OrderedDict()
-    for obj in model.children:
-        # These will be the available children_types of the class
-        if type(obj) == MetaModel:
-            allowed_kids[
-                convertModelToMeta(obj, meta_dict)
-            ] = obj['Cardinality']
-        # These will be pointers to other classes
-        elif type(obj) == MetaPointer:
-
-            # should fill out get_references(self)
-            exec obj['Valid Objects'] in globals()
-
-            def ref_wrapper(s1, s2):
-                return s1.get_references()
-
-            def ptrInit(self):
-                Pointer.__init__(self,
-                                 dst_type=obj['Destination Type'])
-                self['Name'] = obj['Name']
-                self.get_attribute('Name').editable = False
-                self.add_attribute('Destination', 'reference', '')
-                destAttr = self.get_attribute('Destination')
-                destAttr.dst_type = obj['Destination Type']
-                '''
-                destAttr.tooltip = obj['Tooltip']
-                destAttr.display = obj['Display']
-                destAttr.get_options = types.MethodType(
-                    lambda s: ref_wrapper(self, s),
-                    destAttr,
-                    Attribute
-                )
-                '''
-            new_ptr = type(
-                obj['Name'],
-                (Pointer, object, ),
-                {
-                    '__init__': ptrInit,
-                    # from obj['Valid Objects'] as exec'd text
-                    'get_references': get_references,
-                }
-            )
-            ptrs[obj['Name']] = new_ptr()
-        # These will be the attributes of the new class
-        elif type(obj) == MetaAttribute:
-
-            # should fill out validator(self, newValue)
-            exec obj['Validator'] in globals()
-
-            def attrInit(self):
-                Attribute.__init__(self, obj['Kind'],
-                                   Attribute.default_vals[obj['Kind']])
-            new_attr = type(
-                obj['Name'],
-                (Attribute, object, ),
-                {
-                    '__init__': attrInit,
-                    'tooltip': obj['Tooltip'],
-                    'display': obj['Display'],
-                    'editable': obj['Editable'],
-                    'validator': validator,
-                }
-            )
-            attr_dict[obj['Name']] = new_attr()
-
-    # Define the init function inline here for the new class, make
-    # sure all attributes, pointers, children, etc. are set up
-    # properly
-    def modelInit(self, parent=None):
-        super(self.__class__, self).__init__(parent)
-        self.attributes = OrderedDict()
-        self.set_attribute('Name', NameAttribute(self.__class__.__name__))
-        # Handle children
-        self.children = Children(cardinality=allowed_kids)
-        for t, c in self.children.get_cardinality().iteritems():
-            min_number = int(c.split('..')[0])
-            for i in range(0, min_number):
-                new_child = t()
-                new_child['Name'] = '{}_{}'.format(t.__name__, i)
-                self.add_child(new_child)
-        # Handle pointers
-        ptr_types = [type(t) for t in ptrs.values()]
-        for t in ptr_types:
-            self.children.set_cardinality_of(t, '1')
-        for name, ptr in ptrs.iteritems():
-            self.add_child(ptr)
-        # Handle attributes
-        for name, attr in attr_dict.iteritems():
-            self.set_attribute(name, attr)
-
-    new_type = type(
-        model['Name'],
-        (Model, QtCore.QObject, object, ),
-        {
-            '__init__': modelInit
-        }
-    )
-    meta_dict[model['Name']] = new_type
-    return new_type
-
 
 def get_children(model, kind):
     if model.kind() == kind:
@@ -210,7 +108,7 @@ def get_children(model, kind):
         return kids
 
 
-class Model(object):
+class Model(QtCore.QObject, object):
     '''Generic Model/Container class
 
     Every Model has the following:
@@ -480,6 +378,56 @@ class MetaModel(Model):
         self.get_attribute(
             'Cardinality').options = Children.valid_cardinalities
 
+    @staticmethod
+    def toMeta(model):
+        allowed_kids = OrderedDict()
+        attr_dict = OrderedDict()
+        ptrs = OrderedDict()
+        for obj in model.children:
+            if type(obj) == MetaModel:
+                allowed_kids[ MetaModel.toMeta(obj) ] = obj['Cardinality']
+            elif type(obj) == MetaPointer:
+                ptrs[obj['Name']] = MetaPointer.toMeta(obj)
+            elif type(obj) == MetaAttribute:
+                attr_dict[obj['Name']] = MetaAttribute.toMeta(obj)
+
+        # Define the init function inline here for the new class, make
+        # sure all attributes, pointers, children, etc. are set up
+        # properly
+        def modelInit(self, parent=None):
+            super(self.__class__, self).__init__(parent)
+            self.attributes = OrderedDict()
+            self.set_attribute('Name', NameAttribute(self.__class__.__name__))
+            # Handle children
+            self.children = Children(cardinality=allowed_kids)
+            for t, c in self.children.get_cardinality().iteritems():
+                min_number = int(c.split('..')[0])
+                for i in range(0, min_number):
+                    new_child = t()
+                    new_child['Name'] = '{}_{}'.format(t.__name__, i)
+                    self.add_child(new_child)
+
+            # Handle pointers
+            ptr_types = [type(t) for t in ptrs.values()]
+            for t in ptr_types:
+                self.children.set_cardinality_of(t, '1')
+
+            for name, ptr in ptrs.iteritems():
+                self.add_child(ptr)
+
+            # Handle attributes
+            for name, attr in attr_dict.iteritems():
+                self.set_attribute(name, attr)
+
+        new_model = type(
+            model['Name'],
+            (Model, QtCore.QObject, object, ),
+            {
+                '__init__': modelInit
+            }
+        )
+        return new_model
+
 
 class MetaAttribute(Model):
     '''
@@ -517,6 +465,30 @@ class MetaAttribute(Model):
         if success:
             child_model.set_attribute('Parent Key', Attribute('string', ''))
         return success
+
+    @staticmethod
+    def toMeta(model):
+        exec model['Validator'] in globals()
+
+        def attrInit(self):
+            super(self.__class__, self).__init__(
+                model['Kind'],
+                Attribute.default_vals[model['Kind']]
+            )
+
+        new_attr = type(
+            model['Name'],
+            (Attribute, object, ),
+            {
+                '__init__': attrInit,
+                'tooltip': model['Tooltip'],
+                'display': model['Display'],
+                'editable': model['Editable'],
+                'validator': validator,
+            }
+        )
+        print new_attr()
+        return new_attr()
 
 
 class MetaPointer(Model):
@@ -573,6 +545,38 @@ class MetaPointer(Model):
         )
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
+
+    @staticmethod
+    def toMeta(model):
+
+        # should fill out get_references(self)
+        exec model['Valid Objects'] in globals()
+
+        def ref_wrapper(s1, s2):
+            return s1.get_references()
+
+        def ptrInit(self):
+            super(self.__class__, self).__init__(
+                dst_type=model['Destination Type']
+            )
+            self['Name'] = model['Name']
+            self.get_attribute('Name').editable = False
+            self.add_attribute('Destination', 'reference', '')
+            destAttr = self.get_attribute('Destination')
+            destAttr.dst_type = model['Destination Type']
+            destAttr.tooltip = model['Tooltip']
+            destAttr.display = model['Display']
+            
+        new_ptr = type(
+            model['Name'],
+            (Pointer, object, ),
+            {
+                '__init__': ptrInit,
+                # from model['Valid Objects'] as exec'd text
+                'get_references': get_references,
+            }
+        )
+        return new_ptr()
 
 
 class Children(MutableSequence):
