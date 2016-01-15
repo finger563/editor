@@ -218,8 +218,8 @@ class Editor(QtGui.QMainWindow):
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.navigator)
         self.splitter1.addWidget(self.tabbedEditorWidget)
-        self.splitter1.setSizes([self.geometry().x()/5.0, 4.0 *
-                                 self.geometry().x()/5.0])
+        self.splitter1.setSizes([self.geometry().width()/4.0, 3.0 *
+                                 self.geometry().width()/4.0])
 
         # Set up the tabbed output viewer
         self.tabbedOutput = TabbedOutputWidget(self)
@@ -228,8 +228,8 @@ class Editor(QtGui.QMainWindow):
         self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter2.addWidget(self.splitter1)
         self.splitter2.addWidget(self.tabbedOutput)
-        self.splitter2.setSizes([4.0 * self.geometry().y()/5.0,
-                                 self.geometry().y()/5.0])
+        self.splitter2.setSizes([4.0 * self.geometry().height()/5.0,
+                                 self.geometry().height()/5.0])
 
         # Set the central widget of the application
         self.setCentralWidget(self.splitter2)
