@@ -142,29 +142,29 @@ class AttributeEditor(QtGui.QWidget):
         label.setWordWrap(True)
 
         obj = None
-        if attr.kind in ['float', 'int', 'double', 'string']:
+        if attr.getKind() in ['float', 'int', 'double', 'string']:
             obj = QtGui.QLineEdit()
-            obj.setText(str(attr.value))
-        elif attr.kind in ['bool']:
+            obj.setText(str(attr.getValue()))
+        elif attr.getKind() in ['bool']:
             obj = QtGui.QCheckBox()
-            obj.setChecked(attr.value)
-        elif attr.kind in ['code']:
+            obj.setChecked(attr.getValue())
+        elif attr.getKind() in ['code']:
             obj = CodeEditor(self)
             obj.setHighlighterType(ROSHighlighter)
-            obj.setPlainText(attr.value)
-        elif attr.kind in ['python']:
+            obj.setPlainText(attr.getValue())
+        elif attr.getKind() in ['python']:
             obj = CodeEditor()
             obj.setHighlighterType(PythonHighlighter)
-            obj.setPlainText(attr.value)
-        elif attr.kind in ['list']:
+            obj.setPlainText(attr.getValue())
+        elif attr.getKind() in ['list']:
             options = attr.get_options()
             obj = QtGui.QComboBox()
             obj.addItems(options)
             i = 0
-            if attr.value in options:
-                i = options.index(attr.value)
+            if attr.getValue() in options:
+                i = options.index(attr.getValue())
             obj.setCurrentIndex(i)
-        elif attr.kind in ['reference']:
+        elif attr.getKind() in ['reference']:
             obj = ReferenceEditor()
             # Need to get filter function here
             obj.setReferenceType(attr.dst_type)
@@ -173,21 +173,21 @@ class AttributeEditor(QtGui.QWidget):
             obj.setRootModelIndex(
                 self.dataMapper.rootIndex().parent().parent()
             )
-            obj.setCurrentReference(attr.value)
-        elif 'file' in attr.kind:
+            obj.setCurrentReference(attr.getValue())
+        elif 'file' in attr.getKind():
             obj = FileEditor(name=name,
-                             fname=attr.value,
-                             file_type=attr.kind.split('_')[1],
+                             fname=attr.getValue(),
+                             file_type=attr.getKind().split('_')[1],
                              parent=self)
-        elif 'dictionary' in attr.kind:
+        elif 'dictionary' in attr.getKind():
             label = None
-            _type = attr.kind.split('_')[1]
+            _type = attr.getKind().split('_')[1]
             obj = QtGui.QGroupBox(name)
             layout = QtGui.QFormLayout()
             for key_name in attr.options:
                 if 'bool' in _type:
                     cb = QtGui.QCheckBox()
-                    cb.setChecked(bool(attr.value[key_name]))
+                    cb.setChecked(bool(attr.getValue()[key_name]))
                     layout.addRow(QtGui.QLabel(key_name+':'), cb)
                 else:
                     print 'Unknown dictionary value type: {}'.format(_type)

@@ -20,22 +20,29 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-
 from collections import OrderedDict
 
-from action import Action
-from editor_widget import TabbedEditor, EditorView
+from action import\
+    Action
 
-from item_model import ItemModel
+from editor_widget import\
+    TabbedEditor, EditorView
+
+from item_model import\
+    ItemModel
 
 from meta import\
     MetaModel
 
-from view_model import ViewModel
+from view_model import\
+    ViewModel
 
-from tree_view import TreeView, SortFilterProxyModel
+from tree_view import\
+    TreeView,\
+    SortFilterProxyModel
 
-from output import TabbedOutputWidget
+from output import\
+    TabbedOutputWidget
 
 # TODO: Need to close all related widgets when an item is removed from
 #       the model
@@ -404,6 +411,7 @@ class Editor(QtGui.QMainWindow):
             # the actual root is not displayed and is always a Model()
             root = root.children[0]
             #test = MetaModel.toMeta(root)
+            print MetaModel.toDict(root)
             #self.load_model(test())
             with open(fname, 'w') as f:
                 dill.dump(root, f)

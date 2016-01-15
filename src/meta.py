@@ -121,7 +121,7 @@ class Model(QtCore.QObject):
         self.kwargs = {}
 
     def __getitem__(self, key):
-        return self.attributes[key].value
+        return self.attributes[key].getValue()
 
     def __setitem__(self, key, value):
         valid, errMsg = self.attributes[key].setValue(value)
@@ -200,7 +200,7 @@ class Model(QtCore.QObject):
         model_dict['UUID'] = str(model.uuid)
         model_dict['Attributes'] = {
             key: value.__class__.toDict(value) 
-            for key, value in model.attributes
+            for key, value in model.attributes.iteritems()
         }
         model_dict['Children'] = Children.toDict(model.children)
         return model_dict
@@ -239,8 +239,8 @@ class Attribute(Model):
 
     def __init__(self, kind, value, parent=None):
         Model.__init__(self, parent)
-        self.kind = kind
-        self.value = value
+        self._kind = kind
+        self._value = value
 
         # Maps value to list of dependent children
         # Perhaps have this editable instead of using Children?
@@ -280,11 +280,20 @@ class Attribute(Model):
         errMsg = ''
         return valid, errMsg
 
+    def getKind(self):
+        return self._kind
+
+    def setKind(self, kind):
+        self._kind = kind
+
+    def getValue(self):
+        return self._value
+
     def setValue(self, value):
         valid, errMsg = self.validator(value)
         if valid:
-            self.update_dependents(self.value, value)
-            self.value = value
+            self.update_dependents(self._value, value)
+            self._value = value
         return valid, errMsg
 
     def update_dependents(self, oldValue, newValue):
@@ -303,21 +312,21 @@ class Attribute(Model):
     def fromQVariant(self, variant):
         newVal = None
         tmp = None
-        if self.kind in ['string', 'list']:
+        if self.getKind() in ['string', 'list']:
             newVal = str(variant.toString())
-        elif self.kind in ['code', 'python']:
+        elif self.getKind() in ['code', 'python']:
             newVal = str(variant)
-        elif self.kind in ['int', 'integer']:
+        elif self.getKind() in ['int', 'integer']:
             newVal, tmp = variant.toInt()
-        elif self.kind in ['float']:
+        elif self.getKind() in ['float']:
             newVal, tmp = variant.toFloat()
-        elif self.kind in ['double']:
+        elif self.getKind() in ['double']:
             newVal, tmp = variant.toDouble()
-        elif self.kind in ['bool']:
+        elif self.getKind() in ['bool']:
             newVal = variant.toBool()
-        elif self.kind in ['reference']:
+        elif self.getKind() in ['reference']:
             newVal = variant  # .toPyObject()
-        elif 'file' in self.kind:
+        elif 'file' in self.getKind():
             newVal = str(variant)
         if newVal or tmp:
             return self.setValue(newVal)
@@ -326,8 +335,8 @@ class Attribute(Model):
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
-        model_dict['Kind'] = model.kind
-        model_dict['Value'] = model.value
+        model_dict['Kind'] = model.getKind()
+        model_dict['Value'] = model.getValue()
         model_dict['Dependents'] = {
             key: str(value.uuid)
             for key, value in model.dependents
@@ -565,8 +574,9 @@ class MetaPointer(Model):
             return genericFunc
 
         import types
-        self.add_attribute('Destination Type', 'list', 'Model')
+        self.add_attribute('Destination Type', 'reference', '')
         destAttr = self.get_attribute('Destination Type')
+        destAttr.dst_type = 'MetaModel'
         destAttr.get_options = types.MethodType(
             get_options(self),
             destAttr,
@@ -649,7 +659,7 @@ class Children(MutableSequence):
     def toDict(children):
         model_dict = OrderedDict()
         model_dict['Type'] = 'Children'
-        model_dict['Cardinality'] = children.cardinality
+        model_dict['Cardinality'] = children.get_cardinality()
         model_dict['Objects'] = [x.__class__.toDict(x) for x in children]
         return model_dict
 

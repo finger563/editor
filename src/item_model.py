@@ -58,7 +58,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         node = index.internalPointer()
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
             if index.column() < len(node.attributes.items()):
-                return node.attributes.values()[index.column()].value
+                return node.attributes.values()[index.column()].getValue()
         if role == QtCore.Qt.DecorationRole:
             if index.column() == 0:
                 kind = node.kind()
@@ -72,7 +72,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == ItemModel.filter_meta_role:
             return node.kind()
         if role == ItemModel.filter_data_role:
-            return node.attributes.values()[index.column()].value
+            return node.attributes.values()[index.column()].getValue()
         return None
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
