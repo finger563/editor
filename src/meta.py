@@ -357,8 +357,10 @@ class Attribute(Model):
             return False
         child = self.children.pop(position)
         child.parent = None
-        self.dependents = {key: [x for x in value if x != child]
-                           for key, value in self.dependents.iteritems()}
+        # Remove the child from the dependents lists
+        for k, v in self.dependents.iteritems():
+            if child in v:
+                v = [x for x in v if x != child]
         del child
         return True
 
@@ -506,6 +508,15 @@ class MetaAttribute(Model):
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
         self.set_attribute('Editable', Attribute('bool', editable))
+
+    def insert_child(self, position, child_model):
+        '''
+        Reimplemented from :class:`Model` to add a new attribute to the child.
+        '''
+        success = super(MetaAttribute, self).insert_child(position, child_model)
+        if success:
+            child_model.set_attribute('Parent Key', Attribute('string', ''))
+        return success
 
 
 class MetaPointer(Model):
