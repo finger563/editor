@@ -32,6 +32,10 @@ class TreeView(QtGui.QTreeView):
             return False
         return QtGui.QTreeView.edit(self, index, trigger, event)
 
+    @QtCore.pyqtSlot(QtCore.QModelIndex, bool)
+    def sourceRowFiltered(self, index, filtered):
+        self.setExpanded(index, filtered)
+
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def rowsInserted(self, parent, start, end):
         super(TreeView, self).rowsInserted(parent, start, end)

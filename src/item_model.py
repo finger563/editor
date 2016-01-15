@@ -185,6 +185,9 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
     Extends :class:`QtGui.QSortFilterProxyModel` to customize filtering
     on a :class:`QtCoreQAbstractItemModel` or its subclass.
     '''
+
+    rowFiltered = QtCore.pyqtSignal(QtCore.QModelIndex, bool)
+
     def __init__(self, parent):
         super(SortFilterProxyModel, self).__init__(parent)
 
@@ -198,20 +201,20 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
                                start,
                                end)
 
-    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
-    def sourceDataChanged(self, topLeft, bottomRight):
-        self.dataChanged.emit(self.mapFromSource(topLeft),
-                              self.mapFromSource(bottomRight))
-
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
+        text = self.sourceModel().data(index0, self.filterRole())
+        filtered = QtCore.QString(text).contains(self.filterRegExp())
+
         inChildren = False
         for r in range(index0.internalPointer().child_count()):
             if self.filterAcceptsRow(r, index0):
                 inChildren = True
                 break
-        text = self.sourceModel().data(index0, self.filterRole())
-        return QtCore.QString(text).contains(self.filterRegExp()) or inChildren
+
+        filtered = filtered or inChildren
+        self.rowFiltered.emit(index0, filtered)
+        return filtered
 
 
 def main():

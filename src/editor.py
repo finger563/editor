@@ -381,6 +381,7 @@ class Editor(QtGui.QMainWindow):
         self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
         self.tree_view.setModel(self.proxy_model)
         self.proxy_model.rowsInserted.connect(self.tree_view.rowsInserted)
+        self.proxy_model.rowFiltered.connect(self.tree_view.sourceRowFiltered)
         self.tree_view.expandAll()
         
     def saveModel(self, event):
