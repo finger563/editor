@@ -404,7 +404,8 @@ class Editor(QtGui.QMainWindow):
             root = self.model.getModel(QtCore.QModelIndex())
             # the actual root is not displayed and is always a Model()
             root = root.children[0]
-            print MetaModel.toMeta(root)
+            #test = MetaModel.toMeta(root)
+            #self.load_model(test())
             with open(fname, 'w') as f:
                 dill.dump(root, f)
             return 0

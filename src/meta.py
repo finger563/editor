@@ -15,6 +15,8 @@ from PyQt4 import QtCore
 
 from collections import OrderedDict, MutableSequence
 
+import uuid
+
 # TODO: Fix bug with children insert that occurs when: a model has a
 #       child (pointer) with cardinality 1, and a sibling is added, a
 #       cardinality is thrown even though the sibling is not breaking
@@ -84,20 +86,6 @@ from collections import OrderedDict, MutableSequence
 #       its own conversion
 
 
-def convertModelToMeta(model, meta_dict):
-    '''This function is used to create classes based on the editor's
-    current model.  It works on Model instances, which can have
-    pointers, models, and model_attributes as children.  By converting
-    the models in to named classes subclassing Model and adding named
-    attributes subclassing Attribute it forms a new class structure
-    which describes the meta model and which can be used to
-    instantiate models.
-
-    Returns the class of the root type of the meta model
-
-    '''
-
-
 def get_children(model, kind):
     if model.kind() == kind:
         return [model]
@@ -108,7 +96,7 @@ def get_children(model, kind):
         return kids
 
 
-class Model(QtCore.QObject, object):
+class Model(QtCore.QObject):
     '''Generic Model/Container class
 
     Every Model has the following:
@@ -118,7 +106,8 @@ class Model(QtCore.QObject, object):
     * attributes -- A dictionary of attributes.
     '''
     def __init__(self, parent=None):
-        super(Model, self).__init__()
+        QtCore.QObject.__init__(self)
+        self.uuid = uuid.uuid4()
         self.parent = parent
 
         self.children = Children(cardinality={Model:
@@ -204,6 +193,18 @@ class Model(QtCore.QObject, object):
         attr = Attribute(kind, value, self)
         self.set_attribute(name, attr)
 
+    @staticmethod
+    def toDict(model):
+        model_dict = OrderedDict()
+        model_dict['Type'] = model.kind()
+        model_dict['UUID'] = str(model.uuid)
+        model_dict['Attributes'] = {
+            key: value.__class__.toDict(value) 
+            for key, value in model.attributes
+        }
+        model_dict['Children'] = Children.toDict(model.children)
+        return model_dict
+
 
 class Attribute(Model):
     '''Generic Attributes class
@@ -237,7 +238,7 @@ class Attribute(Model):
     editable = True
 
     def __init__(self, kind, value, parent=None):
-        super(Attribute, self).__init__(parent)
+        Model.__init__(self, parent)
         self.kind = kind
         self.value = value
 
@@ -322,12 +323,23 @@ class Attribute(Model):
             return self.setValue(newVal)
         return False, 'Attribute has an illegal kind!'
 
+    @staticmethod
+    def toDict(model):
+        model_dict = Model.toDict(model)
+        model_dict['Kind'] = model.kind
+        model_dict['Value'] = model.value
+        model_dict['Dependents'] = {
+            key: str(value.uuid)
+            for key, value in model.dependents
+        }
+        return model_dict
+
 
 class NameAttribute(Attribute):
     '''
     '''
-    def __init__(self, name, parent=None):
-        super(NameAttribute, self).__init__('string', name, parent)
+    def __init__(self, name):
+        Attribute.__init__(self, 'string', name)
 
     def validator(self, newName):
         if not self.parent.parent or not self.parent.parent.children:
@@ -342,6 +354,12 @@ class NameAttribute(Attribute):
             )
         return valid, errMsg
 
+    @staticmethod
+    def toDict(model):
+        model_dict = Attribute.toDict(model)
+        model_dict.pop('Dependents', None)
+        model_dict.pop('Children', None)
+
 
 class Pointer(Model):
     '''
@@ -350,11 +368,20 @@ class Pointer(Model):
                  parent=None,
                  dst=None,
                  dst_type='Model'):
-        super(Pointer, self).__init__(parent)
+        Model.__init__(self, parent)
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.set_attribute('Name', NameAttribute('Pointer'))
+        self.get_attribute('Name').editable = False
         self.dst_type = dst_type
+        self.add_attribute('Destination', 'reference', '')
+
+    @staticmethod
+    def toDict(model):
+        model_dict = Model.toDict(model)
+        model_dict['Attributes']['Destination Type'] = model.dst_type.__name__
+        model_dict['Attributes']['Destination'] = str(model['Destination'].uuid)
+        return model_dict
 
 
 class MetaModel(Model):
@@ -362,7 +389,7 @@ class MetaModel(Model):
     '''
 
     def __init__(self):
-        super(MetaModel, self).__init__()
+        Model.__init__(self)
 
         self.children = Children(cardinality={MetaModel:
                                               '0..*',
@@ -377,6 +404,12 @@ class MetaModel(Model):
                            Children.valid_cardinalities[0])
         self.get_attribute(
             'Cardinality').options = Children.valid_cardinalities
+
+    @staticmethod
+    def toDict(model):
+        model_dict = Model.toDict(model)
+        model_dict['Type'] = 'MetaModel'
+        return model_dict
 
     @staticmethod
     def toMeta(model):
@@ -395,9 +428,9 @@ class MetaModel(Model):
         # sure all attributes, pointers, children, etc. are set up
         # properly
         def modelInit(self, parent=None):
-            super(self.__class__, self).__init__(parent)
+            Model.__init__(self, parent)
             self.attributes = OrderedDict()
-            self.set_attribute('Name', NameAttribute(self.__class__.__name__))
+            self.set_attribute('Name', NameAttribute(self.kind()))
             # Handle children
             self.children = Children(cardinality=allowed_kids)
             for t, c in self.children.get_cardinality().iteritems():
@@ -421,7 +454,7 @@ class MetaModel(Model):
 
         new_model = type(
             model['Name'],
-            (Model, QtCore.QObject, object, ),
+            (Model, ),
             {
                 '__init__': modelInit
             }
@@ -445,7 +478,7 @@ class MetaAttribute(Model):
                  display='',
                  options=[],
                  editable=True):
-        super(MetaAttribute, self).__init__(parent)
+        Model.__init__(self, parent)
         self.children = Children(cardinality={MetaAttribute:
                                               '0..*'})
         self.attributes = OrderedDict()
@@ -461,24 +494,31 @@ class MetaAttribute(Model):
         '''
         Reimplemented from :class:`Model` to add a new attribute to the child.
         '''
-        success = super(MetaAttribute, self).insert_child(position, child_model)
+        success = Model.insert_child(self, position, child_model)
         if success:
             child_model.set_attribute('Parent Key', Attribute('string', ''))
         return success
+
+    @staticmethod
+    def toDict(model):
+        model_dict = Model.toDict(model)
+        model_dict['Type'] = 'MetaAttribute'
+        return model_dict
 
     @staticmethod
     def toMeta(model):
         exec model['Validator'] in globals()
 
         def attrInit(self):
-            super(self.__class__, self).__init__(
+            Attribute.__init__(
+                self,
                 model['Kind'],
                 Attribute.default_vals[model['Kind']]
             )
 
         new_attr = type(
             model['Name'],
-            (Attribute, object, ),
+            (Attribute, ),
             {
                 '__init__': attrInit,
                 'tooltip': model['Tooltip'],
@@ -503,7 +543,7 @@ class MetaPointer(Model):
                  dst_type='Model',
                  tooltip='',
                  display=''):
-        super(MetaPointer, self).__init__(parent)
+        Model.__init__(self, parent)
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.set_attribute('Name', NameAttribute(name))
@@ -547,6 +587,11 @@ class MetaPointer(Model):
         self.set_attribute('Display', Attribute('string', display))
 
     @staticmethod
+    def toDict(model):
+        model_dict = Model.toDict(model)
+        return model_dict
+
+    @staticmethod
     def toMeta(model):
 
         # should fill out get_references(self)
@@ -556,12 +601,11 @@ class MetaPointer(Model):
             return s1.get_references()
 
         def ptrInit(self):
-            super(self.__class__, self).__init__(
+            Pointer.__init__(
+                self,
                 dst_type=model['Destination Type']
             )
             self['Name'] = model['Name']
-            self.get_attribute('Name').editable = False
-            self.add_attribute('Destination', 'reference', '')
             destAttr = self.get_attribute('Destination')
             destAttr.dst_type = model['Destination Type']
             destAttr.tooltip = model['Tooltip']
@@ -569,7 +613,7 @@ class MetaPointer(Model):
             
         new_ptr = type(
             model['Name'],
-            (Pointer, object, ),
+            (Pointer, ),
             {
                 '__init__': ptrInit,
                 # from model['Valid Objects'] as exec'd text
@@ -600,6 +644,14 @@ class Children(MutableSequence):
         '''
         self._inner = list(it)
         self._cardinality = cardinality
+
+    @staticmethod
+    def toDict(children):
+        model_dict = OrderedDict()
+        model_dict['Type'] = 'Children'
+        model_dict['Cardinality'] = children.cardinality
+        model_dict['Objects'] = [x.__class__.toDict(x) for x in children]
+        return model_dict
 
     def __len__(self):
         return len(self._inner)
