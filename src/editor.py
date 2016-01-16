@@ -413,7 +413,9 @@ class Editor(QtGui.QMainWindow):
             # the actual root is not displayed and is always a Model()
             root = root.children[0]
             #test = MetaModel.toMeta(root)
-            dictStr = json.dumps(MetaModel.toDict(root), indent=4)
+            modelDict = MetaModel.toDict(root)
+            print modelDict
+            dictStr = json.dumps(modelDict, indent=4)
             print dictStr
             #self.load_model(test())
             with open(fname, 'w') as f:

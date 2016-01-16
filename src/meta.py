@@ -578,6 +578,9 @@ class MetaPointer(Model):
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
+        model_dict['Attributes']['Destination Type'] = str(
+            model.get_attribute('Destination Type').getValue().uuid
+        )
         return model_dict
 
     @staticmethod
