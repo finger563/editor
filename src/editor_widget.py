@@ -15,7 +15,7 @@ __status__ = 'Production'
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from attribute_widget import AttributeEditor
+from attribute_widget import AttributePanel
 from editor_item import EditorItem
 
 # TODO: Add in view-model specific loading code once view_model has
@@ -114,8 +114,8 @@ class EditorView(QtGui.QGraphicsView):
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
 
-        self.aw = AttributeEditor(self)
-        self.aw.setMaximumWidth(self.geometry().width() / 3.0)
+        self.attribute_panel = AttributePanel(self)
+        self.attribute_panel.setMaximumWidth(self.geometry().width() / 3.0)
         self._command_key_pressed = False
 
         self._proxyModel = None
@@ -184,7 +184,7 @@ class EditorView(QtGui.QGraphicsView):
         self.view_model = vm
 
     def getEditor(self):
-        return self.aw
+        return self.attribute_panel
 
     def mousePressEvent(self, event):
         QtGui.QGraphicsView.mousePressEvent(self, event)
@@ -207,14 +207,14 @@ class EditorView(QtGui.QGraphicsView):
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
             self._command_key_pressed = False
         elif event.key() == self.close_aw_key:
-            self.aw.cancel(None)
+            self.attribute_panel.cancel(None)
         else:
             QtGui.QGraphicsView.keyReleaseEvent(self, event)
 
     def resizeEvent(self, event):
         QtGui.QGraphicsView.resizeEvent(self, event)
-        self.aw.setMaximumWidth(self.geometry().width() / 3.0)
-        self.aw.updateGeo()
+        self.attribute_panel.setMaximumWidth(self.geometry().width() / 3.0)
+        self.attribute_panel.updateGeo()
 
     def wheelEvent(self, event):
         if self._command_key_pressed:

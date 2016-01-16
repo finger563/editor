@@ -28,14 +28,6 @@ from syntax import\
     ROSHighlighter,\
     PythonHighlighter
 
-# TODO: Propagate reference scope and validation (function) to the
-#       ReferenceEditor and its proxy/filter models.
-
-# TODO: Perhaps find a way to import other highlighters and allow the
-#       user to select which highlighter to use as another attribute?
-
-# TODO: Integrate validators into the attribute editor
-
 # TODO: Figure out how to handle dependent attribute editing
 #       e.g. options/options_type & scope depending on on the kind of attribute
 #
@@ -46,39 +38,49 @@ from syntax import\
 #       Build attribute_editor panes up heirarchically/recursively for
 #       each child of each attribute.
 
+# TODO: Propagate reference scope and validation (function) to the
+#       ReferenceEditor and its proxy/filter models.
+
+# TODO: Perhaps find a way to import other highlighters and allow the
+#       user to select which highlighter to use as another attribute?
+
+# TODO: Integrate validators into the attribute editor
+
 # TODO: Convert attribute editor dataMapper to ManualSubmit to allow
 #       cancelling edits Make sure that changing it here doesn't
 #       affect the EditorItem's interaction
 
 
-class AttributeEditor(QtGui.QWidget):
+class AttributePanel(QtGui.QWidget):
     '''Enables editing of the attributes of a model object.  Interfaces
     with a subclass of a :class:`QDataWidgetMapper` to enable
     automatic updating back and forth between the model and the
     editor.
     '''
     def __init__(self, parent):
-        super(AttributeEditor, self).__init__(parent)
+        super(AttributePanel, self).__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
 
         self.vbox = QtGui.QVBoxLayout()
+        self.vbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.vbox)
+
         self._displayed = False
-        self._unsaved_edits = False
         self._layout = None
 
-        self.dataMapper = QtGui.QDataWidgetMapper()
-
-    def init_layout(self):
+    def clear_layout(self):
         while self._layout and self._layout.count():
             child = self._layout.takeAt(0)
             child.widget().deleteLater()
-        self.vbox.removeItem(self.vbox.itemAt(0))
-        self.scrollArea = QtGui.QScrollArea()
+        self.vbox.removeItem(self.vbox.itemAt(0))        
+
+    def init_layout(self):
+        self.clear_layout()
 
         self.viewWidget = QtGui.QWidget(self)
         self._layout = QtGui.QVBoxLayout(self.viewWidget)
 
+        self.scrollArea = QtGui.QScrollArea()
         self.scrollArea.setWidget(self.viewWidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setVerticalScrollBarPolicy(
@@ -93,26 +95,31 @@ class AttributeEditor(QtGui.QWidget):
 
         self.updateGeo()
 
-    def init_attributes(self, attr):
+    def init_attributes(self, dataMapper, attr):
         i = 0  # index into attributes (if it were a list)
         for key, attr in attr.iteritems():
             if attr.editable:
-                obj = self.add_attribute(key, attr)
-                if obj:
-                    self.dataMapper.addMapping(obj, i)
+                self._layout.addWidget(
+                    AttributeEditor(
+                        self,
+                        dataMapper=dataMapper,
+                        dataMapperIndex=i,
+                        name=key,
+                        attr=attr
+                    )
+                )
             i += 1
 
     def update(self, dataMapper):
-        self.dataMapper = dataMapper
         self.init_layout()
 
-        r = self.dataMapper.model().getModel(self.dataMapper.rootIndex())
-        node = r.child(self.dataMapper.currentIndex())
+        r = dataMapper.model().getModel(dataMapper.rootIndex())
+        node = r.child(dataMapper.currentIndex())
         if not node:
             return
 
         self.add_header(node)
-        self.init_attributes(node.attributes)
+        self.init_attributes(dataMapper, node.attributes)
         self.add_ok_cancel()
         self.unhide(None)
 
@@ -135,71 +142,6 @@ class AttributeEditor(QtGui.QWidget):
         hbox.addWidget(label)
         self._layout.addWidget(qw)
 
-    def add_attribute(self, name, attr):
-        label = QtGui.QLabel()
-        label.setText(name + ':')
-        label.setToolTip(attr.tooltip)
-        label.setWordWrap(True)
-
-        obj = None
-        if attr.getKind() in ['float', 'int', 'double', 'string']:
-            obj = QtGui.QLineEdit()
-            obj.setText(str(attr.getValue()))
-        elif attr.getKind() in ['bool']:
-            obj = QtGui.QCheckBox()
-            obj.setChecked(attr.getValue())
-        elif attr.getKind() in ['code']:
-            obj = CodeEditor(self)
-            obj.setHighlighterType(ROSHighlighter)
-            obj.setPlainText(attr.getValue())
-        elif attr.getKind() in ['python']:
-            obj = CodeEditor()
-            obj.setHighlighterType(PythonHighlighter)
-            obj.setPlainText(attr.getValue())
-        elif attr.getKind() in ['list']:
-            options = attr.get_options()
-            obj = QtGui.QComboBox()
-            obj.addItems(options)
-            i = 0
-            if attr.getValue() in options:
-                i = options.index(attr.getValue())
-            obj.setCurrentIndex(i)
-        elif attr.getKind() in ['reference']:
-            obj = ReferenceEditor()
-            # Need to get filter function here
-            obj.setReferenceType(attr.dst_type)
-            obj.setModel(self.dataMapper.model())
-            # Do we need to get the root index based on the function?
-            obj.setRootModelIndex(
-                self.dataMapper.rootIndex().parent().parent()
-            )
-            obj.setCurrentReference(attr.getValue())
-        elif 'file' in attr.getKind():
-            obj = FileEditor(name=name,
-                             fname=attr.getValue(),
-                             file_type=attr.getKind().split('_')[1],
-                             parent=self)
-        elif 'dictionary' in attr.getKind():
-            label = None
-            _type = attr.getKind().split('_')[1]
-            obj = QtGui.QGroupBox(name)
-            layout = QtGui.QFormLayout()
-            for key_name in attr.options:
-                if 'bool' in _type:
-                    cb = QtGui.QCheckBox()
-                    cb.setChecked(bool(attr.getValue()[key_name]))
-                    layout.addRow(QtGui.QLabel(key_name+':'), cb)
-                else:
-                    print 'Unknown dictionary value type: {}'.format(_type)
-                    break
-            obj.setLayout(layout)
-        if obj:
-            if label:
-                self._layout.addWidget(label)
-            obj.setToolTip(attr.tooltip)
-            self._layout.addWidget(obj)
-        return obj
-
     def add_ok_cancel(self):
         ok_cancel_widget = QtGui.QWidget(self)
         ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
@@ -217,8 +159,12 @@ class AttributeEditor(QtGui.QWidget):
         ok_cancel_widget.setLayout(ok_cancel_layout)
         self._layout.addWidget(ok_cancel_widget)
 
-    def updateEdits(self, event=None):
-        self._unsaved_edits = True
+    def save(self, event):
+        pass
+
+    def cancel(self, event):
+        self.hide(event)
+        self._unsaved_edits = False
 
     def updateGeo(self):
         rect = self.getNewRect(self._displayed)
@@ -253,13 +199,6 @@ class AttributeEditor(QtGui.QWidget):
         self.hideAnimation.setEndValue(endGeometry)
         self.hideAnimation.start()
 
-    def save(self, event):
-        pass
-
-    def cancel(self, event):
-        self.hide(event)
-        self._unsaved_edits = False
-
     def hide(self, event):
         self._displayed = False
         self.animate(event, self._displayed)
@@ -270,3 +209,81 @@ class AttributeEditor(QtGui.QWidget):
 
     def mouseDoubleClickEvent(self, event):
         self.hide(event)
+
+
+class AttributeEditor(QtGui.QWidget):
+    '''Enables editing of the attributes of a model object.  Interfaces
+    with a subclass of a :class:`QDataWidgetMapper` to enable
+    automatic updating back and forth between the model and the
+    editor.
+    '''
+    def __init__(self, parent, dataMapper, dataMapperIndex, name, attr):
+        super(AttributeEditor, self).__init__(parent)
+        self.vbox = QtGui.QVBoxLayout()
+        self.setLayout(self.vbox)
+
+        label = QtGui.QLabel()
+        label.setText(name + ':')
+        label.setToolTip(attr.tooltip)
+        label.setWordWrap(True)
+
+        obj = None
+        if attr.getKind() in ['float', 'int', 'double', 'string']:
+            obj = QtGui.QLineEdit()
+            obj.setText(str(attr.getValue()))
+        elif attr.getKind() in ['bool']:
+            obj = QtGui.QCheckBox()
+            obj.setChecked(attr.getValue())
+        elif attr.getKind() in ['code']:
+            obj = CodeEditor(self)
+            obj.setHighlighterType(ROSHighlighter)
+            obj.setPlainText(attr.getValue())
+        elif attr.getKind() in ['python']:
+            obj = CodeEditor()
+            obj.setHighlighterType(PythonHighlighter)
+            obj.setPlainText(attr.getValue())
+        elif attr.getKind() in ['list']:
+            options = attr.get_options()
+            obj = QtGui.QComboBox()
+            obj.addItems(options)
+            i = 0
+            if attr.getValue() in options:
+                i = options.index(attr.getValue())
+            obj.setCurrentIndex(i)
+        elif attr.getKind() in ['reference']:
+            obj = ReferenceEditor()
+            # Need to get filter function here
+            obj.setReferenceType(attr.dst_type)
+            obj.setModel(dataMapper.model())
+            # Do we need to get the root index based on the function?
+            obj.setRootModelIndex(
+                dataMapper.rootIndex().parent().parent()
+            )
+            obj.setCurrentReference(attr.getValue())
+        elif 'file' in attr.getKind():
+            obj = FileEditor(name=name,
+                             fname=attr.getValue(),
+                             file_type=attr.getKind().split('_')[1],
+                             parent=self)
+        elif 'dictionary' in attr.getKind():
+            label = None
+            _type = attr.getKind().split('_')[1]
+            obj = QtGui.QGroupBox(name)
+            layout = QtGui.QFormLayout()
+            for key_name in attr.options:
+                if 'bool' in _type:
+                    cb = QtGui.QCheckBox()
+                    cb.setChecked(bool(attr.getValue()[key_name]))
+                    layout.addRow(QtGui.QLabel(key_name+':'), cb)
+                else:
+                    print 'Unknown dictionary value type: {}'.format(_type)
+                    break
+            obj.setLayout(layout)
+        if obj:
+            if label:
+                self.layout().addWidget(label)
+            obj.setToolTip(attr.tooltip)
+            dataMapper.addMapping(obj, dataMapperIndex)
+            self.layout().addWidget(obj)
+        # return obj
+

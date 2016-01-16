@@ -356,10 +356,10 @@ class Editor(QtGui.QMainWindow):
         '''Decodes a saved \*.{model, meta, view} file and loads it into the
         editor.
         '''
-        import dill
+        import json
         with open(fname, 'r') as f:
-            #m = dill.load(f)
-            print eval(f.read())
+            model_dict = json.loads(f.read())
+            
             m = None
             return m
 
@@ -412,16 +412,10 @@ class Editor(QtGui.QMainWindow):
             root = self.model.getModel(QtCore.QModelIndex())
             # the actual root is not displayed and is always a Model()
             root = root.children[0]
-            #test = MetaModel.toMeta(root)
             modelDict = MetaModel.toDict(root)
-            print modelDict
             dictStr = json.dumps(modelDict, indent=4)
-            print dictStr
-            #self.load_model(test())
             with open(fname, 'w') as f:
                 f.write(dictStr)
-                # pickle.dump(MetaModel.toDict(root), f)
-                # dill.dump(MetaModel.toDict(root), f)
             return 0
 
     def closeEvent(self, event):
