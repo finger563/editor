@@ -358,7 +358,9 @@ class Editor(QtGui.QMainWindow):
         '''
         import dill
         with open(fname, 'r') as f:
-            m = dill.load(f)
+            #m = dill.load(f)
+            print eval(f.read())
+            m = None
             return m
 
     def load_model(self, model):
@@ -395,7 +397,7 @@ class Editor(QtGui.QMainWindow):
         
     def saveModel(self, event):
         '''Saves a model according to the current mode of the editor.'''
-        import dill
+        import json
         ftype = '{}'.format(self.editor_mode.lower().split()[0])
         fname = QtGui.QFileDialog.getSaveFileName(
             self,
@@ -411,10 +413,13 @@ class Editor(QtGui.QMainWindow):
             # the actual root is not displayed and is always a Model()
             root = root.children[0]
             #test = MetaModel.toMeta(root)
-            print MetaModel.toDict(root)
+            dictStr = json.dumps(MetaModel.toDict(root), indent=4)
+            print dictStr
             #self.load_model(test())
             with open(fname, 'w') as f:
-                dill.dump(root, f)
+                f.write(dictStr)
+                # pickle.dump(MetaModel.toDict(root), f)
+                # dill.dump(MetaModel.toDict(root), f)
             return 0
 
     def closeEvent(self, event):

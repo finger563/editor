@@ -368,6 +368,7 @@ class NameAttribute(Attribute):
         model_dict = Attribute.toDict(model)
         model_dict.pop('Dependents', None)
         model_dict.pop('Children', None)
+        return model_dict
 
 
 class Pointer(Model):
@@ -557,31 +558,9 @@ class MetaPointer(Model):
         self.attributes = OrderedDict()
         self.set_attribute('Name', NameAttribute(name))
 
-        def get_options(base):
-            def genericFunc(s):
-                def get_names(m):
-                    retlist = []
-                    if m.kind() == 'MetaModel':
-                        retlist.append(m['Name'])
-                    for c in m.children:
-                        retlist.extend(get_names(c))
-                    return retlist
-                r = base
-                while r.parent is not None:
-                    r = r.parent
-                r = r.children[0]
-                return get_names(r)
-            return genericFunc
-
-        import types
         self.add_attribute('Destination Type', 'reference', '')
         destAttr = self.get_attribute('Destination Type')
         destAttr.dst_type = 'MetaModel'
-        destAttr.get_options = types.MethodType(
-            get_options(self),
-            destAttr,
-            Attribute
-        )
 
         self.set_attribute(
             'Valid Objects',
@@ -659,7 +638,8 @@ class Children(MutableSequence):
     def toDict(children):
         model_dict = OrderedDict()
         model_dict['Type'] = 'Children'
-        model_dict['Cardinality'] = children.get_cardinality()
+        cardinality_dict = {key.__name__ : value for key,value in children._cardinality.iteritems()}
+        model_dict['Cardinality'] = cardinality_dict
         model_dict['Objects'] = [x.__class__.toDict(x) for x in children]
         return model_dict
 
