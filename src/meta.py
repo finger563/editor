@@ -248,37 +248,21 @@ class Attribute(Model):
         self._value = value
 
         # Maps value to list of dependent children
-        # Perhaps have this editable instead of using Children?
         self.dependents = OrderedDict()
+        # Attributes already exist through inheritance of Model
+        # self.attributes = OrderedDict()
 
-        self.children = Children(cardinality={})
+    def set_attribute(self, key, attr, dependent_value):
+        self.attributes[key] = attr
+        self.dependents.setdefault(
+            dependent_value, []
+        ).append(attr)
+        attr.editable = (self.getValue() == dependent_value)
+        attr.parent = self
 
-    def remove_child(self, position):
-        '''
-        Reimplemented from :class:`Model` to update :`self.dependents`
-        '''
-        if position < 0 or position > self.child_count():
-            return False
-        child = self.children.pop(position)
-        child.parent = None
-        # Remove the child from the dependents lists
-        for k, v in self.dependents.iteritems():
-            if child in v:
-                v = [x for x in v if x != child]
-        del child
-        return True
-
-    def insert_child(self, position, child_model, key):
-        '''
-        Reimplemented from :class:`Model` to update :`self.dependents`
-        '''
-        if position < 0 or position > self.child_count():
-            return False
-        success = self.children.insert(position, child_model)
-        if success:
-            child_model.parent = self
-            self.dependents.setdefault(key, []).append(child_model)
-        return success
+    def add_attribute(self, name, kind, value, dependent_value):
+        attr = Attribute(kind, value, self)
+        self.set_attribute(name, attr)
 
     def validator(self, newValue):
         valid = True
@@ -499,7 +483,19 @@ class MetaAttribute(Model):
         self.attributes = OrderedDict()
         self.set_attribute('Name', NameAttribute(name))
         self.set_attribute('Kind', Attribute('list', kind))
-        self.get_attribute('Kind').options = Attribute.allowed_types
+        kindAttr = self.get_attribute('Kind')
+        kindAttr.options = Attribute.allowed_types
+        kindAttr.tooltip = 'Returns a list of options to choose from.'
+        kindAttr.set_attribute(
+            'List Options', 
+            Attribute(
+                'python',
+                '''def get_options(self):
+    return []
+                '''
+            ),
+            'list'
+        )
         self.set_attribute('Validator', Attribute('python', validator))
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))

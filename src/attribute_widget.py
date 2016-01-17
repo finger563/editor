@@ -286,5 +286,13 @@ class AttributeEditor(QtGui.QWidget):
             obj.setToolTip(attr.tooltip)
             dataMapper.addMapping(obj, dataMapperIndex)
             self.layout().addWidget(obj)
-        # return obj
-
+            for child_name, child_attr in attr.attributes.iteritems():
+                self.layout().addWidget(
+                    AttributeEditor(
+                        self,
+                        dataMapper=dataMapper,
+                        dataMapperIndex=dataMapperIndex,
+                        name=child_name,
+                        attr=child_attr
+                    )
+                )
