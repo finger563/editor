@@ -17,6 +17,11 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: FIX reference selection: must incorporate the get_references
+#       function otherwise references won't work since their scope
+#       won't be correct probably.  For instance can't see available
+#       references for ports because it's not in the right scope.
+
 # TODO: Fix bug with children insert that occurs when: a model has a
 #       child (pointer) with cardinality 1, and a sibling is added, a
 #       cardinality is thrown even though the sibling is not breaking

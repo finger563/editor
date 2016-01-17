@@ -256,6 +256,7 @@ class AttributeEditor(QtGui.QWidget):
             obj.setReferenceType(attr.dst_type)
             obj.setModel(dataMapper.model())
             # Do we need to get the root index based on the function?
+            # TODO: NEED TO FIX THE ROOT INDEX HERE; PASS IT IN FROM SOMEWHERE
             obj.setRootModelIndex(
                 dataMapper.rootIndex().parent().parent()
             )
