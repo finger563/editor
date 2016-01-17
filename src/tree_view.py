@@ -117,7 +117,8 @@ class TreeView(QtGui.QTreeView):
 
     def addTreeItem(self, mi, _type):
         def genericItem(e):
-            self.model().sourceModel().insertRows(0, 1, mi, _type)
+            row_count = mi.model().rowCount(mi)
+            self.model().sourceModel().insertRows(row_count, 1, mi, _type)
         return genericItem
 
     def delTreeItem(self, mi):
