@@ -28,6 +28,9 @@ from syntax import\
     ROSHighlighter,\
     PythonHighlighter
 
+# TODO: Figure out how nested attributes can be accessed from the
+#       model; i.e. how to configure them with the datawidgetmapper?
+
 # TODO: Figure out how to handle dependent attribute editing
 #       e.g. options/options_type & scope depending on on the kind of attribute
 #
@@ -45,10 +48,6 @@ from syntax import\
 #       user to select which highlighter to use as another attribute?
 
 # TODO: Integrate validators into the attribute editor
-
-# TODO: Convert attribute editor dataMapper to ManualSubmit to allow
-#       cancelling edits Make sure that changing it here doesn't
-#       affect the EditorItem's interaction
 
 
 class AttributePanel(QtGui.QWidget):
@@ -110,17 +109,26 @@ class AttributePanel(QtGui.QWidget):
                 )
             i += 1
 
-    def update(self, dataMapper):
+    def setDataMapper(self, dataMapper):
+        self.dataMapper = dataMapper
+
+    def update(self):
         self.init_layout()
 
-        r = dataMapper.model().getModel(dataMapper.rootIndex())
-        node = r.child(dataMapper.currentIndex())
+        node = self.dataMapper.model().getModel(
+            self.dataMapper.rootIndex()
+        )
         if not node:
             return
 
         self.add_header(node)
-        self.init_attributes(dataMapper, node.attributes)
-        self.add_ok_cancel()
+        self.init_attributes(self.dataMapper, node.attributes)
+
+        button = QtGui.QPushButton('Close', self)
+        button.setToolTip('Close the attribute editor.')
+        button.clicked.connect(self.hide)
+        self._layout.addWidget(button)
+
         self.unhide(None)
 
     def add_header(self, item):
@@ -134,37 +142,13 @@ class AttributePanel(QtGui.QWidget):
             pix.setPixmap(
                 pm.scaled(30, 30)
             )
-        qw = QtGui.QWidget()
-        hbox = QtGui.QHBoxLayout(qw)
-        hbox.setAlignment(QtCore.Qt.AlignLeft)
-        qw.setLayout(hbox)
-        hbox.addWidget(pix)
-        hbox.addWidget(label)
-        self._layout.addWidget(qw)
-
-    def add_ok_cancel(self):
-        ok_cancel_widget = QtGui.QWidget(self)
-        ok_cancel_layout = QtGui.QHBoxLayout(ok_cancel_widget)
-
-        button = QtGui.QPushButton('Save', self)
-        button.setToolTip('Save the updated attributes.')
-        button.clicked.connect(self.save)
-        ok_cancel_layout.addWidget(button)
-
-        button = QtGui.QPushButton('Close', self)
-        button.setToolTip('Close the attribute editor.')
-        button.clicked.connect(self.cancel)
-        ok_cancel_layout.addWidget(button)
-
-        ok_cancel_widget.setLayout(ok_cancel_layout)
-        self._layout.addWidget(ok_cancel_widget)
-
-    def save(self, event):
-        pass
-
-    def cancel(self, event):
-        self.hide(event)
-        self._unsaved_edits = False
+        header_widget = QtGui.QWidget()
+        header_layout = QtGui.QHBoxLayout(qw)
+        header_layout.setAlignment(QtCore.Qt.AlignLeft)
+        header_layout.addWidget(pix)
+        header_layout.addWidget(label)
+        header_widget.setLayout(header_layout)
+        self._layout.addWidget(header_widget)
 
     def updateGeo(self):
         rect = self.getNewRect(self._displayed)
@@ -220,6 +204,7 @@ class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent, dataMapper, dataMapperIndex, name, attr):
         super(AttributeEditor, self).__init__(parent)
         self.vbox = QtGui.QVBoxLayout()
+        self.vbox.setContentsMargins(0,0,0,0)
         self.setLayout(self.vbox)
 
         label = QtGui.QLabel()
@@ -258,7 +243,7 @@ class AttributeEditor(QtGui.QWidget):
             # Do we need to get the root index based on the function?
             # TODO: NEED TO FIX THE ROOT INDEX HERE; PASS IT IN FROM SOMEWHERE
             obj.setRootModelIndex(
-                dataMapper.rootIndex().parent().parent()
+                QtCore.QModelIndex()
             )
             obj.setCurrentReference(attr.getValue())
         elif 'file' in attr.getKind():
@@ -266,33 +251,22 @@ class AttributeEditor(QtGui.QWidget):
                              fname=attr.getValue(),
                              file_type=attr.getKind().split('_')[1],
                              parent=self)
-        elif 'dictionary' in attr.getKind():
-            label = None
-            _type = attr.getKind().split('_')[1]
-            obj = QtGui.QGroupBox(name)
-            layout = QtGui.QFormLayout()
-            for key_name in attr.options:
-                if 'bool' in _type:
-                    cb = QtGui.QCheckBox()
-                    cb.setChecked(bool(attr.getValue()[key_name]))
-                    layout.addRow(QtGui.QLabel(key_name+':'), cb)
-                else:
-                    print 'Unknown dictionary value type: {}'.format(_type)
-                    break
-            obj.setLayout(layout)
         if obj:
             if label:
                 self.layout().addWidget(label)
             obj.setToolTip(attr.tooltip)
             dataMapper.addMapping(obj, dataMapperIndex)
             self.layout().addWidget(obj)
+            i = 0
             for child_name, child_attr in attr.attributes.iteritems():
-                self.layout().addWidget(
-                    AttributeEditor(
-                        self,
-                        dataMapper=dataMapper,
-                        dataMapperIndex=dataMapperIndex,
-                        name=child_name,
-                        attr=child_attr
+                if child_attr.editable:
+                    self.layout().addWidget(
+                        AttributeEditor(
+                            self,
+                            dataMapper=dataMapper,
+                            dataMapperIndex=i,
+                            name=child_name,
+                            attr=child_attr
+                        )
                     )
-                )
+                i += 1

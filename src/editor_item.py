@@ -124,8 +124,9 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.modelindex = index
         self.dataMapper = QtGui.QDataWidgetMapper()
         self.dataMapper.setModel(self.modelindex.model())
-        self.dataMapper.setRootIndex(self.modelindex.parent())
-        self.dataMapper.setCurrentModelIndex(self.modelindex)
+        self.dataMapper.setRootIndex(
+            self.modelindex
+        )
         self.delegate = EditorItemDelegate(self)
         self.dataMapper.setItemDelegate(self.delegate)
         self.itemWidget = EditorItemWidget(None, self)
@@ -279,7 +280,8 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.itemWidget.mouseDoubleClickEvent(e)
         '''
         editor = self.scene().parent().getEditor()
-        editor.update(self.dataMapper)
+        editor.setDataMapper(self.dataMapper)
+        editor.update()
         editor.show()
         editor.raise_()
 

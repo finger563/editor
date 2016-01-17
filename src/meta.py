@@ -496,10 +496,10 @@ class MetaAttribute(Model):
             ),
             'list'
         )
-        self.set_attribute('Validator', Attribute('python', validator))
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
         self.set_attribute('Editable', Attribute('bool', editable))
+        self.set_attribute('Validator', Attribute('python', validator))
 
     def insert_child(self, position, child_model):
         '''
