@@ -80,6 +80,8 @@ class Model(QtCore.QObject):
         self.uuid = uuid.uuid4()
         self.parent = parent
 
+        self.attributes = OrderedDict()
+        self.pointers = Children()
         self.children = Children(cardinality={Model:
                                               '0..*',
                                               MetaPointer:
@@ -87,20 +89,18 @@ class Model(QtCore.QObject):
                                               MetaAttribute:
                                               '0..*'})
 
-        self.attributes = OrderedDict()
-        self.pointers = Children()
         self.kwargs = {}
 
     def row_count(self):
-        rows = [
+        return len(self.children)
+
+    def column_count(self):
+        columns = [
             self.children,
             self.attributes,
             self.pointers
         ]
-        return len(rows)
-
-    def column_count(self):
-        return len(self.children)
+        return len(columns)
 
     def child_count(self):
         return len(self.children)
@@ -129,23 +129,23 @@ class Model(QtCore.QObject):
 
     def child(self, row, column):
         item = None
-        if row == 0:
-            if column < len(self.children) and column >= 0:
-                item = self.children[column]
-        elif row == 1:
-            if column < len(self.attributes) and column >= 0:
-                item = self.attributes.values()[column]
-        elif row == 2:
-            if column < len(self.pointers) and column >= 0:
-                item = self.pointers[column]
+        if column == 0:
+            if row < len(self.children) and row >= 0:
+                item = self.children[row]
+        elif column == 1:
+            if row < len(self.attributes) and row >= 0:
+                item = self.attributes.values()[row]
+        elif column == 2:
+            if row < len(self.pointers) and row >= 0:
+                item = self.pointers[row]
         return item
 
     def column(self):
-        if self.parent:
-            return self.parent.children.index(self)
+        return 0
 
     def row(self):
-        return 0
+        if self.parent:
+            return self.parent.children.index(self)
 
     def remove_child(self, position):
         if position < 0 or position > self.child_count():
@@ -224,6 +224,13 @@ class Attribute(Model):
         self.dependents = OrderedDict()
         # Attributes already exist through inheritance of Model
         # self.attributes = OrderedDict()
+
+    def row(self):
+        if self.parent:
+            return self.parent.attributes.values().index(self)
+
+    def column(self):
+        return 1
 
     def set_attribute(self, key, attr, dependent_value):
         self.attributes[key] = attr
@@ -348,11 +355,20 @@ class Pointer(Model):
         self.dst_type = dst_type
         self.add_attribute('Destination', 'reference', '')
 
+    def row(self):
+        if self.parent:
+            return self.parent.pointers.index(self)
+
+    def column(self):
+        return 2
+
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
         model_dict['Attributes']['Destination Type'] = model.dst_type.__name__
-        model_dict['Attributes']['Destination'] = str(model['Destination'].uuid)
+        model_dict['Attributes']['Destination'] = str(
+            model['Destination'].uuid
+        )
         return model_dict
 
 
