@@ -227,6 +227,7 @@ class Attribute(Model):
 
     def row(self):
         if self.parent:
+            print self.parent.attributes.values().index(self)
             return self.parent.attributes.values().index(self)
 
     def column(self):
@@ -631,7 +632,10 @@ class Children(MutableSequence):
     def toDict(children):
         model_dict = OrderedDict()
         model_dict['Type'] = 'Children'
-        cardinality_dict = {key.__name__ : value for key,value in children._cardinality.iteritems()}
+        cardinality_dict = {
+            key.__name__: value
+            for key, value in children._cardinality.iteritems()
+        }
         model_dict['Cardinality'] = cardinality_dict
         model_dict['Objects'] = [x.__class__.toDict(x) for x in children]
         return model_dict

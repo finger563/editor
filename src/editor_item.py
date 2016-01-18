@@ -124,14 +124,15 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.modelindex = index
         self.dataMapper = QtGui.QDataWidgetMapper()
         self.dataMapper.setModel(self.modelindex.model())
-        self.dataMapper.setRootIndex(
-            self.modelindex
-        )
+        self.dataMapper.setRootIndex(self.modelindex.parent())
+        self.dataMapper.setCurrentModelIndex(self.modelindex)
+        self.dataMapper.setOrientation(QtCore.Qt.Vertical)
+        # self.dataMapper.setCurrentIndex(1)
         self.delegate = EditorItemDelegate(self)
         self.dataMapper.setItemDelegate(self.delegate)
         self.itemWidget = EditorItemWidget(None, self)
         self.dataMapper.addMapping(self.itemWidget, 0)
-        
+
         # graphics item which represents
         self._item = None
         # text label of this item

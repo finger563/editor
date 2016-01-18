@@ -83,10 +83,10 @@ class ItemModel(QtCore.QAbstractItemModel):
         if index.isValid():
             node = index.internalPointer()
             if role == QtCore.Qt.EditRole:
-                attr = node.attributes.values()[index.column()]
+                attr = node.attributes.values()[index.row()]
                 if attr.editable:
                     valid, errMsg = node.attributes.values()[
-                        index.column()].fromQVariant(value)
+                        index.row()].fromQVariant(value)
                     if not valid:
                         print 'ERROR: ', errMsg
                     self.dataChanged.emit(index, index)
