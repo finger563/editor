@@ -61,10 +61,16 @@ class ItemModel(QtCore.QAbstractItemModel):
             return None
         node = index.internalPointer()
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
-            if index.column() < len(node.attributes.items()):
+            # rows 0 and 2 are children and pointers respectively
+            if index.row() == 0 or index.row() == 2:
+                if 'Name' in node.attributes.keys():
+                    return node['Name']
+                else:
+                    return None
+            elif index.row() == 1:
                 return node.attributes.values()[index.column()].getValue()
         if role == QtCore.Qt.DecorationRole:
-            if index.row() == 0:
+            if index.column() == 0:
                 kind = node.kind()
                 return QtGui.QIcon(
                     QtGui.QPixmap('icons/model/' + kind + '.png')
@@ -76,21 +82,23 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == ItemModel.filter_meta_role:
             return node.kind()
         if role == ItemModel.filter_data_role:
-            return node.attributes.values()[index.column()].getValue()
+            return node.attributes.values()[index.row()].getValue()
         return None
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
-        if index.isValid():
+        if index.isValid() and role == QtCore.Qt.EditRole:
             node = index.internalPointer()
-            if role == QtCore.Qt.EditRole:
+            if index.column() == 0 or index.column() == 2:
                 attr = node.attributes.values()[index.row()]
-                if attr.editable:
-                    valid, errMsg = node.attributes.values()[
-                        index.row()].fromQVariant(value)
-                    if not valid:
-                        print 'ERROR: ', errMsg
-                    self.dataChanged.emit(index, index)
-                    return True
+            elif index.column() == 1:
+                attr = node
+            print attr, attr.getValue()
+            if attr.editable:
+                valid, errMsg = attr.fromQVariant(value)
+                if not valid:
+                    print 'ERROR: ', errMsg
+                self.dataChanged.emit(index, index)
+                return True
         return False
 
     def headerData(self, section, orientation, role):

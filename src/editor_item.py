@@ -127,7 +127,7 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.dataMapper.setRootIndex(self.modelindex.parent())
         self.dataMapper.setCurrentModelIndex(self.modelindex)
         self.dataMapper.setOrientation(QtCore.Qt.Vertical)
-        # self.dataMapper.setCurrentIndex(1)
+        self.dataMapper.setCurrentIndex(1)
         self.delegate = EditorItemDelegate(self)
         self.dataMapper.setItemDelegate(self.delegate)
         self.itemWidget = EditorItemWidget(None, self)

@@ -394,7 +394,7 @@ class Editor(QtGui.QMainWindow):
         self.tree_view.setModel(self.proxy_model)
         self.proxy_model.rowsInserted.connect(self.tree_view.rowsInserted)
         self.tree_view.expandAll()
-        
+
     def saveModel(self, event):
         '''Saves a model according to the current mode of the editor.'''
         import json

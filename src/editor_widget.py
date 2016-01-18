@@ -145,6 +145,8 @@ class EditorView(QtGui.QGraphicsView):
         self._dataMapper.setCurrentModelIndex(index)
         self._itemDelegate = EditorViewDelegate(self)
         self._dataMapper.setItemDelegate(self._itemDelegate)
+        self._dataMapper.setOrientation(QtCore.Qt.Vertical)
+        self._dataMapper.setCurrentIndex(1)
         self._dataMapper.addMapping(self, 0)
 
         # view model is static; will NEVER be edited or viewed,
