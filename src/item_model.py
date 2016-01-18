@@ -112,7 +112,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         '''
         parentNode = self.getModel(parent)
         # child should be implemented by data model
-        childItem = parentNode.child(row)
+        childItem = parentNode.child(row, column)
         if not childItem:
             return QtCore.QModelIndex()
         else:
@@ -125,7 +125,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         parentNode = node.parent
         if parentNode == self.rootNode:
             return QtCore.QModelIndex()
-        return self.createIndex(parentNode.row(), 0, parentNode)
+        return self.createIndex(parentNode.row(), parentNode.column(), parentNode)
         # data model needs to have a row method,
         # e.g. parent.children.index(self)
 

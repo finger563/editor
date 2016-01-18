@@ -95,7 +95,7 @@ class AttributePanel(QtGui.QWidget):
         self.updateGeo()
 
     def init_attributes(self, dataMapper, attr):
-        i = 0  # index into attributes (if it were a list)
+        i = 1  # index into attributes (if it were a list)
         for key, attr in attr.iteritems():
             if attr.editable:
                 self._layout.addWidget(
@@ -143,7 +143,7 @@ class AttributePanel(QtGui.QWidget):
                 pm.scaled(30, 30)
             )
         header_widget = QtGui.QWidget()
-        header_layout = QtGui.QHBoxLayout(qw)
+        header_layout = QtGui.QHBoxLayout(header_widget)
         header_layout.setAlignment(QtCore.Qt.AlignLeft)
         header_layout.addWidget(pix)
         header_layout.addWidget(label)

@@ -150,12 +150,17 @@ class Model(QtCore.QObject):
     def kind(self):
         return self.__class__.__name__
 
-    def child(self, position):
-        if position < self.child_count() and position >= 0:
-            return self.children[position]
-        else:
-            return None
+    def child(self, row, column):
+        item = None
+        if row < self.child_count() and row >= 0:
+            item = self.children[row]
+            if column > 0 and column <= len(item.attributes.values()):
+                item = item.attributes.values()[column - 1]
+        return item
 
+    def column(self):
+        return 0
+        
     def row(self):
         if self.parent:
             return self.parent.children.index(self)
