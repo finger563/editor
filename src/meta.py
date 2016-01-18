@@ -31,37 +31,11 @@ import uuid
 # TODO: Refactor Attribute fromQVariant() method so that it is no
 #       longer needed; should be handled by delegate probably.
 
-# TODO: Add constraints as python functions stored as text and exec'd
-
-# TODO: Add get_options for list attributes as stored python text
-
-# TODO: Figure out how exactly to create pointers in meta-models
-
-# TODO: Figure out how to convert pointer meta-models into pointers in
-#       real-models, need to determine what objects they correspond
-#       to, what their interaction paradigm is, and how they will be
-#       edited (and viewed)
-#
-#       Perhaps Pointers get serialized into attributes whose options
-#       are objects of that type?  Need support for getting all
-#       objects of a type within a scope of a model at run-time
-
-# TODO: Figure out how to properly handle dependencies between objects
-#       (esp. attributes)
-#
-#       How to handle even more complex dependencies such as between
-#       host_ref selection and the parent's hardware_ref?
-
 # TODO: Add scoping to some dependent attributes (e.g. for pointers
 #       etc.)
 
-# TODO: Figure out how to handle options for attributes, i.e. they
-#       could be a simple list of strings or they may be references to
-#       other types of objects e.g. pointer src_kind options is
-#       dynamic based on the FCO names
-
-# TODO: Might need to extend the cardinality code in children to
-#       handle more types of cardinality, e.g. '5'
+# TODO: Change cardinality to string with a validator that only
+#       accepts text of the form "X(..(Y|*))"
 
 # TODO: Allow for messages/services which are purely references to
 #       libarary/standard messages/services.  Perhaps just allow
@@ -75,22 +49,11 @@ import uuid
 #       Note: if they have the same definitions and name (and thus MD5
 #       hash) they will work out of the box
 
-# TODO: Add pointer conversion operations to 'convertModelToMeta()'
-
-# TODO: Make names only unique within scopes; enforce that no two children
-#       of the same parent share the same name.
-
 # TODO: Models can have same names depending on scope; make sure we
 #       use uniqueness here! (Editor.openEditorTabs)
 
-# TODO: Editing of attributes needs to be worked out some more,
-#       w.r.t. the editable tag and what can/should be editable from
-#       where.
 
-# TODO: Refactor convertModelToMeta so that each meta-type performs
-#       its own conversion
-
-
+# Why is this not a function of Model?
 def get_children(model, kind):
     if model.kind() == kind:
         return [model]
@@ -106,9 +69,11 @@ class Model(QtCore.QObject):
 
     Every Model has the following:
 
-    * parent -- A parent Model Object.
-    * children -- A list of children (Model) objects.
-    * attributes -- A dictionary of attributes.
+    * uuid -- A unique identifier for this object.
+    * parent -- A parent :class:`Model` object.
+    * children -- A list of child :class:`Model` objects.
+    * attributes -- A dictionary mapping names to :class:`Attribute` objects.
+    * pointers -- A list of :class:`Pointer` objects
     '''
     def __init__(self, parent=None):
         QtCore.QObject.__init__(self)
@@ -123,7 +88,22 @@ class Model(QtCore.QObject):
                                               '0..*'})
 
         self.attributes = OrderedDict()
+        self.pointers = Children()
         self.kwargs = {}
+
+    def row_count(self):
+        rows = [
+            self.children,
+            self.attributes,
+            self.pointers
+        ]
+        return len(rows)
+
+    def column_count(self):
+        return len(self.children)
+
+    def child_count(self):
+        return len(self.children)
 
     def __getitem__(self, key):
         return self.attributes[key].getValue()
@@ -144,26 +124,28 @@ class Model(QtCore.QObject):
         self.attributes[key] = attr
         attr.parent = self
 
-    def child_count(self):
-        return len(self.children)
-
     def kind(self):
         return self.__class__.__name__
 
     def child(self, row, column):
         item = None
-        if row < self.child_count() and row >= 0:
-            item = self.children[row]
-            if column > 0 and column <= len(item.attributes.values()):
-                item = item.attributes.values()[column - 1]
+        if row == 0:
+            if column < len(self.children) and column >= 0:
+                item = self.children[column]
+        elif row == 1:
+            if column < len(self.attributes) and column >= 0:
+                item = self.attributes.values()[column]
+        elif row == 2:
+            if column < len(self.pointers) and column >= 0:
+                item = self.pointers[column]
         return item
 
     def column(self):
-        return 0
-        
-    def row(self):
         if self.parent:
             return self.parent.children.index(self)
+
+    def row(self):
+        return 0
 
     def remove_child(self, position):
         if position < 0 or position > self.child_count():
@@ -194,10 +176,11 @@ class Model(QtCore.QObject):
         model_dict['Type'] = model.kind()
         model_dict['UUID'] = str(model.uuid)
         model_dict['Attributes'] = {
-            key: value.__class__.toDict(value) 
+            key: value.__class__.toDict(value)
             for key, value in model.attributes.iteritems()
         }
         model_dict['Children'] = Children.toDict(model.children)
+        model_dict['Pointers'] = Children.toDict(model.children)
         return model_dict
 
 

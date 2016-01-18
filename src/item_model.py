@@ -47,12 +47,14 @@ class ItemModel(QtCore.QAbstractItemModel):
             parentNode = self.rootNode
         else:
             parentNode = parent.internalPointer()
-        return parentNode.child_count()  # should be implemented by data model
+        return parentNode.row_count()
 
     def columnCount(self, parent):
-        # perhaps this should return the actual number of attributes,
-        # but be reimplemented in a proxy model for the tree view?
-        return 1
+        if not parent.isValid():
+            parentNode = self.rootNode
+        else:
+            parentNode = parent.internalPointer()
+        return parentNode.column_count()
 
     def data(self, index, role):
         if not index.isValid():
@@ -62,7 +64,7 @@ class ItemModel(QtCore.QAbstractItemModel):
             if index.column() < len(node.attributes.items()):
                 return node.attributes.values()[index.column()].getValue()
         if role == QtCore.Qt.DecorationRole:
-            if index.column() == 0:
+            if index.row() == 0:
                 kind = node.kind()
                 return QtGui.QIcon(
                     QtGui.QPixmap('icons/model/' + kind + '.png')
@@ -111,7 +113,6 @@ class ItemModel(QtCore.QAbstractItemModel):
         :param in parent: :class:`QModelIndex` of the parent
         '''
         parentNode = self.getModel(parent)
-        # child should be implemented by data model
         childItem = parentNode.child(row, column)
         if not childItem:
             return QtCore.QModelIndex()
@@ -120,14 +121,15 @@ class ItemModel(QtCore.QAbstractItemModel):
 
     def parent(self, index):
         '''Returns a :class:`QModelIndex` for the parent of index.'''
-        # index.row() , index.column()
         node = self.getModel(index)
         parentNode = node.parent
         if parentNode == self.rootNode:
             return QtCore.QModelIndex()
-        return self.createIndex(parentNode.row(), parentNode.column(), parentNode)
-        # data model needs to have a row method,
-        # e.g. parent.children.index(self)
+        return self.createIndex(
+            parentNode.row(),
+            parentNode.column(),
+            parentNode
+        )
 
     def insertRows(self, position, rows, parent=QtCore.QModelIndex(),
                    _type=None):
