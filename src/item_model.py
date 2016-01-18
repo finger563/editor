@@ -50,6 +50,8 @@ class ItemModel(QtCore.QAbstractItemModel):
         return parentNode.child_count()  # should be implemented by data model
 
     def columnCount(self, parent):
+        # perhaps this should return the actual number of attributes,
+        # but be reimplemented in a proxy model for the tree view?
         return 1
 
     def data(self, index, role):

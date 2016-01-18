@@ -145,34 +145,22 @@ class Model(QtCore.QObject):
         attr.parent = self
 
     def child_count(self):
-        '''
-        A subclass should override this if it stores children differently.
-        '''
         return len(self.children)
 
     def kind(self):
         return self.__class__.__name__
 
     def child(self, position):
-        '''
-        A subclass should override this if it stores children differently.
-        '''
         if position < self.child_count() and position >= 0:
             return self.children[position]
         else:
             return None
 
     def row(self):
-        '''
-        A subclass should override this if it stores children differently.
-        '''
         if self.parent:
             return self.parent.children.index(self)
 
     def remove_child(self, position):
-        '''
-        A subclass should override this if it stores children differently.
-        '''
         if position < 0 or position > self.child_count():
             return False
         child = self.children.pop(position)
@@ -181,9 +169,6 @@ class Model(QtCore.QObject):
         return True
 
     def insert_child(self, position, child_model):
-        '''
-        A subclass should override this if it stores children differently.
-        '''
         if position < 0 or position > self.child_count():
             return False
         success = self.children.insert(position, child_model)
