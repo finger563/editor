@@ -80,7 +80,11 @@ class OutputWidget(QtGui.QWidget):
         super(OutputWidget, self).__init__(parent)
 
         self._console = QtGui.QTextBrowser(self)
-
+        self._console.moveCursor(QtGui.QTextCursor.End)
+        self._console.ensureCursorVisible()        
+        self._console.textChanged.connect(
+            self.scroll
+        )
         self._highlight = syntax.OutputHighlighter(self._console.document())
 
         layout = QtGui.QVBoxLayout(self)
@@ -93,6 +97,9 @@ class OutputWidget(QtGui.QWidget):
         XStream.stderr().messageWritten.connect(
             self._console.insertPlainText
         )
+
+    def scroll(self):
+        self._console.moveCursor(QtGui.QTextCursor.End)
 
 
 class TabbedOutputWidget(QtGui.QTabWidget):
