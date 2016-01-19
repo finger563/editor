@@ -109,8 +109,14 @@ class AttributePanel(QtGui.QWidget):
                 )
             i += 1
 
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
+    def sourceDataChanged(self, topLeft, bottomRight):
+        # TODO: Should test to see if our index has changed!
+        self.update()
+
     def setDataMapper(self, dataMapper):
         self.dataMapper = dataMapper
+        self.dataMapper.model().dataChanged.connect(self.sourceDataChanged)
 
     def update(self):
         self.init_layout()
@@ -257,13 +263,25 @@ class AttributeEditor(QtGui.QWidget):
             obj.setToolTip(attr.tooltip)
             dataMapper.addMapping(obj, dataMapperIndex)
             self.layout().addWidget(obj)
+
+            # Configure the new datamapper for the child attribute
+            childDataMapper = QtGui.QDataWidgetMapper()
+            model = dataMapper.model()
+            childDataMapper.setModel(model)
+            childDataMapper.setOrientation(QtCore.Qt.Vertical)
+            parentIndex = dataMapper.rootIndex()
+            selfIndex = model.index(dataMapperIndex, 1, parentIndex)
+            childDataMapper.setRootIndex(selfIndex)
+            childDataMapper.setCurrentIndex(1)
+            childDataMapper.setItemDelegate(dataMapper.itemDelegate())
+
             i = 0
             for child_name, child_attr in attr.attributes.iteritems():
                 if child_attr.editable:
                     self.layout().addWidget(
                         AttributeEditor(
                             self,
-                            dataMapper=dataMapper,
+                            dataMapper=childDataMapper,
                             dataMapperIndex=i,
                             name=child_name,
                             attr=child_attr

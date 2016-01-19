@@ -320,11 +320,9 @@ class Editor(QtGui.QMainWindow):
             )
             if fname:
                 meta_root = self.open_model(fname)
-                meta_dict = OrderedDict()
                 base = MetaModel.toMeta(meta_root)
-                #base = convertModelToMeta(meta_root, meta_dict)
-                #meta_dict['__root__'] = base
-                #self.META = meta_dict
+                # meta_dict['__root__'] = base
+                # self.META = meta_dict
                 root = base()
         elif self.editor_mode == 'Meta Model':
             root = MetaModel()

@@ -476,15 +476,15 @@ class MetaAttribute(Model):
         self.set_attribute('Kind', Attribute('list', kind))
         kindAttr = self.get_attribute('Kind')
         kindAttr.options = Attribute.allowed_types
-        kindAttr.tooltip = 'Returns a list of options to choose from.'
+        listOptionsAttr = Attribute(
+            'python',
+            '''def get_options(self):
+    return []'''
+        )
+        listOptionsAttr.tooltip = 'Returns a list of options to choose from.'
         kindAttr.set_attribute(
             'List Options',
-            Attribute(
-                'python',
-                '''def get_options(self):
-    return []
-                '''
-            ),
+            listOptionsAttr,
             'list'
         )
         self.set_attribute('Tooltip', Attribute('string', tooltip))
