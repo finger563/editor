@@ -17,6 +17,14 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Update the fromMeta functions to build meta-dictionary of
+#       name:type pairs for quickly instantiating objects as needed.
+#       Then we can use this meta-model dictionary for creating models
+#       (and possibly checking them as well?)
+
+# TODO: Complete fromMeta functions to properly map UUID instead of
+#       just loading them
+
 # TODO: FIX reference selection: must incorporate the get_references
 #       function otherwise references won't work since their scope
 #       won't be correct probably.  For instance can't see available

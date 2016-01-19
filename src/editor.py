@@ -44,6 +44,23 @@ from tree_view import\
 from output import\
     TabbedOutputWidget
 
+# TODO: Complete building of meta-model dict
+
+# TODO: Use meta-model dict to check model upon loading (before
+#       creating objects) (for structure, types, cardinalities)
+
+# TODO: Add meta-model name & MD5 to saved models for loading later
+
+# TODO: Allow creation of sub-trees of the meta-model, e.g. creating a
+#       package or a hardware or a component as a standalone model.
+#       Will possibly need to reference other models?
+
+# TODO: Use meta-model name/md5 checking to allow loading of
+#       cooperative models.  Will need to traverse meta-model
+#       tree/dict to find where the model's root object belongs;
+#       i.e. if it is a package type, will need to find where
+#       'Package' Objects are allowed.
+
 # TODO: Need to close all related widgets when an item is removed from
 #       the model
 
