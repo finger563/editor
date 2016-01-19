@@ -71,7 +71,7 @@ class AttributePanel(QtGui.QWidget):
         while self._layout and self._layout.count():
             child = self._layout.takeAt(0)
             child.widget().deleteLater()
-        self.vbox.removeItem(self.vbox.itemAt(0))        
+        self.vbox.removeItem(self.vbox.itemAt(0))
 
     def init_layout(self):
         self.clear_layout()
@@ -95,7 +95,7 @@ class AttributePanel(QtGui.QWidget):
         self.updateGeo()
 
     def init_attributes(self, dataMapper, attr):
-        i = 1  # index into attributes (if it were a list)
+        i = 0  # index into attributes (if it were a list)
         for key, attr in attr.iteritems():
             if attr.editable:
                 self._layout.addWidget(
@@ -204,7 +204,7 @@ class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent, dataMapper, dataMapperIndex, name, attr):
         super(AttributeEditor, self).__init__(parent)
         self.vbox = QtGui.QVBoxLayout()
-        self.vbox.setContentsMargins(0,0,0,0)
+        self.vbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.vbox)
 
         label = QtGui.QLabel()

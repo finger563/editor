@@ -61,14 +61,12 @@ class ItemModel(QtCore.QAbstractItemModel):
             return None
         node = index.internalPointer()
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
-            # rows 0 and 2 are children and pointers respectively
-            if index.row() == 0 or index.row() == 2:
-                if 'Name' in node.attributes.keys():
-                    return node['Name']
-                else:
-                    return None
-            elif index.row() == 1:
-                return node.attributes.values()[index.column()].getValue()
+            #  columns 0 and 2 are children and pointers respectively
+            if index.column() == 0 or index.column() == 2:
+                return node['Name']
+            # column 1 is attributes
+            elif index.column() == 1:
+                return node.getValue()
         if role == QtCore.Qt.DecorationRole:
             if index.column() == 0:
                 kind = node.kind()
@@ -82,22 +80,32 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == ItemModel.filter_meta_role:
             return node.kind()
         if role == ItemModel.filter_data_role:
-            return node.attributes.values()[index.row()].getValue()
+            if index.column() == 0:
+                return node['Name']
         return None
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
         if index.isValid() and role == QtCore.Qt.EditRole:
             node = index.internalPointer()
             if index.column() == 0 or index.column() == 2:
-                attr = node.attributes.values()[index.row()]
+                attr = node.get_attribute('Name')
             elif index.column() == 1:
                 attr = node
-            print attr, attr.getValue()
             if attr.editable:
                 valid, errMsg = attr.fromQVariant(value)
                 if not valid:
                     print 'ERROR: ', errMsg
                 self.dataChanged.emit(index, index)
+                if index.internalPointer() == attr:
+                    self.dataChanged.emit(
+                        index.parent(),
+                        index.parent()
+                    )
+                else:
+                    self.dataChanged.emit(
+                        index.child(0, 1),
+                        index.child(0, 1)
+                    )
                 return True
         return False
 

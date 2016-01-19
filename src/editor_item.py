@@ -65,6 +65,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             return super(EditorItemDelegate, self).eventFilter(editor, event)
 
     def setEditorData(self, editor, index):
+        "updating editor data"
         if type(editor) == EditorItemWidget:
             text = index.data().toString()
             # SET THE EDITOR ITEM TEXT HERE
@@ -84,6 +85,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
     def setModelData(self, editor, model, index):
+        "updating model data"
         if type(editor) == EditorItemWidget:
             return
         elif type(editor) == FileEditor:
@@ -124,12 +126,14 @@ class EditorItem(QtGui.QGraphicsWidget):
         self.modelindex = index
         self.dataMapper = QtGui.QDataWidgetMapper()
         self.dataMapper.setModel(self.modelindex.model())
-        self.dataMapper.setRootIndex(self.modelindex.parent())
-        self.dataMapper.setCurrentModelIndex(self.modelindex)
         self.dataMapper.setOrientation(QtCore.Qt.Vertical)
+
+        self.dataMapper.setRootIndex(self.modelindex)
         self.dataMapper.setCurrentIndex(1)
+
         self.delegate = EditorItemDelegate(self)
         self.dataMapper.setItemDelegate(self.delegate)
+
         self.itemWidget = EditorItemWidget(None, self)
         self.dataMapper.addMapping(self.itemWidget, 0)
 

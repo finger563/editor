@@ -38,7 +38,7 @@ class EditorViewDelegate(QtGui.QItemDelegate):
     def setEditorData(self, editor, index):
         if type(editor) == EditorView:
             text = index.data().toString()
-            # print 'text: \'{}\''.format(text)
+            # print 'tab text: \'{}\''.format(text)
             i = editor.parent().parent().indexOf(editor)
             editor.parent().parent().setTabText(i, text)
             return
@@ -46,8 +46,6 @@ class EditorViewDelegate(QtGui.QItemDelegate):
 
     def setModelData(self, editor, model, index):
         if type(editor) == EditorView:
-            # text = index.data().toString()
-            # print 'set data: \'{}\''.format(text)
             return
         return super(EditorViewDelegate, self).setModelData(editor,
                                                             model, index)
@@ -120,6 +118,8 @@ class EditorView(QtGui.QGraphicsView):
 
         self._proxyModel = None
         self._dataMapper = QtGui.QDataWidgetMapper()
+        self._itemDelegate = EditorViewDelegate(self)
+        self._dataMapper.setItemDelegate(self._itemDelegate)
 
     def viewModel(self):
         # the view model is not encapsulated by data/item models
@@ -140,13 +140,12 @@ class EditorView(QtGui.QGraphicsView):
         scene = EditorScene(self)
         self.setScene(scene)
 
-        parent = index.parent()
-        self._dataMapper.setRootIndex(parent)
-        self._dataMapper.setCurrentModelIndex(index)
-        self._itemDelegate = EditorViewDelegate(self)
-        self._dataMapper.setItemDelegate(self._itemDelegate)
+        self._dataMapper.setModel(index.model())
         self._dataMapper.setOrientation(QtCore.Qt.Vertical)
+
+        self._dataMapper.setRootIndex(index)
         self._dataMapper.setCurrentIndex(1)
+
         self._dataMapper.addMapping(self, 0)
 
         # view model is static; will NEVER be edited or viewed,

@@ -19,8 +19,6 @@ __status__ = 'Production'
 
 from PyQt4 import QtGui, QtCore
 
-from item_model import ItemModel
-
 # TODO: Refactor contextMenu to not use children, but instead use the
 #       current meta-model to determine available actions.
 
@@ -37,6 +35,9 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
 
     def __init__(self, parent):
         super(SortFilterProxyModel, self).__init__(parent)
+
+    def columnCount(self, parent):
+        return 1
 
     def setSourceModel(self, model):
         super(SortFilterProxyModel, self).setSourceModel(model)

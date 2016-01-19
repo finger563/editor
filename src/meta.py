@@ -222,12 +222,9 @@ class Attribute(Model):
 
         # Maps value to list of dependent children
         self.dependents = OrderedDict()
-        # Attributes already exist through inheritance of Model
-        # self.attributes = OrderedDict()
 
     def row(self):
         if self.parent:
-            print self.parent.attributes.values().index(self)
             return self.parent.attributes.values().index(self)
 
     def column(self):
