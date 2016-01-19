@@ -291,13 +291,14 @@ class Editor(QtGui.QMainWindow):
         '''
         mi = self.proxy_model.mapToSource(modelIndex)
         item = self.model.getModel(mi)
-        name = item["Name"]
+        key = str(item.uuid)
+        name = item.get_attribute('Name').scoped()
         if name not in self.openEditorTabs:
             ev = EditorView(self.tabbedEditorWidget)
             ev.setProxyModel(self.proxy_model)
-            self.openEditorTabs[name] = ev
+            self.openEditorTabs[key] = ev
         else:
-            ev = self.openEditorTabs[name]
+            ev = self.openEditorTabs[key]
         self.tabbedEditorWidget.addTab(ev, name)
         ev.init_ui(index=mi, fname=item.kind() + '.view')
         self.tabbedEditorWidget.setCurrentIndex(

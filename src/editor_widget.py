@@ -37,8 +37,8 @@ class EditorViewDelegate(QtGui.QItemDelegate):
 
     def setEditorData(self, editor, index):
         if type(editor) == EditorView:
-            text = index.data().toString()
-            # print 'tab text: \'{}\''.format(text)
+            attr = index.model().getModel(index)
+            text = attr.scoped()
             i = editor.parent().parent().indexOf(editor)
             editor.parent().parent().setTabText(i, text)
             return

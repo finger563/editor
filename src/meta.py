@@ -330,6 +330,11 @@ class NameAttribute(Attribute):
             )
         return valid, errMsg
 
+    def scoped(self):
+        name = self.getValue()
+        parent = self.parent.parent['Name']
+        return parent + '/' + name
+
     @staticmethod
     def toDict(model):
         model_dict = Attribute.toDict(model)
