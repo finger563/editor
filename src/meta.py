@@ -305,8 +305,8 @@ class Attribute(Model):
         model_dict['Kind'] = model.getKind()
         model_dict['Value'] = model.getValue()
         model_dict['Dependents'] = {
-            key: str(value.uuid)
-            for key, value in model.dependents
+            key: [str(x.uuid) for x in values]
+            for key, values in model.dependents.iteritems()
         }
         return model_dict
 
@@ -394,7 +394,6 @@ class MetaModel(Model):
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
-        model_dict['Type'] = 'MetaModel'
         return model_dict
 
     @staticmethod
@@ -474,7 +473,7 @@ class MetaAttribute(Model):
         kindAttr.options = Attribute.allowed_types
         kindAttr.tooltip = 'Returns a list of options to choose from.'
         kindAttr.set_attribute(
-            'List Options', 
+            'List Options',
             Attribute(
                 'python',
                 '''def get_options(self):
@@ -500,7 +499,6 @@ class MetaAttribute(Model):
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
-        model_dict['Type'] = 'MetaAttribute'
         return model_dict
 
     @staticmethod
