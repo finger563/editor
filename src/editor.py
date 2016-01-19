@@ -293,7 +293,7 @@ class Editor(QtGui.QMainWindow):
         item = self.model.getModel(mi)
         key = str(item.uuid)
         name = item.get_attribute('Name').scoped()
-        if name not in self.openEditorTabs:
+        if key not in self.openEditorTabs:
             ev = EditorView(self.tabbedEditorWidget)
             ev.setProxyModel(self.proxy_model)
             self.openEditorTabs[key] = ev

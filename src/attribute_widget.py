@@ -90,7 +90,7 @@ class AttributePanel(QtGui.QWidget):
         )
 
         self.vbox.addWidget(self.scrollArea)
-        self._layout.setContentsMargins(20, 20, 20, 20)
+        self._layout.setContentsMargins(0, 0, 0, 0)
 
         self.updateGeo()
 
@@ -201,7 +201,7 @@ class AttributePanel(QtGui.QWidget):
         self.hide(event)
 
 
-class AttributeEditor(QtGui.QWidget):
+class AttributeEditor(QtGui.QFrame):
     '''Enables editing of the attributes of a model object.  Interfaces
     with a subclass of a :class:`QDataWidgetMapper` to enable
     automatic updating back and forth between the model and the
@@ -210,7 +210,7 @@ class AttributeEditor(QtGui.QWidget):
     def __init__(self, parent, dataMapper, dataMapperIndex, name, attr):
         super(AttributeEditor, self).__init__(parent)
         self.vbox = QtGui.QVBoxLayout()
-        self.vbox.setContentsMargins(0, 0, 0, 0)
+        self.vbox.setContentsMargins(20, 0, 0, 0)
         self.setLayout(self.vbox)
 
         label = QtGui.QLabel()
