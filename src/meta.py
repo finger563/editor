@@ -451,6 +451,56 @@ class MetaModel(Model):
         )
         return new_model
 
+    @staticmethod
+    def fromMeta(model):
+        allowed_kids = OrderedDict()
+        attr_dict = OrderedDict()
+        ptrs = OrderedDict()
+        for obj in model['Children']['Objects']:
+            if obj['Type'] == 'MetaModel':
+                allowed_kids[ MetaModel.fromMeta(obj) ] = obj['Attributes']['Cardinality']['Value']
+            elif obj['Type'] == 'MetaPointer':
+                ptrs[obj['Attributes']['Name']['Value']] = MetaPointer.fromMeta(obj)
+            elif obj['Type'] == 'MetaAttribute':
+                attr_dict[obj['Attributes']['Name']['Value']] = MetaAttribute.fromMeta(obj)
+
+        # Define the init function inline here for the new class, make
+        # sure all attributes, pointers, children, etc. are set up
+        # properly
+        def modelInit(self, parent=None):
+            Model.__init__(self, parent)
+            self.attributes = OrderedDict()
+            self.set_attribute('Name', NameAttribute(self.kind()))
+            # Handle children
+            self.children = Children(cardinality=allowed_kids)
+            for t, c in self.children.get_cardinality().iteritems():
+                min_number = int(c.split('..')[0])
+                for i in range(0, min_number):
+                    new_child = t()
+                    new_child['Name'] = '{}_{}'.format(t.__name__, i)
+                    self.add_child(new_child)
+
+            # Handle pointers
+            ptr_types = [type(t) for t in ptrs.values()]
+            for t in ptr_types:
+                self.children.set_cardinality_of(t, '1')
+
+            for name, ptr in ptrs.iteritems():
+                self.add_child(ptr)
+
+            # Handle attributes
+            for name, attr in attr_dict.iteritems():
+                self.set_attribute(name, attr)
+
+        new_model = type(
+            str(model['Attributes']['Name']['Value']),
+            (Model, ),
+            {
+                '__init__': modelInit
+            }
+        )
+        return new_model
+    
 
 class MetaAttribute(Model):
     '''
@@ -531,6 +581,31 @@ class MetaAttribute(Model):
         print new_attr()
         return new_attr()
 
+    @staticmethod
+    def fromMeta(model):
+        exec model['Attributes']['Validator']['Value'] in globals()
+
+        def attrInit(self):
+            Attribute.__init__(
+                self,
+                model['Attributes']['Kind']['Type'],
+                Attribute.default_vals[model['Attributes']['Kind']['Value']]
+            )
+
+        new_attr = type(
+            str(model['Attributes']['Name']['Value']),
+            (Attribute, ),
+            {
+                '__init__': attrInit,
+                'tooltip': model['Attributes']['Tooltip']['Value'],
+                'display': model['Attributes']['Display']['Value'],
+                'editable': model['Attributes']['Editable']['Value'],
+                'validator': validator,
+            }
+        )
+        print new_attr()
+        return new_attr()
+    
 
 class MetaPointer(Model):
     '''
@@ -605,6 +680,37 @@ class MetaPointer(Model):
         )
         return new_ptr()
 
+    @staticmethod
+    def fromMeta(model):
+
+        # should fill out get_references(self)
+        exec model['Attributes']['Valid Objects']['Value'] in globals()
+
+        def ref_wrapper(s1, s2):
+            return s1.get_references()
+
+        def ptrInit(self):
+            Pointer.__init__(
+                self,
+                dst_type=model['Attributes']['Destination Type']
+            )
+            self['Name'] = model['Attributes']['Name']['Value']
+            destAttr = self.get_attribute('Destination')
+            destAttr.dst_type = model['Attributes']['Destination Type']
+            destAttr.tooltip = model['Attributes']['Tooltip']['Value']
+            destAttr.display = model['Attributes']['Display']['Value']
+            
+        new_ptr = type(
+            str(model['Attributes']['Name']['Value']),
+            (Pointer, ),
+            {
+                '__init__': ptrInit,
+                # from model['Valid Objects'] as exec'd text
+                'get_references': get_references,
+            }
+        )
+        return new_ptr()
+    
 
 class Children(MutableSequence):
     '''Children list which extends :class:`MutableSequence` and enforces

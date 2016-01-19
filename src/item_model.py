@@ -60,6 +60,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return None
         node = index.internalPointer()
+        print "Hey node: ", node
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
             #  columns 0 and 2 are children and pointers respectively
             if index.column() == 0 or index.column() == 2:

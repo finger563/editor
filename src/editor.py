@@ -358,9 +358,10 @@ class Editor(QtGui.QMainWindow):
         import json
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
-            
-            m = None
-            return m
+            root = MetaModel.fromMeta(model_dict)
+            print root().__dict__
+            print root().row_count()
+            return root()
 
     def load_model(self, model):
         '''
