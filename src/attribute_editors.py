@@ -88,21 +88,21 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsInserted(self, parent, start, end):
-        self.buildMap(self.sourceModel())
+        self.buildMap(self.sourceModel(), self.rootIndex)
         self.rowsInserted.emit(self.mapFromSource(parent),
                                start,
                                end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsRemoved(self, parent, start, end):
-        self.buildMap(self.sourceModel())
+        self.buildMap(self.sourceModel(), self.rootIndex)
         self.rowsRemoved.emit(self.mapFromSource(parent),
                               start,
                               end)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
-        self.buildMap(self.sourceModel())
+        self.buildMap(self.sourceModel(), self.rootIndex)
         self.dataChanged.emit(self.mapFromSource(topLeft),
                               self.mapFromSource(bottomRight))
 
@@ -120,9 +120,13 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
                 row = self.buildMap(model, index, row)
         return row
 
+    def setRootModelIndex(self, index):
+        self.rootIndex = index
+
     def setSourceModel(self, model):
+        self.rootIndex = QtCore.QModelIndex()
         QtGui.QAbstractProxyModel.setSourceModel(self, model)
-        self.buildMap(model)
+        self.buildMap(model, self.rootIndex)
         model.dataChanged.connect(self.sourceDataChanged)
         model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
         model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
@@ -176,27 +180,23 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def sourceRowsAboutToBeInserted(self, parent, start, end):
         self.rowsAboutToBeInserted.emit(parent,
                                         start, end)
-        # self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsAboutToBeRemoved(self, parent, start, end):
         self.rowsAboutToBeRemoved.emit(parent,
                                        start, end)
-        # self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsInserted(self, parent, start, end):
         self.rowsInserted.emit(self.mapFromSource(parent),
                                start,
                                end)
-        # self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsRemoved(self, parent, start, end):
         self.rowsRemoved.emit(self.mapFromSource(parent),
                               start,
                               end)
-        # self.invalidate()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
@@ -207,13 +207,16 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def set_filter_type(self, _type):
         self.filter_type = _type
 
+    def set_filter_func(self, _func):
+        self.filter_func = _func
+
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
         p = self.sourceModel()
         i = p.mapToSource(index0)
         m = self.sourceModel().sourceModel()
         item = m.getModel(i)
-        test = item.kind() == self.filter_type
+        test = item.kind() == self.filter_type and self.filter_func(item)
         return test
 
 
@@ -244,15 +247,18 @@ class ReferenceEditor(QtGui.QComboBox):
         self.pFilterModel = ComboSortFilterProxyModel(self)
         self.pFilterModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.pFilterModel.setDynamicSortFilter(True)
-        self.pFilterModel.setSourceModel(self.flatModel)
 
     def setReferenceType(self, _type):
         self.pFilterModel.set_filter_type(_type)
 
+    def setFilterFunc(self, _func):
+        self.pFilterModel.set_filter_func(_func)
+
     def setRootModelIndex(self, index):
-        r = self.flatModel.mapFromSource(index)
-        rmi = self.pFilterModel.mapFromSource(r)
-        super(ReferenceEditor, self).setRootModelIndex(rmi)
+        self.flatModel.setRootModelIndex(index)
+        #r = self.flatModel.mapFromSource(index)
+        #rmi = self.pFilterModel.mapFromSource(r)
+        #super(ReferenceEditor, self).setRootModelIndex(rmi)
 
     def setModel(self, model):
         self.flatModel.setSourceModel(model)

@@ -491,10 +491,9 @@ class MetaModel(Model):
             # Handle pointers
             ptr_types = [type(t) for t in ptrs.values()]
             for t in ptr_types:
-                self.children.set_cardinality_of(t, '1')
-
+                self.pointers.set_cardinality_of(t, '1')
             for name, ptr in ptrs.iteritems():
-                self.add_child(ptr)
+                self.pointers.append(ptr)
 
             # Handle attributes
             for name, attr in attr_dict.iteritems():
@@ -586,7 +585,6 @@ class MetaAttribute(Model):
                 'validator': validator,
             }
         )
-        print new_attr()
         return new_attr()
 
     @staticmethod
@@ -611,15 +609,12 @@ class MetaAttribute(Model):
                 'validator': validator,
             }
         )
-        print new_attr()
         return new_attr()
     
 
 class MetaPointer(Model):
     '''
     '''
-
-    valid_scopes = ['Root', 'Parent']
 
     def __init__(self,
                  parent=None,
@@ -635,20 +630,40 @@ class MetaPointer(Model):
         self.add_attribute('Destination Type', 'reference', '')
         destAttr = self.get_attribute('Destination Type')
         destAttr.dst_type = 'MetaModel'
+        def wrapper1():
+            def generic():
+                r = self.parent
+                while r.parent is not None:
+                    r = r.parent
+                return r.children[0]
+            return generic
+        def wrapper2():
+            def generic(obj):
+                return True
+            return generic
+        destAttr.get_root = wrapper1()
+        destAttr.filter_function = wrapper2()
 
         self.set_attribute(
-            'Valid Objects',
+            'Root Object',
             Attribute(
                 'python',
-                '''def get_references(self):
-    _type = self.dst_type
-    retTypes = [x['Name'] for x in get_children(self.parent, _type)]
-    return retTypes'''
+                '''def get_root(self):
+    return self.parent'''
+            )
+        )
+        self.set_attribute(
+            'Filter Function',
+            Attribute(
+                'python',
+                '''def filter_function(self, obj):
+    objIsAllowed = True
+    return objIsAllowed'''
             )
         )
         self.set_attribute('Tooltip', Attribute('string', tooltip))
         self.set_attribute('Display', Attribute('string', display))
-
+        
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
@@ -660,8 +675,10 @@ class MetaPointer(Model):
     @staticmethod
     def toMeta(model):
 
-        # should fill out get_references(self)
-        exec model['Valid Objects'] in globals()
+        # should fill out get_root(self)
+        exec model['Root Object'] in globals()
+        # should fill out filter_function(self, obj)
+        exec model['Filter Function'] in globals()
 
         def ref_wrapper(s1, s2):
             return s1.get_references()
@@ -683,7 +700,8 @@ class MetaPointer(Model):
             {
                 '__init__': ptrInit,
                 # from model['Valid Objects'] as exec'd text
-                'get_references': get_references,
+                'get_root': get_root,
+                'filter_function': filter_function,
             }
         )
         return new_ptr()
@@ -691,11 +709,10 @@ class MetaPointer(Model):
     @staticmethod
     def fromMeta(model):
 
-        # should fill out get_references(self)
-        exec model['Attributes']['Valid Objects']['Value'] in globals()
-
-        def ref_wrapper(s1, s2):
-            return s1.get_references()
+        # should fill out get_root(self)
+        exec model['Attributes']['Root Object']['Value'] in globals()
+        # should fill out filter_function(self, obj)
+        exec model['Attributes']['Filter Function']['Value'] in globals()
 
         def ptrInit(self):
             Pointer.__init__(
@@ -714,7 +731,8 @@ class MetaPointer(Model):
             {
                 '__init__': ptrInit,
                 # from model['Valid Objects'] as exec'd text
-                'get_references': get_references,
+                'get_root': get_root,
+                'filter_function': filter_function,
             }
         )
         return new_ptr()
@@ -732,7 +750,7 @@ class Children(MutableSequence):
 
     valid_cardinalities = ['0..*', '1..*', '1']
 
-    def __init__(self, it=(), cardinality=()):
+    def __init__(self, it=(), cardinality={}):
         '''
         :param in cardinality: :class:`Dictionary` of key:value pairs
             mapping object type to its cardinality string, e.g.

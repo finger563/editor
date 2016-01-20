@@ -376,8 +376,6 @@ class Editor(QtGui.QMainWindow):
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
             root = MetaModel.fromMeta(model_dict)
-            print root().__dict__
-            print root().row_count()
             return root()
 
     def load_model(self, model):
@@ -409,7 +407,6 @@ class Editor(QtGui.QMainWindow):
         self.proxy_model.setSourceModel(self.model)
         self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
         self.tree_view.setModel(self.proxy_model)
-        self.proxy_model.rowsInserted.connect(self.tree_view.rowsInserted)
         self.tree_view.expandAll()
 
     def saveModel(self, event):

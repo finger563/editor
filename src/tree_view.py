@@ -31,23 +31,8 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
     on a :class:`QtCoreQAbstractItemModel` or its subclass.
     '''
 
-    rowFiltered = QtCore.pyqtSignal(QtCore.QModelIndex, bool)
-
-    def __init__(self, parent):
-        super(SortFilterProxyModel, self).__init__(parent)
-
     def columnCount(self, parent):
         return 1
-
-    def setSourceModel(self, model):
-        super(SortFilterProxyModel, self).setSourceModel(model)
-        model.rowsInserted.connect(self.sourceRowsInserted)
-
-    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
-    def sourceRowsInserted(self, parent, start, end):
-        self.rowsInserted.emit(self.mapFromSource(parent),
-                               start,
-                               end)
 
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
@@ -74,11 +59,6 @@ class TreeView(QtGui.QTreeView):
         if trigger == QtGui.QAbstractItemView.DoubleClicked:
             return False
         return QtGui.QTreeView.edit(self, index, trigger, event)
-
-    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
-    def rowsInserted(self, parent, start, end):
-        super(TreeView, self).rowsInserted(parent, start, end)
-        self.expandNode(parent, True)
 
     def contextMenuEvent(self, e):
         indexes = self.selectedIndexes()
@@ -109,12 +89,6 @@ class TreeView(QtGui.QTreeView):
                 menu.addAction(addAction)
             if hasActions:
                 menu.exec_(e.globalPos())
-
-    def expandNode(self, parent, expand):
-        self.setExpanded(parent, expand)
-        for row in range(self.model().rowCount(parent)):
-            child = self.model().index(row, 0, parent)
-            self.expandNode(child, expand)
 
     def addTreeItem(self, mi, _type):
         def genericItem(e):

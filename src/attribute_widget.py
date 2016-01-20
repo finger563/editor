@@ -245,12 +245,11 @@ class AttributeEditor(QtGui.QFrame):
             obj = ReferenceEditor()
             # Need to get filter function here
             obj.setReferenceType(attr.dst_type)
+            obj.setFilterFunc(lambda o: attr.filter_function(o))
             obj.setModel(dataMapper.model())
-            # Do we need to get the root index based on the function?
-            # TODO: NEED TO FIX THE ROOT INDEX HERE; PASS IT IN FROM SOMEWHERE
-            obj.setRootModelIndex(
-                QtCore.QModelIndex()
-            )
+            root = attr.get_root()
+            rootIndex = dataMapper.model().createIndex(root.row(), root.column(), root)
+            obj.setRootModelIndex(rootIndex)
             obj.setCurrentReference(attr.getValue())
         elif 'file' in attr.getKind():
             obj = FileEditor(name=name,
