@@ -178,6 +178,10 @@ class Model(QtCore.QObject):
         attr = Attribute(kind, value, self)
         self.set_attribute(name, attr)
 
+    def add_pointer(self, ptr):
+        self.pointers.append(ptr)
+        ptr.parent = self
+
     @staticmethod
     def toDict(model):
         model_dict = OrderedDict()
@@ -493,7 +497,7 @@ class MetaModel(Model):
             for t in ptr_types:
                 self.pointers.set_cardinality_of(t, '1')
             for name, ptr in ptrs.iteritems():
-                self.pointers.append(ptr)
+                self.add_pointer(ptr)
 
             # Handle attributes
             for name, attr in attr_dict.iteritems():
@@ -724,6 +728,8 @@ class MetaPointer(Model):
             destAttr.dst_type = model['Attributes']['Destination Type']
             destAttr.tooltip = model['Attributes']['Tooltip']['Value']
             destAttr.display = model['Attributes']['Display']['Value']
+            destAttr.get_root = lambda s: get_root(s)
+            destAttr.filter_function = lambda s, o: filter_function(s,o)
             
         new_ptr = type(
             str(model['Attributes']['Name']['Value']),
