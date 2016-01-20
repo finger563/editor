@@ -85,25 +85,11 @@ from output import\
 #
 #       Perhaps make the loaded model read-only?
 
-# TODO: possibly change serialization to use dicts?  I.e. convert all
-#       models into dicts before serializing?  This would still allow
-#       object references (by having the value of the pointer be the
-#       object's key into the dict; but would also allow lookups into
-#       deserialized data and storage of meta-data (e.g.  UUID for
-#       meta-model/version number: import uuid)
-
 # TODO: Figure out how to update the meta-model without completely
 #       losing the edits to existing models if possible.  Perhaps just
 #       allow loading simultaneously the model + meta-model; and
 #       attempting to resolve model changes when meta-model edits are
 #       performed.
-
-# TODO: Need to look further into monkeypatching (adding or
-#       overwriting instance methods) and how it relates to pickling.
-#       Need to make sure these objects maintain consistency when
-#       being (de-)serialized.  This is especially important for
-#       pointers, their attributes, their constraints, and their
-#       options.
 
 
 class Editor(QtGui.QMainWindow):

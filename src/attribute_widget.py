@@ -28,22 +28,6 @@ from syntax import\
     ROSHighlighter,\
     PythonHighlighter
 
-# TODO: Figure out how nested attributes can be accessed from the
-#       model; i.e. how to configure them with the datawidgetmapper?
-
-# TODO: Figure out how to handle dependent attribute editing
-#       e.g. options/options_type & scope depending on on the kind of attribute
-#
-#       Need to figure out how to add/remove attribute widgets dynamically
-#       and when/how to trigger the add/remove & update events basd on certain
-#       values of other attributes
-#
-#       Build attribute_editor panes up heirarchically/recursively for
-#       each child of each attribute.
-
-# TODO: Propagate reference scope and validation (function) to the
-#       ReferenceEditor and its proxy/filter models.
-
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
 

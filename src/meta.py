@@ -23,12 +23,9 @@ import uuid
 #       (and possibly checking them as well?)
 
 # TODO: Complete fromMeta functions to properly map UUID instead of
-#       just loading them
-
-# TODO: FIX reference selection: must incorporate the get_references
-#       function otherwise references won't work since their scope
-#       won't be correct probably.  For instance can't see available
-#       references for ports because it's not in the right scope.
+#       just loading them; this is required for the references, since
+#       currently their destination type is set to the UUID of the
+#       target object type instead of the object type
 
 # TODO: Fix bug with children insert that occurs when: a model has a
 #       child (pointer) with cardinality 1, and a sibling is added, a
@@ -56,9 +53,6 @@ import uuid
 #
 #       Note: if they have the same definitions and name (and thus MD5
 #       hash) they will work out of the box
-
-# TODO: Models can have same names depending on scope; make sure we
-#       use uniqueness here! (Editor.openEditorTabs)
 
 
 # Why is this not a function of Model?
