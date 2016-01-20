@@ -594,7 +594,7 @@ class MetaAttribute(Model):
         def attrInit(self):
             Attribute.__init__(
                 self,
-                model['Attributes']['Kind']['Type'],
+                model['Attributes']['Kind']['Value'],
                 Attribute.default_vals[model['Attributes']['Kind']['Value']]
             )
 
