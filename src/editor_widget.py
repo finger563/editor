@@ -173,17 +173,19 @@ class EditorView(QtGui.QGraphicsView):
         self.show()
 
     def buildView(self, index, parent=None):
-        t = EditorItem(index=index, parent=parent)
-        numPtrs = len(index.model().getModel(index).pointers)
-        above = t
-        for i in range(numPtrs):
-            ptrIndex = index.child(i, 2)
-            newT = EditorItem(index=ptrIndex, parent=t)
-            newT.setPos(above.pos().x(),
-                        above.pos().y() + above.size().height())
-            above = newT
+        t = None
         if self.viewModel():
             pass
+        else:
+            t = EditorItem(index=index, parent=parent)
+            numPtrs = len(index.model().getModel(index).pointers)
+            above = t
+            for i in range(numPtrs):
+                ptrIndex = index.child(i, 2)
+                newT = EditorItem(index=ptrIndex, parent=t)
+                newT.setPos(above.pos().x(),
+                            above.pos().y() + above.size().height())
+                above = newT
         return t
 
     def loadVM(self, fname):
