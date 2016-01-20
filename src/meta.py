@@ -202,6 +202,7 @@ class Attribute(Model):
         'double',
         'bool'
     ]
+    # Note that 'python' and 'reference' are not allowed types
     default_vals = {
         'string': '',
         'code': '',

@@ -225,6 +225,7 @@ class AttributeEditor(QtGui.QFrame):
             if attr.getValue() in options:
                 i = options.index(attr.getValue())
             obj.setCurrentIndex(i)
+            attr.setValue(str(obj.currentText()))
         elif attr.getKind() in ['reference']:
             obj = ReferenceEditor()
             # Need to get filter function here
