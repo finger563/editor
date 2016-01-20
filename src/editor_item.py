@@ -65,7 +65,6 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             return super(EditorItemDelegate, self).eventFilter(editor, event)
 
     def setEditorData(self, editor, index):
-        "updating editor data"
         if type(editor) == EditorItemWidget:
             text = index.data().toString()
             # SET THE EDITOR ITEM TEXT HERE
@@ -85,8 +84,8 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
     def setModelData(self, editor, model, index):
-        "updating model data"
-        if type(editor) == EditorItemWidget:
+        if (type(editor) == EditorItemWidget or 
+            type(editor) == QtGui.QWidget):
             return
         elif type(editor) == FileEditor:
             text = str(editor.file_name())
