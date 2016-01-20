@@ -324,8 +324,7 @@ class Editor(QtGui.QMainWindow):
             if fname:
                 meta_dict = self.open_model(fname)
                 uuid_dict = OrderedDict()
-                unresolved_keys = OrderedDict()
-                base = MetaModel.fromMeta(meta_dict, uuid_dict, unresolved_keys)
+                base = MetaModel.fromMeta(meta_dict, uuid_dict)
                 root = base()
         elif self.editor_mode == 'Meta Model':
             root = MetaModel()
@@ -362,9 +361,8 @@ class Editor(QtGui.QMainWindow):
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
             uuid_dict = {}
-            unresolved_keys = []
-            root = MetaModel.fromMeta(model_dict, uuid_dict, unresolved_keys)
-            return root()
+            root = MetaModel.fromDict(model_dict, uuid_dict)
+            return root
 
     def load_model(self, model):
         '''
