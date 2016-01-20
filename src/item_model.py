@@ -158,11 +158,10 @@ class ItemModel(QtCore.QAbstractItemModel):
         parentNode = self.getModel(parent)
 
         for row in range(rows):
-            childNode = _type()
+            self.beginInsertRows(parent, position + row, position + row)
 
-            self.beginInsertRows(parent, row, row)
-            success = parentNode.insert_child(position, childNode)
-            self.endInsertRows()
+            childNode = _type()
+            success = parentNode.insert_child(position + row, childNode)
 
             childCount = parentNode.child_count()
             newName = 'New_{}_{}'.format(_type.__name__,
@@ -176,7 +175,8 @@ class ItemModel(QtCore.QAbstractItemModel):
                 ).setValue(newName)
                 childCount += 1
 
-            self.dataChanged.emit(parent, self.index(row, 0, parent))
+            self.endInsertRows()
+            self.dataChanged.emit(parent, self.index(position + row, 0, parent))
 
         return success
 
@@ -190,13 +190,11 @@ class ItemModel(QtCore.QAbstractItemModel):
         parentNode = self.getModel(parent)
 
         for row in range(rows):
-            self.beginRemoveRows(parent, row, row)
+            self.beginRemoveRows(parent, position, position)
             success = parentNode.remove_child(position)
             self.endRemoveRows()
-            self.dataChanged.emit(parent, self.index(row, 0, parent))
+            self.dataChanged.emit(parent, self.index(position, 0, parent))
 
-        count = parentNode.child_count()
-        self.dataChanged.emit(parent, parent.child(count, 0))
         return success
 
 
