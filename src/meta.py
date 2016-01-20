@@ -458,8 +458,10 @@ class MetaModel(Model):
         return new_model
 
     @staticmethod
-    def fromDict(model_dict, uuid_dict):
+    def fromDict(model_dict, uuid_dict, unresolved_keys):
         newobj = MetaModel()
+        newobj.uuid = uuid.UUID(model_dict['UUID'])
+        uuid_dict[model_dict['UUID']] = newobj
         # Handle Name/Cardinality attributes
         for key, value in model_dict['Attributes'].iteritems():
             newobj[key] = value['Value']
@@ -475,11 +477,11 @@ class MetaModel(Model):
         for obj_dict in model_dict['Children']['Objects']:
             child = None
             if obj_dict['Type'] == 'MetaModel':
-                child = MetaModel.fromDict(obj_dict, uuid_dict)
+                child = MetaModel.fromDict(obj_dict, uuid_dict, unresolved_keys)
             elif obj_dict['Type'] == 'MetaAttribute':
-                child = MetaAttribute.fromDict(obj_dict, uuid_dict)
+                child = MetaAttribute.fromDict(obj_dict, uuid_dict, unresolved_keys)
             elif obj_dict['Type'] == 'MetaPointer':
-                child = MetaPointer.fromDict(obj_dict, uuid_dict)
+                child = MetaPointer.fromDict(obj_dict, uuid_dict, unresolved_keys)
             if child:
                 newobj.add_child(child)
         return newobj
@@ -622,7 +624,7 @@ class MetaAttribute(Model):
         return new_attr()
 
     @staticmethod
-    def fromDict(model_dict, uuid_dict):
+    def fromDict(model_dict, uuid_dict, unresolved_keys):
         newobj = MetaAttribute()
         for key, value in model_dict['Attributes'].iteritems():
             newobj[key] = value['Value']
@@ -749,13 +751,19 @@ class MetaPointer(Model):
         return new_ptr()
 
     @staticmethod
-    def fromDict(model_dict, uuid_dict):
+    def fromDict(model_dict, uuid_dict, unresolved_keys):
         newobj = MetaPointer()
         for key, value in model_dict['Attributes'].iteritems():
             if type(value) is not dict:
                 continue
             newobj[key] = value['Value']
-        #newobj.get_attribute('Destination Type').dst_type = uuid_dict[model_dict['Attributes']['Destination Type']]
+        key = model_dict['Attributes']['Destination Type']
+        attr = newobj.get_attribute('Destination Type')
+        if key not in uuid_dict:
+            unresolved_keys.set_default(key, []).append(attr)
+        else:
+            attr.dst_type = uuid_dict[key].kind()
+            attr.setValue(uuid_dict[key])
         return newobj
 
     @staticmethod

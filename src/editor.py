@@ -361,7 +361,12 @@ class Editor(QtGui.QMainWindow):
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
             uuid_dict = {}
-            root = MetaModel.fromDict(model_dict, uuid_dict)
+            unresolved_keys = {}
+            root = MetaModel.fromDict(model_dict, uuid_dict, unresolved_keys)
+            for uuid_key, attr_list in unresolved_keys.iteritems():
+                for attr in attr_list:
+                    attr.dst_type = uuid_dict[uuid_key].kind()
+                    attr.setValue(uuid_dict[uuid_key])
             return root
 
     def load_model(self, model):
