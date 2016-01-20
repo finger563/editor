@@ -211,14 +211,12 @@ class EditorItem(QtGui.QGraphicsWidget):
         miny = 0
         maxx = 0
         maxy = 0
-        '''
         if self._item:
             brect = self._item.boundingRect()
             minx = min(brect.x(),minx)
             miny = min(brect.y(),miny)
             maxx = max(maxx, brect.x() + brect.width())
             maxy = max(maxy, brect.y() + brect.height())
-        '''
         if self._label:
             brect = self._label.boundingRect()
             minx = min(brect.x(), minx)
