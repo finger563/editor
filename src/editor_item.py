@@ -61,8 +61,6 @@ class EditorItemDelegate(QtGui.QItemDelegate):
         '''
         if type(editor) == CodeEditor and type(event) is not QtGui.QFocusEvent:
             return False
-        elif type(editor) == QtGui.QWidget and type(event) is not QtGui.QFocusEvent:
-            return False
         else:
             return super(EditorItemDelegate, self).eventFilter(editor, event)
 

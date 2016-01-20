@@ -28,10 +28,15 @@ from syntax import\
     ROSHighlighter,\
     PythonHighlighter
 
+# TODO: When dataChanged calls Upate(), the model index is no longer
+#       valid so the attribute widget switches data sources
+#       incorrectly.  Should save the current reference before data is
+#       changed and then re-update after it changes.
+
+# TODO: Kill the widget when its object is deleted.
+
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
-
-# TODO: Integrate validators into the attribute editor
 
 
 class AttributePanel(QtGui.QWidget):
@@ -193,6 +198,7 @@ class AttributeEditor(QtGui.QFrame):
     '''
     def __init__(self, parent, dataMapper, dataMapperIndex, name, attr):
         super(AttributeEditor, self).__init__(parent)
+        self.dataMapper = dataMapper
         self.vbox = QtGui.QVBoxLayout()
         self.vbox.setContentsMargins(20, 0, 0, 0)
         self.setLayout(self.vbox)
@@ -231,9 +237,9 @@ class AttributeEditor(QtGui.QFrame):
             # Need to get filter function here
             obj.setReferenceType(attr.dst_type)
             obj.setFilterFunc(lambda o: attr.filter_function(attr, o))
-            obj.setModel(dataMapper.model())
+            obj.setModel(self.dataMapper.model())
             root = attr.get_root(attr)
-            rootIndex = dataMapper.model().createIndex(root.row(), root.column(), root)
+            rootIndex = self.dataMapper.model().createIndex(root.row(), root.column(), root)
             obj.setRootModelIndex(rootIndex)
             obj.setCurrentReference(attr.getValue())
         elif 'file' in attr.getKind():
@@ -245,19 +251,19 @@ class AttributeEditor(QtGui.QFrame):
             if label:
                 self.layout().addWidget(label)
             obj.setToolTip(attr.tooltip)
-            dataMapper.addMapping(obj, dataMapperIndex)
+            self.dataMapper.addMapping(obj, dataMapperIndex)
             self.layout().addWidget(obj)
 
             # Configure the new datamapper for the child attribute
-            childDataMapper = QtGui.QDataWidgetMapper()
-            model = dataMapper.model()
-            childDataMapper.setModel(model)
-            childDataMapper.setOrientation(QtCore.Qt.Vertical)
-            parentIndex = dataMapper.rootIndex()
+            self.childDataMapper = QtGui.QDataWidgetMapper()
+            model = self.dataMapper.model()
+            self.childDataMapper.setModel(model)
+            self.childDataMapper.setOrientation(QtCore.Qt.Vertical)
+            parentIndex = self.dataMapper.rootIndex()
             selfIndex = model.index(dataMapperIndex, 1, parentIndex)
-            childDataMapper.setRootIndex(selfIndex)
-            childDataMapper.setCurrentIndex(1)
-            childDataMapper.setItemDelegate(dataMapper.itemDelegate())
+            self.childDataMapper.setRootIndex(selfIndex)
+            self.childDataMapper.setCurrentIndex(1)
+            self.childDataMapper.setItemDelegate(self.dataMapper.itemDelegate())
 
             i = 0
             for child_name, child_attr in attr.attributes.iteritems():
@@ -265,7 +271,7 @@ class AttributeEditor(QtGui.QFrame):
                     self.layout().addWidget(
                         AttributeEditor(
                             self,
-                            dataMapper=childDataMapper,
+                            dataMapper=self.childDataMapper,
                             dataMapperIndex=i,
                             name=child_name,
                             attr=child_attr

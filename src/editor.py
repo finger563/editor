@@ -389,6 +389,7 @@ class Editor(QtGui.QMainWindow):
         self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.proxy_model.setSortRole(ItemModel.sort_role)
         self.proxy_model.setFilterRole(self.filter_role)
+        self.proxy_model.setFilterKeyColumn(0)
 
         # the model stores the reference to the model that is
         # currently being edited/viewed; this can be a regular model,
