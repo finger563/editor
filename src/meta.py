@@ -464,8 +464,14 @@ class MetaModel(Model):
         for key, value in model_dict['Attributes'].iteritems():
             newobj[key] = value['Value']
         # Handle Children
+        # TODO: Rework cardinality and how children can be inserted
+        card_map = {
+            'MetaModel': MetaModel,
+            'MetaPointer': MetaPointer,
+            'MetaAttribute': MetaAttribute
+        }
         for name, cardinality in model_dict['Children']['Cardinality'].iteritems():
-            newobj.children.set_cardinality_of(name, cardinality)
+            newobj.children.set_cardinality_of(card_map[name], cardinality)
         for obj_dict in model_dict['Children']['Objects']:
             child = None
             if obj_dict['Type'] == 'MetaModel':
@@ -798,7 +804,7 @@ class Children(MutableSequence):
 
     valid_cardinalities = ['0..*', '1..*', '1']
 
-    def __init__(self, it=(), cardinality={}):
+    def __init__(self, it=(), cardinality=OrderedDict()):
         '''
         :param in cardinality: :class:`Dictionary` of key:value pairs
             mapping object type to its cardinality string, e.g.
