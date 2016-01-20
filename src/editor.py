@@ -322,10 +322,10 @@ class Editor(QtGui.QMainWindow):
                 options=QtGui.QFileDialog.Options()
             )
             if fname:
-                meta_root = self.open_model(fname)
-                base = MetaModel.toMeta(meta_root)
-                # meta_dict['__root__'] = base
-                # self.META = meta_dict
+                meta_dict = self.open_model(fname)
+                uuid_dict = OrderedDict()
+                unresolved_keys = OrderedDict()
+                base = MetaModel.fromMeta(meta_dict, uuid_dict, unresolved_keys)
                 root = base()
         elif self.editor_mode == 'Meta Model':
             root = MetaModel()
@@ -361,7 +361,9 @@ class Editor(QtGui.QMainWindow):
         import json
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
-            root = MetaModel.fromMeta(model_dict)
+            uuid_dict = {}
+            unresolved_keys = []
+            root = MetaModel.fromMeta(model_dict, uuid_dict, unresolved_keys)
             return root()
 
     def load_model(self, model):

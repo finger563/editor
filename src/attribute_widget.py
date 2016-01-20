@@ -229,7 +229,7 @@ class AttributeEditor(QtGui.QFrame):
             obj = ReferenceEditor()
             # Need to get filter function here
             obj.setReferenceType(attr.dst_type)
-            obj.setFilterFunc(lambda o: attr.filter_function(o))
+            obj.setFilterFunc(lambda o: attr.filter_function(attr, o))
             obj.setModel(dataMapper.model())
             root = attr.get_root(attr)
             rootIndex = dataMapper.model().createIndex(root.row(), root.column(), root)

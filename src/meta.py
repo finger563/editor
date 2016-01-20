@@ -65,6 +65,9 @@ def get_children(model, kind):
             kids.extend(get_children(c, kind))
         return kids
 
+def resolve_refs(unresolved_keys, model_dict, uuid_dict):
+    pass
+
 
 class Model(QtCore.QObject):
     '''Generic Model/Container class
@@ -458,17 +461,30 @@ class MetaModel(Model):
         return new_model
 
     @staticmethod
-    def fromMeta(model):
+    def fromMeta(model, uuid_dict, unresolved_keys):
         allowed_kids = OrderedDict()
         attr_dict = OrderedDict()
         ptrs = OrderedDict()
+
+        uuid_dict[model['UUID']] = model['Attributes']['Name']['Value']
+
         for obj in model['Children']['Objects']:
             if obj['Type'] == 'MetaModel':
-                allowed_kids[ MetaModel.fromMeta(obj) ] = obj['Attributes']['Cardinality']['Value']
+                allowed_kids[ MetaModel.fromMeta(
+                    obj,
+                    uuid_dict,
+                    unresolved_keys) ] = obj['Attributes']['Cardinality']['Value']
             elif obj['Type'] == 'MetaPointer':
-                ptrs[obj['Attributes']['Name']['Value']] = MetaPointer.fromMeta(obj)
+                ptrs[obj['Attributes']['Name']['Value']] = MetaPointer.fromMeta(
+                    obj,
+                    uuid_dict,
+                    unresolved_keys)
             elif obj['Type'] == 'MetaAttribute':
-                attr_dict[obj['Attributes']['Name']['Value']] = MetaAttribute.fromMeta(obj)
+                attr_dict[obj['Attributes']['Name']['Value']] = MetaAttribute.fromMeta(
+                    obj,
+                    uuid_dict,
+                    unresolved_keys
+                )
 
         # Define the init function inline here for the new class, make
         # sure all attributes, pointers, children, etc. are set up
@@ -586,7 +602,7 @@ class MetaAttribute(Model):
         return new_attr()
 
     @staticmethod
-    def fromMeta(model):
+    def fromMeta(model, uuid_dict, unresolved_keys):
         exec model['Attributes']['Validator']['Value'] in globals()
 
         def attrInit(self):
@@ -628,19 +644,15 @@ class MetaPointer(Model):
         self.add_attribute('Destination Type', 'reference', '')
         destAttr = self.get_attribute('Destination Type')
         destAttr.dst_type = 'MetaModel'
-        def wrapper1():
-            def generic():
-                r = self.parent
-                while r.parent is not None:
-                    r = r.parent
-                return r.children[0]
-            return generic
-        def wrapper2():
-            def generic(obj):
-                return True
-            return generic
-        destAttr.get_root = wrapper1()
-        destAttr.filter_function = wrapper2()
+        def get_root(s):
+            r = s.parent
+            while r.parent is not None:
+                r = r.parent
+            return r.children[0]
+        def filter_function(s, o):
+            return True
+        destAttr.get_root = lambda s: get_root(s)
+        destAttr.filter_function = lambda s, o: filter_function(s, o)
 
         self.set_attribute(
             'Root Object',
@@ -705,7 +717,7 @@ class MetaPointer(Model):
         return new_ptr()
 
     @staticmethod
-    def fromMeta(model):
+    def fromMeta(model, uuid_dict, unresolved_keys):
 
         # should fill out get_root(self)
         exec model['Attributes']['Root Object']['Value'] in globals()
@@ -719,7 +731,7 @@ class MetaPointer(Model):
             )
             self['Name'] = model['Attributes']['Name']['Value']
             destAttr = self.get_attribute('Destination')
-            destAttr.dst_type = model['Attributes']['Destination Type']
+            destAttr.dst_type = uuid_dict[model['Attributes']['Destination Type']]
             destAttr.tooltip = model['Attributes']['Tooltip']['Value']
             destAttr.display = model['Attributes']['Display']['Value']
             destAttr.get_root = lambda s: get_root(s)
