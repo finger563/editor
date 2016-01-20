@@ -283,8 +283,10 @@ class Attribute(Model):
         tmp = None
         if self.getKind() in ['string', 'list']:
             newVal = str(variant.toString())
+            tmp = type(newVal) == str
         elif self.getKind() in ['code', 'python']:
             newVal = str(variant)
+            tmp = type(newVal) == str
         elif self.getKind() in ['int', 'integer']:
             newVal, tmp = variant.toInt()
         elif self.getKind() in ['float']:
@@ -293,6 +295,7 @@ class Attribute(Model):
             newVal, tmp = variant.toDouble()
         elif self.getKind() in ['bool']:
             newVal = variant.toBool()
+            tmp = type(newVal) == bool
         elif self.getKind() in ['reference']:
             newVal = variant  # .toPyObject()
         elif 'file' in self.getKind():

@@ -74,7 +74,7 @@ class AttributePanel(QtGui.QWidget):
         )
 
         self.vbox.addWidget(self.scrollArea)
-        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setContentsMargins(0, 0, 10, 0)
 
         self.updateGeo()
 
