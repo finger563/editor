@@ -166,7 +166,7 @@ class Model(QtCore.QObject):
         return success
 
     def add_child(self, child_model):
-        return self.insert_child(0, child_model)
+        return self.insert_child(len(self.children), child_model)
 
     def add_attribute(self, name, kind, value):
         attr = Attribute(kind, value, self)
