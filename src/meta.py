@@ -22,11 +22,6 @@ import uuid
 #       Then we can use this meta-model dictionary for creating models
 #       (and possibly checking them as well?)
 
-# TODO: Complete fromMeta functions to properly map UUID instead of
-#       just loading them; this is required for the references, since
-#       currently their destination type is set to the UUID of the
-#       target object type instead of the object type
-
 # TODO: Fix bug with children insert that occurs when: a model has a
 #       child (pointer) with cardinality 1, and a sibling is added, a
 #       cardinality is thrown even though the sibling is not breaking
