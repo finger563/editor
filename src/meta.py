@@ -579,6 +579,9 @@ class MetaAttribute(Model):
         self.set_attribute('Display', Attribute('string', display))
         self.set_attribute('Editable', Attribute('bool', editable))
         self.set_attribute('Validator', Attribute('python', validator))
+        pkattr = Attribute('string', '')
+        pkattr.editable = False
+        self.set_attribute('Parent Key', pkattr)
 
     def insert_child(self, position, child_model):
         '''
@@ -586,7 +589,7 @@ class MetaAttribute(Model):
         '''
         success = Model.insert_child(self, position, child_model)
         if success:
-            child_model.set_attribute('Parent Key', Attribute('string', ''))
+            child_model.get_attribute('Parent Key').editable = True
         return success
 
     @staticmethod
@@ -626,11 +629,45 @@ class MetaAttribute(Model):
         newobj.get_attribute('Kind').get_attribute('List Options').setValue(
             model_dict['Attributes']['Kind']['Attributes']['List Options']['Value']
         )
+        # Handle Children
+        # TODO: Rework cardinality and how children can be inserted
+        card_map = {
+            'MetaModel': MetaModel,
+            'MetaPointer': MetaPointer,
+            'MetaAttribute': MetaAttribute
+        }
+        for name, cardinality in model_dict['Children']['Cardinality'].iteritems():
+            newobj.children.set_cardinality_of(card_map[name], cardinality)
+        for obj_dict in model_dict['Children']['Objects']:
+            child = None
+            if obj_dict['Type'] == 'MetaModel':
+                child = MetaModel.fromDict(obj_dict, uuid_dict, unresolved_keys)
+            elif obj_dict['Type'] == 'MetaAttribute':
+                child = MetaAttribute.fromDict(obj_dict, uuid_dict, unresolved_keys)
+            elif obj_dict['Type'] == 'MetaPointer':
+                child = MetaPointer.fromDict(obj_dict, uuid_dict, unresolved_keys)
+            if child:
+                newobj.add_child(child)
         return newobj
 
     @staticmethod
     def fromMeta(model, uuid_dict):
-        exec model['Attributes']['Validator']['Value'] in globals()
+        attr_dict = OrderedDict()
+
+        # provides validator
+        exec model['Attributes']['Validator']['Value'] in locals()
+        # provides get_options
+        exec model['Attributes']['Kind']['Attributes']['List Options']['Value'] in locals()
+
+        for obj in model['Children']['Objects']:
+            if obj['Type'] == 'MetaAttribute':
+                attr_dict[obj['Attributes']['Name']['Value']] = [
+                    MetaAttribute.fromMeta(
+                        obj,
+                        uuid_dict
+                    ),
+                    obj['Attributes']['Parent Key']['Value']
+                ]
 
         def attrInit(self):
             Attribute.__init__(
@@ -638,6 +675,11 @@ class MetaAttribute(Model):
                 model['Attributes']['Kind']['Value'],
                 Attribute.default_vals[model['Attributes']['Kind']['Value']]
             )
+            # Handle attributes
+            for name, attrStruct in attr_dict.iteritems():
+                attr = attrStruct[0]
+                key = attrStruct[1]
+                self.set_attribute(name, attr, key)
 
         new_attr = type(
             str(model['Attributes']['Name']['Value']),
@@ -647,9 +689,11 @@ class MetaAttribute(Model):
                 'tooltip': model['Attributes']['Tooltip']['Value'],
                 'display': model['Attributes']['Display']['Value'],
                 'editable': model['Attributes']['Editable']['Value'],
+                'get_options': get_options,
                 'validator': validator,
             }
         )
+
         return new_attr()
     
 

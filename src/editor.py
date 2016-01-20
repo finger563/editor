@@ -313,6 +313,7 @@ class Editor(QtGui.QMainWindow):
         self.clearModels()
         self.clearViewer()
         root = None
+        import json
         if self.editor_mode == 'Model':
             fname = QtGui.QFileDialog.getOpenFileName(
                 self,
@@ -322,7 +323,8 @@ class Editor(QtGui.QMainWindow):
                 options=QtGui.QFileDialog.Options()
             )
             if fname:
-                meta_dict = self.open_model(fname)
+                with open(fname, 'r') as f:
+                    meta_dict = json.loads(f.read())
                 uuid_dict = OrderedDict()
                 base = MetaModel.fromMeta(meta_dict, uuid_dict)
                 root = base()
