@@ -17,17 +17,6 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from PyQt4 import QtCore
 
-# TODO: Bug: When scrolling over a codeEditor widget, the widget's
-#       contents get destroyed for some reason.  They become a
-#       qvariant.  Might have to do with the scroll event not
-#       capturing properly and showing up as a strange character
-#       sequence.
-
-# TODO: Create an object here which fully encapsulates dictionary editing
-
-# TODO: Propagate the python get_references code to the
-#       ReferenceEditor
-
 
 class FileEditor(QtGui.QPushButton):
     '''

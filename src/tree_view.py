@@ -19,11 +19,6 @@ __status__ = 'Production'
 
 from PyQt4 import QtGui, QtCore
 
-# TODO: Bug: when adding tree items, if you keep increasing the depth
-#       of the new children and then try to add to the root level
-#       object without expanding/collapsing, the tree view will get
-#       into an error state
-
 # TODO: Refactor contextMenu to not use children, but instead use the
 #       current meta-model to determine available actions.
 

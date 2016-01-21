@@ -28,13 +28,6 @@ from syntax import\
     ROSHighlighter,\
     PythonHighlighter
 
-# TODO: When dataChanged calls Upate(), the model index is no longer
-#       valid so the attribute widget switches data sources
-#       incorrectly.  Should save the current reference before data is
-#       changed and then re-update after it changes.
-
-# TODO: Kill the widget when its object is deleted.
-
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
 
