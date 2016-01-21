@@ -61,9 +61,6 @@ from output import\
 #       i.e. if it is a package type, will need to find where
 #       'Package' Objects are allowed.
 
-# TODO: Need to close all related widgets when an item is removed from
-#       the model
-
 # TODO: Refactor editor so that it the meta-model is contained
 #       separately and merely invoked to get the root object for the
 #       editor, e.g. meta-meta-root = Model(), meta-view-root =
@@ -397,6 +394,8 @@ class Editor(QtGui.QMainWindow):
         # inherit from the meta-metamodel so have the same interfaces
         # and can be interacted with in the same way
         self.model = ItemModel(root)
+        self.model.rowsAboutToBeRemoved.connect(self.modelRowsAboutToBeRemoved)
+
         # Link the actual model and the proxy model
         self.proxy_model.setSourceModel(self.model)
         self.filter_edit.textChanged.connect(self.proxy_model.setFilterRegExp)
@@ -426,6 +425,29 @@ class Editor(QtGui.QMainWindow):
             with open(fname, 'w') as f:
                 f.write(dictStr)
             return 0
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def modelRowsAboutToBeRemoved(self, parent, start, end):
+        mi = parent.child(start, 0)
+        item = self.model.getModel(mi)
+        # print 'about to remove item: {}'.format(item)
+        self.removeItem(item)
+
+    def removeItem(self, item):
+        for c in item.children:
+            self.removeItem(c)
+        key = str(item.uuid)
+        self.removeTab(key)
+
+    def removeTab(self, key):
+        if key in self.openEditorTabs:
+            # print 'deleting tab for {}'.format(key)
+            ev = self.openEditorTabs[key]
+            index = self.tabbedEditorWidget.indexOf(ev)
+            if index >= 0:
+                self.tabbedEditorWidget.removeTab(index)
+            self.openEditorTabs.pop(key, None)
+            del ev
 
     def closeEvent(self, event):
         event.accept()
