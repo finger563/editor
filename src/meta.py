@@ -17,6 +17,15 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Need to write fromDict functions for Model, Attribute, and
+#       Pointer
+
+# TODO: Need to integrate Model/Attribute/Pointer fromDict functions
+#       into the fromDict functions for Meta* so that the base
+#       attributes (Name, Cardinality, etc.) don't change uuid when
+#       opening and then saving the model.  This will prevent the
+#       model from changing data when simply opening and saving.
+
 # TODO: Update the fromMeta functions to build meta-dictionary of
 #       name:type pairs for quickly instantiating objects as needed.
 #       Then we can use this meta-model dictionary for creating models
@@ -74,7 +83,7 @@ class Model(QtCore.QObject):
     '''
     def __init__(self, parent=None):
         QtCore.QObject.__init__(self)
-        self.uuid = uuid.uuid4()
+        self.uuid = str(uuid.uuid4())
         self.parent = parent
 
         self.attributes = OrderedDict()
@@ -175,7 +184,7 @@ class Model(QtCore.QObject):
     def toDict(model):
         model_dict = OrderedDict()
         model_dict['Type'] = model.kind()
-        model_dict['UUID'] = str(model.uuid)
+        model_dict['UUID'] = model.uuid
         model_dict['Attributes'] = {
             key: value.__class__.toDict(value)
             for key, value in model.attributes.iteritems()
@@ -310,7 +319,7 @@ class Attribute(Model):
         model_dict['Kind'] = model.getKind()
         model_dict['Value'] = model.getValue()
         model_dict['Dependents'] = {
-            key: [str(x.uuid) for x in values]
+            key: [x.uuid for x in values]
             for key, values in model.dependents.iteritems()
         }
         return model_dict
@@ -374,9 +383,9 @@ class Pointer(Model):
     def toDict(model):
         model_dict = Model.toDict(model)
         model_dict['Attributes']['Destination Type'] = model.dst_type.__name__
-        model_dict['Attributes']['Destination'] = str(
-            model['Destination'].uuid
-        )
+        model_dict['Attributes'][
+            'Destination'
+        ] = model['Destination'].uuid
         return model_dict
 
 
@@ -459,7 +468,7 @@ class MetaModel(Model):
     @staticmethod
     def fromDict(model_dict, uuid_dict, unresolved_keys):
         newobj = MetaModel()
-        newobj.uuid = uuid.UUID(model_dict['UUID'])
+        newobj.uuid = model_dict['UUID']
         uuid_dict[model_dict['UUID']] = newobj
         # Handle Name/Cardinality attributes
         for key, value in model_dict['Attributes'].iteritems():
@@ -628,6 +637,8 @@ class MetaAttribute(Model):
     @staticmethod
     def fromDict(model_dict, uuid_dict, unresolved_keys):
         newobj = MetaAttribute()
+        newobj.uuid = model_dict['UUID']
+        uuid_dict[model_dict['UUID']] = newobj
         for key, value in model_dict['Attributes'].iteritems():
             newobj[key] = value['Value']
         newobj.get_attribute('Kind').get_attribute('List Options').setValue(
@@ -754,9 +765,9 @@ class MetaPointer(Model):
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
-        model_dict['Attributes']['Destination Type'] = str(
-            model.get_attribute('Destination Type').getValue().uuid
-        )
+        model_dict['Attributes'][
+            'Destination Type'
+        ] = model.get_attribute('Destination Type').getValue().uuid
         return model_dict
 
     @staticmethod
@@ -796,6 +807,8 @@ class MetaPointer(Model):
     @staticmethod
     def fromDict(model_dict, uuid_dict, unresolved_keys):
         newobj = MetaPointer()
+        newobj.uuid = model_dict['UUID']
+        uuid_dict[model_dict['UUID']] = newobj
         for key, value in model_dict['Attributes'].iteritems():
             if type(value) is not dict:
                 continue
