@@ -428,18 +428,24 @@ class Editor(QtGui.QMainWindow):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def modelRowsAboutToBeRemoved(self, parent, start, end):
+        '''
+        Slot for handling object deletion.  Removes any open tabs/editor
+        views for the removed object and all its children.
+        '''
         mi = parent.child(start, 0)
         item = self.model.getModel(mi)
         # print 'about to remove item: {}'.format(item)
         self.removeItem(item)
 
     def removeItem(self, item):
+        '''Recursively removes the tabs for item and all its children.'''
         for c in item.children:
             self.removeItem(c)
         key = str(item.uuid)
         self.removeTab(key)
 
     def removeTab(self, key):
+        '''Simple function to clear tab data for an object whose uuid = key.'''
         if key in self.openEditorTabs:
             # print 'deleting tab for {}'.format(key)
             ev = self.openEditorTabs[key]
