@@ -59,6 +59,10 @@ class TreeView(QtGui.QTreeView):
     '''
     '''
 
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def rowsInserted(self, parent, start, end):
+        self.setExpanded(parent, True)
+
     def edit(self, index, trigger, event):
         # don't want to enter renaming mode every time we
         # want to open the graphical editor
