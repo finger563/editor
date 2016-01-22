@@ -19,6 +19,11 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
+# TODO: There seems to be a segfault sometimes that occurs when right
+#       clicking on an object in the tree view when no selection
+#       exists, occurs after deletion of items.  Might have something
+#       to do with the signals we're sending?
+
 
 class ItemModel(QtCore.QAbstractItemModel):
     '''Implements the :class:`QtCore.QAbstractItemModel` to interact with
@@ -157,10 +162,12 @@ class ItemModel(QtCore.QAbstractItemModel):
         '''
         parentNode = self.getModel(parent)
 
+        self.layoutAboutToBeChanged.emit()
+        self.beginInsertRows(parent, position, position + rows - 1)
         for row in range(rows):
-            self.beginInsertRows(parent, position + row, position + row)
 
             childNode = _type()
+
             success = parentNode.insert_child(position + row, childNode)
 
             childCount = parentNode.child_count()
@@ -175,8 +182,9 @@ class ItemModel(QtCore.QAbstractItemModel):
                 ).setValue(newName)
                 childCount += 1
 
-            self.endInsertRows()
-            self.dataChanged.emit(parent, self.index(position + row, 0, parent))
+        self.endInsertRows()
+        self.layoutChanged.emit()
+        self.dataChanged.emit(parent, self.index(position + rows, 0, parent))
 
         return success
 
@@ -189,11 +197,15 @@ class ItemModel(QtCore.QAbstractItemModel):
         '''
         parentNode = self.getModel(parent)
 
+        self.layoutAboutToBeChanged.emit()
+        self.beginRemoveRows(parent, position, position + rows - 1)
+
         for row in range(rows):
-            self.beginRemoveRows(parent, position, position)
             success = parentNode.remove_child(position)
-            self.endRemoveRows()
-            self.dataChanged.emit(parent, self.index(position, 0, parent))
+
+        self.endRemoveRows()
+        self.dataChanged.emit(parent, parent)
+        self.layoutChanged.emit()
 
         return success
 

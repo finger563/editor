@@ -19,8 +19,6 @@ __status__ = 'Production'
 
 from PyQt4 import QtGui, QtCore
 
-# TODO: rowsInserted setExpanded seems to still be buggy; look into item_model
-
 # TODO: Refactor contextMenu to not use children, but instead use the
 #       current meta-model to determine available actions.
 
@@ -32,11 +30,6 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
     Extends :class:`QtGui.QSortFilterProxyModel` to customize filtering
     on a :class:`QtCoreQAbstractItemModel` or its subclass.
     '''
-
-    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
-    def sourceRowsInserted(self, parent, start, end):
-        self.rowsInserted.emit(self.mapFromSource(parent),
-                               start, end)
 
     def columnCount(self, parent):
         return 1
@@ -63,6 +56,7 @@ class TreeView(QtGui.QTreeView):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def rowsInserted(self, parent, start, end):
+        super(TreeView, self).rowsInserted(parent, start, end)
         self.setExpanded(parent, True)
 
     def edit(self, index, trigger, event):
