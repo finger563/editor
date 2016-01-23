@@ -43,9 +43,6 @@ import uuid
 # TODO: Add scoping to some dependent attributes (e.g. for pointers
 #       etc.)
 
-# TODO: Change cardinality to string with a validator that only
-#       accepts text of the form "X(..(Y|*))"
-
 # TODO: Allow for messages/services which are purely references to
 #       libarary/standard messages/services.  Perhaps just allow
 #       publishers/subscribers/clients/servers to point to
@@ -179,6 +176,22 @@ class Model(QtCore.QObject):
     def add_pointer(self, ptr):
         self.pointers.append(ptr)
         ptr.parent = self
+
+    @staticmethod
+    def fromDict(model_dict, uuid_dict, unresolved_keys, meta_dict):
+        # instantiate a new object
+        newobj = meta_dict[model_dict['Type']]()
+
+        model_dict = OrderedDict()
+        model_dict['Type'] = model.kind()
+        model_dict['UUID'] = model.uuid
+        model_dict['Attributes'] = {
+            key: value.__class__.toDict(value)
+            for key, value in model.attributes.iteritems()
+        }
+        model_dict['Children'] = Children.toDict(model.children)
+        model_dict['Pointers'] = Children.toDict(model.children)
+        return model_dict
 
     @staticmethod
     def toDict(model):
@@ -405,10 +418,34 @@ class MetaModel(Model):
 
         self.set_attribute('Name', NameAttribute('Root'))
         self.add_attribute('Cardinality',
-                           'list',
-                           Children.valid_cardinalities[0])
-        self.get_attribute(
-            'Cardinality').options = Children.valid_cardinalities
+                           'string',
+                           '0..*')
+
+        def validatorWrapper():
+            def genericValidator(newValue):
+                valid = True
+                errMsg = ''
+                try:
+                    vals = newValue.split('..', 1)
+                    lower = int(vals[0])
+                    if lower < 0:
+                        valid = False
+                        errMsg = 'Lower must be >= 0'
+                    if valid and len(vals) > 1:
+                        if vals[1] != '*':
+                            upper = int(vals[1])
+                            if upper <= lower:
+                                valid = False
+                                errMsg = 'Upper must be > Lower'
+                except:
+                    valid = False
+                    errMsg = 'Format of Cardinality must be '
+                    errMsg += '<INT>(..(<INT>|*))'
+                return valid, errMsg
+            return genericValidator
+
+        cardAttr = self.get_attribute('Cardinality')
+        cardAttr.validator = validatorWrapper()
 
     @staticmethod
     def toDict(model):
@@ -865,8 +902,6 @@ class Children(MutableSequence):
     objects, and their cardinality
 
     '''
-
-    valid_cardinalities = ['0..*', '1..*', '1']
 
     def __init__(self, it=(), cardinality=OrderedDict()):
         '''
