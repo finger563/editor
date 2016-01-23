@@ -22,7 +22,8 @@ from PyQt4 import QtCore, QtGui
 # TODO: There seems to be a segfault sometimes that occurs when right
 #       clicking on an object in the tree view when no selection
 #       exists, occurs after deletion of items.  Might have something
-#       to do with the signals we're sending?
+#       to do with the signals we're sending?  Can't seem to replicate
+#       it
 
 
 class ItemModel(QtCore.QAbstractItemModel):

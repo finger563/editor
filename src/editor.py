@@ -44,6 +44,9 @@ from tree_view import\
 from output import\
     TabbedOutputWidget
 
+# TODO: Refactor open/load model functions to reuse some code (with
+#       respect to metamodel)?
+
 # TODO: Complete building of meta-model dict
 
 # TODO: Use meta-model dict to check model upon loading (before
@@ -359,6 +362,13 @@ class Editor(QtGui.QMainWindow):
         import json
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
+            # TODO: determine meta-model from model_dict and load it
+            # meta_model = model_dict['__META__']
+            # print meta_model['Name'], meta_model['Version'], meta_model['MD5']
+            self.META = model_dict['__META__']
+            # TODO: create meta_dict from loaded meta-model
+            # TODO: check model_dict against meta_dict
+            # TODO: instantiate objects for model from model_dict based on meta_dict
             uuid_dict = {}
             unresolved_keys = {}
             root = MetaModel.fromDict(model_dict, uuid_dict, unresolved_keys)
@@ -420,6 +430,11 @@ class Editor(QtGui.QMainWindow):
             # the actual root is not displayed and is always a Model()
             root = root.children[0]
             modelDict = MetaModel.toDict(root)
+            modelDict['__META__'] = {
+                'Name': self.META['Name'],
+                'Version': self.META['Version'],
+                'MD5': self.META['MD5']
+            }
             dictStr = json.dumps(modelDict, indent=4)
             with open(fname, 'w') as f:
                 f.write(dictStr)

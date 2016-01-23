@@ -258,7 +258,7 @@ class Attribute(Model):
         self.attributes[key] = attr
         self.dependents.setdefault(
             dependent_value, []
-        ).append(attr)
+        ).append(key)
         attr.editable = (self.getValue() == dependent_value)
         attr.parent = self
 
@@ -291,11 +291,11 @@ class Attribute(Model):
         if oldValue in self.dependents.keys():
             old_deps = self.dependents[oldValue]
             for dep in old_deps:
-                dep.editable = False
+                self.attributes[dep].editable = False
         if newValue in self.dependents.keys():
             deps = self.dependents[newValue]
             for dep in deps:
-                dep.editable = True
+                self.attributes[dep].editable = True
 
     def get_options(self):
         return self.options
@@ -329,12 +329,12 @@ class Attribute(Model):
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
+        model_dict.pop('UUID', None)
+        model_dict.pop('Pointers', None)
+        model_dict.pop('Children', None)
         model_dict['Kind'] = model.getKind()
         model_dict['Value'] = model.getValue()
-        model_dict['Dependents'] = {
-            key: [x.uuid for x in values]
-            for key, values in model.dependents.iteritems()
-        }
+        model_dict['Dependents'] = model.dependents
         return model_dict
 
 
@@ -366,7 +366,6 @@ class NameAttribute(Attribute):
     def toDict(model):
         model_dict = Attribute.toDict(model)
         model_dict.pop('Dependents', None)
-        model_dict.pop('Children', None)
         return model_dict
 
 
@@ -395,6 +394,9 @@ class Pointer(Model):
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
+        model_dict.pop('UUID', None)
+        model_dict.pop('Pointers', None)
+        model_dict.pop('Children', None)
         model_dict['Attributes']['Destination Type'] = model.dst_type.__name__
         model_dict['Attributes'][
             'Destination'
