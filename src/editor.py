@@ -378,7 +378,8 @@ class Editor(QtGui.QMainWindow):
             # TODO: instantiate objects for model from model_dict based on meta_dict
             uuid_dict = {}
             unresolved_keys = {}
-            root = MetaModel.fromDict(model_dict, uuid_dict, unresolved_keys)
+            root_dict = model_dict['__ROOT__']
+            root = MetaModel.fromDict(root_dict, uuid_dict, unresolved_keys)
             for uuid_key, attr_list in unresolved_keys.iteritems():
                 for attr in attr_list:
                     attr.dst_type = uuid_dict[uuid_key].kind()

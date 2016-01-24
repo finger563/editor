@@ -517,14 +517,7 @@ class MetaModel(Model):
             newobj[key] = value['Value']
         # Handle Children
         # TODO: Rework cardinality and how children can be inserted
-        card_map = {
-            'MetaModel': MetaModel,
-            'MetaPointer': MetaPointer,
-            'MetaAttribute': MetaAttribute
-        }
-        for name, cardinality in model_dict['Children']['Cardinality'].iteritems():
-            newobj.children.set_cardinality_of(card_map[name], cardinality)
-        for obj_dict in model_dict['Children']['Objects']:
+        for obj_dict in model_dict['Children']:
             child = None
             if obj_dict['Type'] == 'MetaModel':
                 child = MetaModel.fromDict(obj_dict, uuid_dict, unresolved_keys)
@@ -544,7 +537,7 @@ class MetaModel(Model):
 
         uuid_dict[model['UUID']] = model['Attributes']['Name']['Value']
 
-        for obj in model['Children']['Objects']:
+        for obj in model['Children']:
             if obj['Type'] == 'MetaModel':
                 allowed_kids[ MetaModel.fromMeta(
                     obj,
@@ -688,14 +681,7 @@ class MetaAttribute(Model):
         )
         # Handle Children
         # TODO: Rework cardinality and how children can be inserted
-        card_map = {
-            'MetaModel': MetaModel,
-            'MetaPointer': MetaPointer,
-            'MetaAttribute': MetaAttribute
-        }
-        for name, cardinality in model_dict['Children']['Cardinality'].iteritems():
-            newobj.children.set_cardinality_of(card_map[name], cardinality)
-        for obj_dict in model_dict['Children']['Objects']:
+        for obj_dict in model_dict['Children']:
             child = None
             if obj_dict['Type'] == 'MetaModel':
                 child = MetaModel.fromDict(obj_dict, uuid_dict, unresolved_keys)
@@ -716,7 +702,7 @@ class MetaAttribute(Model):
         # provides get_options
         exec model['Attributes']['Kind']['Attributes']['List Options']['Value'] in locals()
 
-        for obj in model['Children']['Objects']:
+        for obj in model['Children']:
             if obj['Type'] == 'MetaAttribute':
                 attr_dict[obj['Attributes']['Name']['Value']] = [
                     MetaAttribute.fromMeta(
@@ -921,13 +907,6 @@ class Children(MutableSequence):
     @staticmethod
     def toDict(children):
         model_dict = OrderedDict()
-        # model_dict['Type'] = 'Children'
-        # cardinality_dict = {
-        #     key.__name__: value
-        #     for key, value in children._cardinality.iteritems()
-        # }
-        # model_dict['Cardinality'] = cardinality_dict
-        # model_dict['Objects'] = [x.__class__.toDict(x) for x in children]
         model_dict = [x.__class__.toDict(x) for x in children]
         return model_dict
 
@@ -973,30 +952,23 @@ class Children(MutableSequence):
             if item not in self._inner:
                 item_cardinality = self._cardinality[type(item)]
                 children_types = [type(val) for val in self._inner]
-                if item_cardinality == '1':
-                    if type(item) not in children_types:
-                        return True, ''
+                vals = item_cardinality.split('..', 1)
+                num_allowed = int(vals[0])
+                num_existing = children_types.count(type(item))
+                if len(vals) > 1:
+                    if vals[1] != '*':
+                        num_allowed = int(vals[1])
                     else:
-                        return [
-                            False,
-                            'Only allowed to have one {}'.format(
-                                type(item)
-                            )
-                        ]
-                # Need to handle cardinalities of the form 'X..Y'
-                else:
-                    num_allowed = item_cardinality.split('..')[1]
-                    if num_allowed and num_allowed != '*':
-                        num_existing = children_types.count(type(item))
-                        if num_existing >= int(num_allowed):
-                            return [
-                                False,
-                                'Max number of {} is {}'.format(
-                                    type(item),
-                                    num_allowed
-                                )
-                            ]
-                    return True, ''
+                        num_allowed = -1
+                if num_allowed > 0 and num_existing >= num_allowed:
+                    return [
+                        False,
+                        'Max number of {} is {}'.format(
+                            type(item),
+                            num_allowed
+                        )
+                    ]
+                return True, ''
         # item is not allowed as a child
         else:
             return False, '{} is not allowed!'.format(type(item))
