@@ -47,6 +47,13 @@ from tree_view import\
 from output import\
     TabbedOutputWidget
 
+# TODO: Allowing multiple root objects just means that __ROOT__ of the
+#       META is a list of objects, need to refactor the loading
+#       function to iterate on this list (and ensure when saving that
+#       it is always a list).  Will need to update the meta-metamodel
+#       so that the ROOT item can have any number of MetaModel objects
+#       as its children.
+
 # TODO: Refactor open/load model functions to reuse some code (with
 #       respect to metamodel)?
 
@@ -54,8 +61,6 @@ from output import\
 
 # TODO: Use meta-model dict to check model upon loading (before
 #       creating objects) (for structure, types, cardinalities)
-
-# TODO: Add meta-model name & MD5 to saved models for loading later
 
 # TODO: Allow creation of sub-trees of the meta-model, e.g. creating a
 #       package or a hardware or a component as a standalone model.
