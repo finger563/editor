@@ -37,6 +37,8 @@ class SortFilterProxyModel(QtGui.QSortFilterProxyModel):
     def filterAcceptsRow(self, row, parent):
         index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
         text = self.sourceModel().data(index0, self.filterRole())
+        if not text:
+            return False
         text = QtCore.QString(text)
         filtered = text.contains(self.filterRegExp())
 

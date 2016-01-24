@@ -22,6 +22,9 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 from collections import OrderedDict
 
+# for MD5
+import hashlib
+
 from action import\
     Action
 
@@ -325,8 +328,9 @@ class Editor(QtGui.QMainWindow):
             if fname:
                 with open(fname, 'r') as f:
                     meta_dict = json.loads(f.read())
+                self.META = meta_dict
                 uuid_dict = OrderedDict()
-                base = MetaModel.fromMeta(meta_dict, uuid_dict)
+                base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
                 root = base()
         elif self.editor_mode == 'Meta Model':
             root = MetaModel()
@@ -363,8 +367,6 @@ class Editor(QtGui.QMainWindow):
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
             # TODO: determine meta-model from model_dict and load it
-            # meta_model = model_dict['__META__']
-            # print meta_model['Name'], meta_model['Version'], meta_model['MD5']
             self.META = model_dict['__META__']
             # TODO: create meta_dict from loaded meta-model
             # TODO: check model_dict against meta_dict
@@ -423,18 +425,22 @@ class Editor(QtGui.QMainWindow):
             '{} Files (*.{})'.format(self.editor_mode, ftype),
             options=QtGui.QFileDialog.Options()
         )
+        fname = str(fname)
         if fname:
             if fname[-len(ftype):] != ftype:
                 fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
             # the actual root is not displayed and is always a Model()
             root = root.children[0]
-            modelDict = MetaModel.toDict(root)
+            rootDict = MetaModel.toDict(root)
+            modelDict = OrderedDict()
+            modelDict['Name'] = fname.split('/')[-1].split('.')[-2]
+            modelDict['MD5'] = hashlib.md5(str(rootDict)).hexdigest()
             modelDict['__META__'] = {
                 'Name': self.META['Name'],
-                'Version': self.META['Version'],
                 'MD5': self.META['MD5']
             }
+            modelDict['__ROOT__'] = rootDict
             dictStr = json.dumps(modelDict, indent=4)
             with open(fname, 'w') as f:
                 f.write(dictStr)

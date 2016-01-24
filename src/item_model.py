@@ -161,6 +161,9 @@ class ItemModel(QtCore.QAbstractItemModel):
         :param in rows: number of new children to insert
         :param in parent: :class:`QModelIndex` of the parent of new children
         '''
+
+        assert _type != None
+
         parentNode = self.getModel(parent)
 
         self.layoutAboutToBeChanged.emit()
@@ -171,17 +174,18 @@ class ItemModel(QtCore.QAbstractItemModel):
 
             success = parentNode.insert_child(position + row, childNode)
 
-            childCount = parentNode.child_count()
-            newName = 'New_{}_{}'.format(_type.__name__,
-                                         childCount)
-            validName = False
-            while not validName:
+            if success:
+                childCount = parentNode.child_count()
                 newName = 'New_{}_{}'.format(_type.__name__,
                                              childCount)
-                validName, errMsg = childNode.get_attribute(
-                    'Name'
-                ).setValue(newName)
-                childCount += 1
+                validName = False
+                while not validName:
+                    newName = 'New_{}_{}'.format(_type.__name__,
+                                                 childCount)
+                    validName, errMsg = childNode.get_attribute(
+                        'Name'
+                    ).setValue(newName)
+                    childCount += 1
 
         self.endInsertRows()
         self.layoutChanged.emit()
@@ -210,91 +214,3 @@ class ItemModel(QtCore.QAbstractItemModel):
 
         return success
 
-
-def main():
-    import sys
-    from attribute_widget import AttributeEditor
-    from meta import Model
-
-    app = QtGui.QApplication(sys.argv)
-
-    rootNode = Model()
-    rootNode['Name'] = 'Project_Root'
-
-    dep = Model()
-    dep['Name'] = 'My_Deployment'
-    rootNode.add_child(dep)
-
-    sw = Model()
-    sw['Name'] = 'My_Software'
-    rootNode.add_child(sw)
-
-    pkg = Model()
-    pkg['Name'] = 'My_Package'
-    sw.add_child(pkg)
-
-    comp = Model()
-    comp['Name'] = 'My_Component'
-    pkg.add_child(comp)
-
-    tmr = Model()
-    tmr['Name'] = 'My_Timer'
-    comp.add_child(tmr)
-
-    hw = Model()
-    hw['Name'] = 'My_Hardware'
-    rootNode.add_child(hw)
-
-    ''' SET UP THE MODEL, PROXY MODEL '''
-    
-    proxyModel = SortFilterProxyModel(None)
-    proxyModel.setDynamicSortFilter(True)
-    proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
-    proxyModel.setSortRole(ItemModel.sort_role)
-    proxyModel.setFilterRole(ItemModel.filter_role)
-
-    model = ItemModel(rootNode)
-
-    proxyModel.setSourceModel(model)
-
-    ''' SET UP THE ACTUAL WIDGETS '''
-
-    mainWidget = QtGui.QWidget()
-
-    filterEdit = QtGui.QLineEdit()
-    filterEdit.textChanged.connect(proxyModel.setFilterRegExp)
-
-    ae = AttributeEditor(mainWidget)
-    ae.setModel(proxyModel)
-
-    treeView = QtGui.QTreeView()
-    treeView.setModel(proxyModel)
-    treeView.setSortingEnabled(True)
-    treeView.selectionModel().currentChanged.connect(ae.setSelection)
-    treeView.show()
-
-    treeView2 = QtGui.QTreeView()
-    treeView2.setModel(proxyModel)
-    treeView2.setSortingEnabled(True)
-    treeView2.setSelectionModel(treeView.selectionModel())
-    treeView2.show()
-
-    vbox = QtGui.QVBoxLayout()
-    vbox.addWidget(filterEdit)
-    vbox.addWidget(treeView)
-    vbox.addWidget(treeView2)
-    mainWidget.setLayout(vbox)
-    mainWidget.show()
-    app.setActiveWindow(mainWidget)
-
-    ae.show()
-    ae.raise_()
-
-    swIndex = model.index(1, 0, QtCore.QModelIndex())
-    model.insertRows(0, 5, swIndex)
-    # model.removeRows(1, 1)
-
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
