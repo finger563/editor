@@ -48,6 +48,9 @@ class ItemModel(QtCore.QAbstractItemModel):
                 return node
         return self.rootNode
 
+    def hasChildren(self, parent):
+        return self.rowCount(parent) > 0
+
     def rowCount(self, parent):
         if not parent.isValid():
             parentNode = self.rootNode
@@ -145,7 +148,9 @@ class ItemModel(QtCore.QAbstractItemModel):
         '''Returns a :class:`QModelIndex` for the parent of index.'''
         node = self.getModel(index)
         parentNode = node.parent
-        if parentNode == self.rootNode:
+        if (parentNode == self.rootNode or
+            parentNode.row() is None or
+            parentNode.column() is None):
             return QtCore.QModelIndex()
         return self.createIndex(
             parentNode.row(),

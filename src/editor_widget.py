@@ -67,9 +67,6 @@ class EditorScene(QtGui.QGraphicsScene):
     def model(self):
         return self.views()[0].model()
 
-    def proxyModel(self):
-        return self.views()[0].proxyModel()
-
     def contextMenuEvent(self, event):
         item = self.itemAt(event.scenePos())
         if item:
@@ -85,12 +82,12 @@ class EditorScene(QtGui.QGraphicsScene):
 
     def addViewItem(self, mi, _type):
         def genericItem(e):
-            self.proxyModel().sourceModel().insertRows(0, 1, mi, _type)
+            self.model().sourceModel().insertRows(0, 1, mi, _type)
         return genericItem
 
     def delViewItem(self, mi):
         def genericItem(e):
-            self.proxyModel().sourceModel().removeRows(mi.row(), 1,
+            self.model().sourceModel().removeRows(mi.row(), 1,
                                                        mi.parent())
         return genericItem
 
@@ -118,7 +115,7 @@ class EditorView(QtGui.QGraphicsView):
         self.attribute_panel.setMaximumWidth(self.geometry().width() / 3.0)
         self._command_key_pressed = False
 
-        self._proxyModel = None
+        self._model = None
         self._dataMapper = QtGui.QDataWidgetMapper()
         self._itemDelegate = EditorViewDelegate(self)
         self._dataMapper.setItemDelegate(self._itemDelegate)
@@ -128,15 +125,12 @@ class EditorView(QtGui.QGraphicsView):
         # it is directly accessible class objects with attributes etc.
         return self.view_model
 
-    def proxyModel(self):
-        return self._proxyModel
-
     def model(self):
         return self._model
 
-    def setProxyModel(self, proxyModel):
-        self._proxyModel = proxyModel
-        self._dataMapper.setModel(proxyModel.sourceModel())
+    def setModel(self, model):
+        self._model = model
+        self._dataMapper.setModel(self.model())
 
     def init_ui(self, index, fname=''):
         scene = EditorScene(self)

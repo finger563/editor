@@ -61,14 +61,14 @@ class XStream(QtCore.QObject):
     def stdout():
         if (not XStream._stdout):
             XStream._stdout = XStream()
-            sys.stdout = XStream._stdout
+            # sys.stdout = XStream._stdout
         return XStream._stdout
 
     @staticmethod
     def stderr():
         if (not XStream._stderr):
             XStream._stderr = XStream()
-            sys.stderr = XStream._stderr
+            # sys.stderr = XStream._stderr
         return XStream._stderr
 
 
