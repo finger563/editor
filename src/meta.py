@@ -17,6 +17,9 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Need default value attribute for metaAttributes and
+#       metaPointers
+
 # TODO: Need to write fromDict functions for Model, Attribute, and
 #       Pointer
 
@@ -190,7 +193,7 @@ class Model(QtCore.QObject):
             for key, value in model.attributes.iteritems()
         }
         model_dict['Children'] = Children.toDict(model.children)
-        model_dict['Pointers'] = Children.toDict(model.children)
+        model_dict['Pointers'] = Children.toDict(model.pointers)
         return model_dict
 
     @staticmethod
@@ -203,7 +206,7 @@ class Model(QtCore.QObject):
             for key, value in model.attributes.iteritems()
         }
         model_dict['Children'] = Children.toDict(model.children)
-        model_dict['Pointers'] = Children.toDict(model.children)
+        model_dict['Pointers'] = Children.toDict(model.pointers)
         return model_dict
 
 
@@ -397,7 +400,7 @@ class Pointer(Model):
         model_dict.pop('UUID', None)
         model_dict.pop('Pointers', None)
         model_dict.pop('Children', None)
-        model_dict['Attributes']['Destination Type'] = model.dst_type.__name__
+        # model_dict['Attributes']['Destination Type'] = model.dst_type
         model_dict['Attributes'][
             'Destination'
         ] = model['Destination'].uuid
@@ -918,13 +921,14 @@ class Children(MutableSequence):
     @staticmethod
     def toDict(children):
         model_dict = OrderedDict()
-        model_dict['Type'] = 'Children'
-        cardinality_dict = {
-            key.__name__: value
-            for key, value in children._cardinality.iteritems()
-        }
-        model_dict['Cardinality'] = cardinality_dict
-        model_dict['Objects'] = [x.__class__.toDict(x) for x in children]
+        # model_dict['Type'] = 'Children'
+        # cardinality_dict = {
+        #     key.__name__: value
+        #     for key, value in children._cardinality.iteritems()
+        # }
+        # model_dict['Cardinality'] = cardinality_dict
+        # model_dict['Objects'] = [x.__class__.toDict(x) for x in children]
+        model_dict = [x.__class__.toDict(x) for x in children]
         return model_dict
 
     def __len__(self):

@@ -388,6 +388,7 @@ class Editor(QtGui.QMainWindow):
 
         # Set up the hidden Root model, with the 'model' object as its
         # only child
+        # TODO: Figure out how to allow different roots and multiple child objects.
         root = MetaModel()
         root.children.set_cardinality({model.__class__: '1'})
         root.add_child(model)
