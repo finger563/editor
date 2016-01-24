@@ -250,10 +250,10 @@ class ReferenceEditor(QtGui.QComboBox):
         self.pFilterModel.set_filter_func(_func)
 
     def setRootModelIndex(self, index):
-        self.flatModel.setRootModelIndex(index)
-        #r = self.flatModel.mapFromSource(index)
-        #rmi = self.pFilterModel.mapFromSource(r)
-        #super(ReferenceEditor, self).setRootModelIndex(rmi)
+        #self.flatModel.setRootModelIndex(index)
+        r = self.flatModel.mapFromSource(index)
+        rmi = self.pFilterModel.mapFromSource(r)
+        super(ReferenceEditor, self).setRootModelIndex(rmi)
 
     def setModel(self, model):
         self.flatModel.setSourceModel(model)

@@ -28,6 +28,10 @@ from syntax import\
     ROSHighlighter,\
     PythonHighlighter
 
+# TODO: Setting the root for the reference editor doesn't seem to
+#       actually set the root properly, still has global scope when
+#       filtering objects
+
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
 
@@ -233,6 +237,7 @@ class AttributeEditor(QtGui.QFrame):
             obj.setModel(self.dataMapper.model())
             root = attr.get_root(attr)
             rootIndex = self.dataMapper.model().createIndex(root.row(), root.column(), root)
+            print root, rootIndex, root['Name']
             obj.setRootModelIndex(rootIndex)
             obj.setCurrentReference(attr.getValue())
         elif 'file' in attr.getKind():
