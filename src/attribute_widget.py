@@ -28,10 +28,6 @@ from syntax import\
     ROSHighlighter,\
     PythonHighlighter
 
-# TODO: Setting the root for the reference editor doesn't seem to
-#       actually set the root properly, still has global scope when
-#       filtering objects
-
 # TODO: Perhaps find a way to import other highlighters and allow the
 #       user to select which highlighter to use as another attribute?
 

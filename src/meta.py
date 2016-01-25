@@ -39,17 +39,8 @@ import uuid
 #       Then we can use this meta-model dictionary for creating models
 #       (and possibly checking them as well?)
 
-# TODO: Fix bug with children insert that occurs when: a model has a
-#       child (pointer) with cardinality 1, and a sibling is added, a
-#       cardinality is thrown even though the sibling is not breaking
-#       cardinality rules.  Probably something is hosed in the class
-#       definition somewhere.
-
 # TODO: Refactor Attribute fromQVariant() method so that it is no
 #       longer needed; should be handled by delegate probably.
-
-# TODO: Add scoping to some dependent attributes (e.g. for pointers
-#       etc.)
 
 # TODO: Allow for messages/services which are purely references to
 #       libarary/standard messages/services.  Perhaps just allow
