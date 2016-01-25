@@ -1,6 +1,6 @@
 {
     "Name": "rosmod", 
-    "MD5": "d78c05768e0f8fc7670541021ba5082d", 
+    "MD5": "252dd8f2f8bcad3334e11a2aea4a2477", 
     "__META__": {
         "Name": "MetaMetaModel", 
         "MD5": "XXXX"
@@ -474,7 +474,7 @@
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def get_root(self):\n    print self, self.parent, self.parent.parent, self.parent.parent.parent\n    return self.parent.parent.parent.parent", 
+                                                        "Value": "def get_root(self):\n\t# attr.msg_ref.pub.component.package.software\n\tsw = self.parent.parent.parent.parent.parent\n\treturn sw", 
                                                         "Dependents": {}
                                                     }
                                                 }, 
@@ -539,7 +539,7 @@
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def get_root(self):\n    return self.parent", 
+                                                        "Value": "def get_root(self):\n\t# attr.msg_ref.sub.component.package.software\n\tsw = self.parent.parent.parent.parent.parent\n\treturn sw", 
                                                         "Dependents": {}
                                                     }
                                                 }, 
@@ -604,7 +604,7 @@
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def get_root(self):\n    return self.parent", 
+                                                        "Value": "def get_root(self):\n\t# attr.srv_ref.client.component.package.software\n\tsw = self.parent.parent.parent.parent.parent\n\treturn sw", 
                                                         "Dependents": {}
                                                     }
                                                 }, 
@@ -669,7 +669,7 @@
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def get_root(self):\n    return self.parent", 
+                                                        "Value": "def get_root(self):\n\t# attr.srv_ref.server.component.package.software\n\tsw = self.parent.parent.parent.parent.parent\n\treturn sw", 
                                                         "Dependents": {}
                                                     }
                                                 }, 
@@ -846,7 +846,7 @@
                                                 "Type": "Attribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "python", 
-                                                "Value": "def get_root(self):\n    return self.parent", 
+                                                "Value": "def get_root(self):\n\t# attr.comp_ref.comp_inst.node.deployment.project\n\tproject = self.parent.parent.parent.parent.parent\n\treturn project", 
                                                 "Dependents": {}
                                             }
                                         }, 
