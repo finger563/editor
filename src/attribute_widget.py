@@ -19,11 +19,9 @@ __status__ = 'Production'
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from collections import OrderedDict
-
 from attribute_editors import\
     FileEditor,\
-    ComboSortFilterProxyModel, ReferenceEditor,\
+    ReferenceEditor,\
     CodeEditor
 
 from syntax import\
@@ -61,10 +59,6 @@ class AttributePanel(QtGui.QWidget):
             child.widget().deleteLater()
         self.vbox.removeItem(self.vbox.itemAt(0))
 
-    def clear_widgets(self):
-        for key, attr_editor in self.attributes.iteritems():
-            self._layout.removeWidget(attr_editor)
-
     def init_layout(self):
         self.clear_layout()
 
@@ -88,42 +82,23 @@ class AttributePanel(QtGui.QWidget):
 
     def init_attributes(self, dataMapper, attr):
         i = 0  # index into attributes (if it were a list)
-        self.attributes = OrderedDict()
         for key, attr in attr.iteritems():
-            self.attributes[key] = AttributeEditor(
-                self,
-                dataMapper=dataMapper,
-                dataMapperIndex=i,
-                name=key,
-                attr=attr
-            )
             if attr.editable:
                 self._layout.addWidget(
-                    self.attributes[key]
+                    AttributeEditor(
+                        self,
+                        dataMapper=dataMapper,
+                        dataMapperIndex=i,
+                        name=key,
+                        attr=attr
+                    )
                 )
             i += 1
-
-    def update_attributes(self):
-
-        node = self.dataMapper.model().getModel(
-            self.dataMapper.rootIndex()
-        )
-        if not node:
-            return
-
-        for key, attr_editor in self.attributes.iteritems():
-            # attr_editor.update()
-            if node.get_attribute(key).editable:
-                self._layout.insertWidget(self._layout.count() - 2, attr_editor)
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
     def sourceDataChanged(self, topLeft, bottomRight):
         # TODO: Should test to see if our index has changed!
-
-        # TODO: Shouldn't recreate everything from scratch, should
-        #       just iterate through already created objects and
-        #       update their data!
-        self.update_attributes()
+        self.update()
 
     def setDataMapper(self, dataMapper):
         self.dataMapper = dataMapper
@@ -256,19 +231,13 @@ class AttributeEditor(QtGui.QFrame):
             attr.setValue(str(obj.currentText()))
         elif attr.getKind() in ['reference']:
             obj = ReferenceEditor()
-            model = self.dataMapper.model()
-
-            self.proxyModel = ComboSortFilterProxyModel(self)
-            self.proxyModel.setDynamicSortFilter(True)
-            self.proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
-            self.proxyModel.setSortRole(self.dataMapper.model().sort_role)
-            self.proxyModel.setSourceModel(model)
-            self.proxyModel.set_filter_type(attr.dst_type)
-            self.proxyModel.set_filter_func(lambda o: attr.filter_function(attr, o))
-
-            obj.setModel(model)#self.proxyModel)
+            # Need to get filter function here
+            obj.setReferenceType(attr.dst_type)
+            obj.setFilterFunc(lambda o: attr.filter_function(attr, o))
+            obj.setModel(self.dataMapper.model())
             root = attr.get_root(attr)
-            obj.setRoot(root)
+            rootIndex = self.dataMapper.model().createIndex(root.row(), root.column(), root)
+            obj.setRootModelIndex(rootIndex)
             obj.setCurrentReference(attr.getValue())
         elif 'file' in attr.getKind():
             obj = FileEditor(name=name,

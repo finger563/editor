@@ -62,8 +62,6 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             return super(EditorItemDelegate, self).eventFilter(editor, event)
 
     def setEditorData(self, editor, index):
-        # index points to the actual data that is being set, e.g. the attribute
-        # index.data() contains the updated data
         if type(editor) == EditorItemWidget:
             text = index.data().toString()
             # SET THE EDITOR ITEM TEXT HERE
@@ -78,7 +76,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             editor.setPlainText(text)
             return
         elif type(editor) == ReferenceEditor:
-            editor.setCurrentReference(index.data().toPyObject())
+            editor.setCurrentModelIndex(index)
             return
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 
