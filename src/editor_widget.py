@@ -211,7 +211,7 @@ class EditorView(QtGui.QGraphicsView):
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
             self._command_key_pressed = False
         elif event.key() == self.close_aw_key:
-            self.attribute_panel.cancel(None)
+            self.attribute_panel.hide(None)
         else:
             QtGui.QGraphicsView.keyReleaseEvent(self, event)
 

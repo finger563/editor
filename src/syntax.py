@@ -1,9 +1,8 @@
 # syntax.py
 
-import sys
-
 from PyQt4.QtCore import QRegExp
 from PyQt4.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
+
 
 def format(color, style=''):
     """Return a QTextCharFormat with the given attributes.
@@ -211,6 +210,7 @@ class ROSHighlighter (QSyntaxHighlighter):
     braces = [
         '\{', '\}', '\(', '\)', '\[', '\]',
     ]
+
     def __init__(self, document):
         QSyntaxHighlighter.__init__(self, document)
 
@@ -224,13 +224,13 @@ class ROSHighlighter (QSyntaxHighlighter):
 
         # Keyword, operator, and brace rules
         rules += [(r'\b%s\b' % w, 0, STYLES['keyword'])
-            for w in ROSHighlighter.keywords]
+                  for w in ROSHighlighter.keywords]
         rules += [(r'\b%s\b' % w, 0, STYLES['keyword2'])
-            for w in ROSHighlighter.keywords2]        
+                  for w in ROSHighlighter.keywords2]
         rules += [(r'\b%s\b' % w, 0, STYLES['datatype'])
-            for w in ROSHighlighter.datatypes]        
+                  for w in ROSHighlighter.datatypes]
         rules += [(r'%s' % b, 0, STYLES['brace'])
-            for b in ROSHighlighter.braces]
+                  for b in ROSHighlighter.braces]
 
         # All other rules
         rules += [
@@ -263,8 +263,7 @@ class ROSHighlighter (QSyntaxHighlighter):
 
         # Build a QRegExp for each pattern
         self.rules = [(QRegExp(pat), index, fmt)
-            for (pat, index, fmt) in rules]
-
+                      for (pat, index, fmt) in rules]
 
     def highlightBlock(self, text):
         """Apply syntax highlighting to the given block of text.
@@ -286,7 +285,6 @@ class ROSHighlighter (QSyntaxHighlighter):
         in_multiline = self.match_multiline(text, *self.tri_single)
         if not in_multiline:
             in_multiline = self.match_multiline(text, *self.tri_double)
-
 
     def match_multiline(self, text, delimiter, in_state, style):
         """Do highlighting of multi-line strings. ``delimiter`` should be a
@@ -350,6 +348,7 @@ class OutputHighlighter (QSyntaxHighlighter):
     braces = [
         '\{', '\}', '\(', '\)', '\[', '\]',
     ]
+
     def __init__(self, document):
         QSyntaxHighlighter.__init__(self, document)
 
@@ -363,13 +362,13 @@ class OutputHighlighter (QSyntaxHighlighter):
 
         # Keyword, operator, and brace rules
         rules += [(r'\b%s\b' % w, 0, STYLES['keyword'])
-            for w in OutputHighlighter.keywords]
+                  for w in OutputHighlighter.keywords]
         rules += [(r'\b%s\b' % w, 0, STYLES['keyword2'])
-            for w in OutputHighlighter.keywords2]        
+                  for w in OutputHighlighter.keywords2]
         rules += [(r'\b%s\b' % w, 0, STYLES['datatype'])
-            for w in OutputHighlighter.datatypes]        
+                  for w in OutputHighlighter.datatypes]
         rules += [(r'%s' % b, 0, STYLES['brace'])
-            for b in OutputHighlighter.braces]
+                  for b in OutputHighlighter.braces]
 
         # All other rules
         rules += [
@@ -402,8 +401,7 @@ class OutputHighlighter (QSyntaxHighlighter):
 
         # Build a QRegExp for each pattern
         self.rules = [(QRegExp(pat), index, fmt)
-            for (pat, index, fmt) in rules]
-
+                      for (pat, index, fmt) in rules]
 
     def highlightBlock(self, text):
         """Apply syntax highlighting to the given block of text.
@@ -425,7 +423,6 @@ class OutputHighlighter (QSyntaxHighlighter):
         in_multiline = self.match_multiline(text, *self.tri_single)
         if not in_multiline:
             in_multiline = self.match_multiline(text, *self.tri_double)
-
 
     def match_multiline(self, text, delimiter, in_state, style):
         """Do highlighting of multi-line strings. ``delimiter`` should be a

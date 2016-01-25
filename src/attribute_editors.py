@@ -17,8 +17,6 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from PyQt4 import QtCore
 
-# TODO: FIXME: CodeEditor doesn't allow typing capital e 'E'
-
 
 class FileEditor(QtGui.QPushButton):
     '''
@@ -93,7 +91,6 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         rows = model.rowCount(parent)
         for r in range(rows):
             index = model.index(r, 0, parent)
-            # print 'row', row, 'item', model.data(index, QtCore.Qt.DisplayRole)
             self.m_rowMap[index] = row
             self.m_indexMap[row] = index
             row = row + 1
@@ -103,8 +100,10 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
 
     def setRoot(self, root):
         if root:
-            index = self.sourceModel().createIndex(root.row(), root.column(), root)
-            self.rootIndex = index#.parent()
+            index = self.sourceModel().createIndex(
+                root.row(), root.column(), root
+            )
+            self.rootIndex = index
         else:
             self.rootIndex = QtCore.QModelIndex()
         self.buildMap(self.sourceModel(), self.rootIndex)
@@ -191,10 +190,10 @@ class ReferenceEditor(QtGui.QComboBox):
 
     def __init__(self, *args):
         super(ReferenceEditor, self).__init__(*args)
-        
+
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         # self.setEditable(True)
-        
+
         # Add the flatModel that we'll use
         self.flatModel = FlatProxyModel(self)
 
@@ -307,8 +306,8 @@ class CodeEditor(QtGui.QTextEdit):
                 event.ignore()
                 return
 
-        isShortcut = (event.modifiers() and
-                      Qt.ControlModifier and event.key() == Qt.Key_E)
+        isShortcut = ((event.modifiers() &
+                       Qt.ControlModifier) and event.key() == Qt.Key_E)
         if (not self.completer or not isShortcut):
             super(CodeEditor, self).keyPressEvent(event)
 
