@@ -17,6 +17,8 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from PyQt4 import QtCore
 
+# TODO: FIXME: CodeEditor doesn't allow typing capital e 'E'
+
 
 class FileEditor(QtGui.QPushButton):
     '''

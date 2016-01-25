@@ -34,9 +34,6 @@ class EditorViewDelegate(QtGui.QItemDelegate):
     ensuring that the tab's name changes whenever its associated model
     changes, for instance.
     '''
-    def __init__(self, parent=None):
-        super(EditorViewDelegate, self).__init__(parent)
-
     def setEditorData(self, editor, index):
         if type(editor) == EditorView:
             attr = index.model().getModel(index)

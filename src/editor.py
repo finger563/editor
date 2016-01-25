@@ -49,6 +49,8 @@ from tree_view import\
 from output import\
     TabbedOutputWidget
 
+# TODO: Refactor tab closing code to be part of the tabbedEditorWidget
+
 # TODO: Add copy/paste buffer functionality to the model, should
 #       create a copy of the object and simply change the name.
 
