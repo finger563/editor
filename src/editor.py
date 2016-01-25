@@ -339,9 +339,15 @@ class Editor(QtGui.QMainWindow):
                 base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
                 root = base()
         elif self.editor_mode == 'Meta Model':
+            self.META = OrderedDict()
+            self.META['Name'] = 'MetaMetaModel'
+            self.META['MD5'] = 'XXXX'
             root = MetaModel()
             root['Name'] = 'New_Model'
         elif self.editor_mode == 'View Model':
+            self.META = OrderedDict()
+            self.META['Name'] = 'ViewMetaModel'
+            self.META['MD5'] = 'XXXX'
             root = ViewModel()
             root['Name'] = 'New_View_Model'
         if root:
@@ -397,6 +403,7 @@ class Editor(QtGui.QMainWindow):
             print 'Loaded model {}'.format(fname)
             # TODO: determine meta-model from model_dict and load it
             meta_fname = model_dict['__META__']['Name'] + '.meta'
+            self.META = model_dict['__META__']
             # TODO: check model's meta:MD5 vs meta-model's MD5
             # TODO: create meta_dict from loaded meta-model
             try:
@@ -463,8 +470,8 @@ class Editor(QtGui.QMainWindow):
                 fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
             # the actual root is not displayed and is always a Model()
-            root = root.children[0]
-            rootDict = MetaModel.toDict(root)
+            rootDict = MetaModel.toDict(root.children[0])
+            # rootDict = [MetaModel.toDict(x) for x in root.children]
             modelDict = OrderedDict()
             modelDict['Name'] = fname.split('/')[-1].split('.')[-2]
             modelDict['MD5'] = hashlib.md5(str(rootDict)).hexdigest()
