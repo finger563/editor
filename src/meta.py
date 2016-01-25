@@ -17,6 +17,18 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Allow for resolving unknown references when their referenced
+#       object comes into scope, e.g. when a deployment's hardware
+#       reference (which is unknown but matches a certain
+#       syntax/pattern) is loaded as a submodel concurrently with the
+#       deployment.
+
+# TODO: Add unknown reference type which is allowable and
+#       (de-)serializable.  Would be the default reference when
+#       references are created and would allow users to write in the
+#       editable ReferenceEditor to provide references to outside
+#       objects.
+
 # TODO: Need a nice way of getting root item in the model; this would
 #       make getting other objects (for instance in get_root) much
 #       easier if they're not close by in the tree
@@ -25,6 +37,10 @@ import uuid
 #       meta-pointers.  accessor functions would be especially handy.
 #       perhaps meta-class so that there are automatically added
 #       functions e.g. Deployment.Hardware_Reference()
+#
+#       Monkey-patch when creating the class: update the dict so that
+#       the reference Type name (since there can only be one per
+#       object) is callable from the parent object
 
 # TODO: Need default value attribute for metaAttributes and
 #       metaPointers
