@@ -76,7 +76,7 @@ class EditorItemDelegate(QtGui.QItemDelegate):
             editor.setPlainText(text)
             return
         elif type(editor) == ReferenceEditor:
-            editor.setCurrentModelIndex(index)
+            editor.setCurrentReference(index.data().toPyObject())
             return
         return super(EditorItemDelegate, self).setEditorData(editor, index)
 

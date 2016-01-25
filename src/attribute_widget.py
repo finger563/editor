@@ -231,12 +231,10 @@ class AttributeEditor(QtGui.QFrame):
             attr.setValue(str(obj.currentText()))
         elif attr.getKind() in ['reference']:
             obj = ReferenceEditor()
-            # Need to get filter function here
             obj.setReferenceType(attr.dst_type)
             obj.setFilterFunc(lambda o: attr.filter_function(attr, o))
-            obj.setModel(self.dataMapper.model())
             root = attr.get_root(attr)
-            obj.setRoot(root)
+            obj.setModelAndRoot(self.dataMapper.model(), root)
             obj.setCurrentReference(attr.getValue())
         elif 'file' in attr.getKind():
             obj = FileEditor(name=name,

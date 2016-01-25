@@ -69,15 +69,14 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
     list-based widget, such as a :class:`QtGui.QComboBox`.
     '''
 
-    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
-    def sourceRowsAboutToBeInserted(self, parent, start, end):
-        self.rowsAboutToBeInserted.emit(parent,
-                                        start, end)
+    def __init__(self, *args):
+        super(FlatProxyModel, self).__init__(*args)
+        self.rootIndex = None
 
-    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
-    def sourceRowsAboutToBeRemoved(self, parent, start, end):
-        self.rowsAboutToBeRemoved.emit(parent,
-                                       start, end)
+    @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QModelIndex)
+    def sourceDataChanged(self, topLeft, bottomRight):
+        self.dataChanged.emit(self.mapFromSource(topLeft),
+                              self.mapFromSource(bottomRight))
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def sourceRowsInserted(self, parent, start, end):
@@ -100,6 +99,7 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         rows = model.rowCount(parent)
         for r in range(rows):
             index = model.index(r, 0, parent)
+            # print 'row', row, 'item', model.data(index, QtCore.Qt.DisplayRole)
             self.m_rowMap[index] = row
             self.m_indexMap[row] = index
             row = row + 1
@@ -108,17 +108,18 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         return row
 
     def setRoot(self, root):
-        print "root:",root, root['Name']
-        index = self.sourceModel().createIndex(root.row(), root.column(), root)
-        self.rootIndex = index.parent()
+        if root:
+            index = self.sourceModel().createIndex(root.row(), root.column(), root)
+            self.rootIndex = index#.parent()
+        else:
+            self.rootIndex = QtCore.QModelIndex()
         self.buildMap(self.sourceModel(), self.rootIndex)
 
-    def setSourceModel(self, model):
-        self.rootIndex = QtCore.QModelIndex()
-        QtGui.QAbstractProxyModel.setSourceModel(self, model)
+    def setSourceModel(self, model, rootObj=None):
+        super(FlatProxyModel, self).setSourceModel(model)
+        self.setRoot(rootObj)
         self.buildMap(model, self.rootIndex)
-        model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
-        model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
+        model.dataChanged.connect(self.sourceDataChanged)
         model.rowsInserted.connect(self.sourceRowsInserted)
         model.rowsRemoved.connect(self.sourceRowsRemoved)
 
@@ -164,10 +165,14 @@ class ComboSortFilterProxyModel(QtGui.QSortFilterProxyModel):
         self.filter_func = _func
 
     def filterAcceptsRow(self, row, parent):
-        index0 = self.sourceModel().index(row, self.filterKeyColumn(), parent)
         p = self.sourceModel()
+        index0 = p.index(
+            row,
+            self.filterKeyColumn(),
+            self.mapToSource(parent)
+        )
         i = p.mapToSource(index0)
-        m = self.sourceModel().sourceModel()
+        m = p.sourceModel()
         item = m.getModel(i)
         test = item.kind() == self.filter_type and self.filter_func(item)
         return test
@@ -207,20 +212,10 @@ class ReferenceEditor(QtGui.QComboBox):
     def setFilterFunc(self, _func):
         self.pFilterModel.set_filter_func(_func)
 
-    def setRoot(self, root):
-        self.flatModel.setRoot(root)
-        #r = self.flatModel.mapFromSource(index)
-        #rmi = self.pFilterModel.mapFromSource(r)
-        #super(ReferenceEditor, self).setRootModelIndex(rmi)
-
-    def setModel(self, model):
-        self.flatModel.setSourceModel(model)
+    def setModelAndRoot(self, model, root):
+        self.flatModel.setSourceModel(model, root)
         self.pFilterModel.setSourceModel(self.flatModel)
         super(ReferenceEditor, self).setModel(self.pFilterModel)
-
-    def setModelColumn(self, column):
-        self.pFilterModel.setFilterKeyColumn(column)
-        super(ReferenceEditor, self).setModelColumn(column)
 
     def setCurrentReference(self, ref):
         index = self.findData(
@@ -235,11 +230,6 @@ class ReferenceEditor(QtGui.QComboBox):
             ).toPyObject()
         self.setCurrentIndex(index)
         self.activated[str].emit(self.itemText(index))
-        self._old_ref = ref
-
-    def setCurrentModelIndex(self, mi):
-        ref = mi.data().toPyObject()
-        self.setCurrentReference(ref)
 
     def getRootItemModel(self):
         return self.model().sourceModel().sourceModel()

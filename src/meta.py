@@ -17,6 +17,11 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Need a nice way of getting pointers; esp. for getting root in
+#       meta-pointers.  accessor functions would be especially handy.
+#       perhaps meta-class so that there are automatically added
+#       functions e.g. Deployment.Hardware_Reference()
+
 # TODO: Need default value attribute for metaAttributes and
 #       metaPointers
 
