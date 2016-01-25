@@ -18,8 +18,6 @@ from PyQt4 import QtGui
 from attribute_widget import AttributePanel
 from editor_item import EditorItem
 
-# TODO: Changing parent name doesn't change tab name (scoped name)
-
 # TODO: Add in view-model specific loading code once view_model has
 #       been fully specified
 

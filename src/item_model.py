@@ -111,15 +111,35 @@ class ItemModel(QtCore.QAbstractItemModel):
                 if not valid:
                     print 'ERROR: ', errMsg
                 self.dataChanged.emit(index, index)
-                if index.internalPointer() == attr:
+                parent = None
+                # if we are setting the data of an attribute directly
+                if index.column() == 1:
+                    parent = index.parent()
                     self.dataChanged.emit(
                         index.parent(),
                         index.parent()
                     )
+                # if we are setting the data of a model
                 else:
+                    parent = index
                     self.dataChanged.emit(
                         index.child(0, 1),
                         index.child(0, 1)
+                    )
+                # Added this to help ensure that when objects' names
+                # are changed, the scoping works for their children
+                # (e.g. tab names update accordingly when scope
+                # changes)
+                childCount = self.rowCount(parent)
+                self.dataChanged.emit(
+                    parent.child(0, 0),
+                    parent.child(childCount, 0)
+                )
+                for c in range(childCount):
+                    child = parent.child(c, 0)
+                    self.dataChanged.emit(
+                        child.child(0, 1),
+                        child.child(0, 1)
                     )
                 return True
         return False
