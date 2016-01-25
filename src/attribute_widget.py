@@ -236,8 +236,7 @@ class AttributeEditor(QtGui.QFrame):
             obj.setFilterFunc(lambda o: attr.filter_function(attr, o))
             obj.setModel(self.dataMapper.model())
             root = attr.get_root(attr)
-            rootIndex = self.dataMapper.model().createIndex(root.row(), root.column(), root)
-            obj.setRootModelIndex(rootIndex)
+            obj.setRoot(root)
             obj.setCurrentReference(attr.getValue())
         elif 'file' in attr.getKind():
             obj = FileEditor(name=name,

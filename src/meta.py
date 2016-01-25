@@ -770,8 +770,8 @@ class MetaPointer(Model):
             return r.children[0]
         def filter_function(s, o):
             return True
-        destAttr.get_root = lambda s: get_root(s)
-        destAttr.filter_function = lambda s, o: filter_function(s, o)
+        destAttr.get_root = get_root
+        destAttr.filter_function = filter_function
 
         self.set_attribute(
             'Root Object',
@@ -868,8 +868,8 @@ class MetaPointer(Model):
             destAttr.dst_type = uuid_dict[model['Attributes']['Destination Type']]
             destAttr.tooltip = model['Attributes']['Tooltip']['Value']
             destAttr.display = model['Attributes']['Display']['Value']
-            destAttr.get_root = lambda s: get_root(s)
-            destAttr.filter_function = lambda s, o: filter_function(s,o)
+            destAttr.get_root = get_root
+            destAttr.filter_function = filter_function
             
         new_ptr = type(
             str(model['Attributes']['Name']['Value']),
