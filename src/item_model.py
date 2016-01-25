@@ -19,12 +19,6 @@ __status__ = 'Production'
 
 from PyQt4 import QtCore, QtGui
 
-# TODO: There seems to be a segfault sometimes that occurs when right
-#       clicking on an object in the tree view when no selection
-#       exists, occurs after deletion of items.  Might have something
-#       to do with the signals we're sending?  Can't seem to replicate
-#       it
-
 
 class ItemModel(QtCore.QAbstractItemModel):
     '''Implements the :class:`QtCore.QAbstractItemModel` to interact with
@@ -41,6 +35,15 @@ class ItemModel(QtCore.QAbstractItemModel):
         super(ItemModel, self).__init__(parent)
         self.rootNode = root
 
+    def getRootItems(self):
+        return self.rootNode.children
+
+    def setMeta(self, meta):
+        self.META = meta
+    
+    def getMeta(self):
+        return self.META
+
     def getModel(self, index):
         if index.isValid():
             node = index.internalPointer()
@@ -49,7 +52,10 @@ class ItemModel(QtCore.QAbstractItemModel):
         return self.rootNode
 
     def hasChildren(self, parent):
-        return self.rowCount(parent) > 0
+        if parent.isValid():
+            return self.rowCount(parent) > 0
+        else:
+            return True
 
     def rowCount(self, parent):
         if not parent.isValid():
@@ -67,7 +73,7 @@ class ItemModel(QtCore.QAbstractItemModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return None
+            return QtCore.QVariant()
         node = index.internalPointer()
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
             #  columns 0 and 2 are children and pointers respectively
@@ -91,7 +97,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == ItemModel.filter_data_role:
             if index.column() == 0:
                 return node['Name']
-        return None
+        return QtCore.QVariant()
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
         if index.isValid() and role == QtCore.Qt.EditRole:
@@ -121,9 +127,11 @@ class ItemModel(QtCore.QAbstractItemModel):
     def headerData(self, section, orientation, role):
         if role == QtCore.Qt.DisplayRole:
             if section == 0:
-                return 'Model'
+                return QtCore.QVariant('Model')
 
     def flags(self, index):
+        if not index.isValid():
+            return None
         f = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
         if index.column() == 0:
             f = f | QtCore.Qt.ItemIsEditable
@@ -214,8 +222,8 @@ class ItemModel(QtCore.QAbstractItemModel):
             success = parentNode.remove_child(position)
 
         self.endRemoveRows()
-        self.dataChanged.emit(parent, parent)
         self.layoutChanged.emit()
+        self.dataChanged.emit(parent, parent)
 
         return success
 

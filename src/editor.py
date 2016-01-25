@@ -24,6 +24,8 @@ from collections import OrderedDict
 
 # for MD5
 import hashlib
+# for serialization
+import json
 
 from action import\
     Action
@@ -321,7 +323,6 @@ class Editor(QtGui.QMainWindow):
         self.clearModels()
         self.clearViewer()
         root = None
-        import json
         if self.editor_mode == 'Model':
             fname = QtGui.QFileDialog.getOpenFileName(
                 self,
@@ -364,39 +365,51 @@ class Editor(QtGui.QMainWindow):
             root = self.open_model(fname)
             self.load_model(root)
 
+    def checkModel(self, model_dict):
+        # check against self.META
+        return True
+
+    def convertDictToModel(self, root_dict):
+        uuid_dict = {}
+        unresolved_keys = {}
+        root = MetaModel.fromDict(root_dict, uuid_dict, unresolved_keys)
+        for uuid_key, attr_list in unresolved_keys.iteritems():
+            for attr in attr_list:
+                attr.dst_type = uuid_dict[uuid_key].kind()
+                attr.setValue(uuid_dict[uuid_key])
+        return root
+
+    def open_meta(self, fname):
+        '''Decodes a saved meta-model file and loads it into the editor.'''
+        with open(fname, 'r') as f:
+            meta_dict = json.loads(f.read())
+            print 'Loaded meta-model {}'.format(meta_fname)
+            uuid_dict = {}
+            base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
+            print base
+
     def open_model(self, fname):
-        '''Decodes a saved \*.{model, meta, view} file and loads it into the
+        '''Decodes a saved model {*.meta, *.model} file and loads it into the
         editor.
         '''
-        import json
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
             print 'Loaded model {}'.format(fname)
             # TODO: determine meta-model from model_dict and load it
-            self.META = model_dict['__META__']
-            uuid_dict = {}
-            meta_fname = self.META['Name'] + '.meta'
+            meta_fname = model_dict['__META__']['Name'] + '.meta'
+            # TODO: check model's meta:MD5 vs meta-model's MD5
+            # TODO: create meta_dict from loaded meta-model
             try:
-                with open(meta_fname, 'r') as f:
-                    meta_dict = json.loads(f.read())
-                    print 'Loaded meta-model {}'.format(meta_fname)
-                    base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
-                    print base
+                self.open_meta(meta_fname)
             except:
                 print 'ERROR: Cannot find meta-model {}, please select location.'.format(
                     meta_fname
                 )
-            # TODO: create meta_dict from loaded meta-model
+            root = None
             # TODO: check model_dict against meta_dict
-            # TODO: instantiate objects for model from model_dict based on meta_dict
-            uuid_dict = {}
-            unresolved_keys = {}
-            root_dict = model_dict['__ROOT__']
-            root = MetaModel.fromDict(root_dict, uuid_dict, unresolved_keys)
-            for uuid_key, attr_list in unresolved_keys.iteritems():
-                for attr in attr_list:
-                    attr.dst_type = uuid_dict[uuid_key].kind()
-                    attr.setValue(uuid_dict[uuid_key])
+            if self.checkModel(model_dict['__ROOT__']):
+                # TODO: instantiate objects for model from model_dict based on meta_dict
+                root = self.convertDictToModel(model_dict['__ROOT__'])
             return root
 
     def load_model(self, model):
@@ -436,7 +449,6 @@ class Editor(QtGui.QMainWindow):
 
     def saveModel(self, event):
         '''Saves a model according to the current mode of the editor.'''
-        import json
         ftype = '{}'.format(self.editor_mode.lower().split()[0])
         fname = QtGui.QFileDialog.getSaveFileName(
             self,

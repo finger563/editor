@@ -57,7 +57,14 @@ class TreeView(QtGui.QTreeView):
     '''
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
+    def rowsRemoved(self, parent, start, end):
+        '''Seems to fix segfault when deleting item and then clicking certain areas.'''
+        super(TreeView, self).rowsRemoved(parent, start, end)
+        self.setCurrentIndex(QtCore.QModelIndex())
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex, int, int)
     def rowsInserted(self, parent, start, end):
+        '''Implemented to auto-expand item when children are added.'''
         super(TreeView, self).rowsInserted(parent, start, end)
         self.setExpanded(parent, True)
 
