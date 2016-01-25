@@ -1,13 +1,13 @@
 {
     "Name": "test", 
-    "MD5": "6fce9d5a24906cdf0cf3e896ddc54502", 
+    "MD5": "e0dcc8955c617749d15b58ef0b3bf5ee", 
     "__META__": {
         "Name": "rosmod", 
-        "MD5": "d0bbe46fd743000069f9c815df50004e"
+        "MD5": "252dd8f2f8bcad3334e11a2aea4a2477"
     }, 
     "__ROOT__": {
         "Type": "Project", 
-        "UUID": "bb4e7a75-6c7b-41d0-89a4-96c121913339", 
+        "UUID": "eab1a1cb-ecec-46ee-bb9a-54393d5a7d9b", 
         "Attributes": {
             "Name": {
                 "Type": "NameAttribute", 
@@ -19,401 +19,49 @@
         "Children": [
             {
                 "Type": "Software", 
-                "UUID": "2a61eaf4-f17d-4329-8080-db6181df8efa", 
+                "UUID": "e8ba493a-f8b1-4704-9d1e-457251c43f3f", 
                 "Attributes": {
                     "Name": {
                         "Type": "NameAttribute", 
                         "Attributes": {}, 
                         "Kind": "string", 
-                        "Value": "Software"
+                        "Value": "Software_0"
                     }
                 }, 
-                "Children": [
-                    {
-                        "Type": "Package", 
-                        "UUID": "cbd4c480-c94b-406c-a898-bed139be8f4d", 
-                        "Attributes": {
-                            "Name": {
-                                "Type": "NameAttribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "Package"
-                            }
-                        }, 
-                        "Children": [
-                            {
-                                "Type": "Message", 
-                                "UUID": "69c84928-65d4-45aa-8e84-ce928d6afbd8", 
-                                "Attributes": {
-                                    "Definition": {
-                                        "Type": "Definition", 
-                                        "Attributes": {}, 
-                                        "Kind": "code", 
-                                        "Value": "string state", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "State"
-                                    }
-                                }, 
-                                "Children": [], 
-                                "Pointers": []
-                            }, 
-                            {
-                                "Type": "Service", 
-                                "UUID": "0f800c6d-12d4-435f-8eb5-67cbd17da3c5", 
-                                "Attributes": {
-                                    "Definition": {
-                                        "Type": "Definition", 
-                                        "Attributes": {}, 
-                                        "Kind": "code", 
-                                        "Value": "int32 a\nint32 b\n---\nint32 result", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "AddTwoInts"
-                                    }
-                                }, 
-                                "Children": [], 
-                                "Pointers": []
-                            }, 
-                            {
-                                "Type": "Component", 
-                                "UUID": "d9c52f22-1e4e-4279-8c44-5a91021af289", 
-                                "Attributes": {
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "Component_1"
-                                    }
-                                }, 
-                                "Children": [
-                                    {
-                                        "Type": "Timer", 
-                                        "UUID": "c9febfcb-916f-4af8-a2be-ff84765b7d87", 
-                                        "Attributes": {
-                                            "Offset": {
-                                                "Type": "Offset", 
-                                                "Attributes": {}, 
-                                                "Kind": "double", 
-                                                "Value": 0.5, 
-                                                "Dependents": {}
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "Output_Timer"
-                                            }, 
-                                            "Period": {
-                                                "Type": "Period", 
-                                                "Attributes": {}, 
-                                                "Kind": "double", 
-                                                "Value": 1.0, 
-                                                "Dependents": {}
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": []
-                                    }, 
-                                    {
-                                        "Type": "Publisher", 
-                                        "UUID": "9b31025c-14a5-4ae2-b144-bcfdb95b6a3e", 
-                                        "Attributes": {
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "State_pub"
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": [
-                                            {
-                                                "Type": "Message_Reference", 
-                                                "Attributes": {
-                                                    "Destination": "69c84928-65d4-45aa-8e84-ce928d6afbd8", 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "Message_Reference"
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }, 
-                                    {
-                                        "Type": "Subscriber", 
-                                        "UUID": "12eb92d2-7bcb-43cd-95c9-c34a63ef9a71", 
-                                        "Attributes": {
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "State_sub"
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": [
-                                            {
-                                                "Type": "Message_Reference", 
-                                                "Attributes": {
-                                                    "Destination": "69c84928-65d4-45aa-8e84-ce928d6afbd8", 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "Message_Reference"
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }, 
-                                    {
-                                        "Type": "Client", 
-                                        "UUID": "787eeb47-8cc0-40ac-866a-3049d9b7f951", 
-                                        "Attributes": {
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "AddTwoInts_client"
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": [
-                                            {
-                                                "Type": "Service_Reference", 
-                                                "Attributes": {
-                                                    "Destination": "0f800c6d-12d4-435f-8eb5-67cbd17da3c5", 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "Service_Reference"
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }, 
-                                    {
-                                        "Type": "Server", 
-                                        "UUID": "bd747fe0-c6d8-43b1-b285-5e8bb17462ad", 
-                                        "Attributes": {
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "AddTWoInts_server"
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": [
-                                            {
-                                                "Type": "Service_Reference", 
-                                                "Attributes": {
-                                                    "Destination": "0f800c6d-12d4-435f-8eb5-67cbd17da3c5", 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "Service_Reference"
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ], 
-                                "Pointers": []
-                            }
-                        ], 
-                        "Pointers": []
-                    }
-                ], 
+                "Children": [], 
                 "Pointers": []
             }, 
             {
                 "Type": "Hardware", 
-                "UUID": "2f049f3d-1371-4341-a420-b2547397792a", 
+                "UUID": "f8c1c9e5-a101-48e8-9fa7-6b89bcb94cc8", 
                 "Attributes": {
                     "Name": {
                         "Type": "NameAttribute", 
                         "Attributes": {}, 
                         "Kind": "string", 
-                        "Value": "Local"
+                        "Value": "New_Hardware_2"
                     }
                 }, 
-                "Children": [
-                    {
-                        "Type": "Host", 
-                        "UUID": "5cc3ec82-24d8-453f-aefc-21c6708ae92f", 
-                        "Attributes": {
-                            "Name": {
-                                "Type": "NameAttribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "localhost"
-                            }
-                        }, 
-                        "Children": [
-                            {
-                                "Type": "Interface", 
-                                "UUID": "c35c625c-619c-4629-927b-a9124a6d7559", 
-                                "Attributes": {
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "loopback"
-                                    }
-                                }, 
-                                "Children": [], 
-                                "Pointers": []
-                            }
-                        ], 
-                        "Pointers": []
-                    }
-                ], 
+                "Children": [], 
                 "Pointers": []
             }, 
             {
                 "Type": "Deployment", 
-                "UUID": "4712cdbf-e63f-4336-85c2-f4bed8fce657", 
+                "UUID": "f18d47a9-3425-4810-abf9-13b5c6d0477b", 
                 "Attributes": {
                     "Name": {
                         "Type": "NameAttribute", 
                         "Attributes": {}, 
                         "Kind": "string", 
-                        "Value": "Deployment"
+                        "Value": "New_Deployment_3"
                     }
                 }, 
-                "Children": [
-                    {
-                        "Type": "Node", 
-                        "UUID": "77611ef6-7da4-47f2-9415-7ec579a5ad63", 
-                        "Attributes": {
-                            "Priority": {
-                                "Type": "Priority", 
-                                "Attributes": {}, 
-                                "Kind": "int", 
-                                "Value": 0, 
-                                "Dependents": {}
-                            }, 
-                            "Name": {
-                                "Type": "NameAttribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "Node_1"
-                            }
-                        }, 
-                        "Children": [
-                            {
-                                "Type": "Component_Instance", 
-                                "UUID": "fc633e0c-59b9-4f96-af73-3cef0b4d2783", 
-                                "Attributes": {
-                                    "Scheduling_Scheme": {
-                                        "Type": "Scheduling_Scheme", 
-                                        "Attributes": {}, 
-                                        "Kind": "list", 
-                                        "Value": "PFIFO", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Logging": {
-                                        "Type": "Logging", 
-                                        "Attributes": {
-                                            "Info": {
-                                                "Type": "Info", 
-                                                "Attributes": {}, 
-                                                "Kind": "bool", 
-                                                "Value": true, 
-                                                "Dependents": {}
-                                            }, 
-                                            "Debug": {
-                                                "Type": "Debug", 
-                                                "Attributes": {}, 
-                                                "Kind": "bool", 
-                                                "Value": true, 
-                                                "Dependents": {}
-                                            }, 
-                                            "Critical": {
-                                                "Type": "Critical", 
-                                                "Attributes": {}, 
-                                                "Kind": "bool", 
-                                                "Value": true, 
-                                                "Dependents": {}
-                                            }, 
-                                            "Warn": {
-                                                "Type": "Warn", 
-                                                "Attributes": {}, 
-                                                "Kind": "bool", 
-                                                "Value": true, 
-                                                "Dependents": {}
-                                            }
-                                        }, 
-                                        "Kind": "list", 
-                                        "Value": "Off", 
-                                        "Dependents": {
-                                            "On": [
-                                                "Info", 
-                                                "Debug", 
-                                                "Warn", 
-                                                "Critical"
-                                            ]
-                                        }
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "Comp_1_inst"
-                                    }
-                                }, 
-                                "Children": [], 
-                                "Pointers": [
-                                    {
-                                        "Type": "Component_Reference", 
-                                        "Attributes": {
-                                            "Destination": "d9c52f22-1e4e-4279-8c44-5a91021af289", 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "Component_Reference"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        ], 
-                        "Pointers": [
-                            {
-                                "Type": "Host_Reference", 
-                                "Attributes": {
-                                    "Destination": "5cc3ec82-24d8-453f-aefc-21c6708ae92f", 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "Host_Reference"
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                ], 
+                "Children": [], 
                 "Pointers": [
                     {
                         "Type": "Hardware_Reference", 
                         "Attributes": {
-                            "Destination": "2f049f3d-1371-4341-a420-b2547397792a", 
+                            "Destination": "f8c1c9e5-a101-48e8-9fa7-6b89bcb94cc8", 
                             "Name": {
                                 "Type": "NameAttribute", 
                                 "Attributes": {}, 

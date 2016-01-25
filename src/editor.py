@@ -371,8 +371,21 @@ class Editor(QtGui.QMainWindow):
         import json
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
+            print 'Loaded model {}'.format(fname)
             # TODO: determine meta-model from model_dict and load it
             self.META = model_dict['__META__']
+            uuid_dict = {}
+            meta_fname = self.META['Name'] + '.meta'
+            try:
+                with open(meta_fname, 'r') as f:
+                    meta_dict = json.loads(f.read())
+                    print 'Loaded meta-model {}'.format(meta_fname)
+                    base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
+                    print base
+            except:
+                print 'ERROR: Cannot find meta-model {}, please select location.'.format(
+                    meta_fname
+                )
             # TODO: create meta_dict from loaded meta-model
             # TODO: check model_dict against meta_dict
             # TODO: instantiate objects for model from model_dict based on meta_dict
