@@ -114,10 +114,10 @@ class FlatProxyModel(QtGui.QAbstractProxyModel):
         self.rootIndex = QtCore.QModelIndex()
         QtGui.QAbstractProxyModel.setSourceModel(self, model)
         self.buildMap(model, self.rootIndex)
-        #model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
-        #model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
-        #model.rowsInserted.connect(self.sourceRowsInserted)
-        #model.rowsRemoved.connect(self.sourceRowsRemoved)
+        model.rowsAboutToBeInserted.connect(self.sourceRowsAboutToBeInserted)
+        model.rowsAboutToBeRemoved.connect(self.sourceRowsAboutToBeRemoved)
+        model.rowsInserted.connect(self.sourceRowsInserted)
+        model.rowsRemoved.connect(self.sourceRowsRemoved)
 
     def mapFromSource(self, index):
         if index not in self.m_rowMap:
