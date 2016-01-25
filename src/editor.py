@@ -49,6 +49,14 @@ from tree_view import\
 from output import\
     TabbedOutputWidget
 
+# TODO: Add copy/paste buffer functionality to the model, should
+#       create a copy of the object and simply change the name.
+
+# TODO: Add python function input for instantiating objects
+#       parametrically, would allow creating hardware model for
+#       instance where each hardware has a parametric name (BBB_XXX),
+#       and a parametric IP address (for instance)
+
 # TODO: Allowing multiple root objects just means that __ROOT__ of the
 #       META is a list of objects, need to refactor the loading
 #       function to iterate on this list (and ensure when saving that
@@ -389,7 +397,7 @@ class Editor(QtGui.QMainWindow):
         '''Decodes a saved meta-model file and loads it into the editor.'''
         with open(fname, 'r') as f:
             meta_dict = json.loads(f.read())
-            print 'Loaded meta-model {}'.format(meta_fname)
+            print 'Loaded meta-model {}'.format(fname)
             uuid_dict = {}
             base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
             print base
@@ -409,13 +417,14 @@ class Editor(QtGui.QMainWindow):
             try:
                 self.open_meta(meta_fname)
             except:
-                print 'ERROR: Cannot find meta-model {}, please select location.'.format(
+                print 'ERROR: Cannot find {}, please select location.'.format(
                     meta_fname
                 )
             root = None
             # TODO: check model_dict against meta_dict
             if self.checkModel(model_dict['__ROOT__']):
-                # TODO: instantiate objects for model from model_dict based on meta_dict
+                # TODO: instantiate objects for model from model_dict
+                #       based on meta_dict
                 root = self.convertDictToModel(model_dict['__ROOT__'])
             return root
 
@@ -427,7 +436,9 @@ class Editor(QtGui.QMainWindow):
 
         # Set up the hidden Root model, with the 'model' object as its
         # only child
-        # TODO: Figure out how to allow different roots and multiple child objects.
+
+        # TODO: Figure out how to allow different roots and multiple
+        #       child objects.
         root = MetaModel()
         root.children.set_cardinality({model.__class__: '1..*'})
         root.add_child(model)
