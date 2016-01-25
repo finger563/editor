@@ -946,20 +946,31 @@ class Children(MutableSequence):
     def allowed(self):
         return self._cardinality.keys()
 
+    def number_of(self, item):
+        children_types = [type(item) for val in self._inner]
+        return children_types.count(type(item))
+
+    def min_number_of(self, item):
+        item_cardinality = self._cardinality[type(item)]
+        vals = item_cardinality.split('..', 1)
+        return int(vals[0])
+        
+    def max_number_of(self, item):
+        item_cardinality = self._cardinality[type(item)]
+        vals = item_cardinality.split('..', 1)
+        if len(vals) > 1:
+            if vals[1] != '*':
+                return int(vals[1])
+            else:
+                return -1
+        return self.min_number_of(item)
+
     def can_insert(self, item):
         # item is allowed as a child
         if type(item) in self.allowed():
             if item not in self._inner:
-                item_cardinality = self._cardinality[type(item)]
-                children_types = [type(val) for val in self._inner]
-                vals = item_cardinality.split('..', 1)
-                num_allowed = int(vals[0])
-                num_existing = children_types.count(type(item))
-                if len(vals) > 1:
-                    if vals[1] != '*':
-                        num_allowed = int(vals[1])
-                    else:
-                        num_allowed = -1
+                num_allowed = self.max_number_of(item)
+                num_existing = self.number_of(item)
                 if num_allowed > 0 and num_existing >= num_allowed:
                     return [
                         False,

@@ -422,7 +422,7 @@ class Editor(QtGui.QMainWindow):
         # only child
         # TODO: Figure out how to allow different roots and multiple child objects.
         root = MetaModel()
-        root.children.set_cardinality({model.__class__: '1'})
+        root.children.set_cardinality({model.__class__: '1..*'})
         root.add_child(model)
 
         # Set up the proxy model for sorting/filtering

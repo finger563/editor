@@ -73,7 +73,7 @@ class ItemModel(QtCore.QAbstractItemModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return QtCore.QVariant()
+            return None
         node = index.internalPointer()
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
             #  columns 0 and 2 are children and pointers respectively
@@ -97,7 +97,7 @@ class ItemModel(QtCore.QAbstractItemModel):
         if role == ItemModel.filter_data_role:
             if index.column() == 0:
                 return node['Name']
-        return QtCore.QVariant()
+        return None
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
         if index.isValid() and role == QtCore.Qt.EditRole:
