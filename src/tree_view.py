@@ -76,25 +76,30 @@ class TreeView(QtGui.QTreeView):
         return QtGui.QTreeView.edit(self, index, trigger, event)
 
     def contextMenuEvent(self, e):
+        menu = QtGui.QMenu()
+        hasActions = False
+
         indexes = self.selectedIndexes()
         m = self.model().sourceModel()
         if indexes:
-            menu = QtGui.QMenu()
-            hasActions = False
-
             mi = self.model().mapToSource(indexes[0])
-            if not mi.isValid():
-                return
-            item = m.getModel(mi)
+        else:
+            mi = self.model().mapToSource(QtCore.QModelIndex())
+        item = m.getModel(mi)
 
-            if item.parent and \
-               '0' in item.parent.children.get_cardinality_of(type(item)):
+        if item.parent:
+            num_allowed = item.parent.children.min_number_of(item)
+            num_existing = item.parent.children.number_of(item)
+            if num_allowed < num_existing:
                 hasActions = True
                 delAction = QtGui.QAction(
                     'Delete {}'.format(item['Name']), self)
                 delAction.triggered.connect(self.delTreeItem(mi))
                 menu.addAction(delAction)
-            for a in item.children.allowed():
+        for a in item.children.allowed():
+            num_allowed = item.children.max_number_of(a())
+            number_of = item.children.number_of(a())
+            if num_allowed == -1 or number_of < num_allowed:
                 hasActions = True
                 addAction = QtGui.QAction(
                     'Add New {}'.format(a.__name__),
@@ -102,12 +107,12 @@ class TreeView(QtGui.QTreeView):
                 )
                 addAction.triggered.connect(self.addTreeItem(mi, a))
                 menu.addAction(addAction)
-            if hasActions:
-                menu.exec_(e.globalPos())
+        if hasActions:
+            menu.exec_(e.globalPos())
 
     def addTreeItem(self, mi, _type):
         def genericItem(e):
-            row_count = mi.model().rowCount(mi)
+            row_count = self.model().sourceModel().rowCount(mi)
             self.model().sourceModel().insertRows(row_count, 1, mi, _type)
         return genericItem
 
