@@ -38,15 +38,6 @@ import uuid
 #       make getting other objects (for instance in get_root) much
 #       easier if they're not close by in the tree
 
-# TODO: Need a nice way of getting pointers; esp. for getting root in
-#       meta-pointers.  accessor functions would be especially handy.
-#       perhaps meta-class so that there are automatically added
-#       functions e.g. Deployment.Hardware_Reference()
-#
-#       Monkey-patch when creating the class: update the dict so that
-#       the reference Type name (since there can only be one per
-#       object) is callable from the parent object
-
 # TODO: Need default value attribute for metaAttributes and
 #       metaPointers
 
@@ -89,6 +80,12 @@ def get_children(model, kind):
         for c in model.children:
             kids.extend(get_children(c, kind))
         return kids
+
+
+def get_parent(model, kind):
+    if model.kind() != kind and model.parent:
+        model = get_parent(model.parent, kind)
+    return model
 
 
 class Model(QtCore.QObject):
@@ -595,6 +592,7 @@ class MetaModel(Model):
                 self.pointers.set_cardinality_of(t, '1')
             for name, ptr in ptrs.iteritems():
                 self.add_pointer(ptr)
+                setattr(self, name, ptr)
 
             # Handle attributes
             for name, attr in attr_dict.iteritems():

@@ -1,6 +1,6 @@
 {
     "Name": "rosmod", 
-    "MD5": "ee44edf88bec9aec3318e9ddcf6d8f60", 
+    "MD5": "82a14ec2042ab80a7f1ea55adcf37073", 
     "__META__": {
         "Name": "MetaMetaModel", 
         "MD5": "XXXX"
@@ -1301,7 +1301,7 @@
                                         "Type": "Attribute", 
                                         "Attributes": {}, 
                                         "Kind": "python", 
-                                        "Value": "def get_root(self):\n\t# attr.host_ref.node.deployment\n\thw = self.parent.parent.parent.pointers[0]['Destination']\n\treturn hw", 
+                                        "Value": "def get_root(self):\n\t# attr.host_ref.node.deployment\n\thw = self.parent.parent.parent.Hardware_Reference['Destination']\n\treturn hw", 
                                         "Dependents": {}
                                     }
                                 }, 
