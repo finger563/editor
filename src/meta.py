@@ -17,6 +17,10 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Need a nice way of getting root item in the model; this would
+#       make getting other objects (for instance in get_root) much
+#       easier if they're not close by in the tree
+
 # TODO: Need a nice way of getting pointers; esp. for getting root in
 #       meta-pointers.  accessor functions would be especially handy.
 #       perhaps meta-class so that there are automatically added
