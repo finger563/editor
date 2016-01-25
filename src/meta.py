@@ -17,6 +17,11 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Allow for dragging and dropping items in the tree to
+#       move/re-parent them.  This would be useful for instance in
+#       moving hosts between hardwares, component_instances between
+#       nodes, or components/msgs/srvs between packages.
+
 # TODO: Allow for resolving unknown references when their referenced
 #       object comes into scope, e.g. when a deployment's hardware
 #       reference (which is unknown but matches a certain
