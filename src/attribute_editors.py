@@ -53,14 +53,6 @@ class FileEditor(QtGui.QPushButton):
             self.set_file_name(fileName)
 
 
-class ListEditor(QtGui.QComboBox):
-    '''
-    '''
-
-    def __init__(self, *args):
-        super(ListEditor, self).__init__(*args)
-
-
 class FlatProxyModel(QtGui.QAbstractProxyModel):
     '''
     Subclass of :class:`QtGui.QAbstractProxyModel` which flattens a
@@ -183,13 +175,16 @@ class ReferenceEditor(QtGui.QComboBox):
     Required for mapping model items into a :class:`QtGui.QComboBox`.
     Internally it uses :class:`ComboSortFilterProxyModel` for
     filtering the available objects from its flattened proxy model,
-    which is a :class:`FlatProxyModel`.  Connects to these models'
-    signals so that it can properly update and maintain state when the
-    underlying model changes, e.g. when referentiable objects are
-    added or removed from the model.  This feature is necessary
-    because the ReferenceEditor widget can be active
-    (viewed/interacted with) at the same time the underlying
-    :class:`item_model.ItemModel` is changing.
+    which is a :class:`FlatProxyModel`.  Unfortunately, we must create
+    a FlatProxyModel instead of just setting the combo-box's view to
+    be a tree view because we do not want to view the heirarchy and we
+    don't want to see filtered object's parents in the selection
+    popup.  Automatically onnects to these models' signals so that it
+    can properly update and maintain state when the underlying model
+    changes, e.g. when referentiable objects are added or removed from
+    the model.  This feature is necessary because the ReferenceEditor
+    widget can be active (viewed/interacted with) at the same time the
+    underlying :class:`item_model.ItemModel` is changing.
     '''
 
     def __init__(self, *args):
