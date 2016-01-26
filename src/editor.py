@@ -362,18 +362,19 @@ class Editor(QtGui.QMainWindow):
                 self.open_meta(fname)
                 uuid_dict = OrderedDict()
                 base = MetaModel.fromMeta(self.META['__ROOT__'][0], uuid_dict)
-                root = base()
+                roots = [
+                    MetaModel.fromMeta(r, uuid_dict)()
+                    for r in self.META['__ROOT__']
+                ]
         elif self.editor_mode == 'Meta Model':
             self.open_meta('MetaMetaModel.meta')
-            root = MetaModel()
-            root['Name'] = 'New_Model'
+            roots = [MetaModel()]
         elif self.editor_mode == 'View Model':
             # TODO: Replace this with view_model code
             self.open_meta('MetaViewModel.meta')
-            root = ViewModel()
-            root['Name'] = 'New_View_Model'
-        if root:
-            self.load_model([root])
+            roots = [ViewModel()]
+        if roots:
+            self.load_model(roots)
 
     def openModel(self, event):
         '''Callback to allow the user to select a model file based on the
@@ -452,9 +453,9 @@ class Editor(QtGui.QMainWindow):
         # TODO: Figure out how to allow different roots and multiple
         #       child objects.
         root = MetaModel()
-        for root in roots:
-            root.children.set_cardinality({root.__class__: '1..*'})
-            root.add_child(root)
+        for r in roots:
+            root.children.set_cardinality({r.__class__: '1..*'})
+            root.add_child(r)
 
         # Set up the proxy model for sorting/filtering
         self.proxy_model = SortFilterProxyModel(self)

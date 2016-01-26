@@ -124,6 +124,7 @@ def convertDictToModel(root_dict, meta_dict):
         roots.append(MetaModel.fromDict(root, uuid_dict, unresolved_keys))
     for uuid_key, attr_list in unresolved_keys.iteritems():
         for attr in attr_list:
+            print attr
             attr.dst_type = uuid_dict[uuid_key].kind()
             attr.setValue(uuid_dict[uuid_key])
     return roots
