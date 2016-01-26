@@ -359,11 +359,9 @@ class Editor(QtGui.QMainWindow):
                 options=QtGui.QFileDialog.Options()
             )
             if fname:
-                with open(fname, 'r') as f:
-                    meta_dict = json.loads(f.read())
-                self.META = meta_dict
+                self.open_meta(fname)
                 uuid_dict = OrderedDict()
-                base = MetaModel.fromMeta(meta_dict['__ROOT__'][0], uuid_dict)
+                base = MetaModel.fromMeta(self.META['__ROOT__'][0], uuid_dict)
                 root = base()
         elif self.editor_mode == 'Meta Model':
             self.open_meta('MetaMetaModel.meta')

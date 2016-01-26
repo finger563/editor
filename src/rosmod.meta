@@ -1,6 +1,6 @@
 {
     "Name": "rosmod", 
-    "MD5": "cc65fd7f41ba584247014eca59d5ed68", 
+    "MD5": "3b73518f7fc697cad785c8030da40370", 
     "__META__": {
         "Name": "MetaMetaModel", 
         "MD5": "95e5033e018c8f65a32c4186603fae9f"
@@ -85,7 +85,51 @@
                             "Value": "Deployment"
                         }
                     }, 
-                    "Children": [], 
+                    "Children": [
+                        {
+                            "Type": "MetaPointer", 
+                            "UUID": "8634fa6f-bf2e-42fd-a4ae-28dac3a8d18a", 
+                            "Attributes": {
+                                "Filter Function": {
+                                    "Type": "Attribute", 
+                                    "Attributes": {}, 
+                                    "Kind": "python", 
+                                    "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
+                                    "Dependents": {}
+                                }, 
+                                "Name": {
+                                    "Type": "NameAttribute", 
+                                    "Attributes": {}, 
+                                    "Kind": "string", 
+                                    "Value": "New_MetaPointer_1"
+                                }, 
+                                "Destination Type": "b16049d4-cfdd-4955-84f2-35eb1cb85d62", 
+                                "Tooltip": {
+                                    "Type": "Attribute", 
+                                    "Attributes": {}, 
+                                    "Kind": "string", 
+                                    "Value": "", 
+                                    "Dependents": {}
+                                }, 
+                                "Display": {
+                                    "Type": "Attribute", 
+                                    "Attributes": {}, 
+                                    "Kind": "string", 
+                                    "Value": "", 
+                                    "Dependents": {}
+                                }, 
+                                "Root Object": {
+                                    "Type": "Attribute", 
+                                    "Attributes": {}, 
+                                    "Kind": "python", 
+                                    "Value": "def get_root(self):\n    return self.parent.parent.parent", 
+                                    "Dependents": {}
+                                }
+                            }, 
+                            "Children": [], 
+                            "Pointers": []
+                        }
+                    ], 
                     "Pointers": []
                 }
             ], 

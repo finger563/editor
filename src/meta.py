@@ -98,7 +98,6 @@ def buildMeta(meta_dict, model_dict, scope=''):
         meta_dict[model_dict['UUID']] = model_dict
 
     # TODO: PUT CLASS CODE HERE FOR INSTANTIATING OBJECTS
-    print meta_dict[model_dict['UUID']]
     # meta_dict[model_dict['UUID']]['__CLASS__'] =
     for c in model_dict['Children']:
         buildMeta(meta_dict, c)
