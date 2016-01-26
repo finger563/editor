@@ -53,6 +53,13 @@ from output import\
 
 # TODO: Add copy/paste buffer functionality to the model, should
 #       create a copy of the object and simply change the name.
+#
+#       Should look into QMimeData, QClipboard, and QDrag (Drag and
+#       Drop) because they all use the same mechanisms.  If copy/paste
+#       works using this technique then we can drag and drop between
+#       widgets or between applications; seems to be pretty easy and
+#       straightforward to add copy/paste functionality to various
+#       widgets, e.g. TreeView and EditorItems
 
 # TODO: Add python function input for instantiating objects
 #       parametrically, would allow creating hardware model for
