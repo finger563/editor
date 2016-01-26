@@ -1,13 +1,13 @@
 {
     "Name": "rosmod", 
-    "MD5": "82a14ec2042ab80a7f1ea55adcf37073", 
+    "MD5": "5acb4794d8ba09d8cb1d004e9dc6987c", 
     "__META__": {
         "Name": "MetaMetaModel", 
-        "MD5": "61ce1b64cfefbeb5e2c3eac38699a91f"
+        "MD5": "f3d2584bf5843b77335d9d4ef0b7a7c4"
     }, 
     "__ROOT__": {
-        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-        "UUID": "e482a3c8-2d40-4c86-95fd-253ebdb6422b", 
+        "Type": "MetaModel", 
+        "UUID": "0a718a9a-dd86-4841-b655-51696e3e6b71", 
         "Attributes": {
             "Cardinality": {
                 "Type": "Attribute", 
@@ -20,32 +20,32 @@
                 "Type": "NameAttribute", 
                 "Attributes": {}, 
                 "Kind": "string", 
-                "Value": "Project"
+                "Value": "New_Model"
             }
         }, 
         "Children": [
             {
-                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                "UUID": "7b4094d7-4f52-47b2-b881-abbcbbf696c2", 
+                "Type": "MetaModel", 
+                "UUID": "ab1b58f3-e2a0-42f9-924c-8d811bd05b17", 
                 "Attributes": {
                     "Cardinality": {
                         "Type": "Attribute", 
                         "Attributes": {}, 
                         "Kind": "string", 
-                        "Value": "1", 
+                        "Value": "0..*", 
                         "Dependents": {}
                     }, 
                     "Name": {
                         "Type": "NameAttribute", 
                         "Attributes": {}, 
                         "Kind": "string", 
-                        "Value": "Software"
+                        "Value": "New_MetaModel_1"
                     }
                 }, 
                 "Children": [
                     {
-                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                        "UUID": "39eb7fa4-da61-46f9-bf9a-78a2d5fb207e", 
+                        "Type": "MetaModel", 
+                        "UUID": "864b741f-fbbe-4608-8e5d-ed86c467761b", 
                         "Attributes": {
                             "Cardinality": {
                                 "Type": "Attribute", 
@@ -58,13 +58,13 @@
                                 "Type": "NameAttribute", 
                                 "Attributes": {}, 
                                 "Kind": "string", 
-                                "Value": "Package"
+                                "Value": "New_MetaModel_1"
                             }
                         }, 
                         "Children": [
                             {
-                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                "UUID": "9356ef27-aa2e-45cb-b92a-38af0e8917ff", 
+                                "Type": "MetaModel", 
+                                "UUID": "40319b25-ba76-4514-9a9c-f1e08c273c9f", 
                                 "Attributes": {
                                     "Cardinality": {
                                         "Type": "Attribute", 
@@ -77,13 +77,13 @@
                                         "Type": "NameAttribute", 
                                         "Attributes": {}, 
                                         "Kind": "string", 
-                                        "Value": "Message"
+                                        "Value": "New_MetaModel_1"
                                     }
                                 }, 
                                 "Children": [
                                     {
                                         "Type": "MetaAttribute", 
-                                        "UUID": "0809206b-7883-4922-af7e-86ddccf92b1a", 
+                                        "UUID": "8096705e-b474-4cca-8c13-5c8a577463e1", 
                                         "Attributes": {
                                             "Kind": {
                                                 "Type": "Attribute", 
@@ -97,7 +97,7 @@
                                                     }
                                                 }, 
                                                 "Kind": "list", 
-                                                "Value": "code", 
+                                                "Value": "string", 
                                                 "Dependents": {
                                                     "list": [
                                                         "List Options"
@@ -108,7 +108,7 @@
                                                 "Type": "NameAttribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Definition"
+                                                "Value": "New_MetaAttribute_1"
                                             }, 
                                             "Editable": {
                                                 "Type": "Attribute", 
@@ -121,7 +121,7 @@
                                                 "Type": "Attribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "ROS Message Definition", 
+                                                "Value": "", 
                                                 "Dependents": {}
                                             }, 
                                             "Validator": {
@@ -135,7 +135,7 @@
                                                 "Type": "Attribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Definition", 
+                                                "Value": "", 
                                                 "Dependents": {}
                                             }, 
                                             "Parent Key": {
@@ -153,8 +153,8 @@
                                 "Pointers": []
                             }, 
                             {
-                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                "UUID": "9f730929-2855-40e4-9026-dd67e39ee593", 
+                                "Type": "MetaModel", 
+                                "UUID": "7e4cd118-4a4a-43bf-b49d-67178b5f37f2", 
                                 "Attributes": {
                                     "Cardinality": {
                                         "Type": "Attribute", 
@@ -167,13 +167,13 @@
                                         "Type": "NameAttribute", 
                                         "Attributes": {}, 
                                         "Kind": "string", 
-                                        "Value": "Service"
+                                        "Value": "New_MetaModel_2"
                                     }
                                 }, 
                                 "Children": [
                                     {
                                         "Type": "MetaAttribute", 
-                                        "UUID": "bd975b61-46f6-45f3-b321-cd4df5624cc6", 
+                                        "UUID": "87269771-b394-496b-9e90-0aefd0445c9b", 
                                         "Attributes": {
                                             "Kind": {
                                                 "Type": "Attribute", 
@@ -187,7 +187,7 @@
                                                     }
                                                 }, 
                                                 "Kind": "list", 
-                                                "Value": "code", 
+                                                "Value": "string", 
                                                 "Dependents": {
                                                     "list": [
                                                         "List Options"
@@ -198,7 +198,7 @@
                                                 "Type": "NameAttribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Definition"
+                                                "Value": "New_MetaAttribute_1"
                                             }, 
                                             "Editable": {
                                                 "Type": "Attribute", 
@@ -211,21 +211,21 @@
                                                 "Type": "Attribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "ROS Service Definition", 
+                                                "Value": "", 
                                                 "Dependents": {}
                                             }, 
                                             "Validator": {
                                                 "Type": "Attribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "python", 
-                                                "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg", 
+                                                "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
                                                 "Dependents": {}
                                             }, 
                                             "Display": {
                                                 "Type": "Attribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Definition", 
+                                                "Value": "", 
                                                 "Dependents": {}
                                             }, 
                                             "Parent Key": {
@@ -243,8 +243,8 @@
                                 "Pointers": []
                             }, 
                             {
-                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                "UUID": "47fc93e9-165d-4cd2-846d-8db892a366db", 
+                                "Type": "MetaModel", 
+                                "UUID": "a916574f-f01d-4fac-90f5-fae078ae4345", 
                                 "Attributes": {
                                     "Cardinality": {
                                         "Type": "Attribute", 
@@ -257,13 +257,13 @@
                                         "Type": "NameAttribute", 
                                         "Attributes": {}, 
                                         "Kind": "string", 
-                                        "Value": "Component"
+                                        "Value": "New_MetaModel_3"
                                     }
                                 }, 
                                 "Children": [
                                     {
-                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                        "UUID": "1e22e457-c093-4418-b21c-fbd60edbdee0", 
+                                        "Type": "MetaModel", 
+                                        "UUID": "f8f4819e-b536-4169-b02b-5a9f2093420f", 
                                         "Attributes": {
                                             "Cardinality": {
                                                 "Type": "Attribute", 
@@ -276,13 +276,13 @@
                                                 "Type": "NameAttribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Timer"
+                                                "Value": "New_MetaModel_1"
                                             }
                                         }, 
                                         "Children": [
                                             {
                                                 "Type": "MetaAttribute", 
-                                                "UUID": "aea579b4-63e3-48f4-a9db-c14665e04f4b", 
+                                                "UUID": "1ef6efbe-aa18-4b56-b6f0-6a23d085fd4a", 
                                                 "Attributes": {
                                                     "Kind": {
                                                         "Type": "Attribute", 
@@ -296,7 +296,7 @@
                                                             }
                                                         }, 
                                                         "Kind": "list", 
-                                                        "Value": "double", 
+                                                        "Value": "string", 
                                                         "Dependents": {
                                                             "list": [
                                                                 "List Options"
@@ -307,7 +307,7 @@
                                                         "Type": "NameAttribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Period"
+                                                        "Value": "New_MetaAttribute_1"
                                                     }, 
                                                     "Editable": {
                                                         "Type": "Attribute", 
@@ -320,21 +320,21 @@
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Period of the timer in seconds.", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Validator": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def validator(self, newValue):\n\tvalid = newValue >= 0.0\n\terrMsg = ''\n\tif not valid:\n\t\terrMsg = 'Period must be a positive value!'\n\treturn valid, errMsg\n                 ", 
+                                                        "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Display": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Period (s)", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Parent Key": {
@@ -350,7 +350,7 @@
                                             }, 
                                             {
                                                 "Type": "MetaAttribute", 
-                                                "UUID": "cfe6b56d-414c-432e-bf7b-57ee8444a783", 
+                                                "UUID": "fbbf9e4f-cd2c-4caa-87a0-1211d27f6b2c", 
                                                 "Attributes": {
                                                     "Kind": {
                                                         "Type": "Attribute", 
@@ -364,7 +364,7 @@
                                                             }
                                                         }, 
                                                         "Kind": "list", 
-                                                        "Value": "double", 
+                                                        "Value": "string", 
                                                         "Dependents": {
                                                             "list": [
                                                                 "List Options"
@@ -375,7 +375,7 @@
                                                         "Type": "NameAttribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Offset"
+                                                        "Value": "New_MetaAttribute_2"
                                                     }, 
                                                     "Editable": {
                                                         "Type": "Attribute", 
@@ -388,21 +388,21 @@
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Offset of the first timer expiry in seconds from the start of the component.", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Validator": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def validator(self, newValue):\n\tvalid = newValue >= 0.0\n\terrMsg = ''\n\tif not valid:\n\t\terrMsg = 'Offset must be a positive value!'\n\treturn valid, errMsg\n                 ", 
+                                                        "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Display": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Offset (s)", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Parent Key": {
@@ -420,8 +420,8 @@
                                         "Pointers": []
                                     }, 
                                     {
-                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                        "UUID": "4563c88b-bda6-40f4-aee4-707cfd05058d", 
+                                        "Type": "MetaModel", 
+                                        "UUID": "e82d96d4-a7f4-4ea8-85be-3381dd7ceff8", 
                                         "Attributes": {
                                             "Cardinality": {
                                                 "Type": "Attribute", 
@@ -434,13 +434,13 @@
                                                 "Type": "NameAttribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Publisher"
+                                                "Value": "New_MetaModel_2"
                                             }
                                         }, 
                                         "Children": [
                                             {
                                                 "Type": "MetaPointer", 
-                                                "UUID": "3849b8fc-d4fa-4878-9f03-40419bf691d4", 
+                                                "UUID": "1f2714d6-9e82-4535-ba03-9e6e3c94674f", 
                                                 "Attributes": {
                                                     "Filter Function": {
                                                         "Type": "Attribute", 
@@ -453,28 +453,28 @@
                                                         "Type": "NameAttribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Message_Reference"
+                                                        "Value": "New_MetaPointer_1"
                                                     }, 
-                                                    "Destination Type": "9356ef27-aa2e-45cb-b92a-38af0e8917ff", 
+                                                    "Destination Type": "6b077b00-48b8-4627-abc5-d36127e46e43", 
                                                     "Tooltip": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Message topic for the publisher.", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Display": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Message", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Root Object": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def get_root(self):\n\t# attr.msg_ref.pub.component.package.software\n\tsw = self.parent.parent.parent.parent.parent\n\treturn sw", 
+                                                        "Value": "def get_root(self):\n    return self.parent", 
                                                         "Dependents": {}
                                                     }
                                                 }, 
@@ -485,8 +485,8 @@
                                         "Pointers": []
                                     }, 
                                     {
-                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                        "UUID": "5eaf13e7-c8ab-4b68-9875-bfeb62c03977", 
+                                        "Type": "MetaModel", 
+                                        "UUID": "4bab45ac-d222-4135-bcaf-58fa661a4a29", 
                                         "Attributes": {
                                             "Cardinality": {
                                                 "Type": "Attribute", 
@@ -499,13 +499,13 @@
                                                 "Type": "NameAttribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Subscriber"
+                                                "Value": "New_MetaModel_3"
                                             }
                                         }, 
                                         "Children": [
                                             {
                                                 "Type": "MetaPointer", 
-                                                "UUID": "b15f3a97-322b-4bb1-aca7-b43a008e0f3e", 
+                                                "UUID": "1887906d-7998-4849-b307-09f30afb1c00", 
                                                 "Attributes": {
                                                     "Filter Function": {
                                                         "Type": "Attribute", 
@@ -518,28 +518,28 @@
                                                         "Type": "NameAttribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Message_Reference"
+                                                        "Value": "New_MetaPointer_1"
                                                     }, 
-                                                    "Destination Type": "9356ef27-aa2e-45cb-b92a-38af0e8917ff", 
+                                                    "Destination Type": "ba986335-8aa5-42fd-a53a-4746d543552a", 
                                                     "Tooltip": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Message topic for the subscriber.", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Display": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Message Reference", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Root Object": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def get_root(self):\n\t# attr.msg_ref.sub.component.package.software\n\tsw = self.parent.parent.parent.parent.parent\n\treturn sw", 
+                                                        "Value": "def get_root(self):\n    return self.parent", 
                                                         "Dependents": {}
                                                     }
                                                 }, 
@@ -550,8 +550,8 @@
                                         "Pointers": []
                                     }, 
                                     {
-                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                        "UUID": "3290e23c-e64a-4175-90e4-4e3ddb9b8489", 
+                                        "Type": "MetaModel", 
+                                        "UUID": "900aa746-f763-4666-8aa1-09cfe8d0c69d", 
                                         "Attributes": {
                                             "Cardinality": {
                                                 "Type": "Attribute", 
@@ -564,13 +564,13 @@
                                                 "Type": "NameAttribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Client"
+                                                "Value": "New_MetaModel_4"
                                             }
                                         }, 
                                         "Children": [
                                             {
                                                 "Type": "MetaPointer", 
-                                                "UUID": "dd2b4d97-e83f-4419-82cb-cd80167e8612", 
+                                                "UUID": "0086fa52-8e51-4eec-9ccb-34233e12bc0f", 
                                                 "Attributes": {
                                                     "Filter Function": {
                                                         "Type": "Attribute", 
@@ -583,28 +583,28 @@
                                                         "Type": "NameAttribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Service_Reference"
+                                                        "Value": "New_MetaPointer_1"
                                                     }, 
-                                                    "Destination Type": "9f730929-2855-40e4-9026-dd67e39ee593", 
+                                                    "Destination Type": "20fe56de-d52c-4db8-9f11-6939e79d810c", 
                                                     "Tooltip": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Service interface for the client.", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Display": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Service Reference", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Root Object": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def get_root(self):\n\t# attr.srv_ref.client.component.package.software\n\tsw = self.parent.parent.parent.parent.parent\n\treturn sw", 
+                                                        "Value": "def get_root(self):\n    return self.parent", 
                                                         "Dependents": {}
                                                     }
                                                 }, 
@@ -615,8 +615,8 @@
                                         "Pointers": []
                                     }, 
                                     {
-                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                        "UUID": "9c632984-9c2e-4d11-958d-10719c558fb2", 
+                                        "Type": "MetaModel", 
+                                        "UUID": "5351178d-926c-4dcc-b768-14b66c9db329", 
                                         "Attributes": {
                                             "Cardinality": {
                                                 "Type": "Attribute", 
@@ -629,13 +629,13 @@
                                                 "Type": "NameAttribute", 
                                                 "Attributes": {}, 
                                                 "Kind": "string", 
-                                                "Value": "Server"
+                                                "Value": "New_MetaModel_5"
                                             }
                                         }, 
                                         "Children": [
                                             {
                                                 "Type": "MetaPointer", 
-                                                "UUID": "98e1d4ed-9d28-4ba3-a3aa-1bd29af3f1df", 
+                                                "UUID": "aa86d7a8-34d4-499e-b83d-cdb2514ac995", 
                                                 "Attributes": {
                                                     "Filter Function": {
                                                         "Type": "Attribute", 
@@ -648,28 +648,28 @@
                                                         "Type": "NameAttribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Service_Reference"
+                                                        "Value": "New_MetaPointer_1"
                                                     }, 
-                                                    "Destination Type": "9f730929-2855-40e4-9026-dd67e39ee593", 
+                                                    "Destination Type": "ab0c4d32-1b7f-4092-881c-1e5c8fa24faa", 
                                                     "Tooltip": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Service interface for the client.", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Display": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "string", 
-                                                        "Value": "Service Reference", 
+                                                        "Value": "", 
                                                         "Dependents": {}
                                                     }, 
                                                     "Root Object": {
                                                         "Type": "Attribute", 
                                                         "Attributes": {}, 
                                                         "Kind": "python", 
-                                                        "Value": "def get_root(self):\n\t# attr.srv_ref.server.component.package.software\n\tsw = self.parent.parent.parent.parent.parent\n\treturn sw", 
+                                                        "Value": "def get_root(self):\n    return self.parent", 
                                                         "Dependents": {}
                                                     }
                                                 }, 
@@ -689,8 +689,8 @@
                 "Pointers": []
             }, 
             {
-                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                "UUID": "5a38d905-ac13-4e72-8f70-8beceda2baaa", 
+                "Type": "MetaModel", 
+                "UUID": "478ed59e-0e24-4580-9f7c-6332c1cbf2a3", 
                 "Attributes": {
                     "Cardinality": {
                         "Type": "Attribute", 
@@ -703,59 +703,15 @@
                         "Type": "NameAttribute", 
                         "Attributes": {}, 
                         "Kind": "string", 
-                        "Value": "Hardware"
+                        "Value": "New_MetaModel_2"
                     }
                 }, 
-                "Children": [
-                    {
-                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                        "UUID": "bc724545-004e-4640-9c4d-71068d55ccaf", 
-                        "Attributes": {
-                            "Cardinality": {
-                                "Type": "Attribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "0..*", 
-                                "Dependents": {}
-                            }, 
-                            "Name": {
-                                "Type": "NameAttribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "Host"
-                            }
-                        }, 
-                        "Children": [
-                            {
-                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                "UUID": "30451331-d743-44c0-8e15-60e07ee1bb93", 
-                                "Attributes": {
-                                    "Cardinality": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "0..*", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "Interface"
-                                    }
-                                }, 
-                                "Children": [], 
-                                "Pointers": []
-                            }
-                        ], 
-                        "Pointers": []
-                    }
-                ], 
+                "Children": [], 
                 "Pointers": []
             }, 
             {
-                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                "UUID": "9d3a9b91-d83c-4b59-beb7-10d62c9001ef", 
+                "Type": "MetaModel", 
+                "UUID": "4246e1b1-16b3-42a8-9f39-e9a72e35a02c", 
                 "Attributes": {
                     "Cardinality": {
                         "Type": "Attribute", 
@@ -768,661 +724,10 @@
                         "Type": "NameAttribute", 
                         "Attributes": {}, 
                         "Kind": "string", 
-                        "Value": "Deployment"
+                        "Value": "New_MetaModel_3"
                     }
                 }, 
-                "Children": [
-                    {
-                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                        "UUID": "b3ae1c37-54ba-4267-b196-916053dec9b4", 
-                        "Attributes": {
-                            "Cardinality": {
-                                "Type": "Attribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "0..*", 
-                                "Dependents": {}
-                            }, 
-                            "Name": {
-                                "Type": "NameAttribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "Node"
-                            }
-                        }, 
-                        "Children": [
-                            {
-                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
-                                "UUID": "c8ea5822-411a-4fd1-8380-123c8aaa08ed", 
-                                "Attributes": {
-                                    "Cardinality": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "0..*", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "Component_Instance"
-                                    }
-                                }, 
-                                "Children": [
-                                    {
-                                        "Type": "MetaPointer", 
-                                        "UUID": "393328a7-34c5-4bc3-8633-23dcb61d89bd", 
-                                        "Attributes": {
-                                            "Filter Function": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "python", 
-                                                "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "Component_Reference"
-                                            }, 
-                                            "Destination Type": "47fc93e9-165d-4cd2-846d-8db892a366db", 
-                                            "Tooltip": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Display": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Root Object": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "python", 
-                                                "Value": "def get_root(self):\n\t# attr.comp_ref.comp_inst.node.deployment.project\n\tproject = self.parent.parent.parent.parent.parent\n\treturn project", 
-                                                "Dependents": {}
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": []
-                                    }, 
-                                    {
-                                        "Type": "MetaAttribute", 
-                                        "UUID": "21c74138-86f8-44c8-97e3-3bb3862b0c5e", 
-                                        "Attributes": {
-                                            "Kind": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {
-                                                    "List Options": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def get_options(self):\n    return ['On','Off']", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Kind": "list", 
-                                                "Value": "list", 
-                                                "Dependents": {
-                                                    "list": [
-                                                        "List Options"
-                                                    ]
-                                                }
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "Logging"
-                                            }, 
-                                            "Editable": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "bool", 
-                                                "Value": true, 
-                                                "Dependents": {}
-                                            }, 
-                                            "Tooltip": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "Component logging enabled?", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Validator": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "python", 
-                                                "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Display": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "Logging", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Parent Key": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }
-                                        }, 
-                                        "Children": [
-                                            {
-                                                "Type": "MetaAttribute", 
-                                                "UUID": "d0cb22f1-a97a-4104-90eb-e2ee3d1a76c6", 
-                                                "Attributes": {
-                                                    "Kind": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {
-                                                            "List Options": {
-                                                                "Type": "Attribute", 
-                                                                "Attributes": {}, 
-                                                                "Kind": "python", 
-                                                                "Value": "def get_options(self):\n    return []", 
-                                                                "Dependents": {}
-                                                            }
-                                                        }, 
-                                                        "Kind": "list", 
-                                                        "Value": "bool", 
-                                                        "Dependents": {
-                                                            "list": [
-                                                                "List Options"
-                                                            ]
-                                                        }
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "Info"
-                                                    }, 
-                                                    "Editable": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "bool", 
-                                                        "Value": true, 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Validator": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Parent Key": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "On", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }, 
-                                            {
-                                                "Type": "MetaAttribute", 
-                                                "UUID": "a2dd24f8-ac96-41b2-aba3-18bd4b8bcfdd", 
-                                                "Attributes": {
-                                                    "Kind": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {
-                                                            "List Options": {
-                                                                "Type": "Attribute", 
-                                                                "Attributes": {}, 
-                                                                "Kind": "python", 
-                                                                "Value": "def get_options(self):\n    return []", 
-                                                                "Dependents": {}
-                                                            }
-                                                        }, 
-                                                        "Kind": "list", 
-                                                        "Value": "bool", 
-                                                        "Dependents": {
-                                                            "list": [
-                                                                "List Options"
-                                                            ]
-                                                        }
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "Debug"
-                                                    }, 
-                                                    "Editable": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "bool", 
-                                                        "Value": true, 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Validator": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Parent Key": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "On", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }, 
-                                            {
-                                                "Type": "MetaAttribute", 
-                                                "UUID": "0f403281-46cb-47b3-ada2-ad24ed387c5b", 
-                                                "Attributes": {
-                                                    "Kind": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {
-                                                            "List Options": {
-                                                                "Type": "Attribute", 
-                                                                "Attributes": {}, 
-                                                                "Kind": "python", 
-                                                                "Value": "def get_options(self):\n    return []", 
-                                                                "Dependents": {}
-                                                            }
-                                                        }, 
-                                                        "Kind": "list", 
-                                                        "Value": "bool", 
-                                                        "Dependents": {
-                                                            "list": [
-                                                                "List Options"
-                                                            ]
-                                                        }
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "Warn"
-                                                    }, 
-                                                    "Editable": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "bool", 
-                                                        "Value": true, 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Validator": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Parent Key": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "On", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }, 
-                                            {
-                                                "Type": "MetaAttribute", 
-                                                "UUID": "632f15b3-c695-4bdc-9508-25cbe92cbdb4", 
-                                                "Attributes": {
-                                                    "Kind": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {
-                                                            "List Options": {
-                                                                "Type": "Attribute", 
-                                                                "Attributes": {}, 
-                                                                "Kind": "python", 
-                                                                "Value": "def get_options(self):\n    return []", 
-                                                                "Dependents": {}
-                                                            }
-                                                        }, 
-                                                        "Kind": "list", 
-                                                        "Value": "bool", 
-                                                        "Dependents": {
-                                                            "list": [
-                                                                "List Options"
-                                                            ]
-                                                        }
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "Critical"
-                                                    }, 
-                                                    "Editable": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "bool", 
-                                                        "Value": true, 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Validator": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Parent Key": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "On", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }
-                                        ], 
-                                        "Pointers": []
-                                    }, 
-                                    {
-                                        "Type": "MetaAttribute", 
-                                        "UUID": "2aaa17fa-05b8-4035-a7d7-f0e03d701b37", 
-                                        "Attributes": {
-                                            "Kind": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {
-                                                    "List Options": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def get_options(self):\n    return ['FIFO','PFIFO','EDF']", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Kind": "list", 
-                                                "Value": "list", 
-                                                "Dependents": {
-                                                    "list": [
-                                                        "List Options"
-                                                    ]
-                                                }
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "Scheduling_Scheme"
-                                            }, 
-                                            "Editable": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "bool", 
-                                                "Value": true, 
-                                                "Dependents": {}
-                                            }, 
-                                            "Tooltip": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "How are the operations scheduled in the component's queue?", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Validator": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "python", 
-                                                "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Display": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "Scheduling Scheme", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Parent Key": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": []
-                                    }
-                                ], 
-                                "Pointers": []
-                            }, 
-                            {
-                                "Type": "MetaPointer", 
-                                "UUID": "01c2cf57-558a-4651-a6a1-00bf09b3fa1e", 
-                                "Attributes": {
-                                    "Filter Function": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "python", 
-                                        "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "Host_Reference"
-                                    }, 
-                                    "Destination Type": "bc724545-004e-4640-9c4d-71068d55ccaf", 
-                                    "Tooltip": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Display": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Root Object": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "python", 
-                                        "Value": "def get_root(self):\n\t# attr.host_ref.node.deployment\n\thw = self.parent.parent.parent.Hardware_Reference['Destination']\n\treturn hw", 
-                                        "Dependents": {}
-                                    }
-                                }, 
-                                "Children": [], 
-                                "Pointers": []
-                            }, 
-                            {
-                                "Type": "MetaAttribute", 
-                                "UUID": "5da0b9b0-2bfb-4a5c-98c4-358f3522413c", 
-                                "Attributes": {
-                                    "Kind": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {
-                                            "List Options": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "python", 
-                                                "Value": "def get_options(self):\n    return []", 
-                                                "Dependents": {}
-                                            }
-                                        }, 
-                                        "Kind": "list", 
-                                        "Value": "int", 
-                                        "Dependents": {
-                                            "list": [
-                                                "List Options"
-                                            ]
-                                        }
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "Priority"
-                                    }, 
-                                    "Editable": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "bool", 
-                                        "Value": true, 
-                                        "Dependents": {}
-                                    }, 
-                                    "Tooltip": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "What is the RT Priority of the Node Process?", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Validator": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "python", 
-                                        "Value": "def validator(self, newValue):\n\tvalid = newValue > 0 and newValue < 100\n\terrMsg = ''\n\tif not valid:\n\t\terrMsg = 'Priority must be between 0 and 100!'\n\treturn valid, errMsg\n                 ", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Display": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "Priority", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Parent Key": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "", 
-                                        "Dependents": {}
-                                    }
-                                }, 
-                                "Children": [], 
-                                "Pointers": []
-                            }
-                        ], 
-                        "Pointers": []
-                    }, 
-                    {
-                        "Type": "MetaPointer", 
-                        "UUID": "8e6c5f99-d266-440d-b933-28a7e14fd3fd", 
-                        "Attributes": {
-                            "Filter Function": {
-                                "Type": "Attribute", 
-                                "Attributes": {}, 
-                                "Kind": "python", 
-                                "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
-                                "Dependents": {}
-                            }, 
-                            "Name": {
-                                "Type": "NameAttribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "Hardware_Reference"
-                            }, 
-                            "Destination Type": "5a38d905-ac13-4e72-8f70-8beceda2baaa", 
-                            "Tooltip": {
-                                "Type": "Attribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "", 
-                                "Dependents": {}
-                            }, 
-                            "Display": {
-                                "Type": "Attribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "", 
-                                "Dependents": {}
-                            }, 
-                            "Root Object": {
-                                "Type": "Attribute", 
-                                "Attributes": {}, 
-                                "Kind": "python", 
-                                "Value": "def get_root(self):\n    return self.parent.parent.parent", 
-                                "Dependents": {}
-                            }
-                        }, 
-                        "Children": [], 
-                        "Pointers": []
-                    }
-                ], 
+                "Children": [], 
                 "Pointers": []
             }
         ], 

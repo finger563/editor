@@ -64,36 +64,31 @@ def get_meta_meta_model():
 
     mm = MetaModel()
     mm['Name'] = 'MetaModel'
+    mm.uuid = 'MetaModel'
     ma = MetaModel()
     ma['Name'] = 'MetaAttribute'
+    ma.uuid = 'MetaAttribute'
     mp = MetaModel()
     mp['Name'] = 'MetaPointer'
+    mp.uuid = 'MetaPointer'
 
     mm1 = MetaModel()
     mm1['Name'] = 'MetaModel'
+    mm1.uuid = 'MetaModel'
 
     mm.add_child(mm1)
     mm.add_child(ma)
     mm.add_child(mp)
-    na = NameAttribute('NameAttribute')
+
+    # na = NameAttribute('NameAttribute')
 
     mmd = MetaModel.toDict(mm)
 
-    mad = MetaModel.toDict(ma)
-
-    mpd = MetaModel.toDict(mp)
-
-    nad = NameAttribute.toDict(na)
-
-    root_dict = [mmd, mad, mpd]
+    root_dict = [mmd]
 
     meta_meta_dict['Name'] = 'MetaMetaModel'
     meta_meta_dict['MD5'] = hashlib.md5(str(root_dict)).hexdigest()
     meta_meta_dict['__ROOT__'] = root_dict
-    # meta_meta_dict['MetaModel'] = mmd
-    # meta_meta_dict['MetaAttribute'] = mad
-    # meta_meta_dict['MetaPointer'] = mpd
-    # meta_meta_dict['NameAttribute'] = nad
     return meta_meta_dict
 
 
@@ -101,13 +96,16 @@ def buildMeta(meta_dict, model_dict, scope=''):
     '''This function builds a dict of uuid: meta_dict[key] pairs.'''
     if model_dict['UUID'] not in meta_dict:
         meta_dict[model_dict['UUID']] = model_dict
+
+    # TODO: PUT CLASS CODE HERE FOR INSTANTIATING OBJECTS
+    # meta_dict[model_dict['UUID']]['__CLASS__'] = 
     for c in model_dict['Children']:
         buildMeta(meta_dict, c)
     for p in model_dict['Pointers']:
         buildMeta(meta_dict, p)
 
 
-def convertDictToModel(root_dict):
+def convertDictToModel(root_dict, meta_dict):
     uuid_dict = {}
     unresolved_keys = {}
     root = MetaModel.fromDict(root_dict, uuid_dict, unresolved_keys)
@@ -144,7 +142,7 @@ def checkModelToMeta(model_dict, meta_dict):
     }
     for c in model_dict['Children']:
         # make sure the child type exists in the meta-model
-        if c['Type'] not in meta_dict:
+        if not checkModelToMeta(c, meta_dict):
             print 'ERROR: Child type \'{}\' of {} not in meta-model!'.format(
                 c['Type'],
                 meta_name
@@ -188,7 +186,7 @@ def checkModelToMeta(model_dict, meta_dict):
     allowed_ptrs = [p['Type'] for p in meta_type['Pointers']]
     for p in model_dict['Pointers']:
         # make sure the child type exists in the meta-model
-        if p['Type'] not in meta_dict:
+        if not checkModelToMeta(p, meta_dict):
             print 'ERROR: Pointer type \'{}\' of {} not in meta-model!'.format(
                 p['Type'],
                 meta_name
@@ -507,7 +505,6 @@ class NameAttribute(Attribute):
     @staticmethod
     def toDict(model):
         model_dict = Attribute.toDict(model)
-        model_dict['Type'] = 'NameAttribute'
         model_dict.pop('Dependents', None)
         return model_dict
 

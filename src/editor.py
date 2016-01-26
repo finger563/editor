@@ -366,7 +366,7 @@ class Editor(QtGui.QMainWindow):
                 base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
                 root = base()
         elif self.editor_mode == 'Meta Model':
-            self.META = get_meta_meta_model()
+            self.META = self.open_meta('MetaMetaModel.meta')
             root = MetaModel()
             root['Name'] = 'New_Model'
         elif self.editor_mode == 'View Model':
@@ -420,7 +420,6 @@ class Editor(QtGui.QMainWindow):
             self.open_meta(meta_fname)
             # TODO: Do something more if the models aren't in sync
             if self.META['MD5'] != model_meta['MD5']:
-                print self.META['MD5'], model_meta['MD5']
                 print 'ERROR: Model and meta are out of sync!'
             '''
             try:
