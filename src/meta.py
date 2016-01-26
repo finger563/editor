@@ -98,7 +98,7 @@ def buildMeta(meta_dict, model_dict, scope=''):
         meta_dict[model_dict['UUID']] = model_dict
 
     # TODO: PUT CLASS CODE HERE FOR INSTANTIATING OBJECTS
-    # meta_dict[model_dict['UUID']]['__CLASS__'] = 
+    # meta_dict[model_dict['UUID']]['__CLASS__'] =
     for c in model_dict['Children']:
         buildMeta(meta_dict, c)
     for p in model_dict['Pointers']:
@@ -106,6 +106,17 @@ def buildMeta(meta_dict, model_dict, scope=''):
 
 
 def convertDictToModel(root_dict, meta_dict):
+    # TODO: Make this recursive function which uses meta_dict[obj
+    #       type]['__CLASS__'] to instantiate object
+
+    # TODO: Since classes are stored in the meta-dict, figure out how
+    #       meta-models will load and instantiate versus how models
+    #       will load and instantiate.  Probably will have to have
+    #       MetaMetaModel Dict have the class types for MetaModel,
+    #       MetaAttribute, and MetaPointer (What about
+    #       NameAttribute?), while when building the metadict for
+    #       MetaModels to be used with models we will need to use the
+    #       fromDict method (or a new equivalent)
     uuid_dict = {}
     unresolved_keys = {}
     root = MetaModel.fromDict(root_dict, uuid_dict, unresolved_keys)
@@ -137,7 +148,8 @@ def checkModelToMeta(model_dict, meta_dict):
         for c in meta_type['Children']
     ]
     cardinality = {
-        c['Attributes']['Name']['Value']: c['Attributes']['Cardinality']['Value']
+        c['Attributes']['Name']['Value']:
+        c['Attributes']['Cardinality']['Value']
         for c in meta_type['Children']
     }
     for c in model_dict['Children']:
@@ -882,7 +894,7 @@ class MetaPointer(Model):
         key = model_dict['Attributes']['Destination Type']
         attr = newobj.get_attribute('Destination Type')
         if key not in uuid_dict:
-            unresolved_keys.set_default(key, []).append(attr)
+            unresolved_keys.setdefault(key, []).append(attr)
         else:
             attr.dst_type = uuid_dict[key].kind()
             attr.setValue(uuid_dict[key])

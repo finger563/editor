@@ -433,7 +433,7 @@ class Editor(QtGui.QMainWindow):
                 print 'CHECK PASSED'
                 # TODO: instantiate objects for model from model_dict
                 #       based on meta_dict
-                root = convertDictToModel(model_dict['__ROOT__'])
+                root = convertDictToModel(model_dict['__ROOT__'], self.META)
             else:
                 print 'CHECK FAILED'
             return root
