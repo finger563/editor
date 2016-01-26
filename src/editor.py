@@ -373,7 +373,7 @@ class Editor(QtGui.QMainWindow):
             root = ViewModel()
             root['Name'] = 'New_View_Model'
         if root:
-            self.load_model(root)
+            self.load_model([root])
 
     def openModel(self, event):
         '''Callback to allow the user to select a model file based on the
@@ -390,9 +390,9 @@ class Editor(QtGui.QMainWindow):
         if fname:
             self.clearModels()
             self.clearViewer()
-            root = self.open_model(fname)
-            if root:
-                self.load_model(root)
+            roots = self.open_model(fname)
+            if roots:
+                self.load_model(roots)
 
     def open_meta(self, fname):
         '''Decodes a saved meta-model file and loads it into the editor.'''
@@ -402,6 +402,7 @@ class Editor(QtGui.QMainWindow):
             # uuid_dict = {}
             # base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
             # TODO: create meta_dict from loaded meta-model
+            # TODO: Probably will need to resolve UUID referencce problems here
             for r in meta_dict['__ROOT__']:
                 buildMeta(meta_dict, r)
             self.META = meta_dict
@@ -426,20 +427,20 @@ class Editor(QtGui.QMainWindow):
                     meta_fname
                 )
             '''
-            root = None
-            test = False not in [
-                checkModelToMeta(c, self.META) for c in model_dict['__ROOT__']
-            ]
-            if test:
+            roots = []
+            if checkModelToMeta(model_dict['__ROOT__'], self.META):
                 print 'CHECK PASSED'
                 # TODO: instantiate objects for model from model_dict
                 #       based on meta_dict
-                root = convertDictToModel(model_dict['__ROOT__'][0], self.META)
+                roots = convertDictToModel(
+                    model_dict['__ROOT__'],
+                    self.META
+                )
             else:
                 print 'CHECK FAILED'
-            return root
+            return roots
 
-    def load_model(self, model):
+    def load_model(self, roots):
         '''
         :param in model: the root object of a model, which is loaded into
             the tree-viewer and proxy models
@@ -451,8 +452,9 @@ class Editor(QtGui.QMainWindow):
         # TODO: Figure out how to allow different roots and multiple
         #       child objects.
         root = MetaModel()
-        root.children.set_cardinality({model.__class__: '1..*'})
-        root.add_child(model)
+        for root in roots:
+            root.children.set_cardinality({root.__class__: '1..*'})
+            root.add_child(root)
 
         # Set up the proxy model for sorting/filtering
         self.proxy_model = SortFilterProxyModel(self)

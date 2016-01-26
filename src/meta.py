@@ -117,17 +117,27 @@ def convertDictToModel(root_dict, meta_dict):
     #       NameAttribute?), while when building the metadict for
     #       MetaModels to be used with models we will need to use the
     #       fromDict method (or a new equivalent)
+    roots = []
     uuid_dict = {}
     unresolved_keys = {}
-    root = MetaModel.fromDict(root_dict, uuid_dict, unresolved_keys)
+    for root in root_dict:
+        roots.append(MetaModel.fromDict(root, uuid_dict, unresolved_keys))
     for uuid_key, attr_list in unresolved_keys.iteritems():
         for attr in attr_list:
             attr.dst_type = uuid_dict[uuid_key].kind()
             attr.setValue(uuid_dict[uuid_key])
-    return root
+    return roots
 
 
-def checkModelToMeta(model_dict, meta_dict):
+def checkModelToMeta(root, meta):
+    test = False not in [
+        checkObjectToMeta(c, meta)
+        for c in root
+    ]
+    return test
+
+
+def checkObjectToMeta(model_dict, meta_dict):
     '''
     This function does a first-level depth check of the validity of a
     model against its meta-model, contained within model_dict and
@@ -154,7 +164,7 @@ def checkModelToMeta(model_dict, meta_dict):
     }
     for c in model_dict['Children']:
         # make sure the child type exists in the meta-model
-        if not checkModelToMeta(c, meta_dict):
+        if not checkObjectToMeta(c, meta_dict):
             print 'ERROR: Child type \'{}\' of {} not in meta-model!'.format(
                 c['Type'],
                 meta_name
@@ -198,7 +208,7 @@ def checkModelToMeta(model_dict, meta_dict):
     allowed_ptrs = [p['Type'] for p in meta_type['Pointers']]
     for p in model_dict['Pointers']:
         # make sure the child type exists in the meta-model
-        if not checkModelToMeta(p, meta_dict):
+        if not checkObjectToMeta(p, meta_dict):
             print 'ERROR: Pointer type \'{}\' of {} not in meta-model!'.format(
                 p['Type'],
                 meta_name
