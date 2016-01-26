@@ -70,23 +70,127 @@ import uuid
 #       Note: if they have the same definitions and name (and thus MD5
 #       hash) they will work out of the box
 
+'''
+import hashlib
 
-# Why is this not a function of Model?
-def get_children(model, kind):
-    if model.kind() == kind:
-        return [model]
-    else:
-        kids = []
-        for c in model.children:
-            kids.extend(get_children(c, kind))
-        return kids
+meta_meta_dict = OrderedDict()
+
+meta_model_dict = OrderedDict()
+meta_model_dict['Type'] = MetaModel
+meta_model_dict['Attributes'] = OrderedDict()
+meta_model_dict['Attributes']['Name'] = 'string'
+meta_model_dict['Attributes']['Cardinality'] = 'string'
+meta_model_dict['Children'] = OrderedDict()
+meta_model_dict['Children']['001'] = '0..*'
+meta_model_dict['Children']['002'] = '0..*'
+meta_model_dict['Children']['003'] = '0..*'
+meta_model_dict['Pointers'] = OrderedDict()
+
+meta_attribute_dict = OrderedDict()
+meta_attribute_dict['Type'] = MetaAttribute
+meta_attribute_dict['Children'] = OrderedDict()
+meta_attribute_dict['Children']['002'] = '0..*'
+meta_attribute_dict['Pointers'] = OrderedDict()
+
+meta_pointer_dict = OrderedDict()
+meta_pointer_dict['Type'] = MetaPointer
+meta_pointer_dict['Children'] = OrderedDict()
+meta_pointer_dict['Pointers'] = OrderedDict()
+
+root_dict = OrderedDict()
+
+root_dict['001'] = meta_model_dict
+root_dict['002'] = meta_attribute_dict
+root_dict['003'] = meta_pointer_dict
+
+meta_meta_dict['__ROOT__'] = root_dict
+meta_meta_dict['Name'] = 'MetaMetaModel'
+meta_meta_dict['MD5'] = hashlib.md5(str(root_dict)).hexdigest()
+'''
 
 
-def get_parent(model, kind):
-    if model.kind() != kind and model.parent:
-        model = get_parent(model.parent, kind)
-    return model
+def checkModelToMeta(model_dict, meta_dict):
+    '''
+    This function does a first-level depth check of the validity of a
+    model against its meta-model, contained within model_dict and
+    meta_dict respectively.
+    '''
+    # check that it is a valid type
+    if model_dict['Type'] not in meta_dict:
+        return False
+    meta_type = meta_dict[model_dict['Type']]
+    meta_name = meta_type['Attributes']['Name']['Value']
 
+    # check that it has valid children types and numbers (cardinality)
+    allowed_kids = [c['Attributes']['Name']['Value'] for c in meta_type['Children']]
+    cardinality = {
+        c['Attributes']['Name']['Value']: c['Attributes']['Cardinality']['Value']
+        for c in meta_type['Children']
+    }
+    for c in model_dict['Children']:
+        # make sure the child type exists in the meta-model
+        if c['Type'] not in meta_dict:
+            print 'ERROR: Child type {} of {} not in meta-model!'.format(
+                c['Type'],
+                meta_name
+            )
+            return False
+        child_meta_type = meta_dict[c['Type']]
+        child_meta_name = child_meta_type['Attributes']['Name']['Value']
+        # make sure the child type is allowed
+        if child_meta_name not in allowed_kids:
+            print 'ERROR: Child type {} not allowed in {}!'.format(
+                child_meta_name,
+                meta_name
+            )
+            return False
+    # make sure the parent is allowed to have this many kids of this type
+    child_types = [
+        meta_dict[c['Type']]['Attributes']['Name']['Value']
+        for c in model_dict['Children']
+    ]
+    for kid_type in allowed_kids:
+        min_num, max_num = getMinMaxCardinality(
+            cardinality[kid_type]
+        )
+        actual = child_types.count(kid_type)
+        if actual < min_num:
+            print 'ERROR: must have {} children of type {} in {}'.format(
+                min_num,
+                kid_type,
+                meta_name
+            )
+            return False
+        if max_num > 0 and actual > max_num:
+            print 'ERROR: can only have {} children of type {} in {}'.format(
+                max_num,
+                kid_type,
+                meta_name
+            )
+            return False
+
+    # check that is has valid pointer objects 
+    allowed_ptrs = [p['Type'] for p in meta_type['Pointers']]
+    for p in model_dict['Pointers']:
+        # make sure the child type exists in the meta-model
+        if p['Type'] not in meta_dict:
+            print 'ERROR: Pointer type {} of {} not in meta-model!'.format(
+                p['Type'],
+                meta_name
+            )
+            return False
+        ptr_meta_type = meta_dict[p['Type']]
+        ptr_meta_name = ptr_meta_type['Attributes']['Name']['Value']
+        # make sure the child type is allowed
+        if ptr_meta_name not in allowed_ptrs:
+            print 'ERROR: Pointer type {} not allowed in {}!'.format(
+                ptr_meta_name,
+                meta_name
+            )
+            return False
+
+    # check that is has valid attribute objects
+    return True
 
 class Model(QtCore.QObject):
     '''Generic Model/Container class
@@ -198,21 +302,20 @@ class Model(QtCore.QObject):
         self.pointers.append(ptr)
         ptr.parent = self
 
-    @staticmethod
-    def fromDict(model_dict, uuid_dict, unresolved_keys, meta_dict):
-        # instantiate a new object
-        newobj = meta_dict[model_dict['Type']]()
+    def get_children(self, kind):
+        if self.kind() == kind:
+            return [self]
+        else:
+            kids = []
+            for c in self.children:
+                kids.extend(self.get_children(kind))
+            return kids
 
-        model_dict = OrderedDict()
-        model_dict['Type'] = model.kind()
-        model_dict['UUID'] = model.uuid
-        model_dict['Attributes'] = {
-            key: value.__class__.toDict(value)
-            for key, value in model.attributes.iteritems()
-        }
-        model_dict['Children'] = Children.toDict(model.children)
-        model_dict['Pointers'] = Children.toDict(model.pointers)
-        return model_dict
+    def get_parent(self, kind):
+        model = self
+        if self.kind() != kind and self.parent:
+            model = self.parent.get_parent(kind)
+        return model
 
     @staticmethod
     def toDict(model):
@@ -418,7 +521,6 @@ class Pointer(Model):
         model_dict.pop('UUID', None)
         model_dict.pop('Pointers', None)
         model_dict.pop('Children', None)
-        # model_dict['Attributes']['Destination Type'] = model.dst_type
         model_dict['Attributes'][
             'Destination'
         ] = model['Destination'].uuid
@@ -474,56 +576,6 @@ class MetaModel(Model):
     def toDict(model):
         model_dict = Model.toDict(model)
         return model_dict
-
-    @staticmethod
-    def toMeta(model):
-        allowed_kids = OrderedDict()
-        attr_dict = OrderedDict()
-        ptrs = OrderedDict()
-        for obj in model.children:
-            if type(obj) == MetaModel:
-                allowed_kids[ MetaModel.toMeta(obj) ] = obj['Cardinality']
-            elif type(obj) == MetaPointer:
-                ptrs[obj['Name']] = MetaPointer.toMeta(obj)
-            elif type(obj) == MetaAttribute:
-                attr_dict[obj['Name']] = MetaAttribute.toMeta(obj)
-
-        # Define the init function inline here for the new class, make
-        # sure all attributes, pointers, children, etc. are set up
-        # properly
-        def modelInit(self, parent=None):
-            Model.__init__(self, parent)
-            self.attributes = OrderedDict()
-            self.set_attribute('Name', NameAttribute(self.kind()))
-            # Handle children
-            self.children = Children(cardinality=allowed_kids)
-            for t, c in self.children.get_cardinality().iteritems():
-                min_number = int(c.split('..')[0])
-                for i in range(0, min_number):
-                    new_child = t()
-                    new_child['Name'] = '{}_{}'.format(t.__name__, i)
-                    self.add_child(new_child)
-
-            # Handle pointers
-            ptr_types = [type(t) for t in ptrs.values()]
-            for t in ptr_types:
-                self.children.set_cardinality_of(t, '1')
-
-            for name, ptr in ptrs.iteritems():
-                self.add_child(ptr)
-
-            # Handle attributes
-            for name, attr in attr_dict.iteritems():
-                self.set_attribute(name, attr)
-
-        new_model = type(
-            model['Name'],
-            (Model, ),
-            {
-                '__init__': modelInit
-            }
-        )
-        return new_model
 
     @staticmethod
     def fromDict(model_dict, uuid_dict, unresolved_keys):
@@ -665,30 +717,6 @@ class MetaAttribute(Model):
         return model_dict
 
     @staticmethod
-    def toMeta(model):
-        exec model['Validator'] in globals()
-
-        def attrInit(self):
-            Attribute.__init__(
-                self,
-                model['Kind'],
-                Attribute.default_vals[model['Kind']]
-            )
-
-        new_attr = type(
-            model['Name'],
-            (Attribute, ),
-            {
-                '__init__': attrInit,
-                'tooltip': model['Tooltip'],
-                'display': model['Display'],
-                'editable': model['Editable'],
-                'validator': validator,
-            }
-        )
-        return new_attr()
-
-    @staticmethod
     def fromDict(model_dict, uuid_dict, unresolved_keys):
         newobj = MetaAttribute()
         newobj.uuid = model_dict['UUID']
@@ -818,40 +846,6 @@ class MetaPointer(Model):
         return model_dict
 
     @staticmethod
-    def toMeta(model):
-
-        # should fill out get_root(self)
-        exec model['Root Object'] in globals()
-        # should fill out filter_function(self, obj)
-        exec model['Filter Function'] in globals()
-
-        def ref_wrapper(s1, s2):
-            return s1.get_references()
-
-        def ptrInit(self):
-            Pointer.__init__(
-                self,
-                dst_type=model['Destination Type']
-            )
-            self['Name'] = model['Name']
-            destAttr = self.get_attribute('Destination')
-            destAttr.dst_type = model['Destination Type']
-            destAttr.tooltip = model['Tooltip']
-            destAttr.display = model['Display']
-            
-        new_ptr = type(
-            model['Name'],
-            (Pointer, ),
-            {
-                '__init__': ptrInit,
-                # from model['Valid Objects'] as exec'd text
-                'get_root': get_root,
-                'filter_function': filter_function,
-            }
-        )
-        return new_ptr()
-
-    @staticmethod
     def fromDict(model_dict, uuid_dict, unresolved_keys):
         newobj = MetaPointer()
         newobj.uuid = model_dict['UUID']
@@ -903,6 +897,17 @@ class MetaPointer(Model):
         return new_ptr()
     
 
+def getMinMaxCardinality(cardinality):
+    vals = cardinality.split('..', 1)
+    min_num = int(vals[0])
+    max_num = min_num
+    if len(vals) > 1:
+        if vals[1] != '*':
+            max_num = int(vals[1])
+        else:
+            max_num = -1
+    return min_num, max_num
+        
 class Children(MutableSequence):
     '''Children list which extends :class:`MutableSequence` and enforces
     item type and cardinality rules.
