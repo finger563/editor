@@ -98,7 +98,7 @@ meta_meta_dict['MD5'] = hashlib.md5(str(root_dict)).hexdigest()
 '''
 
 
-def buildMeta(meta_dict, model_dict):
+def buildMeta(meta_dict, model_dict, scope=''):
     '''This function builds a dict of uuid: meta_dict[key] pairs.'''
     if model_dict['UUID'] not in meta_dict:
         meta_dict[model_dict['UUID']] = model_dict
@@ -320,7 +320,7 @@ class Model(QtCore.QObject):
     @staticmethod
     def toDict(model):
         model_dict = OrderedDict()
-        model_dict['Type'] = model.kind()
+        model_dict['Type'] = model.meta_type
         model_dict['UUID'] = model.uuid
         model_dict['Attributes'] = {
             key: value.__class__.toDict(value)
@@ -467,6 +467,7 @@ class NameAttribute(Attribute):
     '''
     def __init__(self, name):
         Attribute.__init__(self, 'string', name)
+        setattr(self, 'meta_type', 'NameAttribute')
 
     def validator(self, newName):
         if not self.parent.parent or not self.parent.parent.children:
@@ -489,6 +490,7 @@ class NameAttribute(Attribute):
     @staticmethod
     def toDict(model):
         model_dict = Attribute.toDict(model)
+        model_dict['Type'] = 'NameAttribute'
         model_dict.pop('Dependents', None)
         return model_dict
 
@@ -627,6 +629,7 @@ class MetaModel(Model):
         # properly
         def modelInit(self, parent=None):
             Model.__init__(self, parent)
+            setattr(self, 'meta_type', model['UUID'])
             self.attributes = OrderedDict()
             self.set_attribute('Name', NameAttribute(self.kind()))
             # Handle children

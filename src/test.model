@@ -1,13 +1,13 @@
 {
     "Name": "test", 
-    "MD5": "e98151eef9a19440bf6ec63492e00167", 
+    "MD5": "e858c637a0ac6b58bd279731d3021879", 
     "__META__": {
         "Name": "rosmod", 
         "MD5": "82a14ec2042ab80a7f1ea55adcf37073"
     }, 
     "__ROOT__": {
-        "Type": "Project", 
-        "UUID": "c8095cc0-839e-4679-a64e-a2dcfad0bba4", 
+        "Type": "e482a3c8-2d40-4c86-95fd-253ebdb6422b", 
+        "UUID": "045ab218-0041-4942-bdfd-f7db0b5b1629", 
         "Attributes": {
             "Name": {
                 "Type": "NameAttribute", 
@@ -18,8 +18,8 @@
         }, 
         "Children": [
             {
-                "Type": "Software", 
-                "UUID": "dee4bfe5-cc0f-465f-8b01-6005fe597473", 
+                "Type": "7b4094d7-4f52-47b2-b881-abbcbbf696c2", 
+                "UUID": "d6edf92b-9861-4c7a-bb20-88c87c5905d1", 
                 "Attributes": {
                     "Name": {
                         "Type": "NameAttribute", 

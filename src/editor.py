@@ -432,7 +432,7 @@ class Editor(QtGui.QMainWindow):
                     meta_fname
                 )
             root = None
-            if checkModelToMeta(model_dict['__ROOT__'], self.META['__ROOT__']):
+            if checkModelToMeta(model_dict['__ROOT__'], self.META):
                 print 'CHECK PASSED'
                 # TODO: instantiate objects for model from model_dict
                 #       based on meta_dict
