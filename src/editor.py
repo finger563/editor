@@ -37,6 +37,7 @@ from item_model import\
     ItemModel
 
 from meta import\
+    checkModelToMeta,\
     MetaModel
 
 from view_model import\
@@ -387,11 +388,8 @@ class Editor(QtGui.QMainWindow):
             self.clearModels()
             self.clearViewer()
             root = self.open_model(fname)
-            self.load_model(root)
-
-    def checkModel(self, model_dict):
-        # check against self.META
-        return True
+            if root:
+                self.load_model(root)
 
     def convertDictToModel(self, root_dict):
         uuid_dict = {}
@@ -408,9 +406,10 @@ class Editor(QtGui.QMainWindow):
         with open(fname, 'r') as f:
             meta_dict = json.loads(f.read())
             print 'Loaded meta-model {}'.format(fname)
-            uuid_dict = {}
-            base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
-            print base
+            # uuid_dict = {}
+            # base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
+            # TODO: create meta_dict from loaded meta-model
+            self.META = meta_dict
 
     def open_model(self, fname):
         '''Decodes a saved model {*.meta, *.model} file and loads it into the
@@ -419,23 +418,25 @@ class Editor(QtGui.QMainWindow):
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
             print 'Loaded model {}'.format(fname)
-            # TODO: determine meta-model from model_dict and load it
-            meta_fname = model_dict['__META__']['Name'] + '.meta'
-            self.META = model_dict['__META__']
-            # TODO: check model's meta:MD5 vs meta-model's MD5
-            # TODO: create meta_dict from loaded meta-model
+            model_meta = model_dict['__META__']
+            meta_fname = model_meta['Name'] + '.meta'
             try:
                 self.open_meta(meta_fname)
+                # TODO: Do something more if the models aren't in sync
+                if self.META['MD5'] != model_meta['MD5']:
+                    print 'ERROR: Model and meta are out of sync!'
             except:
                 print 'ERROR: Cannot find {}, please select location.'.format(
                     meta_fname
                 )
             root = None
-            # TODO: check model_dict against meta_dict
-            if self.checkModel(model_dict['__ROOT__']):
+            if checkModelToMeta(model_dict['__ROOT__'], self.META['__ROOT__']):
+                print 'CHECK PASSED'
                 # TODO: instantiate objects for model from model_dict
                 #       based on meta_dict
                 root = self.convertDictToModel(model_dict['__ROOT__'])
+            else:
+                print 'CHECK FAILED'
             return root
 
     def load_model(self, model):
@@ -467,6 +468,7 @@ class Editor(QtGui.QMainWindow):
         # inherit from the meta-metamodel so have the same interfaces
         # and can be interacted with in the same way
         self.model = ItemModel(root)
+        self.model.setMeta(self.META)
         self.model.rowsAboutToBeRemoved.connect(self.modelRowsAboutToBeRemoved)
 
         # Link the actual model and the proxy model

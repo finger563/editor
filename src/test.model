@@ -1,13 +1,13 @@
 {
     "Name": "test", 
-    "MD5": "e0dcc8955c617749d15b58ef0b3bf5ee", 
+    "MD5": "e98151eef9a19440bf6ec63492e00167", 
     "__META__": {
         "Name": "rosmod", 
-        "MD5": "252dd8f2f8bcad3334e11a2aea4a2477"
+        "MD5": "82a14ec2042ab80a7f1ea55adcf37073"
     }, 
     "__ROOT__": {
         "Type": "Project", 
-        "UUID": "eab1a1cb-ecec-46ee-bb9a-54393d5a7d9b", 
+        "UUID": "c8095cc0-839e-4679-a64e-a2dcfad0bba4", 
         "Attributes": {
             "Name": {
                 "Type": "NameAttribute", 
@@ -19,7 +19,7 @@
         "Children": [
             {
                 "Type": "Software", 
-                "UUID": "e8ba493a-f8b1-4704-9d1e-457251c43f3f", 
+                "UUID": "dee4bfe5-cc0f-465f-8b01-6005fe597473", 
                 "Attributes": {
                     "Name": {
                         "Type": "NameAttribute", 
@@ -30,47 +30,6 @@
                 }, 
                 "Children": [], 
                 "Pointers": []
-            }, 
-            {
-                "Type": "Hardware", 
-                "UUID": "f8c1c9e5-a101-48e8-9fa7-6b89bcb94cc8", 
-                "Attributes": {
-                    "Name": {
-                        "Type": "NameAttribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "New_Hardware_2"
-                    }
-                }, 
-                "Children": [], 
-                "Pointers": []
-            }, 
-            {
-                "Type": "Deployment", 
-                "UUID": "f18d47a9-3425-4810-abf9-13b5c6d0477b", 
-                "Attributes": {
-                    "Name": {
-                        "Type": "NameAttribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "New_Deployment_3"
-                    }
-                }, 
-                "Children": [], 
-                "Pointers": [
-                    {
-                        "Type": "Hardware_Reference", 
-                        "Attributes": {
-                            "Destination": "f8c1c9e5-a101-48e8-9fa7-6b89bcb94cc8", 
-                            "Name": {
-                                "Type": "NameAttribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "Hardware_Reference"
-                            }
-                        }
-                    }
-                ]
             }
         ], 
         "Pointers": []

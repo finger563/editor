@@ -117,6 +117,7 @@ def checkModelToMeta(model_dict, meta_dict):
     '''
     # check that it is a valid type
     if model_dict['Type'] not in meta_dict:
+        print 'ERROR: object type \'{}\' not in metamodel!'.format(model_dict['Type'])
         return False
     meta_type = meta_dict[model_dict['Type']]
     meta_name = meta_type['Attributes']['Name']['Value']
@@ -130,7 +131,7 @@ def checkModelToMeta(model_dict, meta_dict):
     for c in model_dict['Children']:
         # make sure the child type exists in the meta-model
         if c['Type'] not in meta_dict:
-            print 'ERROR: Child type {} of {} not in meta-model!'.format(
+            print 'ERROR: Child type \'{}\' of {} not in meta-model!'.format(
                 c['Type'],
                 meta_name
             )
@@ -139,7 +140,7 @@ def checkModelToMeta(model_dict, meta_dict):
         child_meta_name = child_meta_type['Attributes']['Name']['Value']
         # make sure the child type is allowed
         if child_meta_name not in allowed_kids:
-            print 'ERROR: Child type {} not allowed in {}!'.format(
+            print 'ERROR: Child type \'{}\' not allowed in {}!'.format(
                 child_meta_name,
                 meta_name
             )
@@ -155,14 +156,14 @@ def checkModelToMeta(model_dict, meta_dict):
         )
         actual = child_types.count(kid_type)
         if actual < min_num:
-            print 'ERROR: must have {} children of type {} in {}'.format(
+            print 'ERROR: must have {} children of type \'{}\' in {}'.format(
                 min_num,
                 kid_type,
                 meta_name
             )
             return False
         if max_num > 0 and actual > max_num:
-            print 'ERROR: can only have {} children of type {} in {}'.format(
+            print 'ERROR: can only have {} children of type \'{}\' in {}'.format(
                 max_num,
                 kid_type,
                 meta_name
@@ -174,7 +175,7 @@ def checkModelToMeta(model_dict, meta_dict):
     for p in model_dict['Pointers']:
         # make sure the child type exists in the meta-model
         if p['Type'] not in meta_dict:
-            print 'ERROR: Pointer type {} of {} not in meta-model!'.format(
+            print 'ERROR: Pointer type \'{}\' of {} not in meta-model!'.format(
                 p['Type'],
                 meta_name
             )
@@ -183,7 +184,7 @@ def checkModelToMeta(model_dict, meta_dict):
         ptr_meta_name = ptr_meta_type['Attributes']['Name']['Value']
         # make sure the child type is allowed
         if ptr_meta_name not in allowed_ptrs:
-            print 'ERROR: Pointer type {} not allowed in {}!'.format(
+            print 'ERROR: Pointer type \'{}\' not allowed in {}!'.format(
                 ptr_meta_name,
                 meta_name
             )
