@@ -1,13 +1,13 @@
 {
     "Name": "test", 
-    "MD5": "53beeae1f79008483a809e645a1ac57c", 
+    "MD5": "a4735af5976939d20b72f7d2e07be7fd", 
     "__META__": {
         "Name": "rosmod", 
-        "MD5": "82a14ec2042ab80a7f1ea55adcf37073"
+        "MD5": "584f2850675fef1795c80d9b3ca8c913"
     }, 
     "__ROOT__": {
-        "Type": "e482a3c8-2d40-4c86-95fd-253ebdb6422b", 
-        "UUID": "dd807106-2e9f-4d3d-84b0-b3e8b836e6dd", 
+        "Type": "c64fb269-c167-4b24-9ad3-b4a71005efe5", 
+        "UUID": "8d20c4b9-c2ed-4d91-978a-9f48339113a2", 
         "Attributes": {
             "Name": {
                 "Type": "NameAttribute", 
@@ -18,14 +18,42 @@
         }, 
         "Children": [
             {
-                "Type": "7b4094d7-4f52-47b2-b881-abbcbbf696c2", 
-                "UUID": "f51270fd-3b2f-4dc8-bd06-5e19c110bdac", 
+                "Type": "6664ce1e-d335-49a5-bc93-fd09e734af2e", 
+                "UUID": "b76d887f-ee28-4436-a56c-2b8b4940b9b2", 
                 "Attributes": {
                     "Name": {
                         "Type": "NameAttribute", 
                         "Attributes": {}, 
                         "Kind": "string", 
-                        "Value": "Software_0"
+                        "Value": "New_Software_1"
+                    }
+                }, 
+                "Children": [], 
+                "Pointers": []
+            }, 
+            {
+                "Type": "297bd31c-b3c2-4293-bc69-cd7ae10ce0d9", 
+                "UUID": "c06f67b0-1295-4b70-84e6-aeaa293203a9", 
+                "Attributes": {
+                    "Name": {
+                        "Type": "NameAttribute", 
+                        "Attributes": {}, 
+                        "Kind": "string", 
+                        "Value": "New_Hardware_2"
+                    }
+                }, 
+                "Children": [], 
+                "Pointers": []
+            }, 
+            {
+                "Type": "4407c016-ab5c-4a73-b70f-7c36bcecdebe", 
+                "UUID": "b9495c18-5a58-474c-aacb-64d8c8230a27", 
+                "Attributes": {
+                    "Name": {
+                        "Type": "NameAttribute", 
+                        "Attributes": {}, 
+                        "Kind": "string", 
+                        "Value": "New_Deployment_3"
                     }
                 }, 
                 "Children": [], 

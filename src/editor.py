@@ -363,15 +363,15 @@ class Editor(QtGui.QMainWindow):
                     meta_dict = json.loads(f.read())
                 self.META = meta_dict
                 uuid_dict = OrderedDict()
-                base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
+                base = MetaModel.fromMeta(meta_dict['__ROOT__'][0], uuid_dict)
                 root = base()
         elif self.editor_mode == 'Meta Model':
-            self.META = self.open_meta('MetaMetaModel.meta')
+            self.open_meta('MetaMetaModel.meta')
             root = MetaModel()
             root['Name'] = 'New_Model'
         elif self.editor_mode == 'View Model':
             # TODO: Replace this with view_model code
-            self.META = get_meta_meta_model()
+            self.open_meta('MetaViewModel.meta')
             root = ViewModel()
             root['Name'] = 'New_View_Model'
         if root:
@@ -429,11 +429,14 @@ class Editor(QtGui.QMainWindow):
                 )
             '''
             root = None
-            if checkModelToMeta(model_dict['__ROOT__'], self.META):
+            test = False not in [
+                checkModelToMeta(c, self.META) for c in model_dict['__ROOT__']
+            ]
+            if test:
                 print 'CHECK PASSED'
                 # TODO: instantiate objects for model from model_dict
                 #       based on meta_dict
-                root = convertDictToModel(model_dict['__ROOT__'], self.META)
+                root = convertDictToModel(model_dict['__ROOT__'][0], self.META)
             else:
                 print 'CHECK FAILED'
             return root
@@ -492,8 +495,7 @@ class Editor(QtGui.QMainWindow):
                 fname += '.{}'.format(ftype)
             root = self.model.getModel(QtCore.QModelIndex())
             # the actual root is not displayed and is always a Model()
-            rootDict = MetaModel.toDict(root.children[0])
-            # rootDict = [MetaModel.toDict(x) for x in root.children]
+            rootDict = [MetaModel.toDict(c) for c in root.children]
             modelDict = OrderedDict()
             modelDict['Name'] = fname.split('/')[-1].split('.')[-2]
             modelDict['MD5'] = hashlib.md5(str(rootDict)).hexdigest()

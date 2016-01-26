@@ -1,736 +1,95 @@
 {
     "Name": "rosmod", 
-    "MD5": "5acb4794d8ba09d8cb1d004e9dc6987c", 
+    "MD5": "cc65fd7f41ba584247014eca59d5ed68", 
     "__META__": {
         "Name": "MetaMetaModel", 
-        "MD5": "f3d2584bf5843b77335d9d4ef0b7a7c4"
+        "MD5": "95e5033e018c8f65a32c4186603fae9f"
     }, 
-    "__ROOT__": {
-        "Type": "MetaModel", 
-        "UUID": "0a718a9a-dd86-4841-b655-51696e3e6b71", 
-        "Attributes": {
-            "Cardinality": {
-                "Type": "Attribute", 
-                "Attributes": {}, 
-                "Kind": "string", 
-                "Value": "0..*", 
-                "Dependents": {}
-            }, 
-            "Name": {
-                "Type": "NameAttribute", 
-                "Attributes": {}, 
-                "Kind": "string", 
-                "Value": "New_Model"
-            }
-        }, 
-        "Children": [
-            {
-                "Type": "MetaModel", 
-                "UUID": "ab1b58f3-e2a0-42f9-924c-8d811bd05b17", 
-                "Attributes": {
-                    "Cardinality": {
-                        "Type": "Attribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "0..*", 
-                        "Dependents": {}
-                    }, 
-                    "Name": {
-                        "Type": "NameAttribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "New_MetaModel_1"
-                    }
+    "__ROOT__": [
+        {
+            "Type": "MetaModel", 
+            "UUID": "e1d9a3cc-7de4-4f06-8b6e-d7ed62717a18", 
+            "Attributes": {
+                "Cardinality": {
+                    "Type": "Attribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "0..*", 
+                    "Dependents": {}
                 }, 
-                "Children": [
-                    {
-                        "Type": "MetaModel", 
-                        "UUID": "864b741f-fbbe-4608-8e5d-ed86c467761b", 
-                        "Attributes": {
-                            "Cardinality": {
-                                "Type": "Attribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "0..*", 
-                                "Dependents": {}
-                            }, 
-                            "Name": {
-                                "Type": "NameAttribute", 
-                                "Attributes": {}, 
-                                "Kind": "string", 
-                                "Value": "New_MetaModel_1"
-                            }
+                "Name": {
+                    "Type": "NameAttribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "Project"
+                }
+            }, 
+            "Children": [
+                {
+                    "Type": "MetaModel", 
+                    "UUID": "26ea63c6-82cb-43a8-acda-78faa7d0d32c", 
+                    "Attributes": {
+                        "Cardinality": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "0..*", 
+                            "Dependents": {}
                         }, 
-                        "Children": [
-                            {
-                                "Type": "MetaModel", 
-                                "UUID": "40319b25-ba76-4514-9a9c-f1e08c273c9f", 
-                                "Attributes": {
-                                    "Cardinality": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "0..*", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "New_MetaModel_1"
-                                    }
-                                }, 
-                                "Children": [
-                                    {
-                                        "Type": "MetaAttribute", 
-                                        "UUID": "8096705e-b474-4cca-8c13-5c8a577463e1", 
-                                        "Attributes": {
-                                            "Kind": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {
-                                                    "List Options": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def get_options(self):\n    return []", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Kind": "list", 
-                                                "Value": "string", 
-                                                "Dependents": {
-                                                    "list": [
-                                                        "List Options"
-                                                    ]
-                                                }
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "New_MetaAttribute_1"
-                                            }, 
-                                            "Editable": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "bool", 
-                                                "Value": true, 
-                                                "Dependents": {}
-                                            }, 
-                                            "Tooltip": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Validator": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "python", 
-                                                "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Display": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Parent Key": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": []
-                                    }
-                                ], 
-                                "Pointers": []
-                            }, 
-                            {
-                                "Type": "MetaModel", 
-                                "UUID": "7e4cd118-4a4a-43bf-b49d-67178b5f37f2", 
-                                "Attributes": {
-                                    "Cardinality": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "0..*", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "New_MetaModel_2"
-                                    }
-                                }, 
-                                "Children": [
-                                    {
-                                        "Type": "MetaAttribute", 
-                                        "UUID": "87269771-b394-496b-9e90-0aefd0445c9b", 
-                                        "Attributes": {
-                                            "Kind": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {
-                                                    "List Options": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def get_options(self):\n    return []", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Kind": "list", 
-                                                "Value": "string", 
-                                                "Dependents": {
-                                                    "list": [
-                                                        "List Options"
-                                                    ]
-                                                }
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "New_MetaAttribute_1"
-                                            }, 
-                                            "Editable": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "bool", 
-                                                "Value": true, 
-                                                "Dependents": {}
-                                            }, 
-                                            "Tooltip": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Validator": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "python", 
-                                                "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Display": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Parent Key": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "", 
-                                                "Dependents": {}
-                                            }
-                                        }, 
-                                        "Children": [], 
-                                        "Pointers": []
-                                    }
-                                ], 
-                                "Pointers": []
-                            }, 
-                            {
-                                "Type": "MetaModel", 
-                                "UUID": "a916574f-f01d-4fac-90f5-fae078ae4345", 
-                                "Attributes": {
-                                    "Cardinality": {
-                                        "Type": "Attribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "0..*", 
-                                        "Dependents": {}
-                                    }, 
-                                    "Name": {
-                                        "Type": "NameAttribute", 
-                                        "Attributes": {}, 
-                                        "Kind": "string", 
-                                        "Value": "New_MetaModel_3"
-                                    }
-                                }, 
-                                "Children": [
-                                    {
-                                        "Type": "MetaModel", 
-                                        "UUID": "f8f4819e-b536-4169-b02b-5a9f2093420f", 
-                                        "Attributes": {
-                                            "Cardinality": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "0..*", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "New_MetaModel_1"
-                                            }
-                                        }, 
-                                        "Children": [
-                                            {
-                                                "Type": "MetaAttribute", 
-                                                "UUID": "1ef6efbe-aa18-4b56-b6f0-6a23d085fd4a", 
-                                                "Attributes": {
-                                                    "Kind": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {
-                                                            "List Options": {
-                                                                "Type": "Attribute", 
-                                                                "Attributes": {}, 
-                                                                "Kind": "python", 
-                                                                "Value": "def get_options(self):\n    return []", 
-                                                                "Dependents": {}
-                                                            }
-                                                        }, 
-                                                        "Kind": "list", 
-                                                        "Value": "string", 
-                                                        "Dependents": {
-                                                            "list": [
-                                                                "List Options"
-                                                            ]
-                                                        }
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "New_MetaAttribute_1"
-                                                    }, 
-                                                    "Editable": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "bool", 
-                                                        "Value": true, 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Validator": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Parent Key": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }, 
-                                            {
-                                                "Type": "MetaAttribute", 
-                                                "UUID": "fbbf9e4f-cd2c-4caa-87a0-1211d27f6b2c", 
-                                                "Attributes": {
-                                                    "Kind": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {
-                                                            "List Options": {
-                                                                "Type": "Attribute", 
-                                                                "Attributes": {}, 
-                                                                "Kind": "python", 
-                                                                "Value": "def get_options(self):\n    return []", 
-                                                                "Dependents": {}
-                                                            }
-                                                        }, 
-                                                        "Kind": "list", 
-                                                        "Value": "string", 
-                                                        "Dependents": {
-                                                            "list": [
-                                                                "List Options"
-                                                            ]
-                                                        }
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "New_MetaAttribute_2"
-                                                    }, 
-                                                    "Editable": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "bool", 
-                                                        "Value": true, 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Validator": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def validator(self, newValue):\n    valid = True\n    errMsg = ''\n    return valid, errMsg\n                 ", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Parent Key": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }
-                                        ], 
-                                        "Pointers": []
-                                    }, 
-                                    {
-                                        "Type": "MetaModel", 
-                                        "UUID": "e82d96d4-a7f4-4ea8-85be-3381dd7ceff8", 
-                                        "Attributes": {
-                                            "Cardinality": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "0..*", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "New_MetaModel_2"
-                                            }
-                                        }, 
-                                        "Children": [
-                                            {
-                                                "Type": "MetaPointer", 
-                                                "UUID": "1f2714d6-9e82-4535-ba03-9e6e3c94674f", 
-                                                "Attributes": {
-                                                    "Filter Function": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "New_MetaPointer_1"
-                                                    }, 
-                                                    "Destination Type": "6b077b00-48b8-4627-abc5-d36127e46e43", 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Root Object": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def get_root(self):\n    return self.parent", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }
-                                        ], 
-                                        "Pointers": []
-                                    }, 
-                                    {
-                                        "Type": "MetaModel", 
-                                        "UUID": "4bab45ac-d222-4135-bcaf-58fa661a4a29", 
-                                        "Attributes": {
-                                            "Cardinality": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "0..*", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "New_MetaModel_3"
-                                            }
-                                        }, 
-                                        "Children": [
-                                            {
-                                                "Type": "MetaPointer", 
-                                                "UUID": "1887906d-7998-4849-b307-09f30afb1c00", 
-                                                "Attributes": {
-                                                    "Filter Function": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "New_MetaPointer_1"
-                                                    }, 
-                                                    "Destination Type": "ba986335-8aa5-42fd-a53a-4746d543552a", 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Root Object": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def get_root(self):\n    return self.parent", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }
-                                        ], 
-                                        "Pointers": []
-                                    }, 
-                                    {
-                                        "Type": "MetaModel", 
-                                        "UUID": "900aa746-f763-4666-8aa1-09cfe8d0c69d", 
-                                        "Attributes": {
-                                            "Cardinality": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "0..*", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "New_MetaModel_4"
-                                            }
-                                        }, 
-                                        "Children": [
-                                            {
-                                                "Type": "MetaPointer", 
-                                                "UUID": "0086fa52-8e51-4eec-9ccb-34233e12bc0f", 
-                                                "Attributes": {
-                                                    "Filter Function": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "New_MetaPointer_1"
-                                                    }, 
-                                                    "Destination Type": "20fe56de-d52c-4db8-9f11-6939e79d810c", 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Root Object": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def get_root(self):\n    return self.parent", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }
-                                        ], 
-                                        "Pointers": []
-                                    }, 
-                                    {
-                                        "Type": "MetaModel", 
-                                        "UUID": "5351178d-926c-4dcc-b768-14b66c9db329", 
-                                        "Attributes": {
-                                            "Cardinality": {
-                                                "Type": "Attribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "0..*", 
-                                                "Dependents": {}
-                                            }, 
-                                            "Name": {
-                                                "Type": "NameAttribute", 
-                                                "Attributes": {}, 
-                                                "Kind": "string", 
-                                                "Value": "New_MetaModel_5"
-                                            }
-                                        }, 
-                                        "Children": [
-                                            {
-                                                "Type": "MetaPointer", 
-                                                "UUID": "aa86d7a8-34d4-499e-b83d-cdb2514ac995", 
-                                                "Attributes": {
-                                                    "Filter Function": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Name": {
-                                                        "Type": "NameAttribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "New_MetaPointer_1"
-                                                    }, 
-                                                    "Destination Type": "ab0c4d32-1b7f-4092-881c-1e5c8fa24faa", 
-                                                    "Tooltip": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Display": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "string", 
-                                                        "Value": "", 
-                                                        "Dependents": {}
-                                                    }, 
-                                                    "Root Object": {
-                                                        "Type": "Attribute", 
-                                                        "Attributes": {}, 
-                                                        "Kind": "python", 
-                                                        "Value": "def get_root(self):\n    return self.parent", 
-                                                        "Dependents": {}
-                                                    }
-                                                }, 
-                                                "Children": [], 
-                                                "Pointers": []
-                                            }
-                                        ], 
-                                        "Pointers": []
-                                    }
-                                ], 
-                                "Pointers": []
-                            }
-                        ], 
-                        "Pointers": []
-                    }
-                ], 
-                "Pointers": []
-            }, 
-            {
-                "Type": "MetaModel", 
-                "UUID": "478ed59e-0e24-4580-9f7c-6332c1cbf2a3", 
-                "Attributes": {
-                    "Cardinality": {
-                        "Type": "Attribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "0..*", 
-                        "Dependents": {}
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "Software"
+                        }
                     }, 
-                    "Name": {
-                        "Type": "NameAttribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "New_MetaModel_2"
-                    }
+                    "Children": [], 
+                    "Pointers": []
                 }, 
-                "Children": [], 
-                "Pointers": []
-            }, 
-            {
-                "Type": "MetaModel", 
-                "UUID": "4246e1b1-16b3-42a8-9f39-e9a72e35a02c", 
-                "Attributes": {
-                    "Cardinality": {
-                        "Type": "Attribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "0..*", 
-                        "Dependents": {}
+                {
+                    "Type": "MetaModel", 
+                    "UUID": "b16049d4-cfdd-4955-84f2-35eb1cb85d62", 
+                    "Attributes": {
+                        "Cardinality": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "0..*", 
+                            "Dependents": {}
+                        }, 
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "Hardware"
+                        }
                     }, 
-                    "Name": {
-                        "Type": "NameAttribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "New_MetaModel_3"
-                    }
+                    "Children": [], 
+                    "Pointers": []
                 }, 
-                "Children": [], 
-                "Pointers": []
-            }
-        ], 
-        "Pointers": []
-    }
+                {
+                    "Type": "MetaModel", 
+                    "UUID": "5f45606c-bec8-4b3d-aa5f-d448345972f5", 
+                    "Attributes": {
+                        "Cardinality": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "0..*", 
+                            "Dependents": {}
+                        }, 
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "Deployment"
+                        }
+                    }, 
+                    "Children": [], 
+                    "Pointers": []
+                }
+            ], 
+            "Pointers": []
+        }
+    ]
 }
