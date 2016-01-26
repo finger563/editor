@@ -38,6 +38,7 @@ from item_model import\
 
 from meta import\
     checkModelToMeta,\
+    buildMeta,\
     MetaModel
 
 from view_model import\
@@ -409,6 +410,7 @@ class Editor(QtGui.QMainWindow):
             # uuid_dict = {}
             # base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
             # TODO: create meta_dict from loaded meta-model
+            buildMeta(meta_dict, meta_dict['__ROOT__'])
             self.META = meta_dict
 
     def open_model(self, fname):

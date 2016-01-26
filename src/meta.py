@@ -17,6 +17,9 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Fix serialization of types so that they write out meta-model
+#       UUIDs instead of names
+
 # TODO: Allow for dragging and dropping items in the tree to
 #       move/re-parent them.  This would be useful for instance in
 #       moving hosts between hardwares, component_instances between
@@ -40,20 +43,6 @@ import uuid
 
 # TODO: Need default value attribute for metaAttributes and
 #       metaPointers
-
-# TODO: Need to write fromDict functions for Model, Attribute, and
-#       Pointer
-
-# TODO: Need to integrate Model/Attribute/Pointer fromDict functions
-#       into the fromDict functions for Meta* so that the base
-#       attributes (Name, Cardinality, etc.) don't change uuid when
-#       opening and then saving the model.  This will prevent the
-#       model from changing data when simply opening and saving.
-
-# TODO: Update the fromMeta functions to build meta-dictionary of
-#       name:type pairs for quickly instantiating objects as needed.
-#       Then we can use this meta-model dictionary for creating models
-#       (and possibly checking them as well?)
 
 # TODO: Refactor Attribute fromQVariant() method so that it is no
 #       longer needed; should be handled by delegate probably.
@@ -107,6 +96,16 @@ meta_meta_dict['__ROOT__'] = root_dict
 meta_meta_dict['Name'] = 'MetaMetaModel'
 meta_meta_dict['MD5'] = hashlib.md5(str(root_dict)).hexdigest()
 '''
+
+
+def buildMeta(meta_dict, model_dict):
+    '''This function builds a dict of uuid: meta_dict[key] pairs.'''
+    if model_dict['UUID'] not in meta_dict:
+        meta_dict[model_dict['UUID']] = model_dict
+    for c in model_dict['Children']:
+        buildMeta(meta_dict, c)
+    for p in model_dict['Pointers']:
+        buildMeta(meta_dict, p)
 
 
 def checkModelToMeta(model_dict, meta_dict):
