@@ -913,6 +913,7 @@ class MetaPointer(Model):
                 self,
                 dst_type=model['Attributes']['Destination Type']
             )
+            setattr(self, 'meta_type', model['UUID'])
             self['Name'] = model['Attributes']['Name']['Value']
             destAttr = self.get_attribute('Destination')
             destAttr.dst_type = uuid_dict[model['Attributes']['Destination Type']]

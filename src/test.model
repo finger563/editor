@@ -1,65 +1,94 @@
 {
     "Name": "test", 
-    "MD5": "a4735af5976939d20b72f7d2e07be7fd", 
+    "MD5": "5e183694d196ae1d7bc35837a750ba10", 
     "__META__": {
         "Name": "rosmod", 
-        "MD5": "584f2850675fef1795c80d9b3ca8c913"
+        "MD5": "3b73518f7fc697cad785c8030da40370"
     }, 
-    "__ROOT__": {
-        "Type": "c64fb269-c167-4b24-9ad3-b4a71005efe5", 
-        "UUID": "8d20c4b9-c2ed-4d91-978a-9f48339113a2", 
-        "Attributes": {
-            "Name": {
-                "Type": "NameAttribute", 
-                "Attributes": {}, 
-                "Kind": "string", 
-                "Value": "Project"
-            }
-        }, 
-        "Children": [
-            {
-                "Type": "6664ce1e-d335-49a5-bc93-fd09e734af2e", 
-                "UUID": "b76d887f-ee28-4436-a56c-2b8b4940b9b2", 
-                "Attributes": {
-                    "Name": {
-                        "Type": "NameAttribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "New_Software_1"
-                    }
-                }, 
-                "Children": [], 
-                "Pointers": []
+    "__ROOT__": [
+        {
+            "Type": "e1d9a3cc-7de4-4f06-8b6e-d7ed62717a18", 
+            "UUID": "8e5dff88-291f-4256-be1e-d9ff6658ddf1", 
+            "Attributes": {
+                "Name": {
+                    "Type": "NameAttribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "Project"
+                }
             }, 
-            {
-                "Type": "297bd31c-b3c2-4293-bc69-cd7ae10ce0d9", 
-                "UUID": "c06f67b0-1295-4b70-84e6-aeaa293203a9", 
-                "Attributes": {
-                    "Name": {
-                        "Type": "NameAttribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "New_Hardware_2"
-                    }
+            "Children": [
+                {
+                    "Type": "26ea63c6-82cb-43a8-acda-78faa7d0d32c", 
+                    "UUID": "e506cfc3-aec2-4728-8457-6dd98ad69f5f", 
+                    "Attributes": {
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "New_Software_1"
+                        }
+                    }, 
+                    "Children": [], 
+                    "Pointers": []
                 }, 
-                "Children": [], 
-                "Pointers": []
-            }, 
-            {
-                "Type": "4407c016-ab5c-4a73-b70f-7c36bcecdebe", 
-                "UUID": "b9495c18-5a58-474c-aacb-64d8c8230a27", 
-                "Attributes": {
-                    "Name": {
-                        "Type": "NameAttribute", 
-                        "Attributes": {}, 
-                        "Kind": "string", 
-                        "Value": "New_Deployment_3"
-                    }
+                {
+                    "Type": "b16049d4-cfdd-4955-84f2-35eb1cb85d62", 
+                    "UUID": "a6115a3a-9630-48ce-bbf5-516b823a56e8", 
+                    "Attributes": {
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "New_Hardware_2"
+                        }
+                    }, 
+                    "Children": [], 
+                    "Pointers": []
                 }, 
-                "Children": [], 
-                "Pointers": []
-            }
-        ], 
-        "Pointers": []
-    }
+                {
+                    "Type": "b16049d4-cfdd-4955-84f2-35eb1cb85d62", 
+                    "UUID": "dc9f61ad-f19a-40c2-81f1-2a5a76bd907c", 
+                    "Attributes": {
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "New_Hardware_3"
+                        }
+                    }, 
+                    "Children": [], 
+                    "Pointers": []
+                }, 
+                {
+                    "Type": "5f45606c-bec8-4b3d-aa5f-d448345972f5", 
+                    "UUID": "72517432-967a-4de7-8d21-81f936a93dde", 
+                    "Attributes": {
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "New_Deployment_4"
+                        }
+                    }, 
+                    "Children": [], 
+                    "Pointers": [
+                        {
+                            "Type": "8634fa6f-bf2e-42fd-a4ae-28dac3a8d18a", 
+                            "Attributes": {
+                                "Destination": "0177ae50-c497-46fd-ad6c-c6e4728a114a", 
+                                "Name": {
+                                    "Type": "NameAttribute", 
+                                    "Attributes": {}, 
+                                    "Kind": "string", 
+                                    "Value": "New_MetaPointer_1"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ], 
+            "Pointers": []
+        }
+    ]
 }
