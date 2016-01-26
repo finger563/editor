@@ -3,10 +3,10 @@
     "MD5": "82a14ec2042ab80a7f1ea55adcf37073", 
     "__META__": {
         "Name": "MetaMetaModel", 
-        "MD5": "XXXX"
+        "MD5": "61ce1b64cfefbeb5e2c3eac38699a91f"
     }, 
     "__ROOT__": {
-        "Type": "MetaModel", 
+        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
         "UUID": "e482a3c8-2d40-4c86-95fd-253ebdb6422b", 
         "Attributes": {
             "Cardinality": {
@@ -25,7 +25,7 @@
         }, 
         "Children": [
             {
-                "Type": "MetaModel", 
+                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                 "UUID": "7b4094d7-4f52-47b2-b881-abbcbbf696c2", 
                 "Attributes": {
                     "Cardinality": {
@@ -44,7 +44,7 @@
                 }, 
                 "Children": [
                     {
-                        "Type": "MetaModel", 
+                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                         "UUID": "39eb7fa4-da61-46f9-bf9a-78a2d5fb207e", 
                         "Attributes": {
                             "Cardinality": {
@@ -63,7 +63,7 @@
                         }, 
                         "Children": [
                             {
-                                "Type": "MetaModel", 
+                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                 "UUID": "9356ef27-aa2e-45cb-b92a-38af0e8917ff", 
                                 "Attributes": {
                                     "Cardinality": {
@@ -153,7 +153,7 @@
                                 "Pointers": []
                             }, 
                             {
-                                "Type": "MetaModel", 
+                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                 "UUID": "9f730929-2855-40e4-9026-dd67e39ee593", 
                                 "Attributes": {
                                     "Cardinality": {
@@ -243,7 +243,7 @@
                                 "Pointers": []
                             }, 
                             {
-                                "Type": "MetaModel", 
+                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                 "UUID": "47fc93e9-165d-4cd2-846d-8db892a366db", 
                                 "Attributes": {
                                     "Cardinality": {
@@ -262,7 +262,7 @@
                                 }, 
                                 "Children": [
                                     {
-                                        "Type": "MetaModel", 
+                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                         "UUID": "1e22e457-c093-4418-b21c-fbd60edbdee0", 
                                         "Attributes": {
                                             "Cardinality": {
@@ -420,7 +420,7 @@
                                         "Pointers": []
                                     }, 
                                     {
-                                        "Type": "MetaModel", 
+                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                         "UUID": "4563c88b-bda6-40f4-aee4-707cfd05058d", 
                                         "Attributes": {
                                             "Cardinality": {
@@ -485,7 +485,7 @@
                                         "Pointers": []
                                     }, 
                                     {
-                                        "Type": "MetaModel", 
+                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                         "UUID": "5eaf13e7-c8ab-4b68-9875-bfeb62c03977", 
                                         "Attributes": {
                                             "Cardinality": {
@@ -550,7 +550,7 @@
                                         "Pointers": []
                                     }, 
                                     {
-                                        "Type": "MetaModel", 
+                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                         "UUID": "3290e23c-e64a-4175-90e4-4e3ddb9b8489", 
                                         "Attributes": {
                                             "Cardinality": {
@@ -615,7 +615,7 @@
                                         "Pointers": []
                                     }, 
                                     {
-                                        "Type": "MetaModel", 
+                                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                         "UUID": "9c632984-9c2e-4d11-958d-10719c558fb2", 
                                         "Attributes": {
                                             "Cardinality": {
@@ -689,7 +689,7 @@
                 "Pointers": []
             }, 
             {
-                "Type": "MetaModel", 
+                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                 "UUID": "5a38d905-ac13-4e72-8f70-8beceda2baaa", 
                 "Attributes": {
                     "Cardinality": {
@@ -708,7 +708,7 @@
                 }, 
                 "Children": [
                     {
-                        "Type": "MetaModel", 
+                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                         "UUID": "bc724545-004e-4640-9c4d-71068d55ccaf", 
                         "Attributes": {
                             "Cardinality": {
@@ -727,7 +727,7 @@
                         }, 
                         "Children": [
                             {
-                                "Type": "MetaModel", 
+                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                 "UUID": "30451331-d743-44c0-8e15-60e07ee1bb93", 
                                 "Attributes": {
                                     "Cardinality": {
@@ -754,7 +754,7 @@
                 "Pointers": []
             }, 
             {
-                "Type": "MetaModel", 
+                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                 "UUID": "9d3a9b91-d83c-4b59-beb7-10d62c9001ef", 
                 "Attributes": {
                     "Cardinality": {
@@ -773,7 +773,7 @@
                 }, 
                 "Children": [
                     {
-                        "Type": "MetaModel", 
+                        "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                         "UUID": "b3ae1c37-54ba-4267-b196-916053dec9b4", 
                         "Attributes": {
                             "Cardinality": {
@@ -792,7 +792,7 @@
                         }, 
                         "Children": [
                             {
-                                "Type": "MetaModel", 
+                                "Type": "5cb889e8-58f0-4a44-9693-b64426f86902", 
                                 "UUID": "c8ea5822-411a-4fd1-8380-123c8aaa08ed", 
                                 "Attributes": {
                                     "Cardinality": {

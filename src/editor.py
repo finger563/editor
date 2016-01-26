@@ -39,6 +39,8 @@ from item_model import\
 from meta import\
     checkModelToMeta,\
     buildMeta,\
+    convertDictToModel,\
+    get_meta_meta_model,\
     MetaModel
 
 from view_model import\
@@ -152,6 +154,11 @@ class Editor(QtGui.QMainWindow):
 
     def __init__(self):
         super(Editor, self).__init__()
+
+        '''
+        with open('MetaMetaModel.meta', 'w') as f:
+            f.write(json.dumps(get_meta_meta_model(), indent=4))
+        '''
 
         # Set up the editor mode
         self.editor_mode = self.editor_modes[1]
@@ -359,15 +366,12 @@ class Editor(QtGui.QMainWindow):
                 base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
                 root = base()
         elif self.editor_mode == 'Meta Model':
-            self.META = OrderedDict()
-            self.META['Name'] = 'MetaMetaModel'
-            self.META['MD5'] = 'XXXX'
+            self.META = get_meta_meta_model()
             root = MetaModel()
             root['Name'] = 'New_Model'
         elif self.editor_mode == 'View Model':
-            self.META = OrderedDict()
-            self.META['Name'] = 'ViewMetaModel'
-            self.META['MD5'] = 'XXXX'
+            # TODO: Replace this with view_model code
+            self.META = get_meta_meta_model()
             root = ViewModel()
             root['Name'] = 'New_View_Model'
         if root:
@@ -392,16 +396,6 @@ class Editor(QtGui.QMainWindow):
             if root:
                 self.load_model(root)
 
-    def convertDictToModel(self, root_dict):
-        uuid_dict = {}
-        unresolved_keys = {}
-        root = MetaModel.fromDict(root_dict, uuid_dict, unresolved_keys)
-        for uuid_key, attr_list in unresolved_keys.iteritems():
-            for attr in attr_list:
-                attr.dst_type = uuid_dict[uuid_key].kind()
-                attr.setValue(uuid_dict[uuid_key])
-        return root
-
     def open_meta(self, fname):
         '''Decodes a saved meta-model file and loads it into the editor.'''
         with open(fname, 'r') as f:
@@ -410,7 +404,8 @@ class Editor(QtGui.QMainWindow):
             # uuid_dict = {}
             # base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
             # TODO: create meta_dict from loaded meta-model
-            buildMeta(meta_dict, meta_dict['__ROOT__'])
+            for r in meta_dict['__ROOT__']:
+                buildMeta(meta_dict, r)
             self.META = meta_dict
 
     def open_model(self, fname):
@@ -422,21 +417,24 @@ class Editor(QtGui.QMainWindow):
             print 'Loaded model {}'.format(fname)
             model_meta = model_dict['__META__']
             meta_fname = model_meta['Name'] + '.meta'
+            self.open_meta(meta_fname)
+            # TODO: Do something more if the models aren't in sync
+            if self.META['MD5'] != model_meta['MD5']:
+                print self.META['MD5'], model_meta['MD5']
+                print 'ERROR: Model and meta are out of sync!'
+            '''
             try:
-                self.open_meta(meta_fname)
-                # TODO: Do something more if the models aren't in sync
-                if self.META['MD5'] != model_meta['MD5']:
-                    print 'ERROR: Model and meta are out of sync!'
             except:
                 print 'ERROR: Cannot find {}, please select location.'.format(
                     meta_fname
                 )
+            '''
             root = None
             if checkModelToMeta(model_dict['__ROOT__'], self.META):
                 print 'CHECK PASSED'
                 # TODO: instantiate objects for model from model_dict
                 #       based on meta_dict
-                root = self.convertDictToModel(model_dict['__ROOT__'])
+                root = convertDictToModel(model_dict['__ROOT__'])
             else:
                 print 'CHECK FAILED'
             return root

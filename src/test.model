@@ -1,13 +1,13 @@
 {
     "Name": "test", 
-    "MD5": "e858c637a0ac6b58bd279731d3021879", 
+    "MD5": "53beeae1f79008483a809e645a1ac57c", 
     "__META__": {
         "Name": "rosmod", 
         "MD5": "82a14ec2042ab80a7f1ea55adcf37073"
     }, 
     "__ROOT__": {
         "Type": "e482a3c8-2d40-4c86-95fd-253ebdb6422b", 
-        "UUID": "045ab218-0041-4942-bdfd-f7db0b5b1629", 
+        "UUID": "dd807106-2e9f-4d3d-84b0-b3e8b836e6dd", 
         "Attributes": {
             "Name": {
                 "Type": "NameAttribute", 
@@ -19,7 +19,7 @@
         "Children": [
             {
                 "Type": "7b4094d7-4f52-47b2-b881-abbcbbf696c2", 
-                "UUID": "d6edf92b-9861-4c7a-bb20-88c87c5905d1", 
+                "UUID": "f51270fd-3b2f-4dc8-bd06-5e19c110bdac", 
                 "Attributes": {
                     "Name": {
                         "Type": "NameAttribute", 

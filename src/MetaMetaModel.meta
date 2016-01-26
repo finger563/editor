@@ -1,0 +1,133 @@
+{
+    "Name": "MetaMetaModel", 
+    "MD5": "61ce1b64cfefbeb5e2c3eac38699a91f", 
+    "__ROOT__": [
+        {
+            "Type": "MetaModel", 
+            "UUID": "5cb889e8-58f0-4a44-9693-b64426f86902", 
+            "Attributes": {
+                "Cardinality": {
+                    "Type": "Attribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "0..*", 
+                    "Dependents": {}
+                }, 
+                "Name": {
+                    "Type": "NameAttribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "MetaModel"
+                }
+            }, 
+            "Children": [
+                {
+                    "Type": "MetaModel", 
+                    "UUID": "b08e09bd-caa6-4a92-95ec-5483a25f9aee", 
+                    "Attributes": {
+                        "Cardinality": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "0..*", 
+                            "Dependents": {}
+                        }, 
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "MetaModel"
+                        }
+                    }, 
+                    "Children": [], 
+                    "Pointers": []
+                }, 
+                {
+                    "Type": "MetaModel", 
+                    "UUID": "96202b2e-c720-4332-a338-83f553a94260", 
+                    "Attributes": {
+                        "Cardinality": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "0..*", 
+                            "Dependents": {}
+                        }, 
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "MetaAttribute"
+                        }
+                    }, 
+                    "Children": [], 
+                    "Pointers": []
+                }, 
+                {
+                    "Type": "MetaModel", 
+                    "UUID": "62d5c1b8-ba59-4163-a0c0-a75348f424bf", 
+                    "Attributes": {
+                        "Cardinality": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "0..*", 
+                            "Dependents": {}
+                        }, 
+                        "Name": {
+                            "Type": "NameAttribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "MetaPointer"
+                        }
+                    }, 
+                    "Children": [], 
+                    "Pointers": []
+                }
+            ], 
+            "Pointers": []
+        }, 
+        {
+            "Type": "MetaModel", 
+            "UUID": "96202b2e-c720-4332-a338-83f553a94260", 
+            "Attributes": {
+                "Cardinality": {
+                    "Type": "Attribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "0..*", 
+                    "Dependents": {}
+                }, 
+                "Name": {
+                    "Type": "NameAttribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "MetaAttribute"
+                }
+            }, 
+            "Children": [], 
+            "Pointers": []
+        }, 
+        {
+            "Type": "MetaModel", 
+            "UUID": "62d5c1b8-ba59-4163-a0c0-a75348f424bf", 
+            "Attributes": {
+                "Cardinality": {
+                    "Type": "Attribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "0..*", 
+                    "Dependents": {}
+                }, 
+                "Name": {
+                    "Type": "NameAttribute", 
+                    "Attributes": {}, 
+                    "Kind": "string", 
+                    "Value": "MetaPointer"
+                }
+            }, 
+            "Children": [], 
+            "Pointers": []
+        }
+    ]
+}

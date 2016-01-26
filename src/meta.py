@@ -17,9 +17,6 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
-# TODO: Fix serialization of types so that they write out meta-model
-#       UUIDs instead of names
-
 # TODO: Allow for dragging and dropping items in the tree to
 #       move/re-parent them.  This would be useful for instance in
 #       moving hosts between hardwares, component_instances between
@@ -59,43 +56,45 @@ import uuid
 #       Note: if they have the same definitions and name (and thus MD5
 #       hash) they will work out of the box
 
-'''
 import hashlib
 
-meta_meta_dict = OrderedDict()
 
-meta_model_dict = OrderedDict()
-meta_model_dict['Type'] = MetaModel
-meta_model_dict['Attributes'] = OrderedDict()
-meta_model_dict['Attributes']['Name'] = 'string'
-meta_model_dict['Attributes']['Cardinality'] = 'string'
-meta_model_dict['Children'] = OrderedDict()
-meta_model_dict['Children']['001'] = '0..*'
-meta_model_dict['Children']['002'] = '0..*'
-meta_model_dict['Children']['003'] = '0..*'
-meta_model_dict['Pointers'] = OrderedDict()
+def get_meta_meta_model():
+    meta_meta_dict = OrderedDict()
 
-meta_attribute_dict = OrderedDict()
-meta_attribute_dict['Type'] = MetaAttribute
-meta_attribute_dict['Children'] = OrderedDict()
-meta_attribute_dict['Children']['002'] = '0..*'
-meta_attribute_dict['Pointers'] = OrderedDict()
+    mm = MetaModel()
+    mm['Name'] = 'MetaModel'
+    ma = MetaModel()
+    ma['Name'] = 'MetaAttribute'
+    mp = MetaModel()
+    mp['Name'] = 'MetaPointer'
 
-meta_pointer_dict = OrderedDict()
-meta_pointer_dict['Type'] = MetaPointer
-meta_pointer_dict['Children'] = OrderedDict()
-meta_pointer_dict['Pointers'] = OrderedDict()
+    mm1 = MetaModel()
+    mm1['Name'] = 'MetaModel'
 
-root_dict = OrderedDict()
+    mm.add_child(mm1)
+    mm.add_child(ma)
+    mm.add_child(mp)
+    na = NameAttribute('NameAttribute')
 
-root_dict['001'] = meta_model_dict
-root_dict['002'] = meta_attribute_dict
-root_dict['003'] = meta_pointer_dict
+    mmd = MetaModel.toDict(mm)
 
-meta_meta_dict['__ROOT__'] = root_dict
-meta_meta_dict['Name'] = 'MetaMetaModel'
-meta_meta_dict['MD5'] = hashlib.md5(str(root_dict)).hexdigest()
-'''
+    mad = MetaModel.toDict(ma)
+
+    mpd = MetaModel.toDict(mp)
+
+    nad = NameAttribute.toDict(na)
+
+    root_dict = [mmd, mad, mpd]
+
+    meta_meta_dict['Name'] = 'MetaMetaModel'
+    meta_meta_dict['MD5'] = hashlib.md5(str(root_dict)).hexdigest()
+    meta_meta_dict['__ROOT__'] = root_dict
+    # meta_meta_dict['MetaModel'] = mmd
+    # meta_meta_dict['MetaAttribute'] = mad
+    # meta_meta_dict['MetaPointer'] = mpd
+    # meta_meta_dict['NameAttribute'] = nad
+    return meta_meta_dict
 
 
 def buildMeta(meta_dict, model_dict, scope=''):
@@ -108,6 +107,17 @@ def buildMeta(meta_dict, model_dict, scope=''):
         buildMeta(meta_dict, p)
 
 
+def convertDictToModel(root_dict):
+    uuid_dict = {}
+    unresolved_keys = {}
+    root = MetaModel.fromDict(root_dict, uuid_dict, unresolved_keys)
+    for uuid_key, attr_list in unresolved_keys.iteritems():
+        for attr in attr_list:
+            attr.dst_type = uuid_dict[uuid_key].kind()
+            attr.setValue(uuid_dict[uuid_key])
+    return root
+
+
 def checkModelToMeta(model_dict, meta_dict):
     '''
     This function does a first-level depth check of the validity of a
@@ -116,13 +126,18 @@ def checkModelToMeta(model_dict, meta_dict):
     '''
     # check that it is a valid type
     if model_dict['Type'] not in meta_dict:
-        print 'ERROR: object type \'{}\' not in metamodel!'.format(model_dict['Type'])
+        print 'ERROR: object type \'{}\' not in metamodel!'.format(
+            model_dict['Type']
+        )
         return False
     meta_type = meta_dict[model_dict['Type']]
     meta_name = meta_type['Attributes']['Name']['Value']
 
     # check that it has valid children types and numbers (cardinality)
-    allowed_kids = [c['Attributes']['Name']['Value'] for c in meta_type['Children']]
+    allowed_kids = [
+        c['Attributes']['Name']['Value']
+        for c in meta_type['Children']
+    ]
     cardinality = {
         c['Attributes']['Name']['Value']: c['Attributes']['Cardinality']['Value']
         for c in meta_type['Children']
@@ -169,7 +184,7 @@ def checkModelToMeta(model_dict, meta_dict):
             )
             return False
 
-    # check that is has valid pointer objects 
+    # check that is has valid pointer objects
     allowed_ptrs = [p['Type'] for p in meta_type['Pointers']]
     for p in model_dict['Pointers']:
         # make sure the child type exists in the meta-model
@@ -191,6 +206,7 @@ def checkModelToMeta(model_dict, meta_dict):
 
     # check that is has valid attribute objects
     return True
+
 
 class Model(QtCore.QObject):
     '''Generic Model/Container class
@@ -365,6 +381,7 @@ class Attribute(Model):
 
     def __init__(self, kind, value, parent=None):
         Model.__init__(self, parent)
+        setattr(self, 'meta_type', 'Attribute')
         self._kind = kind
         self._value = value
 
@@ -495,6 +512,11 @@ class NameAttribute(Attribute):
         return model_dict
 
 
+class UnknownReference(Model):
+    '''
+    '''
+
+
 class Pointer(Model):
     '''
     '''
@@ -508,7 +530,7 @@ class Pointer(Model):
         self.set_attribute('Name', NameAttribute('Pointer'))
         self.get_attribute('Name').editable = False
         self.dst_type = dst_type
-        self.add_attribute('Destination', 'reference', '')
+        self.add_attribute('Destination', 'reference', UnknownReference())
 
     def row(self):
         if self.parent:
@@ -535,6 +557,7 @@ class MetaModel(Model):
 
     def __init__(self):
         Model.__init__(self)
+        setattr(self, 'meta_type', 'MetaModel')
 
         self.children = Children(cardinality={MetaModel:
                                               '0..*',
@@ -679,6 +702,7 @@ class MetaAttribute(Model):
                  display='',
                  editable=True):
         Model.__init__(self, parent)
+        setattr(self, 'meta_type', 'MetaAttribute')
         self.children = Children(cardinality={MetaAttribute:
                                               '0..*'})
         self.attributes = OrderedDict()
@@ -806,11 +830,12 @@ class MetaPointer(Model):
                  tooltip='',
                  display=''):
         Model.__init__(self, parent)
+        setattr(self, 'meta_type', 'MetaPointer')
         self.children = Children(cardinality={})
         self.attributes = OrderedDict()
         self.set_attribute('Name', NameAttribute(name))
 
-        self.add_attribute('Destination Type', 'reference', '')
+        self.add_attribute('Destination Type', 'reference', UnknownReference())
         destAttr = self.get_attribute('Destination Type')
         destAttr.dst_type = dst_type
         def get_root(s):
