@@ -17,6 +17,13 @@ from collections import OrderedDict, MutableSequence
 
 import uuid
 
+# TODO: Update parent key attribute to have the same type (and
+#       preferrably options) as the parent's value
+
+# TODO: Add default values for all Meta-attributes so that when they
+#       generate classes the new classes can be initialized with a
+#       valid default value
+
 # TODO: Allow for dragging and dropping items in the tree to
 #       move/re-parent them.  This would be useful for instance in
 #       moving hosts between hardwares, component_instances between
@@ -102,7 +109,6 @@ def buildMeta(meta_dict, model_dict, uuid_dict):
     # TODO: PUT CLASS CODE HERE FOR INSTANTIATING OBJECTS
     uuid = model_dict['UUID']
     class_type = meta_dict[uuid]['Type']
-    uuid_dict = {}
     if uuid == 'MetaModel':
         meta_dict[uuid]['__CLASS__'] = MetaModel
     elif uuid == 'MetaAttribute':
