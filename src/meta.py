@@ -140,6 +140,9 @@ def convertDictToModel(root_dict, meta_dict):
     #       NameAttribute?), while when building the metadict for
     #       MetaModels to be used with models we will need to use the
     #       fromDict method (or a new equivalent)
+
+    # TODO: Figure out how to properly pass the data in to the newly
+    #       created objects
     roots = []
     uuid_dict = {}
     unresolved_keys = {}
