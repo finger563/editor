@@ -194,7 +194,7 @@ def checkChildrenToMeta(model_dict, meta_dict):
         child_meta_name = child_meta_type['Attributes']['Name']['Value']
         # make sure the child type is allowed
         if child_meta_name not in allowed_kids:
-            print 'ERROR: Child type \'{}\' not allowed in {}!'.format(
+            print 'ERROR: Child \'{}\' not allowed in {}!'.format(
                 child_meta_name,
                 meta_name
             )
@@ -238,7 +238,7 @@ def checkPointersToMeta(model_dict, meta_dict):
     for p in model_dict['Pointers']:
         # make sure the child type exists in the meta-model
         if not checkObjectToMeta(p, meta_dict):
-            print 'ERROR: Pointer type \'{}\' of {} not in meta-model!'.format(
+            print 'ERROR: Pointer \'{}\' of {} not in meta-model!'.format(
                 p['Type'],
                 meta_name
             )
@@ -256,6 +256,36 @@ def checkPointersToMeta(model_dict, meta_dict):
     return True
 
 
+def checkAttributesToMeta(model_dict, meta_dict):
+    meta_type = meta_dict[model_dict['Type']]
+    meta_name = meta_type['Attributes']['Name']['Value']
+
+    allowed_attr = [
+        a['Attributes']['Name']['Value']
+        for a in meta_type['Children']
+        if a['Type'] == 'MetaAttribute'
+    ]
+
+    for a in model_dict['Attributes']:
+        if not checkObjectToMeta(a, meta_dict):
+            print 'ERROR: Attribute \'{}\' of {} not in meta-model!'.format(
+                a['Type'],
+                meta_name
+            )
+            return False
+        attr_meta_type = meta_dict[a['Type']]
+        attr_meta_name = attr_meta_type['Attribute']['Name']['Value']
+        if attr_meta_name not in allowed_attr:
+            print 'ERROR: Attribute type \'{}\' not allowed in {}!'.format(
+                attr_meta_name,
+                meta_name
+            )
+            print '\tAllowed Attributes:\n\t\t{}'.format(allowed_attr)
+            return False
+
+    return True
+
+
 def checkObjectToMeta(model_dict, meta_dict):
     '''
     This function does a first-level depth check of the validity of a
@@ -268,8 +298,6 @@ def checkObjectToMeta(model_dict, meta_dict):
             model_dict['Type']
         )
         return False
-    meta_type = meta_dict[model_dict['Type']]
-    meta_name = meta_type['Attributes']['Name']['Value']
 
     # check that it has valid children types and numbers (cardinality)
     if 'Children' in model_dict:
@@ -284,6 +312,10 @@ def checkObjectToMeta(model_dict, meta_dict):
             return test
 
     # check that is has valid attribute objects
+    if 'Attriburtes' in model_dict:
+        test = checkAttributesToMeta(model_dict, meta_dict)
+        if not test:
+            return test
     return True
 
 
