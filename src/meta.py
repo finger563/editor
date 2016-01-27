@@ -27,6 +27,8 @@ import uuid
 #       reference (which is unknown but matches a certain
 #       syntax/pattern) is loaded as a submodel concurrently with the
 #       deployment.
+#
+#       How to add them to the meta-meta model?
 
 # TODO: Add unknown reference type which is allowable and
 #       (de-)serializable.  Would be the default reference when
@@ -92,7 +94,7 @@ def get_meta_meta_model():
     return meta_meta_dict
 
 
-def buildMeta(meta_dict, model_dict, scope=''):
+def buildMeta(meta_dict, model_dict):
     '''This function builds a dict of uuid: meta_dict[key] pairs.'''
     if model_dict['UUID'] not in meta_dict:
         meta_dict[model_dict['UUID']] = model_dict
@@ -124,9 +126,13 @@ def convertDictToModel(root_dict, meta_dict):
         roots.append(MetaModel.fromDict(root, uuid_dict, unresolved_keys))
     for uuid_key, attr_list in unresolved_keys.iteritems():
         for attr in attr_list:
-            print attr
-            attr.dst_type = uuid_dict[uuid_key].kind()
-            attr.setValue(uuid_dict[uuid_key])
+            if uuid_key in uuid_dict:
+                attr.dst_type = uuid_dict[uuid_key].kind()
+                attr.setValue(uuid_dict[uuid_key])
+            else:
+                ur = UnknownReference()
+                ur['Reference'] = attr.getValue()
+                attr.setValue(ur)
     return roots
 
 
@@ -532,9 +538,15 @@ class NameAttribute(Attribute):
         return model_dict
 
 
+# TODO: make it so that when you type into the reference editor it
+#       updates a value in unknown reference
 class UnknownReference(Model):
     '''
     '''
+    def __init__(self, parent=None):
+        Model.__init__(self, parent)
+        setattr(self, 'meta_type', 'UnknownReference')
+        self.set_attribute('Reference', Attribute('string', ''))
 
 
 class Pointer(Model):
@@ -565,9 +577,14 @@ class Pointer(Model):
         model_dict.pop('UUID', None)
         model_dict.pop('Pointers', None)
         model_dict.pop('Children', None)
-        model_dict['Attributes'][
-            'Destination'
-        ] = model['Destination'].uuid
+        if model['Destination'].meta_type == 'UnknownReference':
+            model_dict['Attributes'][
+                'Destination'
+            ] = model['Destination']['Reference']
+        else:
+            model_dict['Attributes'][
+                'Destination'
+            ] = model['Destination'].uuid
         return model_dict
 
 
@@ -888,9 +905,15 @@ class MetaPointer(Model):
     @staticmethod
     def toDict(model):
         model_dict = Model.toDict(model)
-        model_dict['Attributes'][
-            'Destination Type'
-        ] = model.get_attribute('Destination Type').getValue().uuid
+        if model['Destination Type'].meta_type == 'UnknownReference':
+            print model['Destination Type']
+            model_dict['Attributes'][
+                'Destination Type'
+            ] = model['Destination Type']['Reference']
+        else:
+            model_dict['Attributes'][
+                'Destination Type'
+            ] = model['Destination Type'].uuid
         return model_dict
 
     @staticmethod
@@ -905,6 +928,7 @@ class MetaPointer(Model):
         key = model_dict['Attributes']['Destination Type']
         attr = newobj.get_attribute('Destination Type')
         if key not in uuid_dict:
+            attr.setValue(key)
             unresolved_keys.setdefault(key, []).append(attr)
         else:
             attr.dst_type = uuid_dict[key].kind()

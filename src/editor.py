@@ -155,10 +155,8 @@ class Editor(QtGui.QMainWindow):
     def __init__(self):
         super(Editor, self).__init__()
 
-        '''
         with open('MetaMetaModel.meta', 'w') as f:
             f.write(json.dumps(get_meta_meta_model(), indent=4))
-        '''
 
         # Set up the editor mode
         self.editor_mode = self.editor_modes[1]

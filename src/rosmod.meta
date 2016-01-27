@@ -1,6 +1,6 @@
 {
     "Name": "rosmod", 
-    "MD5": "3b73518f7fc697cad785c8030da40370", 
+    "MD5": "1b3894388229100e03c1c7936640cbd2", 
     "__META__": {
         "Name": "MetaMetaModel", 
         "MD5": "95e5033e018c8f65a32c4186603fae9f"
@@ -8,7 +8,7 @@
     "__ROOT__": [
         {
             "Type": "MetaModel", 
-            "UUID": "e1d9a3cc-7de4-4f06-8b6e-d7ed62717a18", 
+            "UUID": "835152ea-4329-4998-8aed-fddadef24c99", 
             "Attributes": {
                 "Cardinality": {
                     "Type": "Attribute", 
@@ -21,13 +21,13 @@
                     "Type": "NameAttribute", 
                     "Attributes": {}, 
                     "Kind": "string", 
-                    "Value": "Project"
+                    "Value": "Root"
                 }
             }, 
             "Children": [
                 {
                     "Type": "MetaModel", 
-                    "UUID": "26ea63c6-82cb-43a8-acda-78faa7d0d32c", 
+                    "UUID": "71af1d83-e4bd-4fe2-b232-ec5907295e2d", 
                     "Attributes": {
                         "Cardinality": {
                             "Type": "Attribute", 
@@ -40,96 +40,53 @@
                             "Type": "NameAttribute", 
                             "Attributes": {}, 
                             "Kind": "string", 
-                            "Value": "Software"
+                            "Value": "New_MetaModel_1"
                         }
                     }, 
                     "Children": [], 
                     "Pointers": []
                 }, 
                 {
-                    "Type": "MetaModel", 
-                    "UUID": "b16049d4-cfdd-4955-84f2-35eb1cb85d62", 
+                    "Type": "MetaPointer", 
+                    "UUID": "774d6dcf-84e6-465a-a607-81eab27335dc", 
                     "Attributes": {
-                        "Cardinality": {
+                        "Filter Function": {
                             "Type": "Attribute", 
                             "Attributes": {}, 
-                            "Kind": "string", 
-                            "Value": "0..*", 
+                            "Kind": "python", 
+                            "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
                             "Dependents": {}
                         }, 
                         "Name": {
                             "Type": "NameAttribute", 
                             "Attributes": {}, 
                             "Kind": "string", 
-                            "Value": "Hardware"
+                            "Value": "New_MetaPointer_2"
+                        }, 
+                        "Destination Type": "71af1d83-e4bd-4fe2-b232-ec5907295e2d", 
+                        "Tooltip": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "", 
+                            "Dependents": {}
+                        }, 
+                        "Display": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "string", 
+                            "Value": "", 
+                            "Dependents": {}
+                        }, 
+                        "Root Object": {
+                            "Type": "Attribute", 
+                            "Attributes": {}, 
+                            "Kind": "python", 
+                            "Value": "def get_root(self):\n    return self.parent", 
+                            "Dependents": {}
                         }
                     }, 
                     "Children": [], 
-                    "Pointers": []
-                }, 
-                {
-                    "Type": "MetaModel", 
-                    "UUID": "5f45606c-bec8-4b3d-aa5f-d448345972f5", 
-                    "Attributes": {
-                        "Cardinality": {
-                            "Type": "Attribute", 
-                            "Attributes": {}, 
-                            "Kind": "string", 
-                            "Value": "0..*", 
-                            "Dependents": {}
-                        }, 
-                        "Name": {
-                            "Type": "NameAttribute", 
-                            "Attributes": {}, 
-                            "Kind": "string", 
-                            "Value": "Deployment"
-                        }
-                    }, 
-                    "Children": [
-                        {
-                            "Type": "MetaPointer", 
-                            "UUID": "8634fa6f-bf2e-42fd-a4ae-28dac3a8d18a", 
-                            "Attributes": {
-                                "Filter Function": {
-                                    "Type": "Attribute", 
-                                    "Attributes": {}, 
-                                    "Kind": "python", 
-                                    "Value": "def filter_function(self, obj):\n    objIsAllowed = True\n    return objIsAllowed", 
-                                    "Dependents": {}
-                                }, 
-                                "Name": {
-                                    "Type": "NameAttribute", 
-                                    "Attributes": {}, 
-                                    "Kind": "string", 
-                                    "Value": "New_MetaPointer_1"
-                                }, 
-                                "Destination Type": "b16049d4-cfdd-4955-84f2-35eb1cb85d62", 
-                                "Tooltip": {
-                                    "Type": "Attribute", 
-                                    "Attributes": {}, 
-                                    "Kind": "string", 
-                                    "Value": "", 
-                                    "Dependents": {}
-                                }, 
-                                "Display": {
-                                    "Type": "Attribute", 
-                                    "Attributes": {}, 
-                                    "Kind": "string", 
-                                    "Value": "", 
-                                    "Dependents": {}
-                                }, 
-                                "Root Object": {
-                                    "Type": "Attribute", 
-                                    "Attributes": {}, 
-                                    "Kind": "python", 
-                                    "Value": "def get_root(self):\n    return self.parent.parent.parent", 
-                                    "Dependents": {}
-                                }
-                            }, 
-                            "Children": [], 
-                            "Pointers": []
-                        }
-                    ], 
                     "Pointers": []
                 }
             ], 
