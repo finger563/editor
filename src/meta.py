@@ -94,17 +94,32 @@ def get_meta_meta_model():
     return meta_meta_dict
 
 
-def buildMeta(meta_dict, model_dict):
+def buildMeta(meta_dict, model_dict, uuid_dict):
     '''This function builds a dict of uuid: meta_dict[key] pairs.'''
     if model_dict['UUID'] not in meta_dict:
         meta_dict[model_dict['UUID']] = model_dict
 
     # TODO: PUT CLASS CODE HERE FOR INSTANTIATING OBJECTS
-    # meta_dict[model_dict['UUID']]['__CLASS__'] =
+    uuid = model_dict['UUID']
+    class_type = meta_dict[uuid]['Type']
+    uuid_dict = {}
+    if uuid == 'MetaModel':
+        meta_dict[uuid]['__CLASS__'] = MetaModel
+    elif uuid == 'MetaAttribute':
+        meta_dict[uuid]['__CLASS__'] = MetaAttribute
+    elif uuid == 'MetaPointer':
+        meta_dict[uuid]['__CLASS__'] = MetaPointer
+    elif class_type == 'MetaModel':
+        meta_dict[uuid]['__CLASS__'] = MetaModel.fromMeta(model_dict, uuid_dict)
+    elif class_type == 'MetaAttribute':
+        meta_dict[uuid]['__CLASS__'] = MetaAttribute.fromMeta(model_dict, uuid_dict)
+    elif class_type == 'MetaPointer':
+        meta_dict[uuid]['__CLASS__'] = MetaPointer.fromMeta(model_dict, uuid_dict)
+
     for c in model_dict['Children']:
-        buildMeta(meta_dict, c)
+        buildMeta(meta_dict, c, uuid_dict)
     for p in model_dict['Pointers']:
-        buildMeta(meta_dict, p)
+        buildMeta(meta_dict, p, uuid_dict)
 
 
 def convertDictToModel(root_dict, meta_dict):
@@ -702,16 +717,17 @@ class MetaModel(Model):
                     self.add_child(new_child)
 
             # Handle pointers
-            ptr_types = [type(t) for t in ptrs.values()]
+            ptr_types = ptrs.values()
             for t in ptr_types:
                 self.pointers.set_cardinality_of(t, '1')
             for name, ptr in ptrs.iteritems():
-                self.add_pointer(ptr)
-                setattr(self, name, ptr)
+                p = ptr()
+                self.add_pointer(p)
+                setattr(self, name, p)
 
             # Handle attributes
             for name, attr in attr_dict.iteritems():
-                self.set_attribute(name, attr)
+                self.set_attribute(name, attr())
 
         new_model = type(
             str(model['Attributes']['Name']['Value']),
@@ -808,11 +824,6 @@ class MetaAttribute(Model):
     def fromMeta(model, uuid_dict):
         attr_dict = OrderedDict()
 
-        # provides validator
-        exec model['Attributes']['Validator']['Value'] in locals()
-        # provides get_options
-        exec model['Attributes']['Kind']['Attributes']['List Options']['Value'] in locals()
-
         for obj in model['Children']:
             if obj['Type'] == 'MetaAttribute':
                 attr_dict[obj['Attributes']['Name']['Value']] = [
@@ -829,11 +840,17 @@ class MetaAttribute(Model):
                 model['Attributes']['Kind']['Value'],
                 Attribute.default_vals[model['Attributes']['Kind']['Value']]
             )
+            # provides validator
+            exec model['Attributes']['Validator']['Value'] in locals()
+            setattr(self, 'validator', validator)
+            # provides get_options
+            exec model['Attributes']['Kind']['Attributes']['List Options']['Value'] in locals()
+            setattr(self, 'get_options', get_options)
             # Handle attributes
             for name, attrStruct in attr_dict.iteritems():
                 attr = attrStruct[0]
                 key = attrStruct[1]
-                self.set_attribute(name, attr, key)
+                self.set_attribute(name, attr(), key)
 
         new_attr = type(
             str(model['Attributes']['Name']['Value']),
@@ -843,12 +860,10 @@ class MetaAttribute(Model):
                 'tooltip': model['Attributes']['Tooltip']['Value'],
                 'display': model['Attributes']['Display']['Value'],
                 'editable': model['Attributes']['Editable']['Value'],
-                'get_options': get_options,
-                'validator': validator,
             }
         )
 
-        return new_attr()
+        return new_attr
     
 
 class MetaPointer(Model):
@@ -938,17 +953,19 @@ class MetaPointer(Model):
     @staticmethod
     def fromMeta(model, uuid_dict):
 
-        # should fill out get_root(self)
-        exec model['Attributes']['Root Object']['Value'] in globals()
-        # should fill out filter_function(self, obj)
-        exec model['Attributes']['Filter Function']['Value'] in globals()
-
         def ptrInit(self):
             Pointer.__init__(
                 self,
                 dst_type=model['Attributes']['Destination Type']
             )
             setattr(self, 'meta_type', model['UUID'])
+            # should fill out get_root(self)
+            exec model['Attributes']['Root Object']['Value'] in globals()
+            setattr(self, 'get_root', get_root)
+            # should fill out filter_function(self, obj)
+            exec model['Attributes']['Filter Function']['Value'] in globals()
+            setattr(self, 'filter_function', filter_function)
+
             self['Name'] = model['Attributes']['Name']['Value']
             destAttr = self.get_attribute('Destination')
             destAttr.dst_type = uuid_dict[model['Attributes']['Destination Type']]
@@ -962,12 +979,9 @@ class MetaPointer(Model):
             (Pointer, ),
             {
                 '__init__': ptrInit,
-                # from model['Valid Objects'] as exec'd text
-                'get_root': get_root,
-                'filter_function': filter_function,
             }
         )
-        return new_ptr()
+        return new_ptr
     
 
 def getMinMaxCardinality(cardinality):

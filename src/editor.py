@@ -402,8 +402,11 @@ class Editor(QtGui.QMainWindow):
             # base = MetaModel.fromMeta(meta_dict['__ROOT__'], uuid_dict)
             # TODO: create meta_dict from loaded meta-model
             # TODO: Probably will need to resolve UUID referencce problems here
+            uuid_dict = {}
+            unresolved_keys = {}
             for r in meta_dict['__ROOT__']:
-                buildMeta(meta_dict, r)
+                a = MetaModel.fromDict(r, uuid_dict, unresolved_keys)
+                buildMeta(meta_dict, r, uuid_dict)
             self.META = meta_dict
 
     def open_model(self, fname):
