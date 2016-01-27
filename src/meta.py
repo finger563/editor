@@ -165,30 +165,19 @@ def checkModelToMeta(root, meta):
     return test
 
 
-def checkObjectToMeta(model_dict, meta_dict):
-    '''
-    This function does a first-level depth check of the validity of a
-    model against its meta-model, contained within model_dict and
-    meta_dict respectively.
-    '''
-    # check that it is a valid type
-    if model_dict['Type'] not in meta_dict:
-        print 'ERROR: object type \'{}\' not in metamodel!'.format(
-            model_dict['Type']
-        )
-        return False
+def checkChildrenToMeta(model_dict, meta_dict):
     meta_type = meta_dict[model_dict['Type']]
     meta_name = meta_type['Attributes']['Name']['Value']
-
-    # check that it has valid children types and numbers (cardinality)
     allowed_kids = [
         c['Attributes']['Name']['Value']
         for c in meta_type['Children']
+        if 'Cardinality' in c['Attributes']
     ]
     cardinality = {
         c['Attributes']['Name']['Value']:
         c['Attributes']['Cardinality']['Value']
-        for c in meta_type['Children']
+        for c in meta_type['Children'] 
+        if 'Cardinality' in c['Attributes']
     }
     for c in model_dict['Children']:
         # make sure the child type exists in the meta-model
@@ -231,8 +220,12 @@ def checkObjectToMeta(model_dict, meta_dict):
                 meta_name
             )
             return False
+    return True
 
-    # check that is has valid pointer objects
+
+def checkPointersToMeta(model_dict, meta_dict):
+    meta_type = meta_dict[model_dict['Type']]
+    meta_name = meta_type['Attributes']['Name']['Value']
     allowed_ptrs = [p['Type'] for p in meta_type['Pointers']]
     for p in model_dict['Pointers']:
         # make sure the child type exists in the meta-model
@@ -251,6 +244,35 @@ def checkObjectToMeta(model_dict, meta_dict):
                 meta_name
             )
             return False
+    return True
+
+
+def checkObjectToMeta(model_dict, meta_dict):
+    '''
+    This function does a first-level depth check of the validity of a
+    model against its meta-model, contained within model_dict and
+    meta_dict respectively.
+    '''
+    # check that it is a valid type
+    if model_dict['Type'] not in meta_dict:
+        print 'ERROR: object type \'{}\' not in metamodel!'.format(
+            model_dict['Type']
+        )
+        return False
+    meta_type = meta_dict[model_dict['Type']]
+    meta_name = meta_type['Attributes']['Name']['Value']
+
+    # check that it has valid children types and numbers (cardinality)
+    if 'Children' in model_dict:
+        test = checkChildrenToMeta(model_dict, meta_dict)
+        if not test:
+            return test
+
+    # check that is has valid pointer objects
+    if 'Pointers' in model_dict:
+        test = checkPointersToMeta(model_dict, meta_dict)
+        if not test:
+            return test
 
     # check that is has valid attribute objects
     return True
