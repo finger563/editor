@@ -410,34 +410,33 @@ class Editor(QtGui.QMainWindow):
         '''Decodes a saved model {*.meta, *.model} file and loads it into the
         editor.
         '''
+        roots = []
         with open(fname, 'r') as f:
             model_dict = json.loads(f.read())
             print 'Loaded model {}'.format(fname)
             model_meta = model_dict['__META__']
             meta_fname = model_meta['Name'] + '.meta'
-            self.open_meta(meta_fname)
-            # TODO: Do something more if the models aren't in sync
-            if self.META['MD5'] != model_meta['MD5']:
-                print 'ERROR: Model and meta are out of sync!'
-            '''
             try:
+                self.open_meta(meta_fname)
             except:
                 print 'ERROR: Cannot find {}, please select location.'.format(
                     meta_fname
                 )
-            '''
-            roots = []
-            if checkModelToMeta(model_dict['__ROOT__'], self.META):
-                print 'CHECK PASSED'
-                # TODO: instantiate objects for model from model_dict
-                #       based on meta_dict
-                roots = convertDictToModel(
-                    model_dict['__ROOT__'],
-                    self.META
-                )
+            if self.META['MD5'] != model_meta['MD5']:
+                # TODO: Do something more if the models aren't in sync
+                print 'ERROR: Model and meta are out of sync!'
             else:
-                print 'CHECK FAILED'
-            return roots
+                if checkModelToMeta(model_dict['__ROOT__'], self.META):
+                    print 'Model conforms to Meta-Model.'
+                    # TODO: instantiate objects for model from model_dict
+                    #       based on meta_dict
+                    roots = convertDictToModel(
+                        model_dict['__ROOT__'],
+                        self.META
+                    )
+                else:
+                    print 'ERROR: Model does not conform to Meta-Model!'
+        return roots
 
     def load_model(self, roots):
         '''
