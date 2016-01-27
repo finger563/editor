@@ -195,6 +195,7 @@ def checkChildrenToMeta(model_dict, meta_dict):
                 child_meta_name,
                 meta_name
             )
+            print '\tAllowed Children:\n\t\t{}'.format(allowed_kids)
             return False
     # make sure the parent is allowed to have this many kids of this type
     child_types = [
@@ -226,7 +227,11 @@ def checkChildrenToMeta(model_dict, meta_dict):
 def checkPointersToMeta(model_dict, meta_dict):
     meta_type = meta_dict[model_dict['Type']]
     meta_name = meta_type['Attributes']['Name']['Value']
-    allowed_ptrs = [p['Type'] for p in meta_type['Pointers']]
+    allowed_ptrs = [
+        p['Attributes']['Name']['Value']
+        for p in meta_type['Children']
+        if p['Type'] == 'MetaPointer'
+    ]
     for p in model_dict['Pointers']:
         # make sure the child type exists in the meta-model
         if not checkObjectToMeta(p, meta_dict):
@@ -243,6 +248,7 @@ def checkPointersToMeta(model_dict, meta_dict):
                 ptr_meta_name,
                 meta_name
             )
+            print '\tAllowed Pointers:\n\t\t{}'.format(allowed_ptrs)
             return False
     return True
 
