@@ -67,8 +67,13 @@ import uuid
 
 import hashlib
 
+# How to use this new META dict definition to perform dictionary
+# checking when loading a model that references a meta-model?
+
 # Structure of META:
-#   'ROOT'        : which object types exist in root context
+#   'NAME'        : Name of the meta-model
+#   'MD5'         : MD5 of the the dict minus NAME and MD5
+#   'ROOT'        : list of object types which can exist in root context
 #   '<type name>' : sub-dictionary which specifies the META for an
 #                   object whose type is <type name>
 
@@ -77,6 +82,7 @@ import hashlib
 # Structure of <type name> sub-dictionary in META:
 #   'containment' : dictionary of <type name>: <cardinality>
 #   'definition'  : class definition for the <type name>
+#   'dictionary'  : dictionary of the class object for <type name>?
 
 
 class Base(QtCore.QObject):
@@ -126,59 +132,78 @@ class Association(Base):
         self.add_parameter(dst)
 
 
-def Containment(Association):
+class Containment(Association):
     def __init__(self, cardinality, *args):
         Association.__init__(self, *args)
         self.add_parameter(cardinality)
 
 
-def Pointer(Association):
+class Pointer(Association):
     def __init__(self, name, *args):
         Association.__init__(self, *args)
         self.add_parameter(name)
 
 
-def Set(Association):
+class Set(Association):
     def __init__(self, name, cardinality, *args):
         Association.__init__(self, *args)
         self.add_parameter(name)
         self.add_parameter(cardinality)
 
 
-def Inheritance(Association):
+class Inheritance(Association):
     pass
 
 
 def get_meta_meta_model():
     meta_meta_dict = OrderedDict()
 
-    mm = MetaModel()
-    mm['Name'] = 'MetaModel'
-    mm.uuid = 'MetaModel'
-    ma = MetaModel()
-    ma['Name'] = 'MetaAttribute'
-    ma.uuid = 'MetaAttribute'
-    mp = MetaModel()
-    mp['Name'] = 'MetaPointer'
-    mp.uuid = 'MetaPointer'
+    ad = OrderedDict()
+    ad['containment'] = OrderedDict()
+    ad['definition'] = Association
+    ad['dictionary'] = OrderedDict()
+    meta_meta_dict['Association'] = ad
 
-    mm1 = MetaModel()
-    mm1['Name'] = 'MetaModel'
-    mm1.uuid = 'MetaModel'
+    cd = OrderedDict()
+    cd['containment'] = OrderedDict()
+    cd['definition'] = Containment
+    cd['dictionary'] = OrderedDict()
+    meta_meta_dict['Association'] = cd
 
-    mm.add_child(mm1)
-    mm.add_child(ma)
-    mm.add_child(mp)
+    pd = OrderedDict()
+    pd['containment'] = OrderedDict()
+    pd['definition'] = Pointer
+    pd['dictionary'] = OrderedDict()
+    meta_meta_dict['Association'] = pd
 
-    # na = NameAttribute('NameAttribute')
+    sd = OrderedDict()
+    sd['containment'] = OrderedDict()
+    sd['definition'] = Set
+    sd['dictionary'] = OrderedDict()
+    meta_meta_dict['Association'] = sd
 
-    mmd = MetaModel.toDict(mm)
+    _id = OrderedDict()
+    _id['containment'] = OrderedDict()
+    _id['definition'] = Inheritance
+    _id['dictionary'] = OrderedDict()
+    meta_meta_dict['Association'] = _id
 
-    root_dict = [mmd]
+    md = OrderedDict()
+    md['containment'] = OrderedDict()
+    md['definition'] = Model
+    md['dictionary'] = OrderedDict()
+    meta_meta_dict['Association'] = md
 
-    meta_meta_dict['Name'] = 'MetaMetaModel'
-    meta_meta_dict['MD5'] = hashlib.md5(str(root_dict)).hexdigest()
-    meta_meta_dict['__ROOT__'] = root_dict
+    meta_meta_dict['ROOT'] = [
+        'Association',
+        'Containment',
+        'Pointer',
+        'Set',
+        'Inheritance',
+        'Model'
+    ]
+    meta_meta_dict['MD5'] = hashlib.md5(str(meta_meta_dict)).hexdigest()
+    meta_meta_dict['NAME'] = 'MetaMetaModel'
     return meta_meta_dict
 
 
