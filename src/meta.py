@@ -85,10 +85,41 @@ import hashlib
 #   'dictionary'  : dictionary of the class object for <type name>?
 
 
+def getMinMaxCardinality(cardinality):
+    vals = cardinality.split('..', 1)
+    min_num = int(vals[0])
+    max_num = min_num
+    if len(vals) > 1:
+        if vals[1] != '*':
+            max_num = int(vals[1])
+        else:
+            max_num = -1
+    return min_num, max_num
+
+
+def can_insert(child, parent, META):
+    childType = child.getMetaType()
+    parentType = parent.getMetaType()
+    containment = META[parentType]['containment']
+    if childType not in containment:
+        return False
+    existing = parent.get_children()
+    if child in existing:
+        return False
+    cardinality = containment[childType]
+    min_num, max_num = getMinMaxCardinality(cardinality)
+    number = [
+        c.getMetaType()
+        for c in existing
+    ].count(childType)
+    return (max_num > 0 and number < max_num) or (max_num < 0)
+
+
 class Base(QtCore.QObject):
     def __init__(self):
         QtCore.QObject.__init__(self)
         self.META = None
+        self.META_TYPE = None
         self.UUID = None
 
     def setUUID(self, _uuid):
@@ -105,6 +136,12 @@ class Base(QtCore.QObject):
 
     def kind(self):
         return self.__class__.__name__
+
+    def setMetaType(self, mt):
+        self.META_TYPE = mt
+
+    def getMetaType(self):
+        return self.META_TYPE
 
 
 class Model(Base):
@@ -941,17 +978,6 @@ class MetaPointer(Model):
         return new_ptr
     
 
-def getMinMaxCardinality(cardinality):
-    vals = cardinality.split('..', 1)
-    min_num = int(vals[0])
-    max_num = min_num
-    if len(vals) > 1:
-        if vals[1] != '*':
-            max_num = int(vals[1])
-        else:
-            max_num = -1
-    return min_num, max_num
-        
 class Children(MutableSequence):
     '''Children list which extends :class:`MutableSequence` and enforces
     item type and cardinality rules.
