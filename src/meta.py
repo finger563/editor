@@ -67,6 +67,87 @@ import uuid
 
 import hashlib
 
+# Structure of META:
+#   'ROOT'        : which object types exist in root context
+#   '<type name>' : sub-dictionary which specifies the META for an
+#                   object whose type is <type name>
+
+# Each meta-object will have a top-level entry in the META dict
+
+# Structure of <type name> sub-dictionary in META:
+#   'containment' : dictionary of <type name>: <cardinality>
+#   'definition'  : class definition for the <type name>
+
+
+class Base(QtCore.QObject):
+    def __init__(self):
+        QtCore.QObject.__init__(self)
+        self.META = None
+        self.UUID = None
+
+    def setUUID(self, _uuid):
+        self.UUID = _uuid
+
+    def getUUID(self):
+        return self.UUID
+
+    def setMETA(self, _meta):
+        self.META = _meta
+
+    def getMETA(self):
+        return self.META
+
+    def kind(self):
+        return self.__class__.__name__
+
+
+class Model(Base):
+    def __init__(self, name):
+        Base.__init__(self)
+        self.parameters = []
+        self.children = []
+        self.add_parameter(name)
+
+
+class Parameter(Model):
+    def __init__(self, _type, name, value, validator, default):
+        Base.__init__(self)
+        self.add_parameter(_type)
+        self.add_parameter(name)
+        self.add_parameter(value)
+        self.add_parameter(validator)
+        self.add_parameter(default)
+
+
+class Association(Base):
+    def __init__(self, src, dst):
+        Base.__init__(self)
+        self.add_parameter(src)
+        self.add_parameter(dst)
+
+
+def Containment(Association):
+    def __init__(self, cardinality, *args):
+        Association.__init__(self, *args)
+        self.add_parameter(cardinality)
+
+
+def Pointer(Association):
+    def __init__(self, name, *args):
+        Association.__init__(self, *args)
+        self.add_parameter(name)
+
+
+def Set(Association):
+    def __init__(self, name, cardinality, *args):
+        Association.__init__(self, *args)
+        self.add_parameter(name)
+        self.add_parameter(cardinality)
+
+
+def Inheritance(Association):
+    pass
+
 
 def get_meta_meta_model():
     meta_meta_dict = OrderedDict()
@@ -99,224 +180,6 @@ def get_meta_meta_model():
     meta_meta_dict['MD5'] = hashlib.md5(str(root_dict)).hexdigest()
     meta_meta_dict['__ROOT__'] = root_dict
     return meta_meta_dict
-
-
-def buildMeta(meta_dict, model_dict, uuid_dict):
-    '''This function builds a dict of uuid: meta_dict[key] pairs.'''
-    if model_dict['UUID'] not in meta_dict:
-        meta_dict[model_dict['UUID']] = model_dict
-
-    # TODO: PUT CLASS CODE HERE FOR INSTANTIATING OBJECTS
-    uuid = model_dict['UUID']
-    class_type = meta_dict[uuid]['Type']
-    if uuid == 'MetaModel':
-        meta_dict[uuid]['__CLASS__'] = MetaModel
-    elif uuid == 'MetaAttribute':
-        meta_dict[uuid]['__CLASS__'] = MetaAttribute
-    elif uuid == 'MetaPointer':
-        meta_dict[uuid]['__CLASS__'] = MetaPointer
-    elif class_type == 'MetaModel':
-        meta_dict[uuid]['__CLASS__'] = MetaModel.fromMeta(model_dict, uuid_dict)
-    elif class_type == 'MetaAttribute':
-        meta_dict[uuid]['__CLASS__'] = MetaAttribute.fromMeta(model_dict, uuid_dict)
-    elif class_type == 'MetaPointer':
-        meta_dict[uuid]['__CLASS__'] = MetaPointer.fromMeta(model_dict, uuid_dict)
-
-    for c in model_dict['Children']:
-        buildMeta(meta_dict, c, uuid_dict)
-    for p in model_dict['Pointers']:
-        buildMeta(meta_dict, p, uuid_dict)
-
-
-def convertDictToModel(root_dict, meta_dict):
-    # TODO: Make this recursive function which uses meta_dict[obj
-    #       type]['__CLASS__'] to instantiate object
-
-    # TODO: Since classes are stored in the meta-dict, figure out how
-    #       meta-models will load and instantiate versus how models
-    #       will load and instantiate.  Probably will have to have
-    #       MetaMetaModel Dict have the class types for MetaModel,
-    #       MetaAttribute, and MetaPointer (What about
-    #       NameAttribute?), while when building the metadict for
-    #       MetaModels to be used with models we will need to use the
-    #       fromDict method (or a new equivalent)
-
-    # TODO: Figure out how to properly pass the data in to the newly
-    #       created objects
-    roots = []
-    uuid_dict = {}
-    unresolved_keys = {}
-    for root in root_dict:
-        roots.append(MetaModel.fromDict(root, uuid_dict, unresolved_keys))
-    for uuid_key, attr_list in unresolved_keys.iteritems():
-        for attr in attr_list:
-            if uuid_key in uuid_dict:
-                attr.dst_type = uuid_dict[uuid_key].kind()
-                attr.setValue(uuid_dict[uuid_key])
-            else:
-                ur = UnknownReference()
-                ur['Reference'] = attr.getValue()
-                attr.setValue(ur)
-    return roots
-
-
-def checkModelToMeta(root, meta):
-    test = False not in [
-        checkObjectToMeta(c, meta)
-        for c in root
-    ]
-    return test
-
-
-def checkChildrenToMeta(model_dict, meta_dict):
-    meta_type = meta_dict[model_dict['Type']]
-    meta_name = meta_type['Attributes']['Name']['Value']
-    allowed_kids = [
-        c['Attributes']['Name']['Value']
-        for c in meta_type['Children']
-        if 'Cardinality' in c['Attributes']
-    ]
-    cardinality = {
-        c['Attributes']['Name']['Value']:
-        c['Attributes']['Cardinality']['Value']
-        for c in meta_type['Children'] 
-        if 'Cardinality' in c['Attributes']
-    }
-    for c in model_dict['Children']:
-        # make sure the child type exists in the meta-model
-        if not checkObjectToMeta(c, meta_dict):
-            print 'ERROR: Child type \'{}\' of {} not in meta-model!'.format(
-                c['Type'],
-                meta_name
-            )
-            return False
-        child_meta_type = meta_dict[c['Type']]
-        child_meta_name = child_meta_type['Attributes']['Name']['Value']
-        # make sure the child type is allowed
-        if child_meta_name not in allowed_kids:
-            print 'ERROR: Child \'{}\' not allowed in {}!'.format(
-                child_meta_name,
-                meta_name
-            )
-            print '\tAllowed Children:\n\t\t{}'.format(allowed_kids)
-            return False
-    # make sure the parent is allowed to have this many kids of this type
-    child_types = [
-        meta_dict[c['Type']]['Attributes']['Name']['Value']
-        for c in model_dict['Children']
-    ]
-    for kid_type in allowed_kids:
-        min_num, max_num = getMinMaxCardinality(
-            cardinality[kid_type]
-        )
-        actual = child_types.count(kid_type)
-        if actual < min_num:
-            print 'ERROR: must have {} children of type \'{}\' in {}'.format(
-                min_num,
-                kid_type,
-                meta_name
-            )
-            return False
-        if max_num > 0 and actual > max_num:
-            print 'ERROR: can only have {} children of type \'{}\' in {}'.format(
-                max_num,
-                kid_type,
-                meta_name
-            )
-            return False
-    return True
-
-
-def checkPointersToMeta(model_dict, meta_dict):
-    meta_type = meta_dict[model_dict['Type']]
-    meta_name = meta_type['Attributes']['Name']['Value']
-    allowed_ptrs = [
-        p['Attributes']['Name']['Value']
-        for p in meta_type['Children']
-        if p['Type'] == 'MetaPointer'
-    ]
-    for p in model_dict['Pointers']:
-        # make sure the child type exists in the meta-model
-        if not checkObjectToMeta(p, meta_dict):
-            print 'ERROR: Pointer \'{}\' of {} not in meta-model!'.format(
-                p['Type'],
-                meta_name
-            )
-            return False
-        ptr_meta_type = meta_dict[p['Type']]
-        ptr_meta_name = ptr_meta_type['Attributes']['Name']['Value']
-        # make sure the child type is allowed
-        if ptr_meta_name not in allowed_ptrs:
-            print 'ERROR: Pointer type \'{}\' not allowed in {}!'.format(
-                ptr_meta_name,
-                meta_name
-            )
-            print '\tAllowed Pointers:\n\t\t{}'.format(allowed_ptrs)
-            return False
-    return True
-
-
-def checkAttributesToMeta(model_dict, meta_dict):
-    meta_type = meta_dict[model_dict['Type']]
-    meta_name = meta_type['Attributes']['Name']['Value']
-
-    allowed_attr = [
-        a['Attributes']['Name']['Value']
-        for a in meta_type['Children']
-        if a['Type'] == 'MetaAttribute'
-    ]
-
-    for a in model_dict['Attributes']:
-        if not checkObjectToMeta(a, meta_dict):
-            print 'ERROR: Attribute \'{}\' of {} not in meta-model!'.format(
-                a['Type'],
-                meta_name
-            )
-            return False
-        attr_meta_type = meta_dict[a['Type']]
-        attr_meta_name = attr_meta_type['Attribute']['Name']['Value']
-        if attr_meta_name not in allowed_attr:
-            print 'ERROR: Attribute type \'{}\' not allowed in {}!'.format(
-                attr_meta_name,
-                meta_name
-            )
-            print '\tAllowed Attributes:\n\t\t{}'.format(allowed_attr)
-            return False
-
-    return True
-
-
-def checkObjectToMeta(model_dict, meta_dict):
-    '''
-    This function does a first-level depth check of the validity of a
-    model against its meta-model, contained within model_dict and
-    meta_dict respectively.
-    '''
-    # check that it is a valid type
-    if model_dict['Type'] not in meta_dict:
-        print 'ERROR: object type \'{}\' not in metamodel!'.format(
-            model_dict['Type']
-        )
-        return False
-
-    # check that it has valid children types and numbers (cardinality)
-    if 'Children' in model_dict:
-        test = checkChildrenToMeta(model_dict, meta_dict)
-        if not test:
-            return test
-
-    # check that is has valid pointer objects
-    if 'Pointers' in model_dict:
-        test = checkPointersToMeta(model_dict, meta_dict)
-        if not test:
-            return test
-
-    # check that is has valid attribute objects
-    if 'Attriburtes' in model_dict:
-        test = checkAttributesToMeta(model_dict, meta_dict)
-        if not test:
-            return test
-    return True
 
 
 class Model(QtCore.QObject):
