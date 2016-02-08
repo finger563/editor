@@ -71,6 +71,20 @@ class Arrow(QtGui.QGraphicsLineItem):
         painter.setBrush(self.myColor)
 
         centerLine = QtCore.QLineF(myStartItem.pos(), myEndItem.pos())
+        centerAngle = centerLine.angle()
+
+        vertical = False
+        if ((centerAngle > 45 and centerAngle < 135) or
+            (centerAngle > 225 and centerAngle < 315)):
+            vertical = True
+        top = myStartItem
+        bottom = myEndItem
+        if myStartItem.pos().y() > myEndItem.pos().y():
+            top = myEndItem
+            bottom = myStartItem
+
+        
+
         endPolygon = myEndItem.polygon()
         p1 = endPolygon.first() + myEndItem.pos()
 
@@ -86,6 +100,7 @@ class Arrow(QtGui.QGraphicsLineItem):
         self.setLine(QtCore.QLineF(intersectPoint, myStartItem.pos()))
         line = self.line()
 
+        '''
         angle = math.acos(line.dx() / line.length())
         if line.dy() >= 0:
             angle = (math.pi * 2.0) - angle
@@ -98,9 +113,10 @@ class Arrow(QtGui.QGraphicsLineItem):
             math.sin(angle + math.pi - math.pi / 3.0) * arrowSize,
             math.cos(angle + math.pi - math.pi / 3.0) * arrowSize
         )
+        '''
 
         self.arrowHead.clear()
-        for point in [line.p1(), arrowP1, arrowP2]:
+        for point in [line.p1()]:  # , arrowP1, arrowP2]:
             self.arrowHead.append(point)
 
         painter.drawLine(line)
@@ -126,7 +142,7 @@ class DiagramTextItem(QtGui.QGraphicsTextItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
 
     def itemChange(self, change, value):
-        if change == QtGui.QGraphicsItem.ItemSelectedChange:
+        if change == QtGui.QGraphicsItem.ItemSelectedHasChanged:
             self.selectedChange.emit(self)
         return value
 
