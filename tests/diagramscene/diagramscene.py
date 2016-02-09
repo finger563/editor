@@ -77,6 +77,7 @@ class Arrow(QtGui.QGraphicsLineItem):
         if ((centerAngle > 45 and centerAngle < 135) or
             (centerAngle > 225 and centerAngle < 315)):
             vertical = True
+
         top = myStartItem
         bottom = myEndItem
         if myStartItem.pos().y() > myEndItem.pos().y():

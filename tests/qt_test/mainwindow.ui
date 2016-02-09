@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1525</width>
-    <height>1203</height>
+    <width>1958</width>
+    <height>1394</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,13 @@
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <widget class="QTreeWidget" name="treeView">
+       <widget class="QTreeView" name="treeView">
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="acceptDrops">
+         <bool>true</bool>
+        </property>
         <property name="dragEnabled">
          <bool>true</bool>
         </property>
@@ -49,17 +55,27 @@
         <property name="headerHidden">
          <bool>true</bool>
         </property>
-        <column>
-         <property name="text">
-          <string notr="true">1</string>
-         </property>
-        </column>
        </widget>
-       <widget class="QTabWidget" name="tabbedModelView">
+       <widget class="TabbedModelViewer" name="tabbedModelView">
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="tabPosition">
+         <enum>QTabWidget::North</enum>
+        </property>
+        <property name="tabShape">
+         <enum>QTabWidget::Rounded</enum>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
+        <property name="elideMode">
+         <enum>Qt::ElideNone</enum>
+        </property>
         <property name="tabsClosable">
+         <bool>true</bool>
+        </property>
+        <property name="movable">
          <bool>true</bool>
         </property>
         <widget class="QWidget" name="tab">
@@ -68,7 +84,11 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QGraphicsView" name="modelView"/>
+           <widget class="QGraphicsView" name="modelView">
+            <property name="dragMode">
+             <enum>QGraphicsView::NoDrag</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -93,7 +113,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1525</width>
+     <width>1958</width>
      <height>31</height>
     </rect>
    </property>
@@ -154,6 +174,50 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>TabbedModelViewer</class>
+   <extends>QTabWidget</extends>
+   <header>tabbedmodelviewer.h</header>
+   <container>1</container>
+   <slots>
+    <slot>onTabClose(int)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>tabbedModelView</sender>
+   <signal>tabCloseRequested(int)</signal>
+   <receiver>tabbedModelView</receiver>
+   <slot>onTabClose(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>847</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>902</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>762</x>
+     <y>601</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
