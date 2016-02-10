@@ -1,0 +1,623 @@
+{
+    "1c341d0f-2837-4238-a3a9-654239e371f2": {
+        "fields": [
+            {
+                "default": "NewProject", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }
+        ], 
+        "name": "Project", 
+        "uuid": "1c341d0f-2837-4238-a3a9-654239e371f2", 
+        "kind": "MetaModel"
+    }, 
+    "d9ff468b-e88e-4b6f-aabd-6516df1130b5": {
+        "fields": [
+            {
+                "default": "NewSoftware", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }
+        ], 
+        "name": "Software", 
+        "uuid": "d9ff468b-e88e-4b6f-aabd-6516df1130b5", 
+        "kind": "MetaModel"
+    }, 
+    "6d551de7-9aa4-4fb7-bfd4-7ad15e51dfa5": {
+        "fields": [
+            {
+                "default": "NewPackage", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }
+        ], 
+        "name": "Package", 
+        "uuid": "6d551de7-9aa4-4fb7-bfd4-7ad15e51dfa5", 
+        "kind": "MetaModel"
+    }, 
+    "0d281b13-f560-4ef7-9ff3-64fa2c515aaa": {
+        "fields": [
+            {
+                "default": "NewComponent", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": "base", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "component_type", 
+                "allowed": [
+                    "base", 
+                    "ksp", 
+                    "sumo"
+                ]
+            }
+        ], 
+        "name": "Component", 
+        "uuid": "0d281b13-f560-4ef7-9ff3-64fa2c515aaa", 
+        "kind": "MetaModel"
+    }, 
+    "387262f5-1cbf-4120-8d7a-006c9a8876d3": {
+        "fields": [
+            {
+                "default": "NewMessage", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": "", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "definition", 
+                "allowed": []
+            }
+        ], 
+        "name": "Message", 
+        "uuid": "387262f5-1cbf-4120-8d7a-006c9a8876d3", 
+        "kind": "MetaModel"
+    }, 
+    "ae26aa2a-32ef-4afe-b212-4845bb2308da": {
+        "fields": [
+            {
+                "default": "NewService", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": "", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "definition", 
+                "allowed": []
+            }
+        ], 
+        "name": "Service", 
+        "uuid": "ae26aa2a-32ef-4afe-b212-4845bb2308da", 
+        "kind": "MetaModel"
+    }, 
+    "7b74e2dd-05b8-4c64-bfdc-3b74009250db": {
+        "fields": [
+            {
+                "default": "NewClient", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }
+        ], 
+        "name": "Client", 
+        "uuid": "7b74e2dd-05b8-4c64-bfdc-3b74009250db", 
+        "kind": "MetaModel"
+    }, 
+    "d08e17d6-505e-45db-8ce2-f083f2224945": {
+        "fields": [
+            {
+                "default": "NewServer", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": 0, 
+                "kind": "integer", 
+                "validator": null, 
+                "name": "priority", 
+                "allowed": []
+            }, 
+            {
+                "default": 0.0, 
+                "kind": "float", 
+                "validator": null, 
+                "name": "deadline", 
+                "allowed": []
+            }
+        ], 
+        "name": "Server", 
+        "uuid": "d08e17d6-505e-45db-8ce2-f083f2224945", 
+        "kind": "MetaModel"
+    }, 
+    "91c79efc-3f5f-410f-82dd-28c7ce2cbe24": {
+        "fields": [
+            {
+                "default": "NewPublisher", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }
+        ], 
+        "name": "Publisher", 
+        "uuid": "91c79efc-3f5f-410f-82dd-28c7ce2cbe24", 
+        "kind": "MetaModel"
+    }, 
+    "448046ba-6d1c-47b6-8aea-1071280b7da1": {
+        "fields": [
+            {
+                "default": "NewSubscriber", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": 0, 
+                "kind": "integer", 
+                "validator": null, 
+                "name": "priority", 
+                "allowed": []
+            }, 
+            {
+                "default": 0.0, 
+                "kind": "float", 
+                "validator": null, 
+                "name": "deadline", 
+                "allowed": []
+            }
+        ], 
+        "name": "Subscriber", 
+        "uuid": "448046ba-6d1c-47b6-8aea-1071280b7da1", 
+        "kind": "MetaModel"
+    }, 
+    "5a57ecd8-997c-4533-ac45-a06dfc972e17": {
+        "fields": [
+            {
+                "default": "NewTimer", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": 0.0, 
+                "kind": "float", 
+                "validator": null, 
+                "name": "period", 
+                "allowed": []
+            }, 
+            {
+                "default": 0, 
+                "kind": "integer", 
+                "validator": null, 
+                "name": "priority", 
+                "allowed": []
+            }, 
+            {
+                "default": 0.0, 
+                "kind": "float", 
+                "validator": null, 
+                "name": "deadline", 
+                "allowed": []
+            }
+        ], 
+        "name": "Timer", 
+        "uuid": "5a57ecd8-997c-4533-ac45-a06dfc972e17", 
+        "kind": "MetaModel"
+    }, 
+    "00f899c3-81db-4481-95ec-5c8c8cd61dd8": {
+        "fields": [
+            {
+                "default": "NewHardware", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }
+        ], 
+        "name": "Hardware", 
+        "uuid": "00f899c3-81db-4481-95ec-5c8c8cd61dd8", 
+        "kind": "MetaModel"
+    }, 
+    "42aec027-7aa7-42ac-b7a9-2ef8a6c3d41a": {
+        "fields": [
+            {
+                "default": "NewHost", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": "NewHost", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "ip_address", 
+                "allowed": []
+            }, 
+            {
+                "default": "NewHost", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "username", 
+                "allowed": []
+            }, 
+            {
+                "default": "NewHost", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "sshkey", 
+                "allowed": []
+            }, 
+            {
+                "default": "NewHost", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "deployment_path", 
+                "allowed": []
+            }, 
+            {
+                "default": "NewHost", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "install_path", 
+                "allowed": []
+            }, 
+            {
+                "default": "NewHost", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "architecture", 
+                "allowed": []
+            }
+        ], 
+        "name": "Host", 
+        "uuid": "42aec027-7aa7-42ac-b7a9-2ef8a6c3d41a", 
+        "kind": "MetaModel"
+    }, 
+    "fda32c9a-87ef-49d6-a44a-5664c6cfb04e": {
+        "fields": [
+            {
+                "default": "NewDeployment", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }
+        ], 
+        "name": "Deployment", 
+        "uuid": "fda32c9a-87ef-49d6-a44a-5664c6cfb04e", 
+        "kind": "MetaModel"
+    }, 
+    "fc5bf15a-0997-43b7-bd75-69c72925c9eb": {
+        "fields": [
+            {
+                "default": "NewNode", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": 0, 
+                "kind": "integer", 
+                "validator": null, 
+                "name": "priority", 
+                "allowed": []
+            }, 
+            {
+                "default": "", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "cmd_args", 
+                "allowed": []
+            }
+        ], 
+        "name": "Node", 
+        "uuid": "fc5bf15a-0997-43b7-bd75-69c72925c9eb", 
+        "kind": "MetaModel"
+    }, 
+    "b608ff33-2cfa-44d4-b957-496ec4b884ad": {
+        "fields": [
+            {
+                "default": "NewComponentInstance", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "name", 
+                "allowed": []
+            }, 
+            {
+                "default": "FIFO", 
+                "kind": "string", 
+                "validator": null, 
+                "name": "scheduling_scheme", 
+                "allowed": [
+                    "FIFO", 
+                    "PFIFO", 
+                    "EDF"
+                ]
+            }, 
+            {
+                "default": true, 
+                "kind": "boolean", 
+                "validator": null, 
+                "name": "periodic_logging", 
+                "allowed": []
+            }, 
+            {
+                "default": 1000, 
+                "kind": "integer", 
+                "validator": null, 
+                "name": "periodic_log_unit", 
+                "allowed": []
+            }
+        ], 
+        "name": "ComponentInstance", 
+        "uuid": "b608ff33-2cfa-44d4-b957-496ec4b884ad", 
+        "kind": "MetaModel"
+    }, 
+    "6078db46-04ce-4dea-adfc-9f46962c5730": {
+        "fields": [
+            {
+                "cardinality": "1", 
+                "parent": "1c341d0f-2837-4238-a3a9-654239e371f2", 
+                "child": "d9ff468b-e88e-4b6f-aabd-6516df1130b5"
+            }
+        ], 
+        "uuid": "6078db46-04ce-4dea-adfc-9f46962c5730", 
+        "kind": "MetaContainment"
+    }, 
+    "6ab8f5e9-2ee2-42d5-ae1b-bfd17de7d4d3": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "1c341d0f-2837-4238-a3a9-654239e371f2", 
+                "child": "00f899c3-81db-4481-95ec-5c8c8cd61dd8"
+            }
+        ], 
+        "uuid": "6ab8f5e9-2ee2-42d5-ae1b-bfd17de7d4d3", 
+        "kind": "MetaContainment"
+    }, 
+    "e8482335-65ff-4772-9e41-7adf0802c852": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "1c341d0f-2837-4238-a3a9-654239e371f2", 
+                "child": "fda32c9a-87ef-49d6-a44a-5664c6cfb04e"
+            }
+        ], 
+        "uuid": "e8482335-65ff-4772-9e41-7adf0802c852", 
+        "kind": "MetaContainment"
+    }, 
+    "a1405756-7cde-4dae-b4eb-227563277520": {
+        "fields": [
+            {
+                "cardinality": "1..*", 
+                "parent": "d9ff468b-e88e-4b6f-aabd-6516df1130b5", 
+                "child": "6d551de7-9aa4-4fb7-bfd4-7ad15e51dfa5"
+            }
+        ], 
+        "uuid": "a1405756-7cde-4dae-b4eb-227563277520", 
+        "kind": "MetaContainment"
+    }, 
+    "7167a0c9-0a55-46ee-8495-b995707d63fa": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "6d551de7-9aa4-4fb7-bfd4-7ad15e51dfa5", 
+                "child": "387262f5-1cbf-4120-8d7a-006c9a8876d3"
+            }
+        ], 
+        "uuid": "7167a0c9-0a55-46ee-8495-b995707d63fa", 
+        "kind": "MetaContainment"
+    }, 
+    "bc62b905-fddd-463a-963d-1b65deced126": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "6d551de7-9aa4-4fb7-bfd4-7ad15e51dfa5", 
+                "child": "ae26aa2a-32ef-4afe-b212-4845bb2308da"
+            }
+        ], 
+        "uuid": "bc62b905-fddd-463a-963d-1b65deced126", 
+        "kind": "MetaContainment"
+    }, 
+    "9d72f12e-b612-4833-a490-3ca1fa3a48bb": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "6d551de7-9aa4-4fb7-bfd4-7ad15e51dfa5", 
+                "child": "0d281b13-f560-4ef7-9ff3-64fa2c515aaa"
+            }
+        ], 
+        "uuid": "9d72f12e-b612-4833-a490-3ca1fa3a48bb", 
+        "kind": "MetaContainment"
+    }, 
+    "d2f2d9f2-a417-4992-99a4-cb9700b084ed": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "0d281b13-f560-4ef7-9ff3-64fa2c515aaa", 
+                "child": "5a57ecd8-997c-4533-ac45-a06dfc972e17"
+            }
+        ], 
+        "uuid": "d2f2d9f2-a417-4992-99a4-cb9700b084ed", 
+        "kind": "MetaContainment"
+    }, 
+    "b38e39b5-bf75-4338-a139-e9019cdfa9d2": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "0d281b13-f560-4ef7-9ff3-64fa2c515aaa", 
+                "child": "7b74e2dd-05b8-4c64-bfdc-3b74009250db"
+            }
+        ], 
+        "uuid": "b38e39b5-bf75-4338-a139-e9019cdfa9d2", 
+        "kind": "MetaContainment"
+    }, 
+    "7a6d0ff0-af41-405a-b884-a564417bd582": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "0d281b13-f560-4ef7-9ff3-64fa2c515aaa", 
+                "child": "d08e17d6-505e-45db-8ce2-f083f2224945"
+            }
+        ], 
+        "uuid": "7a6d0ff0-af41-405a-b884-a564417bd582", 
+        "kind": "MetaContainment"
+    }, 
+    "00d10a16-28d0-4da5-864b-ef427858d0f2": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "0d281b13-f560-4ef7-9ff3-64fa2c515aaa", 
+                "child": "91c79efc-3f5f-410f-82dd-28c7ce2cbe24"
+            }
+        ], 
+        "uuid": "00d10a16-28d0-4da5-864b-ef427858d0f2", 
+        "kind": "MetaContainment"
+    }, 
+    "82275afd-23bf-4210-aeca-f551b9512d8e": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "0d281b13-f560-4ef7-9ff3-64fa2c515aaa", 
+                "child": "448046ba-6d1c-47b6-8aea-1071280b7da1"
+            }
+        ], 
+        "uuid": "82275afd-23bf-4210-aeca-f551b9512d8e", 
+        "kind": "MetaContainment"
+    }, 
+    "db9f652e-7a0b-4e58-a7a1-bc6402f1b483": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "00f899c3-81db-4481-95ec-5c8c8cd61dd8", 
+                "child": "42aec027-7aa7-42ac-b7a9-2ef8a6c3d41a"
+            }
+        ], 
+        "uuid": "db9f652e-7a0b-4e58-a7a1-bc6402f1b483", 
+        "kind": "MetaContainment"
+    }, 
+    "92bfa1e1-9ac4-4415-b090-2f91df2b0a3b": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "fda32c9a-87ef-49d6-a44a-5664c6cfb04e", 
+                "child": "fc5bf15a-0997-43b7-bd75-69c72925c9eb"
+            }
+        ], 
+        "uuid": "92bfa1e1-9ac4-4415-b090-2f91df2b0a3b", 
+        "kind": "MetaContainment"
+    }, 
+    "15de379a-b671-46a5-b874-b3b713f45358": {
+        "fields": [
+            {
+                "cardinality": "0..*", 
+                "parent": "fc5bf15a-0997-43b7-bd75-69c72925c9eb", 
+                "child": "b608ff33-2cfa-44d4-b957-496ec4b884ad"
+            }
+        ], 
+        "uuid": "15de379a-b671-46a5-b874-b3b713f45358", 
+        "kind": "MetaContainment"
+    }, 
+    "0dbb2a50-aaec-425b-8748-e509681ab030": {
+        "fields": [
+            {
+                "src": "7b74e2dd-05b8-4c64-bfdc-3b74009250db", 
+                "dst": "ae26aa2a-32ef-4afe-b212-4845bb2308da"
+            }
+        ], 
+        "uuid": "0dbb2a50-aaec-425b-8748-e509681ab030", 
+        "name": "service_reference", 
+        "kind": "MetaPointer"
+    }, 
+    "6f56a302-34f3-46d9-b5fe-4f1ba309f8e7": {
+        "fields": [
+            {
+                "src": "d08e17d6-505e-45db-8ce2-f083f2224945", 
+                "dst": "ae26aa2a-32ef-4afe-b212-4845bb2308da"
+            }
+        ], 
+        "uuid": "6f56a302-34f3-46d9-b5fe-4f1ba309f8e7", 
+        "name": "service_reference", 
+        "kind": "MetaPointer"
+    }, 
+    "5af26806-88bd-4048-8b21-4fac5a98405a": {
+        "fields": [
+            {
+                "src": "91c79efc-3f5f-410f-82dd-28c7ce2cbe24", 
+                "dst": "387262f5-1cbf-4120-8d7a-006c9a8876d3"
+            }
+        ], 
+        "uuid": "5af26806-88bd-4048-8b21-4fac5a98405a", 
+        "name": "message_reference", 
+        "kind": "MetaPointer"
+    }, 
+    "b77cf0aa-b06e-4560-97e7-1bfeab2c5f87": {
+        "fields": [
+            {
+                "src": "448046ba-6d1c-47b6-8aea-1071280b7da1", 
+                "dst": "387262f5-1cbf-4120-8d7a-006c9a8876d3"
+            }
+        ], 
+        "uuid": "b77cf0aa-b06e-4560-97e7-1bfeab2c5f87", 
+        "name": "message_reference", 
+        "kind": "MetaPointer"
+    }, 
+    "f52992fe-4c4f-4e63-956b-b29f03914541": {
+        "fields": [
+            {
+                "src": "fda32c9a-87ef-49d6-a44a-5664c6cfb04e", 
+                "dst": "00f899c3-81db-4481-95ec-5c8c8cd61dd8"
+            }
+        ], 
+        "uuid": "f52992fe-4c4f-4e63-956b-b29f03914541", 
+        "name": "hardware_reference", 
+        "kind": "MetaPointer"
+    }, 
+    "cf91a107-73cb-4f11-9623-a9c22e633450": {
+        "fields": [
+            {
+                "src": "fc5bf15a-0997-43b7-bd75-69c72925c9eb", 
+                "dst": "42aec027-7aa7-42ac-b7a9-2ef8a6c3d41a"
+            }
+        ], 
+        "uuid": "cf91a107-73cb-4f11-9623-a9c22e633450", 
+        "name": "host_reference", 
+        "kind": "MetaPointer"
+    }, 
+    "ba06656b-d507-458c-9c16-ea597ff17cec": {
+        "fields": [
+            {
+                "src": "b608ff33-2cfa-44d4-b957-496ec4b884ad", 
+                "dst": "0d281b13-f560-4ef7-9ff3-64fa2c515aaa"
+            }
+        ], 
+        "uuid": "ba06656b-d507-458c-9c16-ea597ff17cec", 
+        "name": "component_reference", 
+        "kind": "MetaPointer"
+    }
+}
